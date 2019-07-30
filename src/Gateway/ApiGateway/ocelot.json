@@ -1,0 +1,79 @@
+﻿{
+  "ReRoutes": [
+    {
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "instruments.service",
+          "Port": 44345
+        }
+      ],
+      "UpstreamPathTemplate": "/instruments/command/{everything}",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "marketcurves.service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/marketcurves/command/{everything}",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "CurveRecipes.service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/CurveRecipes/command/{everything}",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "instruments.query.service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/instruments/query/{everything}",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "marketcurves.query.service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/marketcurves/query/{everything}",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "CurveRecipes.query.service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/CurveRecipes/query/{everything}",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://apigateway"
+  }
+}

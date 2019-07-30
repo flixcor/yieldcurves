@@ -1,0 +1,174 @@
+@page "/CurveRecipes"
+@using CurveRecipes.Query.Service.Client
+@using CurveRecipes.Service.Client
+@using MarketCurves.Query.Service.Client
+@inject ICurveRecipesQueryServiceClient QueryService
+@inject ICurveRecipesServiceClient CommandService
+@inject IMarketCurvesQueryServiceClient MarketCurveService
+
+<h1>Calculated Curves</h1>
+
+<table class="table">
+    <tr>
+        <th>@nameof(GetCurveRecipesDto.Name)</th>
+        <th @onclick="@ShowDiv">Create</th>
+    </tr>
+    @foreach (var item in model)
+    {
+        <tr>
+            <td>@item.Name</td>
+            <td><a href="CurveRecipes/@item.Id">Edit</a></td>
+        </tr>
+    }
+</table>
+
+@if (_showDiv)
+{
+    <div class="form-group">
+        <label>Market Curve</label>
+        <select class="form-control" @onchange="@MarketCurveChanged">
+            @foreach (var curve in _marketCurves)
+            {
+                <option value="@curve.Id">@curve.Name</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label>@nameof(_createCommand.ShortName)</label>
+        <input class="form-control" @bind="_createCommand.ShortName" />
+    </div>
+    <div class="form-group">
+        <label>@nameof(_createCommand.Description)</label>
+        <input class="form-control" @bind="_createCommand.Description" />
+    </div>
+    <div class="form-group">
+        <label>@nameof(_createCommand.LastLiquidTenor)</label>
+        <select class="form-control" @bind="_createCommand.LastLiquidTenor">
+            @foreach (var tenor in Enum.GetValues(typeof(Tenor)))
+            {
+                <option>@tenor</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label>@nameof(_createCommand.DayCountConvention)</label>
+        <select class="form-control" @bind="_createCommand.DayCountConvention">
+            @foreach (var dcc in Enum.GetValues(typeof(DayCountConvention)))
+            {
+                <option>@dcc</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label>@nameof(_createCommand.Interpolation)</label>
+        <select class="form-control" @bind="_createCommand.Interpolation">
+            @foreach (var
+          inter in Enum.GetValues(typeof(Interpolation)))
+            {
+                <option>@inter</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label>@nameof(_createCommand.ExtrapolationShort)</label>
+        <select class="form-control" @bind="_createCommand.ExtrapolationShort">
+            @foreach (var extra in Enum.GetValues(typeof(ExtrapolationShort)))
+            {
+                <option>@extra</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label>@nameof(_createCommand.ExtrapolationLong)</label>
+        <select class="form-control" @bind="_createCommand.ExtrapolationLong">
+            @foreach (var extral in Enum.GetValues(typeof(ExtrapolationLong)))
+            {
+                <option>@extral</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label>@nameof(_createCommand.OutputFrequency.OutputSeries)</label>
+        <select class="form-control" @bind="_createCommand.OutputFrequency.OutputSeries">
+            @foreach (var outputseries in Enum.GetValues(typeof(OutputSeries)))
+            {
+                <option>@outputseries</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label>@nameof(_createCommand.OutputFrequency.MaximumMaturity)</label>
+        <input class="form-control" @bind="_createCommand.OutputFrequency.MaximumMaturity" />
+    </div>
+    <div class="form-group">
+        <label>@nameof(_createCommand.OutputType)</label>
+        <select class="form-control" @bind="_createCommand.OutputType">
+            @foreach (var outputtype in Enum.GetValues(typeof(OutputType)))
+            {
+                <option>@outputtype</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <button @onclick="@Create" type="button" class="btn btn-primary">Submit</button>
+    </div>
+
+}
+
+@code {
+    bool _showDiv = false;
+
+    CreateCalculatedCurve _createCommand = new CreateCalculatedCurve() { Id = Guid.NewGuid() };
+
+    ICollection<Dto> _marketCurves = new List<Dto>();
+
+    ICollection<GetCurveRecipesDto> model = new List<GetCurveRecipesDto>();
+
+    private async Task Create()
+    {
+        if (_createCommand.MarketCurveId == Guid.Empty && _marketCurves.Any())
+        {
+            _createCommand.MarketCurveId = _marketCurves.First().Id;
+        }
+
+        await CommandService.PostAsync(_createCommand);
+
+        HideDiv();
+
+        await Refresh();
+    }
+
+    private async Task Refresh()
+    {
+        _createCommand = new CreateCalculatedCurve
+        {
+            Id = Guid.NewGuid(),
+            OutputFrequency = new OutputFrequency()
+        };
+        _marketCurves = await MarketCurveService.GetAllAsync();
+        model = await QueryService.GetAllAsync();
+    }
+
+    protected override async Task OnInitAsync()
+    {
+        await Refresh();
+    }
+
+    private void HideDiv()
+    {
+        _showDiv = false;
+    }
+
+    private void ShowDiv()
+    {
+        _showDiv = true;
+    }
+
+    private void MarketCurveChanged(UIChangeEventArgs e)
+    {
+        if (Guid.TryParse(e.Value.ToString(), out var outValue))
+        {
+            _createCommand.MarketCurveId = outValue;
+        }
+    }
+}

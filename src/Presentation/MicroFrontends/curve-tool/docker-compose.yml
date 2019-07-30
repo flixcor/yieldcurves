@@ -1,0 +1,14 @@
+
+version: "3"
+services:
+  web:
+    build: .
+    ports:
+      - 8080:8080
+    stdin_open: true
+    tty: true
+    volumes:
+      - ".:/app"
+
+    environment:
+      - CHOKIDAR_USEPOLLING=true
