@@ -9,7 +9,7 @@
 import externalComponent from "../utils/external-component";
 
 export default {
-  name: "HelloWorld",
+  name: "Instruments",
   components: {
     CreateInstrument: () =>
       externalComponent("https://localhost:44346/create-instrument.umd.js"),

@@ -71,6 +71,17 @@ namespace Common.Core
                 : Fail<TOut>(Messages);
         }
 
+        public async Task<Result> Promise(Func<T, Task> onSuccess)
+        {
+            if (IsSuccessful)
+            {
+                await onSuccess(Content);
+                return Ok();
+            }
+
+            return Fail(Messages);
+        }
+
         public Result Promise(Action<T> onSuccess)
         {
             if (IsSuccessful)

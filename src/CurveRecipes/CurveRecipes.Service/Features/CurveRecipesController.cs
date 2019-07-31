@@ -20,10 +20,17 @@ namespace CurveRecipes.Service.Features
 
         // POST api/values
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] CreateCurveRecipe command)
+        public async Task<ActionResult> CreateCurveRecipe([FromBody] CreateCurveRecipe command)
         {
             var result = await _requestMediator.Send(command);
             return result.ToActionResult();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<GetCreateCurveRecipeDto>> CreateCurveRecipe([FromQuery] GetCreateCurveRecipeForMarketCurve query)
+        {
+            var result = await _requestMediator.Send(query);
+            return Ok(result);
         }
 
         // POST api/values

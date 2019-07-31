@@ -1,19 +1,29 @@
 <template>
-    <div class="container">
-    </div>
+  <div>
+    <get-curve-recipes class="comp" v-on:createClicked="onCreateClicked()" />
+    <component v-bind:is="detailComponent" v-if="detailComponent" class="comp" />
+  </div>
 </template>
 
 <script>
-    export default {
-        name: 'MarketCurves',
-        data() {
-            return {
-                showCreate: false
-            }
-        },
-        mounted() {
-        },
-        methods: {
-        }
+import externalComponent from "../utils/external-component";
+
+export default {
+  name: "Recipes",
+  components: {
+    GetCurveRecipes: () =>
+      externalComponent("https://localhost:44380/get-curve-recipes.umd.js")
+  },
+  data() {
+    return {
+      detailComponent: false
+    };
+  },
+  methods: {
+    onCreateClicked() {
+      this.detailComponent = () =>
+        externalComponent("https://localhost:44379/create-curve-recipe.umd.js");
     }
+  }
+};
 </script>

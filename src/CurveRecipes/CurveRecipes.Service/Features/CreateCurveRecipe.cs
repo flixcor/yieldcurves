@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,7 +34,8 @@ namespace CurveRecipes.Service.Features
 
         public class Handler :
             IHandleCommand<CreateCurveRecipe>,
-            IHandleEvent<MarketCurveCreated>
+            IHandleEvent<MarketCurveCreated>,
+            IHandleEvent<CurvePointAdded>
         {
             private readonly IRepository _repository;
             private readonly IReadModelRepository<MarketCurveDto> _readModelRepository;
@@ -69,6 +71,18 @@ namespace CurveRecipes.Service.Features
                 return _readModelRepository.Insert(curve);
             }
 
+            public async Task Handle(CurvePointAdded @event, CancellationToken cancellationToken)
+            {
+                var curve = await _readModelRepository.Get(@event.Id);
+
+                await curve
+                    .ToResult()
+                    .Promise(x=> {
+                        x.Tenors.Add(@event.Tenor);
+                        return _readModelRepository.Update(x);
+                    });
+            }
+
             private string GenerateName(MarketCurveCreated @event)
             {
                 var stringBuilder = new StringBuilder("M");
@@ -83,5 +97,6 @@ namespace CurveRecipes.Service.Features
     public class MarketCurveDto : ReadObject
     {
         public string Name { get; set; }
+        public IList<string> Tenors { get; set; } = new List<string>();
     }
 }
