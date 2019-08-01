@@ -7,13 +7,14 @@
       :type="type"
       :min="min"
       :max="max"
+      :step="step"
     ></md-input>
   </md-field>
 </template>
 
 <script>
 export default {
-  props: ['label', 'id', 'value', 'type', 'min', 'max'],
+  props: ['label', 'id', 'value', 'type', 'min', 'max', 'step'],
   methods: {
     emitChange(e) {
       this.$emit('input', e);

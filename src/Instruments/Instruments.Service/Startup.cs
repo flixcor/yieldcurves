@@ -31,7 +31,7 @@ namespace Instruments.Service
 
             services
                 .AddMediator(typeof(CreateRegularInstrument).Assembly)
-                .AddRedis("cache")
+                .AddRedis("localhost:6379")
                 .AddEventStore(Configuration.GetConnectionString("EventStore"));
 
             // Register the Swagger services

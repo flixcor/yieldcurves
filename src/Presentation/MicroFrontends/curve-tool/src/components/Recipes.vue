@@ -12,7 +12,7 @@ export default {
   name: "Recipes",
   components: {
     GetCurveRecipes: () =>
-      externalComponent("https://localhost:44380/get-curve-recipes.umd.js")
+      externalComponent("https://localhost:5005/get-curve-recipes.umd.js")
   },
   data() {
     return {
@@ -22,7 +22,7 @@ export default {
   methods: {
     onCreateClicked() {
       this.detailComponent = () =>
-        externalComponent("https://localhost:44379/create-curve-recipe.umd.js");
+        externalComponent("https://localhost:5007/create-curve-recipe.umd.js");
     }
   }
 };

@@ -54,7 +54,7 @@ export default {
   },
   created() {
     axios
-      .get(`https://localhost:44347/api/${this.id}`)
+      .get(`https://localhost:5003/api/${this.id}`)
       .then((response) => {
         this.curve = response.data;
       })

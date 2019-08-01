@@ -40,7 +40,7 @@ export default {
   },
   created() {
     axios
-      .get("https://localhost:44345/api")
+      .get("https://localhost:5009/api")
       .then(response => {
         // JSON responses are automatically parsed.
         this.instruments = response.data;

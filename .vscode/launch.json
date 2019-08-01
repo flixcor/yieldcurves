@@ -4,15 +4,16 @@
    // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
    "version": "0.2.0",
    "configurations": [
+     
         {
             "name": ".NET Core Launch (web)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/Instruments/Instruments.Service/bin/Debug/netcoreapp3.0/Instruments.Service.dll",
+            "program": "${workspaceFolder}/src/CurveRecipes/CurveRecipes.Service/bin/Debug/netcoreapp3.0/CurveRecipes.Service.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/src/Instruments/Instruments.Service",
+            "cwd": "${workspaceFolder}/src/CurveRecipes/CurveRecipes.Service",
             "stopAtEntry": false,
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "serverReadyAction": {

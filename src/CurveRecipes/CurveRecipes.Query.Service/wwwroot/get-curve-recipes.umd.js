@@ -2014,12 +2014,12 @@ if (typeof window !== 'undefined') {
 // Indicate to webpack that this file can be concatenated
 /* harmony default export */ var setPublicPath = (null);
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"09367d75-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/GetCurveRecipes.vue?vue&type=template&id=0a66c8e1&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"09367d75-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/GetCurveRecipes.vue?vue&type=template&id=b530167c&
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('md-card',{staticClass:"md-layout-item md-size-50 md-small-size-100"},[_c('md-card-header',[_c('div',{staticClass:"md-title"},[_vm._v("Curve Recipes")]),_c('md-button',{staticClass:"md-primary md-fab md-fab-top-right md-mini",on:{"click":function($event){return _vm.emitCreateClicked()}}},[_c('md-icon',[_vm._v("add")])],1)],1),_c('md-card-content',[(_vm.curves && _vm.curves.length)?_c('md-table',[_c('md-table-row',[_c('md-table-head',[_vm._v("Name")])],1),_vm._l((_vm.curves),function(curve){return _c('md-table-row',{key:curve.id,on:{"click":function($event){return _vm.emitDetailClicked(curve.id)}}},[_c('md-table-cell',[_vm._v(_vm._s(curve.name))])],1)})],2):_vm._e(),(_vm.errors && _vm.errors.length)?_c('ul',_vm._l((_vm.errors),function(error,index){return _c('li',{key:index},[_vm._v(_vm._s(error.message))])}),0):_vm._e()],1)],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/GetCurveRecipes.vue?vue&type=template&id=0a66c8e1&
+// CONCATENATED MODULE: ./src/components/GetCurveRecipes.vue?vue&type=template&id=b530167c&
 
 // EXTERNAL MODULE: ./node_modules/axios/index.js
 var axios = __webpack_require__("bc3a");
@@ -2071,7 +2071,7 @@ var axios_default = /*#__PURE__*/__webpack_require__.n(axios);
   created: function created() {
     var _this = this;
 
-    axios_default.a.get('https://localhost:44380/api').then(function (response) {
+    axios_default.a.get('https://localhost:5005/api').then(function (response) {
       _this.curves = response.data;
     }).catch(function (e) {
       _this.errors.push(e);

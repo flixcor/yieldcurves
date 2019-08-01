@@ -29,7 +29,7 @@ namespace Instruments.Query.Service
 
             services
                 .AddMediator(typeof(GetInstrumentList).Assembly)
-                .AddRedis("cache", typeof(InstrumentDto).Assembly)
+                .AddRedis("localhost:6379", typeof(InstrumentDto).Assembly)
                 .AddEventStore(Configuration.GetConnectionString("EventStore"));
 
             services.AddCors(options =>

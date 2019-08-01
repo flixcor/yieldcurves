@@ -50,7 +50,7 @@ import axios from 'axios';
 import MtSelect from './Material/MtSelect.vue';
 import TextBox from './Material/TextBox.vue';
 
-const endpoint = 'https://localhost:44348/api/curvepoint';
+const endpoint = 'https://localhost:5001/api/curvepoint';
 
 export default {
   components: {

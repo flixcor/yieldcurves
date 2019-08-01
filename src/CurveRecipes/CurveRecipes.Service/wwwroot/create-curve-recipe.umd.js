@@ -2591,12 +2591,12 @@ if (typeof window !== 'undefined') {
 // Indicate to webpack that this file can be concatenated
 /* harmony default export */ var setPublicPath = (null);
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"7b5b594e-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/CreateCurveRecipe.vue?vue&type=template&id=5a2fe8f7&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('md-card',{staticClass:"md-layout-item md-size-50 md-small-size-100"},[_c('md-card-header',[_c('div',{staticClass:"md-title"},[_vm._v("Create new curve recipe")])]),(_vm.commandViewModel)?_c('md-card-content',[_c('text-box',{attrs:{"label":"ShortName","id":"shortNameBox"},model:{value:(_vm.commandViewModel.command.shortName),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "shortName", $$v)},expression:"commandViewModel.command.shortName"}}),_c('text-box',{attrs:{"label":"Description","id":"descriptionBox"},model:{value:(_vm.commandViewModel.command.description),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "description", $$v)},expression:"commandViewModel.command.description"}}),_c('mt-select',{attrs:{"id":"marketCurveDropdown","label":"Market curve","options":_vm.commandViewModel.marketCurves.map(function (x){ return x.id; })},model:{value:(_vm.commandViewModel.command.marketCurveId),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "marketCurveId", $$v)},expression:"commandViewModel.command.marketCurveId"}}),(this.tenors)?_c('mt-select',{attrs:{"id":"lastLiquidTenorDropdown","label":"Last liquid tenor","options":_vm.tenors},model:{value:(_vm.commandViewModel.command.lastLiquidTenor),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "lastLiquidTenor", $$v)},expression:"commandViewModel.command.lastLiquidTenor"}}):_vm._e(),_c('mt-select',{attrs:{"id":"dayCountConventionDropdown","label":"Day count convention","options":_vm.commandViewModel.dayCountConventions},model:{value:(_vm.commandViewModel.command.dayCountConvention),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "dayCountConvention", $$v)},expression:"commandViewModel.command.dayCountConvention"}}),_c('mt-select',{attrs:{"id":"interpolationDropdown","label":"Interpolation","options":_vm.commandViewModel.interpolations},model:{value:(_vm.commandViewModel.command.interpolation),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "interpolation", $$v)},expression:"commandViewModel.command.interpolation"}}),_c('mt-select',{attrs:{"id":"extrapolationShortDropdown","label":"Extrapolation short end","options":_vm.commandViewModel.extrapolationShorts},model:{value:(_vm.commandViewModel.command.extrapolationShort),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "extrapolationShort", $$v)},expression:"commandViewModel.command.extrapolationShort"}}),_c('mt-select',{attrs:{"id":"extrapolationLongDropdown","label":"Extrapolation long end","options":_vm.commandViewModel.extrapolationLongs},model:{value:(_vm.commandViewModel.command.extrapolationLong),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "extrapolationLong", $$v)},expression:"commandViewModel.command.extrapolationLong"}}),_c('mt-select',{attrs:{"id":"outputSeriesDropdown","label":"Output series","options":_vm.commandViewModel.outputSeries},model:{value:(_vm.commandViewModel.command.outputSeries),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "outputSeries", $$v)},expression:"commandViewModel.command.outputSeries"}}),_c('mt-select',{attrs:{"id":"outputTypeDropdown","label":"Output type","options":_vm.commandViewModel.outputTypes},model:{value:(_vm.commandViewModel.command.outputType),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "outputType", $$v)},expression:"commandViewModel.command.outputType"}}),_c('md-button',{staticClass:"md-raised md-primary",on:{"click":this.submit}},[_vm._v("Submit")])],1):_c('md-progress-bar',{attrs:{"md-mode":"indeterminate"}})],1)}
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"7b5b594e-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/CreateCurveRecipe.vue?vue&type=template&id=43c95d60&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('md-card',{staticClass:"md-layout-item md-size-50 md-small-size-100"},[_c('md-card-header',[_c('div',{staticClass:"md-title"},[_vm._v("Create new curve recipe")])]),(_vm.commandViewModel)?_c('md-card-content',[_c('text-box',{attrs:{"label":"ShortName","id":"shortNameBox"},model:{value:(_vm.commandViewModel.command.shortName),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "shortName", $$v)},expression:"commandViewModel.command.shortName"}}),_c('text-box',{attrs:{"label":"Description","id":"descriptionBox"},model:{value:(_vm.commandViewModel.command.description),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "description", $$v)},expression:"commandViewModel.command.description"}}),_c('mt-select',{attrs:{"id":"marketCurveDropdown","label":"Market curve","options":_vm.commandViewModel.marketCurves.map(function (x){ return x.id; })},model:{value:(_vm.commandViewModel.command.marketCurveId),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "marketCurveId", $$v)},expression:"commandViewModel.command.marketCurveId"}}),(this.tenors)?_c('mt-select',{attrs:{"id":"lastLiquidTenorDropdown","label":"Last liquid tenor","options":_vm.tenors},model:{value:(_vm.commandViewModel.command.lastLiquidTenor),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "lastLiquidTenor", $$v)},expression:"commandViewModel.command.lastLiquidTenor"}}):_vm._e(),_c('mt-select',{attrs:{"id":"dayCountConventionDropdown","label":"Day count convention","options":_vm.commandViewModel.dayCountConventions},model:{value:(_vm.commandViewModel.command.dayCountConvention),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "dayCountConvention", $$v)},expression:"commandViewModel.command.dayCountConvention"}}),_c('mt-select',{attrs:{"id":"interpolationDropdown","label":"Interpolation","options":_vm.commandViewModel.interpolations},model:{value:(_vm.commandViewModel.command.interpolation),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "interpolation", $$v)},expression:"commandViewModel.command.interpolation"}}),_c('mt-select',{attrs:{"id":"extrapolationShortDropdown","label":"Extrapolation short end","options":_vm.commandViewModel.extrapolationShorts},model:{value:(_vm.commandViewModel.command.extrapolationShort),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "extrapolationShort", $$v)},expression:"commandViewModel.command.extrapolationShort"}}),_c('mt-select',{attrs:{"id":"extrapolationLongDropdown","label":"Extrapolation long end","options":_vm.commandViewModel.extrapolationLongs},model:{value:(_vm.commandViewModel.command.extrapolationLong),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "extrapolationLong", $$v)},expression:"commandViewModel.command.extrapolationLong"}}),_c('mt-select',{attrs:{"id":"outputSeriesDropdown","label":"Output series","options":_vm.commandViewModel.outputSeries},model:{value:(_vm.commandViewModel.command.outputFrequency.outputSeries),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command.outputFrequency, "outputSeries", $$v)},expression:"commandViewModel.command.outputFrequency.outputSeries"}}),_c('text-box',{attrs:{"type":"number","max":"100","min":"0","step":"0.1","label":"Maximum maturity","id":"maximumMaturityBox"},model:{value:(_vm.commandViewModel.command.outputFrequency.maximumMaturity),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command.outputFrequency, "maximumMaturity", $$v)},expression:"commandViewModel.command.outputFrequency.maximumMaturity"}}),_c('mt-select',{attrs:{"id":"outputTypeDropdown","label":"Output type","options":_vm.commandViewModel.outputTypes},model:{value:(_vm.commandViewModel.command.outputType),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "outputType", $$v)},expression:"commandViewModel.command.outputType"}}),_c('md-button',{staticClass:"md-raised md-primary",on:{"click":this.submit}},[_vm._v("Submit")])],1):_c('md-progress-bar',{attrs:{"md-mode":"indeterminate"}})],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/CreateCurveRecipe.vue?vue&type=template&id=5a2fe8f7&
+// CONCATENATED MODULE: ./src/components/CreateCurveRecipe.vue?vue&type=template&id=43c95d60&
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es6.array.find.js
 var es6_array_find = __webpack_require__("7514");
@@ -2756,12 +2756,12 @@ var component = normalizeComponent(
 )
 
 /* harmony default export */ var MtSelect = (component.exports);
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"7b5b594e-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/Material/TextBox.vue?vue&type=template&id=7fdb18d3&
-var TextBoxvue_type_template_id_7fdb18d3_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('md-field',[_c('label',{attrs:{"for":_vm.id}},[_vm._v(_vm._s(_vm.label))]),_c('md-input',{attrs:{"id":_vm.id,"value":_vm.value,"type":_vm.type,"min":_vm.min,"max":_vm.max},on:{"input":function($event){return _vm.emitChange($event)}}})],1)}
-var TextBoxvue_type_template_id_7fdb18d3_staticRenderFns = []
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"7b5b594e-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/Material/TextBox.vue?vue&type=template&id=d92fa6a8&
+var TextBoxvue_type_template_id_d92fa6a8_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('md-field',[_c('label',{attrs:{"for":_vm.id}},[_vm._v(_vm._s(_vm.label))]),_c('md-input',{attrs:{"id":_vm.id,"value":_vm.value,"type":_vm.type,"min":_vm.min,"max":_vm.max,"step":_vm.step},on:{"input":function($event){return _vm.emitChange($event)}}})],1)}
+var TextBoxvue_type_template_id_d92fa6a8_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/Material/TextBox.vue?vue&type=template&id=7fdb18d3&
+// CONCATENATED MODULE: ./src/components/Material/TextBox.vue?vue&type=template&id=d92fa6a8&
 
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--12-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/Material/TextBox.vue?vue&type=script&lang=js&
 //
@@ -2777,8 +2777,9 @@ var TextBoxvue_type_template_id_7fdb18d3_staticRenderFns = []
 //
 //
 //
+//
 /* harmony default export */ var TextBoxvue_type_script_lang_js_ = ({
-  props: ['label', 'id', 'value', 'type', 'min', 'max'],
+  props: ['label', 'id', 'value', 'type', 'min', 'max', 'step'],
   methods: {
     emitChange: function emitChange(e) {
       this.$emit('input', e);
@@ -2797,8 +2798,8 @@ var TextBoxvue_type_template_id_7fdb18d3_staticRenderFns = []
 
 var TextBox_component = normalizeComponent(
   Material_TextBoxvue_type_script_lang_js_,
-  TextBoxvue_type_template_id_7fdb18d3_render,
-  TextBoxvue_type_template_id_7fdb18d3_staticRenderFns,
+  TextBoxvue_type_template_id_d92fa6a8_render,
+  TextBoxvue_type_template_id_d92fa6a8_staticRenderFns,
   false,
   null,
   null,
@@ -2876,10 +2877,19 @@ var TextBox_component = normalizeComponent(
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
-var endpoint = 'https://localhost:44379';
+var endpoint = 'https://localhost:5007';
 /* harmony default export */ var CreateCurveRecipevue_type_script_lang_js_ = ({
   components: {
     MtSelect: MtSelect,

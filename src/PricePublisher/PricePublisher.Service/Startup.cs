@@ -32,7 +32,7 @@ namespace PricePublisher.Service
 
             services
                 .AddMediator(typeof(PublishPrice).Assembly)
-                .AddRedis("cache", typeof(InstrumentDto).Assembly)
+                .AddRedis("localhost:6379", typeof(InstrumentDto).Assembly)
                 .AddEventStore(Configuration.GetConnectionString("EventStore"));
 
             services.AddControllers();

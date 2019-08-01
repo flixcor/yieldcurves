@@ -32,7 +32,7 @@ namespace CurveRecipes.Service
 
             services.AddSwaggerDocument();
 
-            services.AddRedis("cache", typeof(MarketCurveDto).Assembly)
+            services.AddRedis("localhost:6379", typeof(MarketCurveDto).Assembly)
                 .AddMediator(typeof(CreateCurveRecipe).Assembly)
                 .AddEventStore(Configuration.GetConnectionString("EventStore"))
                 .AddAutoMapper(typeof(CreateCurveRecipe).Assembly, typeof(Shift).Assembly);
@@ -44,7 +44,7 @@ namespace CurveRecipes.Service
                 options.AddPolicy(MyAllowSpecificOrigins,
                 builder =>
                 {
-                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                    builder.WithOrigins("http://localhost:8081").WithMethods("GET","POST").AllowAnyHeader();
                 });
             });
         }

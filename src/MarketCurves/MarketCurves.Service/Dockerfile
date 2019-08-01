@@ -1,23 +1,7 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.0.0-preview7-alpine3.9 AS base
-WORKDIR /app
-EXPOSE 80
-EXPOSE 443
-
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0.100-preview6-alpine3.9 AS build
-WORKDIR /src
-COPY ["src/MarketCurves/MarketCurves.Service/MarketCurves.Service.csproj", "src/MarketCurves/MarketCurves.Service/"]
-COPY ["src/Common/Common.Core/Common.Core.csproj", "src/Common/Common.Core/"]
-COPY ["src/Common/Common.Infrastructure/Common.Infrastructure.csproj", "src/Common/Common.Infrastructure/"]
-COPY ["src/MarketCurves/MarketCurves.Domain/MarketCurves.Domain.csproj", "src/MarketCurves/MarketCurves.Domain/"]
-RUN dotnet restore "src/MarketCurves/MarketCurves.Service/MarketCurves.Service.csproj"
-COPY . .
-WORKDIR "/src/src/MarketCurves/MarketCurves.Service"
-RUN dotnet build "MarketCurves.Service.csproj" -c Release -o /app
+WORKDIR /vsdbg
 
-FROM build AS publish
-RUN dotnet publish "MarketCurves.Service.csproj" -c Release -o /app
+ENV DOTNET_USE_POLLING_FILE_WATCHER 1
 
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "MarketCurves.Service.dll"]
+WORKDIR /app/MarketCurves/MarketCurves.Service
+ENTRYPOINT dotnet watch run --urls=https://+:443;http://+:80

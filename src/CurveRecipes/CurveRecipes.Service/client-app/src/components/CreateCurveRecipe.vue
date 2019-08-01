@@ -49,10 +49,19 @@
       />
       <mt-select
         id="outputSeriesDropdown"
-        v-model="commandViewModel.command.outputSeries"
+        v-model="commandViewModel.command.outputFrequency.outputSeries"
         label="Output series"
         :options="commandViewModel.outputSeries"
       />
+      <text-box
+        type="number"
+        max="100"
+        min="0"
+        step="0.1"
+        v-model="commandViewModel.command.outputFrequency.maximumMaturity"
+        label="Maximum maturity"
+        id="maximumMaturityBox"
+      ></text-box>
       <mt-select
         id="outputTypeDropdown"
         v-model="commandViewModel.command.outputType"
@@ -71,7 +80,7 @@ import axios from 'axios';
 import MtSelect from './Material/MtSelect.vue';
 import TextBox from './Material/TextBox.vue';
 
-const endpoint = 'https://localhost:44379';
+const endpoint = 'https://localhost:5007';
 
 export default {
   components: {

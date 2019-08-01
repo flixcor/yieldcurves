@@ -23,7 +23,7 @@ import axios from 'axios';
 
 import MtSelect from './Material/MtSelect.vue';
 
-const endpoint = 'https://localhost:44346';
+const endpoint = 'https://localhost:5011';
 
 export default {
   components: {

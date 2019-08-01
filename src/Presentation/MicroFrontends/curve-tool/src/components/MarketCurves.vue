@@ -28,7 +28,7 @@ export default {
   name: "MarketCurves",
   components: {
     GetMarketCurves: () =>
-      externalComponent("https://localhost:44347/get-market-curves.umd.js")
+      externalComponent("https://localhost:5003/get-market-curves.umd.js")
   },
   data() {
     return {
@@ -42,18 +42,18 @@ export default {
     onDetailClicked(e) {
       this.id = e;
       this.detailComponent = () =>
-        externalComponent("https://localhost:44347/get-market-curve.umd.js");
+        externalComponent("https://localhost:5003/get-market-curve.umd.js");
       this.addCurvePointComponent = null;
     },
     onCreateClicked() {
       this.detailComponent = () =>
-        externalComponent("https://localhost:44348/create-market-curve.umd.js");
+        externalComponent("https://localhost:5001/create-market-curve.umd.js");
       this.id = null;
       this.addCurvePointComponent = null;
     },
     onDetailCreateClicked() {
       this.addCurvePointComponent = () =>
-        externalComponent("https://localhost:44348/add-curve-point.umd.js");
+        externalComponent("https://localhost:5001/add-curve-point.umd.js");
     }
   }
 };

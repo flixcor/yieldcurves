@@ -44,7 +44,7 @@ export default {
   },
   created() {
     axios
-      .get('https://localhost:44380/api')
+      .get('https://localhost:5005/api')
       .then((response) => {
         this.curves = response.data;
       })

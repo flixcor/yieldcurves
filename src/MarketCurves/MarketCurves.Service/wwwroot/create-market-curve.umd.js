@@ -2014,23 +2014,23 @@ if (typeof window !== 'undefined') {
 // Indicate to webpack that this file can be concatenated
 /* harmony default export */ var setPublicPath = (null);
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"36fb7df5-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/CreateMarketCurve.vue?vue&type=template&id=4ae84de6&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"36fb7df5-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/CreateMarketCurve.vue?vue&type=template&id=619d9d9c&
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('md-card',{staticClass:"md-layout-item md-size-50 md-small-size-100"},[_c('md-card-header',[_c('div',{staticClass:"md-title"},[_vm._v("Create new market curve")])]),(_vm.commandViewModel)?_c('md-card-content',[_c('mt-select',{attrs:{"id":"countryDropdown","label":"Country","options":_vm.commandViewModel.countries},model:{value:(_vm.commandViewModel.command.country),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "country", $$v)},expression:"commandViewModel.command.country"}}),_c('mt-select',{attrs:{"id":"curveTypeDropdown","label":"Curve Type","options":_vm.commandViewModel.curveTypes},model:{value:(_vm.commandViewModel.command.curveType),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "curveType", $$v)},expression:"commandViewModel.command.curveType"}}),_c('mt-select',{attrs:{"id":"floatingLegDropdown","label":"Floating Leg","options":['N/A' ].concat( _vm.commandViewModel.floatingLegs)},model:{value:(_vm.commandViewModel.command.floatingLeg),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "floatingLeg", $$v)},expression:"commandViewModel.command.floatingLeg"}}),_c('md-button',{staticClass:"md-raised md-primary",on:{"click":this.submit}},[_vm._v("Submit")])],1):_c('md-progress-bar',{attrs:{"md-mode":"indeterminate"}})],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/CreateMarketCurve.vue?vue&type=template&id=4ae84de6&
+// CONCATENATED MODULE: ./src/components/CreateMarketCurve.vue?vue&type=template&id=619d9d9c&
 
 // EXTERNAL MODULE: ./node_modules/axios/index.js
 var axios = __webpack_require__("bc3a");
 var axios_default = /*#__PURE__*/__webpack_require__.n(axios);
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"36fb7df5-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/Material/MtSelect.vue?vue&type=template&id=49379999&
-var MtSelectvue_type_template_id_49379999_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"md-layout-item"},[_c('md-field',[_c('label',{attrs:{"for":_vm.id}},[_vm._v(_vm._s(_vm.label))]),_c('md-select',{ref:"dropRef",attrs:{"name":_vm.id,"id":_vm.id},on:{"md-selected":function($event){return _vm.$emit('input', $event)}},model:{value:(_vm.internalValue),callback:function ($$v) {_vm.internalValue=$$v},expression:"internalValue"}},_vm._l((_vm.options),function(opt){return _c('md-option',{key:opt,attrs:{"value":opt}},[_vm._v(_vm._s(opt))])}),1)],1)],1)}
-var MtSelectvue_type_template_id_49379999_staticRenderFns = []
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"36fb7df5-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/Material/MtSelect.vue?vue&type=template&id=348072c7&
+var MtSelectvue_type_template_id_348072c7_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"md-layout-item"},[_c('md-field',[_c('label',{attrs:{"for":_vm.id}},[_vm._v(_vm._s(_vm.label))]),_c('md-select',{ref:"dropRef",attrs:{"name":_vm.id,"id":_vm.id},on:{"md-selected":function($event){return _vm.$emit('input', $event)}},model:{value:(_vm.internalValue),callback:function ($$v) {_vm.internalValue=$$v},expression:"internalValue"}},_vm._l((_vm.options),function(opt){return _c('md-option',{key:opt,attrs:{"value":opt}},[_vm._v(_vm._s(opt))])}),1)],1)],1)}
+var MtSelectvue_type_template_id_348072c7_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/Material/MtSelect.vue?vue&type=template&id=49379999&
+// CONCATENATED MODULE: ./src/components/Material/MtSelect.vue?vue&type=template&id=348072c7&
 
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--12-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/Material/MtSelect.vue?vue&type=script&lang=js&
 //
@@ -2166,8 +2166,8 @@ function normalizeComponent (
 
 var component = normalizeComponent(
   Material_MtSelectvue_type_script_lang_js_,
-  MtSelectvue_type_template_id_49379999_render,
-  MtSelectvue_type_template_id_49379999_staticRenderFns,
+  MtSelectvue_type_template_id_348072c7_render,
+  MtSelectvue_type_template_id_348072c7_staticRenderFns,
   false,
   null,
   null,
@@ -2209,7 +2209,7 @@ var component = normalizeComponent(
 //
 
 
-var endpoint = 'https://localhost:44348';
+var endpoint = 'https://localhost:5001';
 /* harmony default export */ var CreateMarketCurvevue_type_script_lang_js_ = ({
   components: {
     MtSelect: MtSelect

@@ -34,7 +34,7 @@ namespace MarketCurves.Service
 
             services
                 .AddMediator(typeof(CreateMarketCurve).Assembly)
-                .AddRedis("cache", typeof(Instrument).Assembly)
+                .AddRedis("localhost:6379", typeof(Instrument).Assembly)
                 .AddEventStore(Configuration.GetConnectionString("EventStore"));
 
             services.AddControllers();

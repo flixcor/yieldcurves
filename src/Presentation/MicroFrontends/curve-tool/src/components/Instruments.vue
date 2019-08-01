@@ -12,9 +12,9 @@ export default {
   name: "Instruments",
   components: {
     CreateInstrument: () =>
-      externalComponent("https://localhost:44346/create-instrument.umd.js"),
+      externalComponent("https://localhost:5011/create-instrument.umd.js"),
     InstrumentsView: () =>
-      externalComponent("https://localhost:44345/instruments-view.umd.js")
+      externalComponent("https://localhost:5009/instruments-view.umd.js")
   },
   data() {
     return {

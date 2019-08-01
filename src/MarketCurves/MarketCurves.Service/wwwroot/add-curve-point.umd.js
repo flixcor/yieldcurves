@@ -2591,12 +2591,12 @@ if (typeof window !== 'undefined') {
 // Indicate to webpack that this file can be concatenated
 /* harmony default export */ var setPublicPath = (null);
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"36fb7df5-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/AddCurvePoint.vue?vue&type=template&id=c090516a&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"36fb7df5-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/AddCurvePoint.vue?vue&type=template&id=5e8c427c&
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('md-card',{staticClass:"md-layout-item md-size-50 md-small-size-100"},[_c('md-card-header',[_c('div',{staticClass:"md-title"},[_vm._v("Add new curve point")])]),(_vm.commandViewModel)?_c('md-card-content',[_c('mt-select',{attrs:{"id":"tenorDropdown","label":"Tenor","options":_vm.commandViewModel.tenors},model:{value:(_vm.commandViewModel.command.tenor),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "tenor", $$v)},expression:"commandViewModel.command.tenor"}}),_c('mt-select',{attrs:{"id":"instrumentDropdown","label":"Instrument","options":_vm.commandViewModel.instruments.map(function (x){ return x.id; })},model:{value:(_vm.commandViewModel.command.instrumentId),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "instrumentId", $$v)},expression:"commandViewModel.command.instrumentId"}}),_c('text-box',{attrs:{"type":"number","max":"0","label":"DateLag","id":"dateLagBox"},model:{value:(this.commandViewModel.command.dateLag),callback:function ($$v) {_vm.$set(this.commandViewModel.command, "dateLag", $$v)},expression:"this.commandViewModel.command.dateLag"}}),_c('md-checkbox',{model:{value:(_vm.commandViewModel.command.isMandatory),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "isMandatory", $$v)},expression:"commandViewModel.command.isMandatory"}},[_vm._v("Mandatory\n    ")]),_c('br'),(_vm.hasPriceType)?_c('mt-select',{attrs:{"id":"priceTypeDropdown","label":"Price Type","options":_vm.commandViewModel.priceTypes},model:{value:(_vm.commandViewModel.command.priceType),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "priceType", $$v)},expression:"commandViewModel.command.priceType"}}):_vm._e(),_c('md-button',{staticClass:"md-raised md-primary",on:{"click":this.submit}},[_vm._v("Submit")])],1):_c('md-progress-bar',{attrs:{"md-mode":"indeterminate"}})],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/AddCurvePoint.vue?vue&type=template&id=c090516a&
+// CONCATENATED MODULE: ./src/components/AddCurvePoint.vue?vue&type=template&id=5e8c427c&
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es6.array.find.js
 var es6_array_find = __webpack_require__("7514");
@@ -2605,12 +2605,12 @@ var es6_array_find = __webpack_require__("7514");
 var axios = __webpack_require__("bc3a");
 var axios_default = /*#__PURE__*/__webpack_require__.n(axios);
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"36fb7df5-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/Material/MtSelect.vue?vue&type=template&id=49379999&
-var MtSelectvue_type_template_id_49379999_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"md-layout-item"},[_c('md-field',[_c('label',{attrs:{"for":_vm.id}},[_vm._v(_vm._s(_vm.label))]),_c('md-select',{ref:"dropRef",attrs:{"name":_vm.id,"id":_vm.id},on:{"md-selected":function($event){return _vm.$emit('input', $event)}},model:{value:(_vm.internalValue),callback:function ($$v) {_vm.internalValue=$$v},expression:"internalValue"}},_vm._l((_vm.options),function(opt){return _c('md-option',{key:opt,attrs:{"value":opt}},[_vm._v(_vm._s(opt))])}),1)],1)],1)}
-var MtSelectvue_type_template_id_49379999_staticRenderFns = []
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"36fb7df5-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/Material/MtSelect.vue?vue&type=template&id=348072c7&
+var MtSelectvue_type_template_id_348072c7_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"md-layout-item"},[_c('md-field',[_c('label',{attrs:{"for":_vm.id}},[_vm._v(_vm._s(_vm.label))]),_c('md-select',{ref:"dropRef",attrs:{"name":_vm.id,"id":_vm.id},on:{"md-selected":function($event){return _vm.$emit('input', $event)}},model:{value:(_vm.internalValue),callback:function ($$v) {_vm.internalValue=$$v},expression:"internalValue"}},_vm._l((_vm.options),function(opt){return _c('md-option',{key:opt,attrs:{"value":opt}},[_vm._v(_vm._s(opt))])}),1)],1)],1)}
+var MtSelectvue_type_template_id_348072c7_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/Material/MtSelect.vue?vue&type=template&id=49379999&
+// CONCATENATED MODULE: ./src/components/Material/MtSelect.vue?vue&type=template&id=348072c7&
 
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--12-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/Material/MtSelect.vue?vue&type=script&lang=js&
 //
@@ -2746,8 +2746,8 @@ function normalizeComponent (
 
 var component = normalizeComponent(
   Material_MtSelectvue_type_script_lang_js_,
-  MtSelectvue_type_template_id_49379999_render,
-  MtSelectvue_type_template_id_49379999_staticRenderFns,
+  MtSelectvue_type_template_id_348072c7_render,
+  MtSelectvue_type_template_id_348072c7_staticRenderFns,
   false,
   null,
   null,
@@ -2756,12 +2756,12 @@ var component = normalizeComponent(
 )
 
 /* harmony default export */ var MtSelect = (component.exports);
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"36fb7df5-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/Material/TextBox.vue?vue&type=template&id=7fdb18d3&
-var TextBoxvue_type_template_id_7fdb18d3_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('md-field',[_c('label',{attrs:{"for":_vm.id}},[_vm._v(_vm._s(_vm.label))]),_c('md-input',{attrs:{"id":_vm.id,"value":_vm.value,"type":_vm.type,"min":_vm.min,"max":_vm.max},on:{"input":function($event){return _vm.emitChange($event)}}})],1)}
-var TextBoxvue_type_template_id_7fdb18d3_staticRenderFns = []
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"36fb7df5-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/Material/TextBox.vue?vue&type=template&id=2bed221c&
+var TextBoxvue_type_template_id_2bed221c_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('md-field',[_c('label',{attrs:{"for":_vm.id}},[_vm._v(_vm._s(_vm.label))]),_c('md-input',{attrs:{"id":_vm.id,"value":_vm.value,"type":_vm.type,"min":_vm.min,"max":_vm.max},on:{"input":function($event){return _vm.emitChange($event)}}})],1)}
+var TextBoxvue_type_template_id_2bed221c_staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/Material/TextBox.vue?vue&type=template&id=7fdb18d3&
+// CONCATENATED MODULE: ./src/components/Material/TextBox.vue?vue&type=template&id=2bed221c&
 
 // CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--12-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/Material/TextBox.vue?vue&type=script&lang=js&
 //
@@ -2797,8 +2797,8 @@ var TextBoxvue_type_template_id_7fdb18d3_staticRenderFns = []
 
 var TextBox_component = normalizeComponent(
   Material_TextBoxvue_type_script_lang_js_,
-  TextBoxvue_type_template_id_7fdb18d3_render,
-  TextBoxvue_type_template_id_7fdb18d3_staticRenderFns,
+  TextBoxvue_type_template_id_2bed221c_render,
+  TextBoxvue_type_template_id_2bed221c_staticRenderFns,
   false,
   null,
   null,
@@ -2858,7 +2858,7 @@ var TextBox_component = normalizeComponent(
 
 
 
-var endpoint = 'https://localhost:44348/api/curvepoint';
+var endpoint = 'https://localhost:5001/api/curvepoint';
 /* harmony default export */ var AddCurvePointvue_type_script_lang_js_ = ({
   components: {
     MtSelect: MtSelect,

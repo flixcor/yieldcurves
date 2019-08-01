@@ -27,7 +27,7 @@ namespace CurveRecipes.Service.Features
         public Interpolation Interpolation { get; set; }
         public ExtrapolationShort ExtrapolationShort { get; set; }
         public ExtrapolationLong ExtrapolationLong { get; set; }
-        public OutputFrequency OutputFrequency { get; set; }
+        public OutputFrequency OutputFrequency { get; set; } = new OutputFrequency();
         public OutputType OutputType { get; set; }
 
 
