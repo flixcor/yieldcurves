@@ -9,3 +9,15 @@ services:
       - 6379
     ports:
       - "6379:6379"
+      
+  eventstore-node:
+    image: eventstore/eventstore
+    container_name: eventstore
+    expose:
+      - 2113
+      - 1113
+    ports:
+      - "2113:2113"
+      - "1113:1113"
+    stdin_open: true
+    tty: true
