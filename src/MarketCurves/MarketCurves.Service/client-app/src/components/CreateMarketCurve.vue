@@ -22,6 +22,11 @@
         label="Floating Leg"
         :options="['N/A', ...commandViewModel.floatingLegs]"
       />
+      <ul v-if="errors.length">
+        <li v-for="error in errors" :key="error">
+          {{error}}
+        </li>
+      </ul>
       <md-button v-on:click="this.submit" class="md-raised md-primary">Submit</md-button>
     </md-card-content>
     <md-progress-bar v-else md-mode="indeterminate"></md-progress-bar>

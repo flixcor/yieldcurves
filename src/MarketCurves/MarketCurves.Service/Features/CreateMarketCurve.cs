@@ -22,11 +22,10 @@ namespace MarketCurves.Service.Features
                 _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             }
 
-            public async Task<Result> Handle(CreateMarketCurve command, CancellationToken cancellationToken)
+            public Task<Result> Handle(CreateMarketCurve command, CancellationToken cancellationToken)
             {
-                var curve = new MarketCurve(command.Id, command.Country, command.CurveType, command.FloatingLeg);
-                await _repository.SaveAsync(curve);
-                return Result.Ok();
+                var curveResult = MarketCurve.TryCreate(command.Id, command.Country, command.CurveType, command.FloatingLeg);
+                return curveResult.Promise(c=> _repository.SaveAsync(c));
             }
         }
     }

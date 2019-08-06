@@ -5,13 +5,18 @@ namespace CurveRecipes.Domain
 {
     public class Maturity : ValueObject
     {
-        public Maturity(double value)
+        public static Result<Maturity> TryCreate(double value)
         {
             if (value < 0)
             {
-                throw new ArgumentException("Must be => 0", nameof(value));
+                return Result.Fail<Maturity>($"{nameof(value)} Must be => 0");
             }
 
+            return Result.Ok(new Maturity(value));
+        }
+
+        private Maturity(double value)
+        {
             Value = value;
         }
 

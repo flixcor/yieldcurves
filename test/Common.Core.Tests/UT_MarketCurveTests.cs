@@ -15,7 +15,7 @@ namespace UnitTests
             var country = Country.GB;
             var type = CurveType.BONDSPREAD;
 
-            WhenCreated(() => new MarketCurve(id, country, type));
+            WhenCreated(() => MarketCurve.TryCreate(id, country, type).Content);
             Then(new MarketCurveCreated(id, country.ToString(), type.ToString()));
         }
 

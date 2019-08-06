@@ -1,4 +1,5 @@
 ﻿using System;
+using Common.Core;
 
 namespace CurveRecipes.Domain
 {
@@ -99,7 +100,7 @@ namespace CurveRecipes.Domain
 
     public static class TenorExtensions
     {
-        public static Maturity GetMaturity(this Tenor tenor)
+        public static Result<Maturity> GetMaturity(this Tenor tenor)
         {
             double multiplier;
 
@@ -116,7 +117,7 @@ namespace CurveRecipes.Domain
 
             var right = int.Parse(tenor.ToString().Substring(1));
 
-            return new Maturity(right * multiplier);
+            return Maturity.TryCreate(right * multiplier);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Common.Core
 
         public static Maybe<T> None() => new Maybe<T>();
 
-        public Result<T> ToResult() => _value != null ? Result.Ok(_value) : Result.Fail<T>("NotFound");
+        public Result<T> ToResult() => _value != null ? Result.Ok(_value) : Result.Fail<T>($"{typeof(T).Name} not found");
     }
 
     public static class MaybeExtensions

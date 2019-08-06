@@ -38,7 +38,7 @@ namespace MarketCurves.Service.Features
                     {
                         if (i.Vendor.HasPriceType() && command.PriceType == null)
                         {
-                            return;
+                            return Result.Fail();
                         }
 
                         var dateLag = new DateLag(command.DateLag);
@@ -47,9 +47,11 @@ namespace MarketCurves.Service.Features
 
                         if (c != null)
                         {
-                            c.AddCurvePoint(command.Tenor, command.InstrumentId, dateLag, command.PriceType, command.IsMandatory);
-                            await _repository.SaveAsync(c);
+                            var result = c.AddCurvePoint(command.Tenor, command.InstrumentId, dateLag, command.PriceType, command.IsMandatory);
+                            return await result.Promise(() => _repository.SaveAsync(c));
                         }
+
+                        return Result.Fail();
                     });
             }
 

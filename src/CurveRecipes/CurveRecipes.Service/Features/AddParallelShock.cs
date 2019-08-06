@@ -34,9 +34,8 @@ namespace CurveRecipes.Service.Features
 
                 if (c != null)
                 {
-                    c.AddTransformation(order, transformation);
-                    await _repository.SaveAsync(c);
-                    return Result.Ok();
+                    var result = c.AddTransformation(order, transformation);
+                    return await result.Promise(() =>  _repository.SaveAsync(c));
                 }
 
                 return Result.Fail("Not found");

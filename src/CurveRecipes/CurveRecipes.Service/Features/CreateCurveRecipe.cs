@@ -48,16 +48,21 @@ namespace CurveRecipes.Service.Features
 
             public Task<Result> Handle(CreateCurveRecipe command, CancellationToken cancellationToken)
             {
-                 return _readModelRepository
-                    .Get(command.MarketCurveId)
-                    .ToResult()
-                    .Promise(c =>
-                    {
-                        var outputFrequency = new Domain.OutputFrequency(command.OutputFrequency.OutputSeries, new Maturity(command.OutputFrequency.MaximumMaturity));
-                        var recipe = new CurveRecipe(command.Id, command.MarketCurveId, command.ShortName, command.Description, command.LastLiquidTenor, command.DayCountConvention, command.Interpolation,
-                        command.ExtrapolationShort, command.ExtrapolationLong, outputFrequency, command.OutputType);
-                        return _repository.SaveAsync(recipe);
-                    });
+                return _readModelRepository
+                   .Get(command.MarketCurveId)
+                   .ToResult()
+                   .Promise(c =>
+                   {
+                       var maturityResult = Maturity.TryCreate(command.OutputFrequency.MaximumMaturity);
+                       return maturityResult.Promise(m =>
+                       {
+                           var outputFrequency = new Domain.OutputFrequency(command.OutputFrequency.OutputSeries, m);
+                           var recipeResult = CurveRecipe.TryCreate(command.Id, command.MarketCurveId, command.ShortName, command.Description, command.LastLiquidTenor, command.DayCountConvention, command.Interpolation,
+                           command.ExtrapolationShort, command.ExtrapolationLong, outputFrequency, command.OutputType);
+
+                           return recipeResult.Promise(r => _repository.SaveAsync(r));
+                       });
+                   });
             }
 
             public Task Handle(MarketCurveCreated @event, CancellationToken cancellationToken)
@@ -77,7 +82,8 @@ namespace CurveRecipes.Service.Features
 
                 await curve
                     .ToResult()
-                    .Promise(x=> {
+                    .Promise(x =>
+                    {
                         x.Tenors.Add(@event.Tenor);
                         return _readModelRepository.Update(x);
                     });

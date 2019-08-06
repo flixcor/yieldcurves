@@ -24,31 +24,33 @@ namespace CurveRecipes.Service.Features
                 _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             }
 
-            public async Task<Result> Handle(AddKeyRateShock command, CancellationToken cancellationToken)
+            public Task<Result> Handle(AddKeyRateShock command, CancellationToken cancellationToken)
             {
                 var order = new Order(command.Order);
 
-                var krs = command.ToKeyRateShock();
+                var krsResult = command.ToKeyRateShock();
 
-                var result = await _repository.GetByIdAsync<CurveRecipe>(command.Id);
-                result.AddTransformation(order, krs);
-                await _repository.SaveAsync(result);
-
-                return Result.Ok();
+                return krsResult.Promise(async krs => 
+                {
+                    var curve = await _repository.GetByIdAsync<CurveRecipe>(command.Id);
+                    var result = curve.AddTransformation(order, krs);
+                    return await result.Promise(() => _repository.SaveAsync(curve));
+                });
             }
         }
     }
 
     public static class AddKeyRateShockExtensions
     {
-        public static KeyRateShock ToKeyRateShock(this AddKeyRateShock command)
+        public static Result<KeyRateShock> ToKeyRateShock(this AddKeyRateShock command)
         {
             var shift = new Shift(command.Shift);
-            var maturities = command.Maturities.Select(m => new Maturity(m)).ToArray();
+            var maturitiesResult = command.Maturities
+                .Select(m => Maturity.TryCreate(m))
+                .Convert();
 
-            var result = new KeyRateShock(command.ShockTarget, shift, maturities);
-
-            return result;
+            return maturitiesResult
+                .Promise(m=> new KeyRateShock(command.ShockTarget, shift, m.ToArray()));
         }
     }
 }
