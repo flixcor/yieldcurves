@@ -22,11 +22,10 @@ namespace Instruments.Service.Features
                 _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             }
 
-            public async Task<Result> Handle(CreateRegularInstrument command, CancellationToken cancellationToken)
+            public Task<Result> Handle(CreateRegularInstrument command, CancellationToken cancellationToken)
             {
-                var instrument = new RegularInstrument(command.Id, command.Vendor, command.Name);
-                await _repository.SaveAsync(instrument);
-                return Result.Ok();
+                var instrumentResult = RegularInstrument.TryCreate(command.Id, command.Vendor, command.Name);
+                return instrumentResult.Promise(i=> _repository.SaveAsync(i));
             }
         }
     }

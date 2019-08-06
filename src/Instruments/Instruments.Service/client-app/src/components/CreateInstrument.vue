@@ -12,6 +12,11 @@
       />
       <bloomberg-instrument v-if="isBloomberg" v-model="commands.bloomberg" />
       <regular-instrument v-else v-model="commands.regular" />
+      <ul v-if="errors.length">
+        <li v-for="error in errors" :key="error">
+          {{error}}
+        </li>
+      </ul>
       <md-button v-on:click="this.submit" class="md-raised md-primary">Submit</md-button>
     </md-card-content>
     <md-progress-bar v-else md-mode="indeterminate"></md-progress-bar>
@@ -56,7 +61,7 @@ export default {
       axios
         .post(endpoint + route, obj)
         .catch((e) => {
-          this.errors.push(e);
+          if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
         });
     },
     initialize() {
@@ -67,7 +72,7 @@ export default {
           this.commands = response.data;
         })
         .catch((e) => {
-          this.errors.push(e);
+          if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
         });
     },
   },

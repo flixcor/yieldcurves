@@ -15,7 +15,7 @@ namespace UnitTests
             var vendor = Vendor.UBS;
             var desc = "description";
 
-            WhenCreated(() => new RegularInstrument(id, vendor, desc));
+            WhenCreated(() => RegularInstrument.TryCreate(id, vendor, desc).Content);
             Then(new RegularInstrumentCreated(id, vendor.ToString(), desc));
         }
 
@@ -26,7 +26,7 @@ namespace UnitTests
             var vendor = Vendor.Bloomberg;
             var desc = "description";
 
-            Assert.Throws<ArgumentException>(() => new RegularInstrument(id, vendor, desc));
+            Assert.False(RegularInstrument.TryCreate(id, vendor, desc).IsSuccessful);
         }
     }
 }

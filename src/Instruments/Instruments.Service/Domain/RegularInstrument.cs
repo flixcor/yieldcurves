@@ -1,6 +1,8 @@
 ﻿using Common.Core;
 using Common.Core.Events;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using static Instruments.Domain.Vendor;
 
 namespace Instruments.Domain
@@ -16,23 +18,32 @@ namespace Instruments.Domain
         {
         }
 
-        public RegularInstrument(Guid id, Vendor vendor, string description)
+        public static Result<RegularInstrument> TryCreate(Guid id, Vendor vendor, string description)
         {
+            var errors = new List<string>();
+
             if (string.IsNullOrWhiteSpace(description))
             {
-                throw new ArgumentNullException(description);
+                errors.Add($"{nameof(description)} cannot be empty");
             }
 
             if (id.Equals(Guid.Empty))
             {
-                throw new ArgumentNullException(nameof(id));
+                errors.Add($"{nameof(id)} cannot be empty");
             }
 
             if (vendor == Bloomberg)
             {
-                throw new ArgumentException($"Vendor {nameof(Bloomberg)} cannot be used for a {nameof(RegularInstrument)}. Create a {nameof(BloombergInstrument)}", nameof(vendor));
+                errors.Add($"{nameof(Vendor)} {nameof(Bloomberg)} cannot be used for a {nameof(RegularInstrument)}. Create a {nameof(BloombergInstrument)}");
             }
 
+            return errors.Any() 
+                ? Result.Fail<RegularInstrument>(errors.ToArray()) 
+                : Result.Ok(new RegularInstrument(id, vendor, description));
+        }
+
+        private RegularInstrument(Guid id, Vendor vendor, string description)
+        {
             ApplyEvent(new RegularInstrumentCreated(id, vendor.ToString(), description));
         }
 

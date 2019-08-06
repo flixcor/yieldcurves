@@ -23,12 +23,11 @@ namespace Instruments.Service.Features
                 _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             }
 
-            public async Task<Result> Handle(CreateBloombergInstrument command, CancellationToken cancellationToken)
+            public Task<Result> Handle(CreateBloombergInstrument command, CancellationToken cancellationToken)
             {
-                var instrument = new BloombergInstrument(command.Id, command.Ticker, command.PricingSource, command.YellowKey);
+                var instrumentResult = BloombergInstrument.TryCreate(command.Id, command.Ticker, command.PricingSource, command.YellowKey);
 
-                await _repository.SaveAsync(instrument);
-                return Result.Ok();
+                return instrumentResult.Promise(i => _repository.SaveAsync(i));
             }
         }
     }

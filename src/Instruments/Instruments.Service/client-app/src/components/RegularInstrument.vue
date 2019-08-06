@@ -1,9 +1,9 @@
 <template>
   <div>
-    <h5>{{value.command.vendor}} instrument</h5>
+    <h5>{{datasource.command.vendor}} instrument</h5>
 
     <text-box
-      v-model="value.command.name"
+      v-model="datasource.command.name"
       id="nameField"
       label="Name"
       v-on:input="emitChange()"

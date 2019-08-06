@@ -54,7 +54,7 @@ export default {
       axios
         .post(`${endpoint}/api`, this.commandViewModel.command)
         .catch((e) => {
-          this.errors.push(e);
+          if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
         });
     },
     initialize() {
@@ -65,7 +65,7 @@ export default {
           this.commandViewModel = response.data;
         })
         .catch((e) => {
-          this.errors.push(e);
+          if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
         });
     },
   },

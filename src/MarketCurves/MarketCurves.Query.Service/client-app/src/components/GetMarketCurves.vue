@@ -49,7 +49,7 @@ export default {
         this.curves = response.data;
       })
       .catch((e) => {
-        this.errors.push(e);
+        if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
       });
   },
   methods: {

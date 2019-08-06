@@ -2014,12 +2014,12 @@ if (typeof window !== 'undefined') {
 // Indicate to webpack that this file can be concatenated
 /* harmony default export */ var setPublicPath = (null);
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"36fb7df5-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/CreateMarketCurve.vue?vue&type=template&id=619d9d9c&
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"36fb7df5-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/CreateMarketCurve.vue?vue&type=template&id=4620a246&
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('md-card',{staticClass:"md-layout-item md-size-50 md-small-size-100"},[_c('md-card-header',[_c('div',{staticClass:"md-title"},[_vm._v("Create new market curve")])]),(_vm.commandViewModel)?_c('md-card-content',[_c('mt-select',{attrs:{"id":"countryDropdown","label":"Country","options":_vm.commandViewModel.countries},model:{value:(_vm.commandViewModel.command.country),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "country", $$v)},expression:"commandViewModel.command.country"}}),_c('mt-select',{attrs:{"id":"curveTypeDropdown","label":"Curve Type","options":_vm.commandViewModel.curveTypes},model:{value:(_vm.commandViewModel.command.curveType),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "curveType", $$v)},expression:"commandViewModel.command.curveType"}}),_c('mt-select',{attrs:{"id":"floatingLegDropdown","label":"Floating Leg","options":['N/A' ].concat( _vm.commandViewModel.floatingLegs)},model:{value:(_vm.commandViewModel.command.floatingLeg),callback:function ($$v) {_vm.$set(_vm.commandViewModel.command, "floatingLeg", $$v)},expression:"commandViewModel.command.floatingLeg"}}),_c('md-button',{staticClass:"md-raised md-primary",on:{"click":this.submit}},[_vm._v("Submit")])],1):_c('md-progress-bar',{attrs:{"md-mode":"indeterminate"}})],1)}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/components/CreateMarketCurve.vue?vue&type=template&id=619d9d9c&
+// CONCATENATED MODULE: ./src/components/CreateMarketCurve.vue?vue&type=template&id=4620a246&
 
 // EXTERNAL MODULE: ./node_modules/axios/index.js
 var axios = __webpack_require__("bc3a");
@@ -2229,7 +2229,7 @@ var endpoint = 'https://localhost:5001';
       }
 
       axios_default.a.post("".concat(endpoint, "/api"), this.commandViewModel.command).catch(function (e) {
-        _this.errors.push(e);
+        if (e.response.data && Array.isArray(e.response.data)) _this.errors = e.response.data;
       });
     },
     initialize: function initialize() {
@@ -2239,7 +2239,7 @@ var endpoint = 'https://localhost:5001';
         // JSON responses are automatically parsed.
         _this2.commandViewModel = response.data;
       }).catch(function (e) {
-        _this2.errors.push(e);
+        if (e.response.data && Array.isArray(e.response.data)) _this2.errors = e.response.data;
       });
     }
   },

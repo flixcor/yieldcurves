@@ -4,26 +4,23 @@
 
     <mt-select
       id="pricingSourceSelect"
-      ref="pricingSourceSelect"
-      v-bind:value="dataSource.command.pricingSource"
+      v-model="datasource.command.pricingSource"
       label="Pricing Source"
-      :options="dataSource.pricingSources"
+      :options="datasource.pricingSources"
       v-on:input="emitChange()"
     />
 
     <mt-select
       id="yellowKeySelect"
-      ref="yellowKeySelect"
-      v-bind:value="dataSource.command.yellowKey"
+      v-model="datasource.command.yellowKey"
       label="Yellow Key"
-      :options="dataSource.yellowKeys"
+      :options="datasource.yellowKeys"
       v-on:input="emitChange()"
     />
 
     <text-box
-      v-bind:value="dataSource.command.ticker"
+      v-model="datasource.command.ticker"
       id="tickerField"
-      ref="tickerField"
       label="Ticker"
       v-on:input="emitChange()"
     />
@@ -42,13 +39,13 @@ export default {
   },
   data() {
     return {
-      dataSource: this.value,
+      datasource: this.value,
     };
   },
   props: ['value'],
   methods: {
     emitChange() {
-      this.$emit('input', this.dataSource);
+      this.$emit('input', this.datasource);
     },
   },
 };

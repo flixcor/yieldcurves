@@ -15,13 +15,19 @@ namespace Instruments.Domain
         {
         }
 
-        public BloombergInstrument(Guid id, string ticker, PricingSource pricingSource, YellowKey yellowKey)
+        public static Result<BloombergInstrument> TryCreate(Guid id, string ticker, PricingSource pricingSource, YellowKey yellowKey)
         {
             if (string.IsNullOrWhiteSpace(ticker))
             {
-                throw new ArgumentNullException(nameof(ticker));
+                return Result.Fail<BloombergInstrument>($"{nameof(ticker)} cannot be empty");
             }
 
+            var instrument = new BloombergInstrument(id, ticker, pricingSource, yellowKey);
+            return Result.Ok(instrument);
+        }
+
+        private BloombergInstrument(Guid id, string ticker, PricingSource pricingSource, YellowKey yellowKey)
+        {
             ApplyEvent(new BloombergInstrumentCreated(id, ticker, pricingSource.ToString(), yellowKey.ToString()));
         }
 
