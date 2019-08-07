@@ -290,3 +290,6 @@ __pycache__/
 /src/Instruments/Instruments.Query.Service/wwwroot
 /src/Instruments/Instruments.Service/wwwroot
 /src/MarketCurves/MarketCurves.Query.Service/wwwroot
+/src/CurveRecipes/CurveRecipes.Query.Service/wwwroot
+/src/MarketCurves/MarketCurves.Service/wwwroot
+/src/CurveRecipes/CurveRecipes.Service/wwwroot
