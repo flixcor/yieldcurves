@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "CalculationEngine.Service": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
