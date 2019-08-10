@@ -41,14 +41,14 @@
 export default {
   name: 'get-market-curve',
   props: {
-    'name': {
+    name: {
       required: true,
-      type: String
+      type: String,
     },
-    'curvePoints': {
+    curvePoints: {
       required: true,
-      type: Array
-    }
+      type: Array,
+    },
   },
   methods: {
     emitCreateClicked() {

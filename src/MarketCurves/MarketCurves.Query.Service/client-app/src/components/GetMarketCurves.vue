@@ -37,8 +37,8 @@ export default {
   props: {
     curves: {
       required: true,
-      type: Array
-    }
+      type: Array,
+    },
   },
   methods: {
     emitDetailClicked(id) {
