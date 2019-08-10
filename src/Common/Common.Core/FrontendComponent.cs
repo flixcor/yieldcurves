@@ -11,7 +11,7 @@ namespace Common.Core
 
         public string Url { get; }
 
-        public static FrontendComponent<T> Create<T>(T data, string url)
+        public static FrontendComponent<T> Create<T>(T data, string url) where T : class
         {
             return new FrontendComponent<T>(url, data);
         }

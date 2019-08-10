@@ -26,10 +26,10 @@ namespace Common.Infrastructure.Extensions
                 : new NotFoundResult();
         }
 
-        public static ActionResult<T> ToComponentActionResult<T>(this Maybe<T> maybe, string url) where T : class
+        public static ActionResult<FrontendComponent> ToComponentActionResult<T>(this Maybe<T> maybe, string url) where T : class
         {
             return maybe.Found
-                ? (ActionResult<T>) new OkObjectResult(FrontendComponent.Create(maybe.ToResult().Content, url))
+                ? (ActionResult<FrontendComponent>) new OkObjectResult(FrontendComponent.Create(maybe.ToResult().Content, url))
                 : new NotFoundResult();
         }
     }

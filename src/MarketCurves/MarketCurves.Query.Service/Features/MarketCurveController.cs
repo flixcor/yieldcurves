@@ -25,10 +25,10 @@ namespace MarketCurves.Query.Service.Features
         // GET api/values
         [HttpGet]
         [ApiConventionMethod(typeof(DefaultApiConventions),nameof(DefaultApiConventions.Get))]
-        public async Task<ActionResult<IEnumerable<GetMarketCurveList.Dto>>> Get()
+        public async Task<ActionResult<FrontendComponent>> Get()
         {
             var result = await _requestMediator.Send(new GetMarketCurveList.Query());
-            var script = GetUrlToScript("get-marketcurves");
+            var script = GetUrlToScript("get-market-curves");
 
             var component = FrontendComponent.Create(result, script);
             return Ok(component);
@@ -36,7 +36,7 @@ namespace MarketCurves.Query.Service.Features
 
         [HttpGet("{id}")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
-        public async Task<ActionResult<GetMarketCurve.Dto>> Get(Guid id)
+        public async Task<ActionResult<FrontendComponent>> Get(Guid id)
         {
             var result = await _requestMediator.Send(new GetMarketCurve.Query { Id = id });
             var script = GetUrlToScript("get-marketcurve");
@@ -48,7 +48,6 @@ namespace MarketCurves.Query.Service.Features
         {
             var contents = _fileProvider.GetDirectoryContents("wwwroot");
             var fileName = contents
-                .AsEnumerable()
                 .Where(x=> x.Name.Contains($"{fileNamePart}."))
                 .OrderByDescending(f => f.LastModified)
                 .Select(x=> x.Name)

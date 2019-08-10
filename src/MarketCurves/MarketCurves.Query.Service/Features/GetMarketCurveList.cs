@@ -11,7 +11,17 @@ namespace MarketCurves.Query.Service.Features
 {
     public class GetMarketCurveList
     {
-        public class Query : IQuery<IEnumerable<Dto>>
+        public class Result
+        {
+            public Result(IEnumerable<Dto> curves)
+            {
+                Curves = curves ?? throw new ArgumentNullException(nameof(curves));
+            }
+
+            public IEnumerable<Dto> Curves { get;}
+        }
+
+        public class Query : IQuery<Result>
         {
         }
 
@@ -21,7 +31,7 @@ namespace MarketCurves.Query.Service.Features
         }
 
         public class Handler :
-            IHandleQuery<Query, IEnumerable<Dto>>,
+            IHandleQuery<Query, Result>,
             IHandleEvent<MarketCurveCreated>
         {
             private readonly IReadModelRepository<Dto> _readModelRepository;
@@ -31,9 +41,10 @@ namespace MarketCurves.Query.Service.Features
                 _readModelRepository = readModelRepository ?? throw new ArgumentNullException(nameof(readModelRepository));
             }
 
-            public Task<IEnumerable<Dto>> Handle(Query query, CancellationToken cancellationToken)
+            public async Task<Result> Handle(Query query, CancellationToken cancellationToken)
             {
-                return _readModelRepository.GetAll();
+                var dtos = await _readModelRepository.GetAll();
+                return new Result(dtos);
             }
 
             public Task Handle(MarketCurveCreated @event, CancellationToken cancellationToken)
