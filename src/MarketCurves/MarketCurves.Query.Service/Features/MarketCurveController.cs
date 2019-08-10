@@ -39,7 +39,7 @@ namespace MarketCurves.Query.Service.Features
         public async Task<ActionResult<FrontendComponent>> Get(Guid id)
         {
             var result = await _requestMediator.Send(new GetMarketCurve.Query { Id = id });
-            var script = GetUrlToScript("get-marketcurve");
+            var script = GetUrlToScript("get-market-curve");
 
             return result.ToComponentActionResult(script);
         }
@@ -48,7 +48,7 @@ namespace MarketCurves.Query.Service.Features
         {
             var contents = _fileProvider.GetDirectoryContents("wwwroot");
             var fileName = contents
-                .Where(x=> x.Name.Contains($"{fileNamePart}."))
+                .Where(x=> x.Name.StartsWith($"{fileNamePart}.") && x.Name.EndsWith(".js"))
                 .OrderByDescending(f => f.LastModified)
                 .Select(x=> x.Name)
                 .FirstOrDefault();

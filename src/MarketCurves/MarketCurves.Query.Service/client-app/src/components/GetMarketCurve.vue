@@ -1,6 +1,6 @@
 <template>
   <md-card class="md-layout-item md-size-50 md-small-size-100">
-    <template v-if="curve">
+    <template>
       <md-card-header>
         <div class="md-title">Detail for {{name}}</div>
         <md-button
@@ -33,7 +33,6 @@
 
       </md-card-content>
     </template>
-    <md-progress-bar v-else md-mode="indeterminate"></md-progress-bar>
   </md-card>
 </template>
 
