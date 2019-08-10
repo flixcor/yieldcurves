@@ -2,7 +2,7 @@
   <md-card class="md-layout-item md-size-50 md-small-size-100">
     <template v-if="curve">
       <md-card-header>
-        <div class="md-title">Detail for {{curve.name}}</div>
+        <div class="md-title">Detail for {{name}}</div>
         <md-button
           class="md-primary md-fab md-fab-top-right md-mini"
           v-on:click="emitCreateClicked()"
@@ -21,7 +21,7 @@
             <md-table-head>PriceType</md-table-head>
           </md-table-row>
 
-          <md-table-row v-for="point of curve.curvePoints" :key="point.tenor">
+          <md-table-row v-for="point of curvePoints" :key="point.tenor">
             <md-table-cell>{{point.tenor}}</md-table-cell>
             <md-table-cell>{{point.vendor}}</md-table-cell>
             <md-table-cell>{{point.name}}</md-table-cell>
@@ -31,9 +31,6 @@
           </md-table-row>
         </md-table>
 
-        <ul v-if="errors && errors.length">
-          <li v-for="(error,index) of errors" :key="index">{{error.message}}</li>
-        </ul>
       </md-card-content>
     </template>
     <md-progress-bar v-else md-mode="indeterminate"></md-progress-bar>
@@ -41,26 +38,17 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
   name: 'get-market-curve',
-  props: ['id'],
-  data() {
-    return {
-      curve: null,
-      errors: [],
-    };
-  },
-  created() {
-    axios
-      .get(`https://localhost:5003/api/${this.id}`)
-      .then((response) => {
-        this.curve = response.data;
-      })
-      .catch((e) => {
-        if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
-      });
+  props: {
+    'name': {
+      required: true,
+      type: String
+    },
+    'curvePoints': {
+      required: true,
+      type: Array
+    }
   },
   methods: {
     emitCreateClicked() {

@@ -32,25 +32,13 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
   name: 'get-market-curves',
-  data() {
-    return {
-      curves: [],
-      errors: [],
-    };
-  },
-  created() {
-    axios
-      .get('https://localhost:5003/api')
-      .then((response) => {
-        this.curves = response.data;
-      })
-      .catch((e) => {
-        if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
-      });
+  props: {
+    curves: {
+      required: true,
+      type: Array
+    }
   },
   methods: {
     emitDetailClicked(id) {
