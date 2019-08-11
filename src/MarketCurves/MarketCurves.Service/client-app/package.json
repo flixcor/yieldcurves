@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --target lib --formats umd --no-clean  --name create-market-curve ./src/components/CreateMarketCurve.vue && vue-cli-service build --target lib --formats umd --no-clean  --name add-curve-point ./src/components/AddCurvePoint.vue",
+    "build": "vue-cli-service build --target lib --formats umd --no-clean  --name create-market-curve.[chunkhash] ./src/components/CreateMarketCurve.vue && vue-cli-service build --target lib --formats umd --no-clean  --name add-curve-point.[chunkhash] ./src/components/AddCurvePoint.vue",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

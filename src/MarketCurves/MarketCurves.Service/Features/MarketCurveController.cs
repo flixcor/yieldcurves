@@ -18,10 +18,10 @@ namespace MarketCurves.Service.Features
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetCreateCommand()
+        public async Task<IActionResult> GetCreateCommand()
         {
             var result = await _commandMediator.Send(new GetCreateMarketCurve());
-            return Ok(result);
+            return this.ComponentActionResult(result, "create-market-curve");
         }
 
         [HttpPost]
@@ -39,10 +39,10 @@ namespace MarketCurves.Service.Features
         }
 
         [HttpGet("curvepoint/{id}")]
-        public async Task<ActionResult> AddCurvePoint([FromRoute] Guid id)
+        public async Task<IActionResult> AddCurvePoint([FromRoute] Guid id)
         {
             var result = await _commandMediator.Send(new GetAddCurvePoint { MarketCurveId = id });
-            return Ok(result);
+            return this.ComponentActionResult(result, "add-curve-point");
         }
     }
 }

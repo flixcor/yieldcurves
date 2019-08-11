@@ -1,12 +1,10 @@
-﻿using System.IO;
-using Common.Infrastructure.Extensions;
+﻿using Common.Infrastructure.Extensions;
 using MarketCurves.Query.Service.Features;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json.Converters;
 
@@ -29,10 +27,6 @@ namespace MarketCurves.Query.Service
             services.AddMvc()
                 .AddNewtonsoftJson(x => x.SerializerSettings.Converters.Add(new StringEnumConverter()))
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-
-            IFileProvider physicalProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
-            services.AddSingleton(physicalProvider);
-
 
             services.AddSwaggerDocument();
 

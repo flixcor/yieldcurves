@@ -1,31 +1,31 @@
 <template>
-  <md-card class="md-layout-item md-size-50 md-small-size-100">
+  <md-card>
     <md-card-header>
       <div class="md-title">Add new curve point</div>
     </md-card-header>
-    <md-card-content v-if="commandViewModel">
+    <md-card-content>
       <mt-select
         id="tenorDropdown"
-        v-model="commandViewModel.command.tenor"
+        v-model="command.tenor"
         label="Tenor"
-        :options="commandViewModel.tenors"
+        :options="tenors"
       />
       <mt-select
         id="instrumentDropdown"
-        v-model="commandViewModel.command.instrumentId"
+        v-model="command.instrumentId"
         label="Instrument"
-        :options="commandViewModel.instruments.map(x=> x.id)"
+        :options="instruments.map(x=> x.id)"
       />
       <text-box
         type="number"
         max="0"
-        v-model="this.commandViewModel.command.dateLag"
+        v-model="this.command.dateLag"
         label="DateLag"
         id="dateLagBox"
       ></text-box>
 
       <md-checkbox
-        v-model="commandViewModel.command.isMandatory"
+        v-model="command.isMandatory"
         >Mandatory
       </md-checkbox>
 
@@ -33,9 +33,9 @@
 
       <mt-select
         id="priceTypeDropdown"
-        v-model="commandViewModel.command.priceType"
+        v-model="command.priceType"
         label="Price Type"
-        :options="commandViewModel.priceTypes"
+        :options="priceTypes"
         v-if="hasPriceType"
       />
       <ul v-if="errors.length">
@@ -45,7 +45,6 @@
       </ul>
       <md-button v-on:click="this.submit" class="md-raised md-primary">Submit</md-button>
     </md-card-content>
-    <md-progress-bar v-else md-mode="indeterminate"></md-progress-bar>
   </md-card>
 </template>
 
@@ -62,20 +61,16 @@ export default {
     MtSelect,
     TextBox,
   },
-  props: ['id'],
+  props: ['command', 'priceTypes', 'instruments', 'tenors'],
   data() {
     return {
-      commandViewModel: null,
       errors: [],
     };
   },
   computed: {
     hasPriceType() {
-      if (!this.commandViewModel) {
-        return false;
-      }
-      const match = this.commandViewModel.instruments
-        .find(x => x.id === this.commandViewModel.command.instrumentId);
+      const match = this.instruments
+        .find(x => x.id === this.command.instrumentId);
 
       const hasPriceType = match && match.hasPriceType;
 
@@ -85,27 +80,13 @@ export default {
   methods: {
     submit() {
       if (!this.hasPriceType) {
-        this.commandViewModel.command.priceType = null;
+        this.command.priceType = null;
       }
 
-      axios.post(endpoint, this.commandViewModel.command).catch((e) => {
+      axios.post(endpoint, this.command).catch((e) => {
         if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
       });
     },
-    initialize() {
-      axios
-        .get(`${endpoint}/${this.id}`)
-        .then((response) => {
-          // JSON responses are automatically parsed.
-          this.commandViewModel = response.data;
-        })
-        .catch((e) => {
-          if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
-        });
-    },
-  },
-  created() {
-    this.initialize();
   },
 };
 </script>

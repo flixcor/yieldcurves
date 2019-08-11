@@ -1,10 +1,7 @@
 ﻿using Common.Core;
 using Common.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.FileProviders;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MarketCurves.Query.Service.Features
@@ -14,50 +11,27 @@ namespace MarketCurves.Query.Service.Features
     public class MarketCurveController : ControllerBase
     {
         private readonly IRequestMediator _requestMediator;
-        private readonly IFileProvider _fileProvider;
 
-        public MarketCurveController(IRequestMediator requestMediator, IFileProvider fileProvider)
+        public MarketCurveController(IRequestMediator requestMediator)
         {
             _requestMediator = requestMediator ?? throw new ArgumentNullException(nameof(requestMediator));
-            _fileProvider = fileProvider ?? throw new ArgumentNullException(nameof(fileProvider));
         }
 
         // GET api/values
         [HttpGet]
-        [ApiConventionMethod(typeof(DefaultApiConventions),nameof(DefaultApiConventions.Get))]
-        public async Task<ActionResult<FrontendComponent>> Get()
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
+        public async Task<IActionResult> Get()
         {
             var result = await _requestMediator.Send(new GetMarketCurveList.Query());
-            var script = GetUrlToScript("get-market-curves");
-
-            var component = FrontendComponent.Create(result, script);
-            return Ok(component);
+            return this.ComponentActionResult(result, "get-market-curves");
         }
 
         [HttpGet("{id}")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
-        public async Task<ActionResult<FrontendComponent>> Get(Guid id)
+        public async Task<IActionResult> Get(Guid id)
         {
             var result = await _requestMediator.Send(new GetMarketCurve.Query { Id = id });
-            var script = GetUrlToScript("get-market-curve");
-
-            return result.ToComponentActionResult(script);
+            return this.ComponentActionResult(result, "get-market-curve");
         }
-
-        private string GetUrlToScript(string fileNamePart)
-        {
-            var contents = _fileProvider.GetDirectoryContents("wwwroot");
-            var fileName = contents
-                .Where(x=> x.Name.StartsWith($"{fileNamePart}.") && x.Name.EndsWith(".js"))
-                .OrderByDescending(f => f.LastModified)
-                .Select(x=> x.Name)
-                .FirstOrDefault();
-
-            return fileName == null
-                ? null
-                : $"{BaseUrl}/{fileName}";
-        }
-
-        private string BaseUrl => $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
     }
 }
