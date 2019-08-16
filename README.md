@@ -1,6 +1,6 @@
 # Build & run
 1.  Install docker & docker-compose: https://www.docker.com/
-2.  Install node js https://nodejs.org/en/: 
+2.  Install node js: https://nodejs.org/en/ 
 3.  Download the latest dotnet 3.0 preview: https://dotnet.microsoft.com/download/dotnet-core/3.0
 4.  Run all.bat (linux variant coming soon)
 5.  Navigate to http://localhost:8081
