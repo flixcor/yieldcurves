@@ -1,9 +1,9 @@
 # Build & run
-1.      Install docker & docker-compose: https://www.docker.com/
-2.      Install node js https://nodejs.org/en/: 
-3.      Download the latest dotnet 3.0 preview: https://dotnet.microsoft.com/download/dotnet-core/3.0
-4.      Run all.bat (linux variant coming soon)
-5.      Navigate to http://localhost:8081
+1.  Install docker & docker-compose: https://www.docker.com/
+2.  Install node js https://nodejs.org/en/: 
+3.  Download the latest dotnet 3.0 preview: https://dotnet.microsoft.com/download/dotnet-core/3.0
+4.  Run all.bat (linux variant coming soon)
+5.  Navigate to http://localhost:8081
 
 # Lessons learned
 - Event Sourcing might be hard to wrap your head around at first, but it also removes a lot of challenges that are posed by the impedance mismatch and distributed transactions. To me, it seems to be a very viable strategy, especially for microservices.
@@ -42,20 +42,20 @@ https://github.com/ivanpaulovich/clean-architecture-manga
 	https://www.pluralsight.com/courses/cqrs-in-practice
 	https://vimeo.com/131633177
 
-4.      Event Sourcing
+4.  Event Sourcing
 	https://martinfowler.com/eaaDev/EventSourcing.html
 	https://github.com/EdwinVW/pitstop
 	https://github.com/rbanks54/microcafe
 
-5.      Micro Services
-        https://www.oreilly.com/library/view/building-microservices/9781491950340/
+5.  Micro Services
+    https://www.oreilly.com/library/view/building-microservices/9781491950340/
 
-6.      Micro Frontends / Composite UI using distributed Vue Components
-        https://markus.oberlehner.net/blog/distributed-vue-applications-loading-components-via-http/
-        https://markus.oberlehner.net/blog/distributed-vue-applications-pushing-content-and-component-updates-to-the-client/
+6.  Micro Frontends / Composite UI using distributed Vue Components
+    https://markus.oberlehner.net/blog/distributed-vue-applications-loading-components-via-http/
+    https://markus.oberlehner.net/blog/distributed-vue-applications-pushing-content-and-component-updates-to-the-client/
 
-7.      Actor model with Akka.NET
-	https://getakka.net/
+7.  Actor model with Akka.NET
+    https://getakka.net/
 
 
 # To do:
