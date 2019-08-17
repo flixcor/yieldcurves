@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.Core;
 using Microsoft.AspNetCore.Mvc;
@@ -20,15 +19,15 @@ namespace CurveRecipes.Query.Service.Features
 
         // GET api
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetCurveRecipesDto>>> Get()
+        public async Task<IActionResult> Get()
         {
             var result = await _requestMediator.Send(new GetCurveRecipeList());
-            return Ok(result);
+            return this.ComponentActionResult(result, "get-curve-recipes");
         }
 
         // GET api/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<GetCurveRecipeDto>> Get(Guid id)
+        public async Task<IActionResult> Get(Guid id)
         {
             var result = await _requestMediator.Send(new GetCurveRecipe(id));
             return Ok(result.ToActionResult());

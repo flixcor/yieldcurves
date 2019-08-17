@@ -8,9 +8,9 @@ using CurveRecipes.Domain;
 
 namespace CurveRecipes.Service.Features
 {
-    public class GetCreateCurveRecipeForMarketCurve : IQuery<GetCreateCurveRecipeDto>
+    public class GetCreateCurveRecipe : IQuery<GetCreateCurveRecipeDto>
     {
-        public class Handler : IHandleQuery<GetCreateCurveRecipeForMarketCurve, GetCreateCurveRecipeDto>
+        public class Handler : IHandleQuery<GetCreateCurveRecipe, GetCreateCurveRecipeDto>
         {
             private readonly IReadModelRepository<MarketCurveDto> _readModelRepository;
 
@@ -19,7 +19,7 @@ namespace CurveRecipes.Service.Features
                 _readModelRepository = readModelRepository ?? throw new ArgumentNullException(nameof(readModelRepository));
             }
 
-            public async Task<GetCreateCurveRecipeDto> Handle(GetCreateCurveRecipeForMarketCurve query, CancellationToken cancellationToken)
+            public async Task<GetCreateCurveRecipeDto> Handle(GetCreateCurveRecipe query, CancellationToken cancellationToken)
             {
                 var curves = await _readModelRepository.GetAll();
 

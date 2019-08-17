@@ -1,5 +1,5 @@
 <template>
-  <md-card class="md-layout-item md-size-50 md-small-size-100">
+  <md-card>
     <md-card-header>
       <div class="md-title">Curve Recipes</div>
       <md-button
@@ -24,34 +24,15 @@
         </md-table-row>
       </md-table>
 
-      <ul v-if="errors && errors.length">
-        <li v-for="(error,index) of errors" :key="index">{{error.message}}</li>
-      </ul>
     </md-card-content>
   </md-card>
 </template>
 
 <script>
-import axios from 'axios';
 
 export default {
   name: 'GetCurveRecipes',
-  data() {
-    return {
-      curves: [],
-      errors: [],
-    };
-  },
-  created() {
-    axios
-      .get('https://localhost:5005/api')
-      .then((response) => {
-        this.curves = response.data;
-      })
-      .catch((e) => {
-        if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
-      });
-  },
+  props: ['curves'],
   methods: {
     emitDetailClicked(id) {
       this.$emit('detailClicked', id);

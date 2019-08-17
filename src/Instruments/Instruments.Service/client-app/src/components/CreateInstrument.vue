@@ -3,15 +3,16 @@
     <md-card-header>
       <div class="md-title">Create new instrument</div>
     </md-card-header>
-    <md-card-content v-if="commands.regular">
+    <md-progress-bar v-if="loading" md-mode="indeterminate"></md-progress-bar>
+    <md-card-content v-else>
       <mt-select
         id="vendorDropdown"
-        v-model="commands.regular.command.vendor"
+        v-model="regular.command.vendor"
         label="Vendor"
-        :options="commands.regular.vendors"
+        :options="regular.vendors"
       />
-      <bloomberg-instrument v-if="isBloomberg" v-model="commands.bloomberg" />
-      <regular-instrument v-else v-model="commands.regular" />
+      <bloomberg-instrument v-if="isBloomberg" v-model="bloomberg" />
+      <regular-instrument v-else v-model="regular" />
       <ul v-if="errors.length">
         <li v-for="error in errors" :key="error">
           {{error}}
@@ -19,7 +20,6 @@
       </ul>
       <md-button v-on:click="this.submit" class="md-raised md-primary">Submit</md-button>
     </md-card-content>
-    <md-progress-bar v-else md-mode="indeterminate"></md-progress-bar>
   </md-card>
 </template>
 
@@ -36,25 +36,26 @@ export default {
     RegularInstrument: () => import('./RegularInstrument.vue'),
     MtSelect,
   },
+  props: ['regular', 'bloomberg'],
   computed: {
     isBloomberg() {
-      if (!this.commands.regular) return false;
-      return this.commands.regular.command.vendor === 'Bloomberg';
+      if (!this.regular) return false;
+      return this.regular.command.vendor === 'Bloomberg';
     },
   },
   data() {
     return {
-      commands: {},
+      loading: false,
       errors: [],
     };
   },
   methods: {
     submit() {
-      const isBB = () => this.commands.regular.command.vendor === 'Bloomberg';
+      const isBB = () => this.regular.command.vendor === 'Bloomberg';
 
       const obj = isBB()
-        ? this.commands.bloomberg.command
-        : this.commands.regular.command;
+        ? this.bloomberg.command
+        : this.regular.command;
 
       const route = isBB() ? '/api/bloomberg' : '/api';
 
@@ -64,20 +65,6 @@ export default {
           if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
         });
     },
-    initialize() {
-      axios
-        .get(`${endpoint}/api`)
-        .then((response) => {
-          // JSON responses are automatically parsed.
-          this.commands = response.data;
-        })
-        .catch((e) => {
-          if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
-        });
-    },
-  },
-  created() {
-    this.initialize();
   },
 };
 </script>

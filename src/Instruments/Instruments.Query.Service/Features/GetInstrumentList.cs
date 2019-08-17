@@ -7,12 +7,22 @@ using Common.Core.Events;
 
 namespace Instruments.Query.Service.Features
 {
-    public class GetInstrumentList : IQuery<IEnumerable<InstrumentDto>>
+    public class GetInstrumentList : IQuery<GetInstrumentList.Result>
     {
         public string Vendor { get; set; }
 
+        public class Result
+        {
+            public Result(IEnumerable<InstrumentDto> instruments)
+            {
+                Instruments = instruments ?? new List<InstrumentDto>();
+            }
+
+            public IEnumerable<InstrumentDto> Instruments { get; set; }
+        }
+
         public class Handler :
-            IHandleQuery<GetInstrumentList, IEnumerable<InstrumentDto>>,
+            IHandleQuery<GetInstrumentList, Result>,
             IHandleEvent<RegularInstrumentCreated>,
             IHandleEvent<BloombergInstrumentCreated>
         {
@@ -23,9 +33,10 @@ namespace Instruments.Query.Service.Features
                 _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             }
 
-            public Task<IEnumerable<InstrumentDto>> Handle(GetInstrumentList query, CancellationToken cancellationToken)
+            public async Task<Result> Handle(GetInstrumentList query, CancellationToken cancellationToken)
             {
-                return _repository.GetAll();
+                var instruments = await _repository.GetAll();
+                return new Result(instruments);
             }
 
             public Task Handle(RegularInstrumentCreated @event, CancellationToken cancellationToken)

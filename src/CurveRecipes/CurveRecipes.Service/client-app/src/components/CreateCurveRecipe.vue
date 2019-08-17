@@ -1,72 +1,73 @@
 <template>
-  <md-card class="md-layout-item md-size-50 md-small-size-100">
+  <md-card>
     <md-card-header>
       <div class="md-title">Create new curve recipe</div>
     </md-card-header>
-    <md-card-content v-if="commandViewModel">
-      <text-box label="ShortName" id="shortNameBox" v-model="commandViewModel.command.shortName" />
+    <md-progress-bar v-if="loading" md-mode="indeterminate"></md-progress-bar>
+    <md-card-content v-else>
+      <text-box label="ShortName" id="shortNameBox" v-model="command.shortName" />
       <text-box
         label="Description"
         id="descriptionBox"
-        v-model="commandViewModel.command.description"
+        v-model="command.description"
       />
       <mt-select
         id="marketCurveDropdown"
-        v-model="commandViewModel.command.marketCurveId"
+        v-model="command.marketCurveId"
         label="Market curve"
-        :options="commandViewModel.marketCurves.map(x=> x.id)"
+        :options="marketCurves.map(x=> x.id)"
       />
       <mt-select
-        v-if="this.tenors"
+        v-if="matchingTenors"
         id="lastLiquidTenorDropdown"
-        v-model="commandViewModel.command.lastLiquidTenor"
+        v-model="command.lastLiquidTenor"
         label="Last liquid tenor"
-        :options="tenors"
+        :options="matchingTenors"
       />
       <mt-select
         id="dayCountConventionDropdown"
-        v-model="commandViewModel.command.dayCountConvention"
+        v-model="command.dayCountConvention"
         label="Day count convention"
-        :options="commandViewModel.dayCountConventions"
+        :options="dayCountConventions"
       />
       <mt-select
         id="interpolationDropdown"
-        v-model="commandViewModel.command.interpolation"
+        v-model="command.interpolation"
         label="Interpolation"
-        :options="commandViewModel.interpolations"
+        :options="interpolations"
       />
       <mt-select
         id="extrapolationShortDropdown"
-        v-model="commandViewModel.command.extrapolationShort"
+        v-model="command.extrapolationShort"
         label="Extrapolation short end"
-        :options="commandViewModel.extrapolationShorts"
+        :options="extrapolationShorts"
       />
       <mt-select
         id="extrapolationLongDropdown"
-        v-model="commandViewModel.command.extrapolationLong"
+        v-model="command.extrapolationLong"
         label="Extrapolation long end"
-        :options="commandViewModel.extrapolationLongs"
+        :options="extrapolationLongs"
       />
       <mt-select
         id="outputSeriesDropdown"
-        v-model="commandViewModel.command.outputFrequency.outputSeries"
+        v-model="command.outputFrequency.outputSeries"
         label="Output series"
-        :options="commandViewModel.outputSeries"
+        :options="outputSeries"
       />
       <text-box
         type="number"
         max="100"
         min="0"
         step="0.1"
-        v-model="commandViewModel.command.outputFrequency.maximumMaturity"
+        v-model="command.outputFrequency.maximumMaturity"
         label="Maximum maturity"
         id="maximumMaturityBox"
       ></text-box>
       <mt-select
         id="outputTypeDropdown"
-        v-model="commandViewModel.command.outputType"
+        v-model="command.outputType"
         label="Output type"
-        :options="commandViewModel.outputTypes"
+        :options="outputTypes"
       />
       <ul v-if="errors.length">
         <li v-for="error in errors" :key="error">
@@ -75,7 +76,6 @@
       </ul>
       <md-button v-on:click="this.submit" class="md-raised md-primary">Submit</md-button>
     </md-card-content>
-    <md-progress-bar v-else md-mode="indeterminate"></md-progress-bar>
   </md-card>
 </template>
 
@@ -92,48 +92,34 @@ export default {
     MtSelect,
     TextBox,
   },
+  props: ['command', 'marketCurves', 'tenors', 'dayCountConventions', 'interpolations', 'extrapolationShorts', 'extrapolationLongs', 'outputSeries', 'outputTypes'],
   computed: {
-    tenors() {
-      if (this.commandViewModel) {
-        const match = this.commandViewModel.marketCurves
-          .find(x => x.id === this.commandViewModel.command.marketCurveId);
-        if (match) {
-          return match.tenors;
-        }
+    matchingTenors() {
+      const match = this.marketCurves
+        .find(x => x.id === this.command.marketCurveId);
+      if (match) {
+        return match.tenors;
       }
       return false;
     },
   },
   data() {
     return {
-      commandViewModel: null,
+      loading: false,
       errors: [],
     };
   },
   methods: {
     submit() {
-      if (this.commandViewModel.command.floatingLeg === 'N/A') {
-        this.commandViewModel.command.floatingLeg = null;
+      if (this.command.floatingLeg === 'N/A') {
+        this.command.floatingLeg = null;
       }
-
-      axios.post(`${endpoint}/api`, this.commandViewModel.command).catch((e) => {
+      this.loading = true;
+      axios.post(`${endpoint}/api`, this.command).catch((e) => {
         if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
       });
+      this.loading = false;
     },
-    initialize() {
-      axios
-        .get(`${endpoint}/api`)
-        .then((response) => {
-          // JSON responses are automatically parsed.
-          this.commandViewModel = response.data;
-        })
-        .catch((e) => {
-          if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
-        });
-    },
-  },
-  created() {
-    this.initialize();
   },
 };
 </script>

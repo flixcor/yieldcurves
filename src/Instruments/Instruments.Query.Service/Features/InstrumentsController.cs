@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common.Core;
+using Common.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Instruments.Query.Service.Features
@@ -19,10 +19,11 @@ namespace Instruments.Query.Service.Features
 
         // GET api
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<InstrumentDto>>> Get()
+        public async Task<IActionResult> Get()
         {
-            var result = await _mediator.Send(new GetInstrumentList());
-            return Ok(result);
+            var query = new GetInstrumentList();
+            var result = await _mediator.Send(query);
+            return this.ComponentActionResult(result, "get-instrument-list");
         }
     }
 }

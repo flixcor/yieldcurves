@@ -1,18 +1,25 @@
 <template>
   <div>
-    <get-curve-recipes class="comp" v-on:createClicked="onCreateClicked()" />
-    <component v-bind:is="detailComponent" v-if="detailComponent" class="comp" />
+    <FrameLiveFeed
+      endpoint="https://localhost:5005/api"
+      class="comp md-layout-item md-size-50 md-small-size-100"
+      v-on:createClicked="onCreateClicked()"
+    />
+    <FrameLiveFeed
+      endpoint="https://localhost:5007/api"
+      class="comp md-layout-item md-size-50 md-small-size-100"
+      v-if="detailComponent"
+    />
   </div>
 </template>
 
 <script>
-import externalComponent from "../utils/external-component";
+import FrameLiveFeed from './distributed/FrameLiveFeed.vue';
 
 export default {
   name: "Recipes",
   components: {
-    GetCurveRecipes: () =>
-      externalComponent("https://localhost:5005/get-curve-recipes.umd.js")
+    FrameLiveFeed,
   },
   data() {
     return {
@@ -21,8 +28,7 @@ export default {
   },
   methods: {
     onCreateClicked() {
-      this.detailComponent = () =>
-        externalComponent("https://localhost:5007/create-curve-recipe.umd.js");
+      this.detailComponent = true;
     }
   }
 };

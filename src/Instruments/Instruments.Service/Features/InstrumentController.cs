@@ -18,10 +18,10 @@ namespace Instruments.Service.Application
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetCommands()
+        public async Task<IActionResult> GetCommands()
         {
             var result = await _commandMediator.Send(new GetCommands());
-            return Ok(result);
+            return this.ComponentActionResult(result, "create-instrument");
         }
 
         [HttpPost]

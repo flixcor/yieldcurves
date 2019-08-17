@@ -7,10 +7,19 @@ using System.Threading.Tasks;
 
 namespace CurveRecipes.Query.Service.Features
 {
-    public class GetCurveRecipeList : IQuery<IEnumerable<GetCurveRecipesDto>>
+    public class GetCurveRecipeList : IQuery<GetCurveRecipeList.Result>
     {
+        public class Result{
+            public Result(IEnumerable<GetCurveRecipesDto> recipes)
+            {
+                Recipes = recipes ?? new List<GetCurveRecipesDto>();
+            }
+
+            public IEnumerable<GetCurveRecipesDto> Recipes { get; set; }
+        }
+
         public class Handler :
-            IHandleQuery<GetCurveRecipeList, IEnumerable<GetCurveRecipesDto>>,
+            IHandleQuery<GetCurveRecipeList, Result>,
             IHandleEvent<CurveRecipeCreated>
         {
             private readonly IReadModelRepository<GetCurveRecipesDto> _readModelRepository;
@@ -31,9 +40,10 @@ namespace CurveRecipes.Query.Service.Features
                 return _readModelRepository.Insert(dto);
             }
 
-            public Task<IEnumerable<GetCurveRecipesDto>> Handle(GetCurveRecipeList query, CancellationToken cancellationToken)
+            public async Task<Result> Handle(GetCurveRecipeList query, CancellationToken cancellationToken)
             {
-                return _readModelRepository.GetAll();
+                var recipes = await _readModelRepository.GetAll();
+                return new Result(recipes);
             }
         }
     }

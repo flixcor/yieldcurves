@@ -1,20 +1,25 @@
 <template>
   <div>
-    <instruments-view v-on:create="showCreate = !showCreate" class="comp" />
-    <create-instrument v-if="showCreate" class="comp" />
+    <FrameLiveFeed
+      endpoint="https://localhost:5009/api"
+      class="comp md-layout-item md-size-50 md-small-size-100"
+      v-on:create="showCreate = !showCreate"
+    />
+    <FrameLiveFeed
+      endpoint="https://localhost:5011/api"
+      class="comp md-layout-item md-size-50 md-small-size-100"
+      v-if="showCreate"
+    />
   </div>
 </template>
 
 <script>
-import externalComponent from "../utils/external-component";
+import FrameLiveFeed from './distributed/FrameLiveFeed.vue';
 
 export default {
   name: "Instruments",
   components: {
-    CreateInstrument: () =>
-      externalComponent("https://localhost:5011/create-instrument.umd.js"),
-    InstrumentsView: () =>
-      externalComponent("https://localhost:5009/instruments-view.umd.js")
+    FrameLiveFeed,
   },
   data() {
     return {

@@ -27,10 +27,10 @@ namespace CurveRecipes.Service.Features
         }
 
         [HttpGet]
-        public async Task<ActionResult<GetCreateCurveRecipeDto>> CreateCurveRecipe([FromQuery] GetCreateCurveRecipeForMarketCurve query)
+        public async Task<IActionResult> GetCreateCurveRecipe()
         {
-            var result = await _requestMediator.Send(query);
-            return Ok(result);
+            var result = await _requestMediator.Send(new GetCreateCurveRecipe());
+            return this.ComponentActionResult(result, "create-curve-recipe");
         }
 
         // POST api/values
