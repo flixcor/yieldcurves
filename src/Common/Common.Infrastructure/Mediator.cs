@@ -23,15 +23,13 @@ namespace Common.Infrastructure
             var handlerType = typeof(IHandleEvent<>)
                 .MakeGenericType(@event.GetType());
 
-            using (var scope = _serviceProvider.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                IEnumerable<dynamic> handlers = services.GetServices(handlerType) ?? new List<dynamic>();
+            using var scope = _serviceProvider.CreateScope();
+            var services = scope.ServiceProvider;
+            IEnumerable<dynamic> handlers = services.GetServices(handlerType) ?? new List<dynamic>();
 
-                var tasks = handlers.Select(handler => handler.Handle((dynamic)@event, cancellationToken)).Cast<Task>();
+            var tasks = handlers.Select(handler => handler.Handle((dynamic)@event, cancellationToken)).Cast<Task>();
 
-                await Task.WhenAll(tasks);
-            }
+            await Task.WhenAll(tasks);
         }
 
         public Task<TResponse> Send<TResponse>(IRequest<TResponse> query, CancellationToken cancellationToken = default)

@@ -114,18 +114,16 @@ namespace Common.Infrastructure
                 }
                 else
                 {
-                    using (var transaction = await connection.StartTransactionAsync(streamName, expectedVersion))
+                    using var transaction = await connection.StartTransactionAsync(streamName, expectedVersion);
+                    var position = 0;
+                    while (position < eventsToSave.Count)
                     {
-                        var position = 0;
-                        while (position < eventsToSave.Count)
-                        {
-                            var pageEvents = eventsToSave.Skip(position).Take(WritePageSize);
-                            await transaction.WriteAsync(pageEvents);
-                            position += WritePageSize;
-                        }
-
-                        await transaction.CommitAsync();
+                        var pageEvents = eventsToSave.Skip(position).Take(WritePageSize);
+                        await transaction.WriteAsync(pageEvents);
+                        position += WritePageSize;
                     }
+
+                    await transaction.CommitAsync();
                 }
             }
 

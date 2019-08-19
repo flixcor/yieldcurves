@@ -21,7 +21,7 @@ namespace Common.Core
         public Maybe<TO> Bind<TO>(Func<T, TO> func) where TO : class => _value != null ? func(_value).Return() : Maybe<TO>.None();
 
         public T Coalesce(T otherwise) => _value ?? otherwise;
-        public T Coalesce(Func<T> otherwise) => _value != null? _value : otherwise();
+        public T Coalesce(Func<T> otherwise) => _value ?? otherwise();
         public async Task<T> Coalesce(Func<Task<T>> otherwise) => _value ?? await otherwise();
 
         public static Maybe<T> None() => new Maybe<T>();

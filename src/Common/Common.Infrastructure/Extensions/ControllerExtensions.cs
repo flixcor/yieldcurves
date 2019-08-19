@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using Common.Core;
 using Microsoft.AspNetCore.Mvc;
@@ -11,13 +11,13 @@ namespace Common.Infrastructure.Extensions
         private static string GetComponentUrl(this ControllerBase controller, string componentName)
         {
             var baseUrl = $"{controller.Request.Scheme}://{controller.Request.Host}{controller.Request.PathBase}";
-            var physicalProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
 
+            using var physicalProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
             var contents = physicalProvider.GetDirectoryContents("wwwroot");
             var fileName = contents
-                .Where(x=> x.Name.StartsWith($"{componentName}.") && x.Name.EndsWith(".js"))
+                .Where(x => x.Name.StartsWith($"{componentName}.") && x.Name.EndsWith(".js"))
                 .OrderByDescending(f => f.LastModified)
-                .Select(x=> x.Name)
+                .Select(x => x.Name)
                 .FirstOrDefault();
 
             return fileName == null

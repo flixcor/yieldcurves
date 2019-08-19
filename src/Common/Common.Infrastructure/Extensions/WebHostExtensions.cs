@@ -12,33 +12,29 @@ namespace Common.Infrastructure.Extensions
         {
             var host = builder.Build();
 
-            using (var scope = host.Services.CreateScope())
+            using var scope = host.Services.CreateScope();
+            var listener = scope.ServiceProvider.GetService<IMessageBusListener>();
+
+            if (listener != null)
             {
-                var listener = scope.ServiceProvider.GetService<IMessageBusListener>();
-
-                if (listener != null)
-                {
-                    await listener.SubscribeToAll();
-                }
-
-                await host.RunAsync();
+                await listener.SubscribeToAll();
             }
+
+            await host.RunAsync();
         }
 
         public static async Task RunAsync(this IHostBuilder builder)
         {
             var host = builder.Build();
-            using (var scope = host.Services.CreateScope())
+            using var scope = host.Services.CreateScope();
+            var listener = scope.ServiceProvider.GetService<IMessageBusListener>();
+
+            if (listener != null)
             {
-                var listener = scope.ServiceProvider.GetService<IMessageBusListener>();
-
-                if (listener != null)
-                {
-                    await listener.SubscribeToAll();
-                }
-
-                await host.RunAsync();
+                await listener.SubscribeToAll();
             }
+
+            await host.RunAsync();
         }
     }
 }
