@@ -5,7 +5,6 @@
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <DockerComposeProjectPath>..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
     <UserSecretsId>7057417a-f8d2-4767-94cf-b991e189b5da</UserSecretsId>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
