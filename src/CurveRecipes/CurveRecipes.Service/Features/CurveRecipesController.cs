@@ -33,6 +33,13 @@ namespace CurveRecipes.Service.Features
             return this.ComponentActionResult(result, "create-curve-recipe");
         }
 
+        [HttpGet("addtransformation/{id}")]
+        public async Task<IActionResult> GetAddTransformation([FromRoute] Guid id)
+        {
+            var result = await _requestMediator.Send(new GetAddTransformation{ RecipeId = id });
+            return Ok(result);
+        }
+
         // POST api/values
         [HttpPost("addparallelshock")]
         public async Task<ActionResult> AddParallelShock([FromBody] AddParallelShock command)

@@ -13,7 +13,7 @@ namespace CurveRecipes.Service.Features
         public int Order { get; set; }
         public ShockTarget ShockTarget { get; set; }
         public double Shift { get; set; }
-        public double[] Maturities { get; set; }
+        public double[] Maturities { get; set; } = new double[] {};
 
         public class Handler : IHandleCommand<AddKeyRateShock>
         {
