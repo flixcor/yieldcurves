@@ -11,16 +11,19 @@
       :endpoint="`https://localhost:5003/api/${id}`"
       class="comp md-layout-item md-size-50 md-small-size-100"
       v-on:createClicked="onDetailCreateClicked()"
+      v-on:success="showDetail = false"
     />
     <FrameLiveFeed
       v-if="showCreate"
       endpoint="https://localhost:5001/api"
       class="comp md-layout-item md-size-50 md-small-size-100"
+      v-on:success="showCreate = false"
     />
     <FrameLiveFeed
       v-if="id && showAdd"
       :endpoint="`https://localhost:5001/api/curvepoint/${id}`"
       class="comp md-layout-item md-size-50 md-small-size-100"
+      v-on:success="showAdd = false"
     />
   </div>
 </template>

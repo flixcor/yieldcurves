@@ -3,12 +3,13 @@
     <FrameLiveFeed
       endpoint="https://localhost:5005/api"
       class="comp md-layout-item md-size-50 md-small-size-100"
-      v-on:createClicked="onCreateClicked()"
+      v-on:createClicked="detailComponent = !detailComponent"
     />
     <FrameLiveFeed
       endpoint="https://localhost:5007/api"
       class="comp md-layout-item md-size-50 md-small-size-100"
       v-if="detailComponent"
+      v-on:success="detailComponent = false"
     />
   </div>
 </template>
@@ -26,10 +27,5 @@ export default {
       detailComponent: false
     };
   },
-  methods: {
-    onCreateClicked() {
-      this.detailComponent = true;
-    }
-  }
 };
 </script>

@@ -61,6 +61,7 @@ export default {
 
       axios
         .post(endpoint + route, obj)
+        .then(() => this.$emit('success'))
         .catch((e) => {
           if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
         });

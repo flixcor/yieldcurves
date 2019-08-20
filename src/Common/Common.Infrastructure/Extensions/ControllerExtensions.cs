@@ -15,7 +15,7 @@ namespace Common.Infrastructure.Extensions
             using var physicalProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
             var contents = physicalProvider.GetDirectoryContents("wwwroot");
             var fileName = contents
-                .Where(x => x.Name.StartsWith($"{componentName}.") && x.Name.EndsWith(".js"))
+                .Where(x => x.Name.StartsWith($"{componentName}.") && x.Name.EndsWith("umd.js"))
                 .OrderByDescending(f => f.LastModified)
                 .Select(x => x.Name)
                 .FirstOrDefault();

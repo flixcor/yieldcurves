@@ -115,9 +115,11 @@ export default {
         this.command.floatingLeg = null;
       }
       this.loading = true;
-      axios.post(`${endpoint}/api`, this.command).catch((e) => {
-        if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
-      });
+      axios.post(`${endpoint}/api`, this.command)
+        .then(() => this.$emit('success'))
+        .catch((e) => {
+          if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
+        });
       this.loading = false;
     },
   },

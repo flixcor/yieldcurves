@@ -1,3 +1,5 @@
+dotnet restore &
+dotnet build &
 start docker-compose up &
 start full.stack.microservice .\src\CurveRecipes\CurveRecipes.Service &
 start full.stack.microservice .\src\CurveRecipes\CurveRecipes.Query.Service &

@@ -57,17 +57,7 @@ export default {
 
       axios
         .post(`${endpoint}/api`, this.command)
-        .catch((e) => {
-          if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
-        });
-    },
-    initialize() {
-      axios
-        .get(`${endpoint}/api`)
-        .then((response) => {
-          // JSON responses are automatically parsed.
-          this.commandViewModel = response.data;
-        })
+        .then(() => this.$emit('success'))
         .catch((e) => {
           if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
         });

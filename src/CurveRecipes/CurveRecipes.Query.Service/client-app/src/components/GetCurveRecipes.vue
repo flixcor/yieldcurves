@@ -14,7 +14,6 @@
         <md-table-row>
           <md-table-head>Name</md-table-head>
         </md-table-row>
-
         <md-table-row
           v-for="curve of curves"
           :key="curve.id"
@@ -23,7 +22,6 @@
           <md-table-cell>{{curve.name}}</md-table-cell>
         </md-table-row>
       </md-table>
-
     </md-card-content>
   </md-card>
 </template>
