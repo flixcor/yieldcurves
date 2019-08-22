@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace CurveRecipes.Query.Service.Features
 {
-    public class GetCurveRecipe : IQuery<Maybe<GetCurveRecipeDto>>
+    public class GetCurveRecipeDetail : IQuery<Maybe<GetCurveRecipeDto>>
     {
-        public GetCurveRecipe(Guid id)
+        public GetCurveRecipeDetail(Guid id)
         {
             Id = id;
         }
@@ -19,7 +19,7 @@ namespace CurveRecipes.Query.Service.Features
         public Guid Id { get; }
 
         public class Handler :
-            IHandleQuery<GetCurveRecipe, Maybe<GetCurveRecipeDto>>,
+            IHandleQuery<GetCurveRecipeDetail, Maybe<GetCurveRecipeDto>>,
             IHandleEvent<CurveRecipeCreated>,
             IHandleEvent<KeyRateShockAdded>,
             IHandleEvent<ParallelShockAdded>,
@@ -54,7 +54,7 @@ namespace CurveRecipes.Query.Service.Features
                     });
             }
 
-            public Task<Maybe<GetCurveRecipeDto>> Handle(GetCurveRecipe query, CancellationToken cancellationToken)
+            public Task<Maybe<GetCurveRecipeDto>> Handle(GetCurveRecipeDetail query, CancellationToken cancellationToken)
             {
                 return _readModelRepository.Get(query.Id);
             }

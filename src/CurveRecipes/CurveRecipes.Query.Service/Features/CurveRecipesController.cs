@@ -22,15 +22,15 @@ namespace CurveRecipes.Query.Service.Features
         public async Task<IActionResult> Get()
         {
             var result = await _requestMediator.Send(new GetCurveRecipeList());
-            return this.ComponentActionResult(result, "get-curve-recipes");
+            return this.ComponentActionResult(result, "get-curve-recipe-list");
         }
 
         // GET api/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id)
+        public async Task<IActionResult> Get([FromRoute] Guid id)
         {
-            var result = await _requestMediator.Send(new GetCurveRecipe(id));
-            return Ok(result.ToActionResult());
+            var result = await _requestMediator.Send(new GetCurveRecipeDetail(id));
+            return this.ComponentActionResult(result, "get-curve-recipe-detail");
         }
     }
 }

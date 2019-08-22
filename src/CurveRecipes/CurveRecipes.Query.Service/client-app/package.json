@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --target lib --formats umd --no-clean --name get-curve-recipes.[chunkhash] ./src/components/GetCurveRecipes.vue",
+    "build": "vue-cli-service build --target lib --formats umd --no-clean --name get-curve-recipe-list.[chunkhash] ./src/components/GetCurveRecipeList.vue && vue-cli-service build --target lib --formats umd --no-clean --name get-curve-recipe-detail.[chunkhash] ./src/components/GetCurveRecipeDetail.vue",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

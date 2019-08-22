@@ -27,8 +27,8 @@ namespace CurveRecipes.Query.Service
 
             services.AddSwaggerDocument();
 
-            services.AddRedis("localhost:6379", typeof(GetCurveRecipe).Assembly)
-                .AddMediator(typeof(GetCurveRecipe).Assembly)
+            services.AddRedis("localhost:6379", typeof(GetCurveRecipeDetail).Assembly)
+                .AddMediator(typeof(GetCurveRecipeDetail).Assembly)
                 .AddEventStore(Configuration.GetConnectionString("EventStore"));
 
             services.AddControllers();
