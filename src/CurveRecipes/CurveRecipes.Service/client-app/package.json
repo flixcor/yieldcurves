@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --target lib --formats umd --no-clean --name create-curve-recipe.[chunkhash] ./src/components/CreateCurveRecipe.vue",
+    "build": "vue-cli-service build --target lib --formats umd --no-clean --name create-curve-recipe.[chunkhash] ./src/components/CreateCurveRecipe.vue && vue-cli-service build --target lib --formats umd --no-clean --name add-transformation.[chunkhash] ./src/components/AddTransformation.vue",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

@@ -12,23 +12,23 @@
     <md-card-content>
       <md-table v-if="transformations && transformations.length">
         <md-table-row>
+          <md-table-head>Transformation</md-table-head>
           <md-table-head>Parameter</md-table-head>
           <md-table-head>Value</md-table-head>
         </md-table-row>
-        <md-table-row
-          v-for="(transformation, index) of transformations"
-          :key="index"
-        >
-          <md-table-cell>{{transformation.name}}</md-table-cell>
-          <md-table-cell>{{transformation.value}}</md-table-cell>
-        </md-table-row>
+        <template v-for="(transformation, i) of transformations">
+          <md-table-row v-for="(parameter, j) of transformation.parameters" :key="i + j">
+            <md-table-cell>{{transformation.name}}</md-table-cell>
+            <md-table-cell>{{parameter.name}}</md-table-cell>
+            <md-table-cell>{{parameter.value}}</md-table-cell>
+          </md-table-row>
+        </template>
       </md-table>
     </md-card-content>
   </md-card>
 </template>
 
 <script>
-
 export default {
   name: 'GetCurveRecipes',
   props: ['name', 'transformations'],

@@ -85,7 +85,7 @@ import axios from 'axios';
 import MtSelect from './Material/MtSelect.vue';
 import TextBox from './Material/TextBox.vue';
 
-const endpoint = 'https://localhost:5007';
+const endpoint = 'https://localhost:5007/api';
 
 export default {
   components: {
@@ -115,7 +115,7 @@ export default {
         this.command.floatingLeg = null;
       }
       this.loading = true;
-      axios.post(`${endpoint}/api`, this.command)
+      axios.post(endpoint, this.command)
         .then(() => this.$emit('success'))
         .catch((e) => {
           if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;

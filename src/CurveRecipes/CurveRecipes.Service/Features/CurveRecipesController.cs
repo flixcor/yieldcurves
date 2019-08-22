@@ -18,14 +18,6 @@ namespace CurveRecipes.Service.Features
             _requestMediator = requestMediator ?? throw new ArgumentNullException(nameof(requestMediator));
         }
 
-        // POST api/values
-        [HttpPost]
-        public async Task<ActionResult> CreateCurveRecipe([FromBody] CreateCurveRecipe command)
-        {
-            var result = await _requestMediator.Send(command);
-            return result.ToActionResult();
-        }
-
         [HttpGet]
         public async Task<IActionResult> GetCreateCurveRecipe()
         {
@@ -33,14 +25,20 @@ namespace CurveRecipes.Service.Features
             return this.ComponentActionResult(result, "create-curve-recipe");
         }
 
-        [HttpGet("addtransformation/{id}")]
+        [HttpPost]
+        public async Task<ActionResult> CreateCurveRecipe([FromBody] CreateCurveRecipe command)
+        {
+            var result = await _requestMediator.Send(command);
+            return result.ToActionResult();
+        }
+
+        [HttpGet("{id}/addtransformation")]
         public async Task<IActionResult> GetAddTransformation([FromRoute] Guid id)
         {
             var result = await _requestMediator.Send(new GetAddTransformation{ RecipeId = id });
-            return Ok(result);
+            return this.ComponentActionResult(result, "add-transformation");
         }
 
-        // POST api/values
         [HttpPost("addparallelshock")]
         public async Task<ActionResult> AddParallelShock([FromBody] AddParallelShock command)
         {

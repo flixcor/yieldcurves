@@ -44,7 +44,7 @@ namespace MarketCurves.Service
                 options.AddPolicy(MyAllowSpecificOrigins,
                 builder =>
                 {
-                    builder.WithOrigins("http://localhost:8081").WithMethods("GET").AllowAnyHeader();
+                    builder.WithOrigins("http://localhost:8081","http://127.0.0.1:8081").WithMethods("GET").AllowAnyHeader();
                 });
             });
         }

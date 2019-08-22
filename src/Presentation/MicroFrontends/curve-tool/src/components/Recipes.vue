@@ -17,6 +17,13 @@
       class="comp md-layout-item md-size-50 md-small-size-100"
       v-if="detailComponent && id"
       v-on:success="detailComponent = false"
+      v-on:createClicked="addTransformationComponent = true"
+    />
+    <FrameLiveFeed
+      :endpoint="`https://localhost:5007/api/${id}/addtransformation`"
+      class="comp md-layout-item md-size-50 md-small-size-100"
+      v-if="addTransformationComponent && id"
+      v-on:success="addTransformationComponent = false"
     />
   </div>
 </template>
@@ -33,18 +40,21 @@ export default {
     return {
       createComponent: false,
       detailComponent: false,
+      addTransformationComponent: false,
       id: false,
     };
   },
   methods: {
     onCreateClicked() {
       this.id = false;
-      this.createComponent = true;
       this.detailComponent = false;
+      this.addTransformationComponent = false;
+      this.createComponent = true;
     },
     onDetailClicked(id) {
       this.id = id;
       this.createComponent = false;
+      this.addTransformationComponent = false;
       this.detailComponent = true;
     },
   },
