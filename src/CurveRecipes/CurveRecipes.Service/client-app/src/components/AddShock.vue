@@ -22,7 +22,7 @@
         label="Maturities"
         id="maturitiesBox"
         v-model="datasource.maturities"
-        v-if="datasource.maturities"
+        v-if="value.maturities"
       />
   </div>
 </template>
