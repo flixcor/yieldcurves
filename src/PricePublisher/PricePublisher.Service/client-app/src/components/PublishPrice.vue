@@ -6,10 +6,17 @@
     <md-progress-bar v-if="loading" md-mode="indeterminate"></md-progress-bar>
     <md-card-content v-else>
       <mt-select
-        id="vendorDropdown"
-        v-model="regular.command.vendor"
-        label="Vendor"
-        :options="regular.vendors"
+        id="instrumentDropdown"
+        v-model="command.instrumentId"
+        label="Instrument"
+        :options="instruments.map(x=> x.id)"
+      />
+      <mt-select
+        id="priceTypeDropdown"
+        v-model="command.priceType"
+        label="Price type"
+        :options="priceTypes"
+        v-if="hasPriceType"
       />
       <ul v-if="errors.length">
         <li v-for="error in errors" :key="error">
@@ -26,37 +33,37 @@ import axios from 'axios';
 
 import MtSelect from './Material/MtSelect.vue';
 
-const endpoint = 'https://localhost:5011';
+const endpoint = 'https://localhost:5013/api';
 
 export default {
   components: {
     MtSelect,
   },
-  props: ['regular', 'bloomberg'],
-  computed: {
-    isBloomberg() {
-      if (!this.regular) return false;
-      return this.regular.command.vendor === 'Bloomberg';
-    },
-  },
+  props: ['command', 'priceTypes', 'instruments'],
   data() {
     return {
       loading: false,
       errors: [],
     };
   },
+  computed: {
+    hasPriceType() {
+      const match = this.instruments
+        .find(x => x.id === this.command.instrumentId);
+
+      const hasPriceType = match && match.hasPriceType;
+
+      return hasPriceType;
+    },
+  },
   methods: {
     submit() {
-      const isBB = () => this.regular.command.vendor === 'Bloomberg';
-
-      const obj = isBB()
-        ? this.bloomberg.command
-        : this.regular.command;
-
-      const route = isBB() ? '/api/bloomberg' : '/api';
+      if (!this.hasPriceType) {
+        this.command.priceType = null;
+      }
 
       axios
-        .post(endpoint + route, obj)
+        .post(endpoint, this.command)
         .then(() => this.$emit('success'))
         .catch((e) => {
           if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;

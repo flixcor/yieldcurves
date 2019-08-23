@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
@@ -11,7 +12,7 @@ namespace PricePublisher.Service.Features
     {
         public class Command : ICommand
         {
-            public Guid Id { get; set; }
+            public Guid Id { get; set; } = Guid.NewGuid();
             public DateTime AsOfDate { get; set; }
             public DateTime AsAtDate { get; set; }
             public Guid InstrumentId { get; set; }
@@ -53,13 +54,13 @@ namespace PricePublisher.Service.Features
 
                 public Task Handle(BloombergInstrumentCreated @event, CancellationToken cancellationToken)
                 {
-                    var dto = new InstrumentDto { Id = @event.Id };
+                    var dto = new InstrumentDto { Id = @event.Id, HasPriceType = false };
                     return _readModelRepository.Insert(dto);
                 }
 
                 public Task Handle(RegularInstrumentCreated @event, CancellationToken cancellationToken)
                 {
-                    var dto = new InstrumentDto { Id = @event.Id };
+                    var dto = new InstrumentDto { Id = @event.Id, HasPriceType = @event.Vendor.HasPriceType() };
                     return _readModelRepository.Insert(dto);
                 }
             }
@@ -69,20 +70,31 @@ namespace PricePublisher.Service.Features
         {
             public class Handler : IHandleQuery<Query, Query.Dto>
             {
-                public Task<Dto> Handle(Query query, CancellationToken cancellationToken)
+                private readonly IReadModelRepository<InstrumentDto> _readModelRepository;
+
+                public Handler(IReadModelRepository<InstrumentDto> readModelRepository)
                 {
-                    return Task.FromResult(new Dto());
+                    _readModelRepository = readModelRepository ?? throw new ArgumentNullException(nameof(readModelRepository));
+                }
+
+                public async Task<Dto> Handle(Query query, CancellationToken cancellationToken)
+                {
+                    return new Dto
+                    {
+                        Instruments = await _readModelRepository.GetAll()
+                    };
                 }
             }
 
             public class Dto
             {
-                public Command Command { get; } = new Command
+                public Command Command { get; set; } = new Command
                 {
                     AsAtDate = DateTime.Now
                 };
 
                 public string[] PriceTypes { get; } = Enum.GetNames(typeof(PriceType));
+                public IEnumerable<InstrumentDto> Instruments { get; set; } = new List<InstrumentDto>();
             }
 
         }
@@ -91,7 +103,23 @@ namespace PricePublisher.Service.Features
 
     }
 
+    public static class Extensions
+    {
+        public static bool HasPriceType(this string vendor)
+        {
+            switch (vendor)
+            {
+                case "Bloomberg":
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+    }
+
     public class InstrumentDto : ReadObject
     {
+        public bool HasPriceType { get; set; }
     }
 }
