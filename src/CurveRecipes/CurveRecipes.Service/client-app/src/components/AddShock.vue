@@ -4,11 +4,11 @@
         type="number"
         label="Order"
         id="orderBox"
-        v-model="datasource.order"
+        v-model="value.order"
       />
       <mt-select
         id="shockTargetDropdown"
-        v-model="datasource.shockTarget"
+        v-model="value.shockTarget"
         label="Shock target"
         :options="shockTargets"
       />
@@ -16,14 +16,27 @@
         type="number"
         label="Shift"
         id="shiftBox"
-        v-model="datasource.shift"
+        v-model="value.shift"
       />
-      <text-box
-        label="Maturities"
-        id="maturitiesBox"
-        v-model="datasource.maturities"
-        v-if="value.maturities"
-      />
+      <template
+       v-if="value.maturities"
+      >
+        <text-box
+         v-for="(maturity, index) of value.maturities"
+         type="number"
+         :key="index"
+         :label="`Maturity ${index + 1}`"
+         :id="`maturitiesBox[${index}]`"
+         v-model="value.maturities[index]"
+        />
+        <text-box
+         type="number"
+         :label="`Maturity ${value.maturities.length + 1}`"
+         id="newMaturityBox"
+         v-on:change="onNewMaturityBlur()"
+         v-model="newMaturity"
+        />
+      </template>
   </div>
 </template>
 
@@ -39,12 +52,21 @@ export default {
   props: ['value', 'shockTargets'],
   data() {
     return {
-      datasource: this.value,
+      newMaturity: false,
     };
   },
   methods: {
     emitChange() {
-      this.$emit('input', this.datasource);
+      this.$emit('input', this.value);
+    },
+    onNewMaturityBlur() {
+      if (!Array.isArray(this.value.maturities)) {
+        this.value.maturities = [];
+      }
+      if (this.newMaturity) {
+        this.value.maturities.push(this.newMaturity);
+        this.newMaturity = false;
+      }
     },
   },
 };
