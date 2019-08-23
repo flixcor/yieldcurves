@@ -19,10 +19,17 @@ namespace PricePublisher.Service.Controllers
 
         // POST api/values
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] PublishPrice command)
+        public async Task<IActionResult> Post([FromBody] PublishPrice.Command command)
         {
             var result = await _mediator.Send(command);
             return result.ToActionResult();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Get([FromBody] PublishPrice.Query query)
+        {
+            var result = await _mediator.Send(query);
+            return this.ComponentActionResult(result, "publish-price");
         }
     }
 }
