@@ -5,6 +5,11 @@
     </md-card-header>
     <md-progress-bar v-if="loading" md-mode="indeterminate"></md-progress-bar>
     <md-card-content v-else>
+      <text-box
+        id="asOfDateBox"
+        v-model="command.asOfDate"
+        label="As of date"
+      />
       <mt-select
         id="instrumentDropdown"
         v-model="command.instrumentId"
@@ -17,6 +22,16 @@
         label="Price type"
         :options="priceTypes"
         v-if="hasPriceType"
+      />
+      <text-box
+        id="priceCurrencyBox"
+        v-model="command.priceCurrency"
+        label="Price currency (ISO3)"
+      />
+      <text-box
+        id="priceAmountBox"
+        v-model="command.priceAmount"
+        label="Price amount"
       />
       <ul v-if="errors.length">
         <li v-for="error in errors" :key="error">
@@ -32,12 +47,14 @@
 import axios from 'axios';
 
 import MtSelect from './Material/MtSelect.vue';
+import TextBox from './Material/TextBox.vue';
 
 const endpoint = 'https://localhost:5013/api';
 
 export default {
   components: {
     MtSelect,
+    TextBox,
   },
   props: ['command', 'priceTypes', 'instruments'],
   data() {

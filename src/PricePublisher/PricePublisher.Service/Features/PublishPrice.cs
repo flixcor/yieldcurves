@@ -14,7 +14,6 @@ namespace PricePublisher.Service.Features
         {
             public Guid Id { get; set; } = Guid.NewGuid();
             public DateTime AsOfDate { get; set; }
-            public DateTime AsAtDate { get; set; }
             public Guid InstrumentId { get; set; }
             public string PriceCurrency { get; set; }
             public double PriceAmount { get; set; }
@@ -27,11 +26,13 @@ namespace PricePublisher.Service.Features
             {
                 private readonly IRepository _repository;
                 private readonly IReadModelRepository<InstrumentDto> _readModelRepository;
+                private readonly Func<DateTime> _currentDateTimeFactory;
 
-                public Handler(IRepository repository, IReadModelRepository<InstrumentDto> readModelRepository)
+                public Handler(IRepository repository, IReadModelRepository<InstrumentDto> readModelRepository, Func<DateTime> currentDateTimeFactory)
                 {
                     _repository = repository ?? throw new ArgumentNullException(nameof(repository));
                     _readModelRepository = readModelRepository ?? throw new ArgumentNullException(nameof(readModelRepository));
+                    _currentDateTimeFactory = currentDateTimeFactory ?? throw new ArgumentNullException(nameof(currentDateTimeFactory));
                 }
 
                 public async Task<Result> Handle(Command command, CancellationToken cancellationToken)
@@ -46,7 +47,7 @@ namespace PricePublisher.Service.Features
                             var currency = currencyResult.Content;
 
                             var price = new Price(currency, command.PriceAmount);
-                            var pricing = new InstrumentPricing(command.Id, command.AsOfDate, command.AsAtDate, command.InstrumentId, price, command.PriceType);
+                            var pricing = new InstrumentPricing(command.Id, command.AsOfDate, _currentDateTimeFactory(), command.InstrumentId, price, command.PriceType);
 
                             return _repository.SaveAsync(pricing);
                         });
@@ -88,10 +89,7 @@ namespace PricePublisher.Service.Features
 
             public class Dto
             {
-                public Command Command { get; set; } = new Command
-                {
-                    AsAtDate = DateTime.Now
-                };
+                public Command Command { get; set; } = new Command();
 
                 public string[] PriceTypes { get; } = Enum.GetNames(typeof(PriceType));
                 public IEnumerable<InstrumentDto> Instruments { get; set; } = new List<InstrumentDto>();
