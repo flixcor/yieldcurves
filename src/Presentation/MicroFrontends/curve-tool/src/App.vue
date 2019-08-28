@@ -4,6 +4,7 @@
       <md-tab to="/instruments" id="tab-instruments" md-label="Instruments"></md-tab>
       <md-tab to="/marketcurves" id="tab-marketcurves" md-label="marketcurves"></md-tab>
       <md-tab to="/recipes" id="tab-recipes" md-label="recipes"></md-tab>
+      <md-tab to="/prices" id="tab-prices" md-label="prices"></md-tab>
     </md-tabs>
     <router-view />
   </div>

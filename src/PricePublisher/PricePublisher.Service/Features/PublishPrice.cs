@@ -55,7 +55,7 @@ namespace PricePublisher.Service.Features
 
                 public Task Handle(BloombergInstrumentCreated @event, CancellationToken cancellationToken)
                 {
-                    var dto = new InstrumentDto { Id = @event.Id, HasPriceType = false };
+                    var dto = new InstrumentDto { Id = @event.Id, HasPriceType = true };
                     return _readModelRepository.Insert(dto);
                 }
 
@@ -105,9 +105,9 @@ namespace PricePublisher.Service.Features
     {
         public static bool HasPriceType(this string vendor)
         {
-            switch (vendor)
+            switch (vendor.ToLower())
             {
-                case "Bloomberg":
+                case "bloomberg":
                     return true;
                 default:
                     return false;

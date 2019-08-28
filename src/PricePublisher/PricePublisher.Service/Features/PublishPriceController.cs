@@ -26,7 +26,7 @@ namespace PricePublisher.Service.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromBody] PublishPrice.Query query)
+        public async Task<IActionResult> Get([FromQuery] PublishPrice.Query query)
         {
             var result = await _mediator.Send(query);
             return this.ComponentActionResult(result, "publish-price");
