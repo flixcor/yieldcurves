@@ -28,7 +28,7 @@ namespace MarketCurves.Query.Service
                 .AddNewtonsoftJson(x => x.SerializerSettings.Converters.Add(new StringEnumConverter()))
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-            services.AddSwaggerDocument();
+            
 
             services
                 .AddMediator(typeof(GetMarketCurve).Assembly)
@@ -69,8 +69,8 @@ namespace MarketCurves.Query.Service
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseOpenApi();
-            app.UseSwaggerUi3();
+            
+            
         }
     }
 }

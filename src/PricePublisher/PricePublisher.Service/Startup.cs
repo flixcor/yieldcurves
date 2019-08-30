@@ -31,7 +31,7 @@ namespace PricePublisher.Service
 
             // Register the Swagger services
 
-            services.AddSwaggerDocument();
+            
 
             services
                 .AddMediator(typeof(PublishPrice).Assembly)
@@ -72,8 +72,8 @@ namespace PricePublisher.Service
 
             app.UseStaticFiles();
 
-            app.UseOpenApi();
-            app.UseSwaggerUi3();
+            
+            
         }
     }
 }

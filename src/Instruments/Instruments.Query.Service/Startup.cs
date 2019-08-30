@@ -25,7 +25,7 @@ namespace Instruments.Query.Service
         {
             services.AddControllers();
 
-            services.AddSwaggerDocument();
+            
 
             services
                 .AddMediator(typeof(GetInstrumentList).Assembly)
@@ -65,8 +65,8 @@ namespace Instruments.Query.Service
 
             
 
-            app.UseOpenApi();
-            app.UseSwaggerUi3();
+            
+            
         }
     }
 }

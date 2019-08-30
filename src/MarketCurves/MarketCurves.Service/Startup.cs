@@ -30,7 +30,7 @@ namespace MarketCurves.Service
 
             // Register the Swagger services
 
-            services.AddSwaggerDocument();
+            
 
             services
                 .AddMediator(typeof(CreateMarketCurve).Assembly)
@@ -70,8 +70,8 @@ namespace MarketCurves.Service
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseOpenApi();
-            app.UseSwaggerUi3();
+            
+            
         }
     }
 }

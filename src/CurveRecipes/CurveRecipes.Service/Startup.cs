@@ -30,7 +30,7 @@ namespace CurveRecipes.Service
                 .AddNewtonsoftJson(x => x.SerializerSettings.Converters.Add(new StringEnumConverter()))
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-            services.AddSwaggerDocument();
+            
 
             services.AddRedis("localhost:6379", typeof(MarketCurveDto).Assembly)
                 .AddMediator(typeof(CreateCurveRecipe).Assembly)
@@ -70,8 +70,8 @@ namespace CurveRecipes.Service
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseOpenApi();
-            app.UseSwaggerUi3();
+            
+            
         }
     }
 }

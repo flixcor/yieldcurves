@@ -35,7 +35,7 @@ namespace Instruments.Service
                 .AddEventStore(Configuration.GetConnectionString("EventStore"));
 
             // Register the Swagger services
-            services.AddSwaggerDocument();
+            
 
             services.AddControllers();
 
@@ -70,8 +70,8 @@ namespace Instruments.Service
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseOpenApi();
-            app.UseSwaggerUi3();
+            
+            
         }
     }
 }

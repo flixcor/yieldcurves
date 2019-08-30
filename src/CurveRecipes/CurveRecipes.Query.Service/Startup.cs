@@ -25,7 +25,7 @@ namespace CurveRecipes.Query.Service
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-            services.AddSwaggerDocument();
+            
 
             services.AddRedis("localhost:6379", typeof(GetCurveRecipeDetail).Assembly)
                 .AddMediator(typeof(GetCurveRecipeDetail).Assembly)
@@ -64,8 +64,8 @@ namespace CurveRecipes.Query.Service
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseOpenApi();
-            app.UseSwaggerUi3();
+            
+            
         }
     }
 }
