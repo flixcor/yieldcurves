@@ -21,8 +21,7 @@ namespace PricePublisher.Service.Features
 
             public class Handler :
                 IHandleCommand<Command>,
-                IHandleEvent<BloombergInstrumentCreated>,
-                IHandleEvent<RegularInstrumentCreated>
+                IHandleEvent<InstrumentCreated>
             {
                 private readonly IRepository _repository;
                 private readonly IReadModelRepository<InstrumentDto> _readModelRepository;
@@ -53,15 +52,9 @@ namespace PricePublisher.Service.Features
                         });
                 }
 
-                public Task Handle(BloombergInstrumentCreated @event, CancellationToken cancellationToken)
+                public Task Handle(InstrumentCreated @event, CancellationToken cancellationToken)
                 {
-                    var dto = new InstrumentDto { Id = @event.Id, HasPriceType = true };
-                    return _readModelRepository.Insert(dto);
-                }
-
-                public Task Handle(RegularInstrumentCreated @event, CancellationToken cancellationToken)
-                {
-                    var dto = new InstrumentDto { Id = @event.Id, HasPriceType = @event.Vendor.HasPriceType() };
+                    var dto = new InstrumentDto { Id = @event.Id, HasPriceType = @event.HasPriceType, Name = @event.Description, Vendor = @event.Vendor };
                     return _readModelRepository.Insert(dto);
                 }
             }
@@ -94,30 +87,13 @@ namespace PricePublisher.Service.Features
                 public string[] PriceTypes { get; } = Enum.GetNames(typeof(PriceType));
                 public IEnumerable<InstrumentDto> Instruments { get; set; } = new List<InstrumentDto>();
             }
-
         }
-
-
-
-    }
-
-    public static class Extensions
-    {
-        public static bool HasPriceType(this string vendor)
-        {
-            switch (vendor.ToLower())
-            {
-                case "bloomberg":
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
     }
 
     public class InstrumentDto : ReadObject
     {
+        public string Vendor { get; set; }
+        public string Name { get; set; }
         public bool HasPriceType { get; set; }
     }
 }

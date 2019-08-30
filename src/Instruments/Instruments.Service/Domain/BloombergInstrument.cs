@@ -29,6 +29,7 @@ namespace Instruments.Domain
         private BloombergInstrument(Guid id, string ticker, PricingSource pricingSource, YellowKey yellowKey)
         {
             ApplyEvent(new BloombergInstrumentCreated(id, ticker, pricingSource.ToString(), yellowKey.ToString()));
+            ApplyEvent(new InstrumentCreated(id, Vendor.Bloomberg.ToString(), $"{ticker} {pricingSource} {yellowKey}", true));
         }
 
         private static void Apply(BloombergInstrument i, BloombergInstrumentCreated e)

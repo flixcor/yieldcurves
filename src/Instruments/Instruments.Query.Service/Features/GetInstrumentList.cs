@@ -23,8 +23,7 @@ namespace Instruments.Query.Service.Features
 
         public class Handler :
             IHandleQuery<GetInstrumentList, Result>,
-            IHandleEvent<RegularInstrumentCreated>,
-            IHandleEvent<BloombergInstrumentCreated>
+            IHandleEvent<InstrumentCreated>
         {
             private readonly IReadModelRepository<InstrumentDto> _repository;
 
@@ -39,20 +38,13 @@ namespace Instruments.Query.Service.Features
                 return new Result(instruments);
             }
 
-            public Task Handle(RegularInstrumentCreated @event, CancellationToken cancellationToken)
-            {
-                var dto = new InstrumentDto { Id = @event.Id, Description = @event.Description, Vendor = @event.Vendor };
-
-                return _repository.Insert(dto);
-            }
-
-            public Task Handle(BloombergInstrumentCreated @event, CancellationToken cancellationToken)
+            public Task Handle(InstrumentCreated @event, CancellationToken cancellationToken)
             {
                 var dto = new InstrumentDto
                 {
                     Id = @event.Id,
-                    Description = $"{@event.Ticker} {@event.PricingSource} {@event.YellowKey}",
-                    Vendor = "Bloomberg"
+                    Description = @event.Description,
+                    Vendor = @event.Vendor
                 };
 
                 return _repository.Insert(dto);

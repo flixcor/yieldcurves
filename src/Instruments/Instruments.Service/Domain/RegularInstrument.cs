@@ -45,6 +45,7 @@ namespace Instruments.Domain
         private RegularInstrument(Guid id, Vendor vendor, string description)
         {
             ApplyEvent(new RegularInstrumentCreated(id, vendor.ToString(), description));
+            ApplyEvent(new InstrumentCreated(id, vendor.ToString(), description));
         }
 
         private static void Apply(RegularInstrument i, RegularInstrumentCreated e)
