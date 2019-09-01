@@ -2,6 +2,8 @@
 {
     public class EventPosition : ReadObject
     {
+        private EventPosition() { }
+
         public EventPosition(long commitPosition, long preparePosition, string applicationName)
         {
             ApplicationName = applicationName;
@@ -9,8 +11,8 @@
             PreparePosition = preparePosition;
         }
 
-        public string ApplicationName { get; }
-        public long CommitPosition { get; }
-        public long PreparePosition { get; }
+        public string ApplicationName { get; private set; }
+        public long CommitPosition { get; private set; }
+        public long PreparePosition { get; private set; }
     }
 }

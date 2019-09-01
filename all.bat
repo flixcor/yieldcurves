@@ -8,4 +8,5 @@ start full.stack.microservice .\src\MarketCurves\MarketCurves.Query.Service &
 start full.stack.microservice .\src\Instruments\Instruments.Service &
 start full.stack.microservice .\src\Instruments\Instruments.Query.Service &
 start full.stack.microservice .\src\PricePublisher\PricePublisher.Service &
+start full.stack.microservice .\src\PricePublisher\PricePublisher.Query.Service &
 start npm.audit.install.serve .\src\Presentation\MicroFrontends\curve-tool

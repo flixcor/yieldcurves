@@ -11,7 +11,7 @@ namespace Common.Core
 
         public Maybe(T someValue)
         {
-            _value = someValue ?? throw new ArgumentNullException(nameof(someValue));
+            _value = someValue;
         }
 
         private Maybe()

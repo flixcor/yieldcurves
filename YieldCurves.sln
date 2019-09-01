@@ -76,6 +76,8 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "MicroFrontends", "src\Prese
 		SlnRelativePath = "src\Presentation\MicroFrontends\"
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PricePublisher.Query.Service", "src\PricePublisher\PricePublisher.Query.Service\PricePublisher.Query.Service.csproj", "{209A34A1-C490-419C-AF86-A2B63245D192}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -137,6 +139,10 @@ Global
 		{2601DB5B-E173-4679-B6BF-52EF6558B1A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2601DB5B-E173-4679-B6BF-52EF6558B1A0}.Release|Any CPU.ActiveCfg = Debug|Any CPU
 		{2601DB5B-E173-4679-B6BF-52EF6558B1A0}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{209A34A1-C490-419C-AF86-A2B63245D192}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{209A34A1-C490-419C-AF86-A2B63245D192}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{209A34A1-C490-419C-AF86-A2B63245D192}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{209A34A1-C490-419C-AF86-A2B63245D192}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -163,6 +169,7 @@ Global
 		{A70C9C95-332E-4ED4-96DB-80C3ECA4CD1C} = {B8B0A5DB-E4AD-4941-A447-5BE0FE3817E9}
 		{D484821E-BD50-47E0-864A-33203F3DD26E} = {8EE6D1F7-5704-4FC9-ACA6-D9CF1C8E9446}
 		{2601DB5B-E173-4679-B6BF-52EF6558B1A0} = {F1BA26EF-F24D-4A01-AB78-D0A0F4258AAC}
+		{209A34A1-C490-419C-AF86-A2B63245D192} = {B8B0A5DB-E4AD-4941-A447-5BE0FE3817E9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2681B182-AD3D-4651-A205-39DA65F48B1C}

@@ -1,6 +1,8 @@
 ﻿using Common.Core;
 using Common.Core.Extensions;
+using Common.Infrastructure.EfCore;
 using EventStore.ClientAPI;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 using System.Linq;
@@ -53,6 +55,21 @@ namespace Common.Infrastructure.Extensions
                 .AddScoped(x=> EventStoreConnection.Create(connectionString))
                 .AddScoped<IMessageBusListener, EventStoreListener>()
                 .AddScoped<IRepository>(x=> new EventStoreRepository(connectionString));
+        }
+
+        public static IServiceCollection AddEfCore(this IServiceCollection services, string connectionString, params Assembly[] assembliesToScan)
+        {
+            return services
+                .AddScoped(_ => 
+                {
+                    var optionsBuilder = new DbContextOptionsBuilder<GenericDbContext>();
+                    optionsBuilder.UseSqlServer(connectionString);
+                    var context = new GenericDbContext(optionsBuilder.Options, assembliesToScan);
+                    context.Database.EnsureCreated();
+
+                    return context;
+                })
+                .AddScoped<IReadModelRepository<EventPosition>, EfCoreRepository<EventPosition>>();
         }
     }
 }
