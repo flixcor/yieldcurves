@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Common.Core;
 using Common.Core.Events;
 using Common.Infrastructure.EfCore;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace PricePublisher.Query.Service.Features
@@ -45,22 +46,26 @@ namespace PricePublisher.Query.Service.Features
 
             public async Task<Result> Handle(GetPriceList query, CancellationToken cancellationToken)
             {
-                var efQuery = _db.Set<Dto>() as IQueryable<Dto>;
+                var connection = _db.Database.GetDbConnection();
 
-                if (query.AsAtDate.HasValue)
-                {
-                    efQuery = efQuery.Where(x => x.AsAtDate <= query.AsAtDate.Value);
-                }
+                var asAtDatePart = query.AsAtDate.HasValue
+                    ? $"AsAtDate <= '{query.AsAtDate.Value}'"
+                    : "1 = 1";
 
-                if (query.AsOfDate.HasValue)
-                {
-                    efQuery = efQuery.Where(x => x.AsOfDate.Date == query.AsOfDate.Value.Date);
-                }
-                
-                var result = await efQuery
-                    .GroupBy(x => x.Instrument)
-                    .Select(x => x.OrderByDescending(y => y.AsAtDate).FirstOrDefault())
-                    .ToListAsync(cancellationToken);
+                var asOfDatePart = query.AsOfDate.HasValue
+                    ? $"AsOfDate = '{query.AsOfDate.Value.Date}'"
+                    : "1 = 1";
+
+                var querystring = @$"SELECT dto1.*
+                                    FROM [PricePublisherQuery].[dbo].[Dto] dto1
+                                    inner join (select Instrument, Max(AsAtDate) AsAtDate 
+                                                from [dbo].[Dto] 
+                                                WHERE {asAtDatePart} AND {asOfDatePart}
+                                                group by instrument, PriceType
+                                    ) as dto2
+                                    on dto1.AsAtDate = dto2.AsAtDate AND dto1.Instrument = dto2.Instrument";
+
+                var result = await connection.QueryAsync<Dto>(querystring);
 
                 return new Result { Prices = result };
             }
@@ -82,8 +87,6 @@ namespace PricePublisher.Query.Service.Features
                 };
 
                 _db.Add(dto);
-
-                await _db.SaveChangesAsync(cancellationToken);
             }
 
             public Task Handle(InstrumentCreated @event, CancellationToken cancellationToken)
@@ -95,7 +98,7 @@ namespace PricePublisher.Query.Service.Features
                     Vendor = @event.Vendor
                 });
 
-                return _db.SaveChangesAsync(cancellationToken);
+                return Task.CompletedTask;
             }
         }
     }

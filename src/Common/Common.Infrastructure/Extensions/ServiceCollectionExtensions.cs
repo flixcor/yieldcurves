@@ -53,23 +53,34 @@ namespace Common.Infrastructure.Extensions
             return services
                 .AddSingleton(new ApplicationName(Assembly.GetEntryAssembly().GetName().Name))
                 .AddScoped(x=> EventStoreConnection.Create(connectionString))
-                .AddScoped<IMessageBusListener, EventStoreListener>()
+                .AddScoped<IMessageBusListener, EventStoreListener>(x=> 
+                {
+                    var conn = x.GetRequiredService<IEventStoreConnection>();
+                    var bus = x.GetRequiredService<IEventBus>();
+                    var repo = x.GetRequiredService<IReadModelRepository<EventPosition>>();
+                    var appName = x.GetRequiredService<ApplicationName>();
+                    var uow = x.GetService<IUnitOfWork>();
+
+                    return new EventStoreListener(conn, bus, repo, appName, uow);
+                })
                 .AddScoped<IRepository>(x=> new EventStoreRepository(connectionString));
         }
 
-        public static IServiceCollection AddEfCore(this IServiceCollection services, string connectionString, params Assembly[] assembliesToScan)
+        public static IServiceCollection AddEfCore(this IServiceCollection services, string connectionString, Assembly assemblyToScan)
         {
             return services
                 .AddScoped(_ => 
                 {
                     var optionsBuilder = new DbContextOptionsBuilder<GenericDbContext>();
                     optionsBuilder.UseSqlServer(connectionString);
-                    var context = new GenericDbContext(optionsBuilder.Options, assembliesToScan);
+
+                    var context = new GenericDbContext(optionsBuilder.Options, assemblyToScan);
                     context.Database.EnsureCreated();
 
                     return context;
                 })
-                .AddScoped<IReadModelRepository<EventPosition>, EfCoreRepository<EventPosition>>();
+                .AddScoped<IReadModelRepository<EventPosition>, EfCoreRepository<EventPosition>>()
+                .AddScoped<IUnitOfWork, EfCoreUnitOfWork>();
         }
     }
 }

@@ -23,9 +23,7 @@ namespace Common.Infrastructure
             var handlerType = typeof(IHandleEvent<>)
                 .MakeGenericType(@event.GetType());
 
-            using var scope = _serviceProvider.CreateScope();
-            var services = scope.ServiceProvider;
-            IEnumerable<dynamic> handlers = services.GetServices(handlerType) ?? new List<dynamic>();
+            IEnumerable<dynamic> handlers = _serviceProvider.GetServices(handlerType) ?? new List<dynamic>();
 
             var tasks = handlers.Select(handler => handler.Handle((dynamic)@event, cancellationToken)).Cast<Task>();
 

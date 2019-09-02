@@ -12,13 +12,19 @@ namespace Common.Infrastructure
         private readonly IEventStoreConnection _connection;
         private readonly IEventBus _eventBus;
         private readonly IReadModelRepository<EventPosition> _currentPositionRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly string _applicationName;
 
-        public EventStoreListener(IEventStoreConnection connectionString, IEventBus eventBus, IReadModelRepository<EventPosition> currentPositionRepository, ApplicationName applicationName)
+        public EventStoreListener(IEventStoreConnection connectionString, 
+            IEventBus eventBus, 
+            IReadModelRepository<EventPosition> currentPositionRepository, 
+            ApplicationName applicationName,
+            IUnitOfWork unitOfWork)
         {
             _connection = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _currentPositionRepository = currentPositionRepository ?? throw new ArgumentNullException(nameof(currentPositionRepository));
+            _unitOfWork = unitOfWork;
             _applicationName = applicationName?.Value ?? throw new ArgumentNullException(nameof(applicationName));
         }
 
@@ -62,6 +68,11 @@ namespace Common.Infrastructure
             {
                 positionToInsert.Id = currentEventPosition.Id;
                 await _currentPositionRepository.Update(positionToInsert);
+            }
+
+            if (_unitOfWork != null)
+            {
+                await _unitOfWork.SaveChanges();
             }
         }
 

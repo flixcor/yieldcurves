@@ -23,15 +23,22 @@ namespace Common.Infrastructure.EfCore
         public Task Insert(T t)
         {
             _db.Add(t);
-            return _db.SaveChangesAsync();
+            return Task.CompletedTask;
         }
 
         public async Task<Maybe<T>> Single(Expression<Func<T, bool>> where) => (await _db.Set<T>().Where(where).FirstOrDefaultAsync()).Return();
 
         public Task Update(T t)
         {
+            var tracked = _db.Set<T>().Local.FirstOrDefault(x => x.Id == t.Id);
+
+            if (tracked != null)
+            {
+                _db.Set<T>().Local.Remove(tracked);
+            }
+
             _db.Update(t);
-            return _db.SaveChangesAsync();
+            return Task.CompletedTask;
         }
     }
 }

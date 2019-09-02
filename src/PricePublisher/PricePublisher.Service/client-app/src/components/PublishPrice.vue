@@ -5,11 +5,7 @@
     </md-card-header>
     <md-progress-bar v-if="loading" md-mode="indeterminate"></md-progress-bar>
     <md-card-content v-else>
-      <text-box
-        id="asOfDateBox"
-        v-model="command.asOfDate"
-        label="As of date"
-      />
+      <md-datepicker id="asOfDatePicker" v-model="asOfDate" md-immediately />
       <mt-select
         id="instrumentDropdown"
         v-model="command.instrumentId"
@@ -71,6 +67,14 @@ export default {
       const hasPriceType = match && match.hasPriceType;
 
       return hasPriceType;
+    },
+    asOfDate: {
+      get() {
+        return new Date(this.command.asOfDate).toISOString().split('T')[0];
+      },
+      set(newVal) {
+        this.command.asOfDate = new Date(newVal).toJSON();
+      },
     },
   },
   methods: {

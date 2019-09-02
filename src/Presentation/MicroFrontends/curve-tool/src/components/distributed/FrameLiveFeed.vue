@@ -25,12 +25,17 @@ export default {
     // Fetch initial data.
     this.fetch();
   },
+  watch:{
+    endpoint: function (){
+      this.fetch();
+    }
+  },
   methods: {
     async fetch() {
       const { data } = await axios.get(this.endpoint);
       this.props = data.data;
       this.comp = data.url;
     }
-  }
+  },
 };
 </script>
