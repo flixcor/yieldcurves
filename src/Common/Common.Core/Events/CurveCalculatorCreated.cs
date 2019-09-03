@@ -1,8 +1,7 @@
 ﻿using System;
-using Common.Core;
 using Newtonsoft.Json;
 
-namespace CalculationEngine.Domain
+namespace Common.Core.Events
 {
     public class CurveCalculatorCreated : Event
     {

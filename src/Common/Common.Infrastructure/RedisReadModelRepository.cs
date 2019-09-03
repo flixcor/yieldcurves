@@ -28,7 +28,7 @@ namespace Common.Infrastructure
                 .AsQueryable()
                 .FirstOrDefault(where);
 
-            return readObject.Return();
+            return readObject.Maybe();
         }
 
         public async Task<Maybe<T>> Get(Guid id)
@@ -43,7 +43,7 @@ namespace Common.Infrastructure
                 dto = JsonConvert.DeserializeObject<T>(result);
             }
 
-            return dto.Return();
+            return dto.Maybe();
         }
 
         public async Task<IEnumerable<T>> GetAll()

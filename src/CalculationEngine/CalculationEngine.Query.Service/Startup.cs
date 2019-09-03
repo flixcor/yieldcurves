@@ -1,12 +1,12 @@
-﻿using Common.Infrastructure.Extensions;
+﻿using CalculationEngine.Query.Service.Features;
+using Common.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PricePublisher.Query.Service.Features;
 
-namespace PricePublisher.Query.Service
+namespace CalculationEngine.Query.Service
 {
     public class Startup
     {
@@ -34,9 +34,9 @@ namespace PricePublisher.Query.Service
             services.AddControllers();
 
             services
-                .AddEfCore(Configuration.GetConnectionString("SqlServer"), typeof(GetPriceList).Assembly)
+                .AddEfCore(Configuration.GetConnectionString("SqlServer"), typeof(GetCalculatedCurveDetail).Assembly)
                 .AddEventStore(Configuration.GetConnectionString("EventStore"))
-                .AddMediator(typeof(GetPriceList).Assembly);
+                .AddMediator(typeof(GetCalculatedCurveDetail).Assembly);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

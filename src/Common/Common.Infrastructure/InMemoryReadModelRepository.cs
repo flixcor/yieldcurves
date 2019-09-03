@@ -20,7 +20,7 @@ namespace Common.Infrastructure
         {
             var readObject = Checkpoint.FirstOrDefault(x => x.Id == id);
 
-            return Task.FromResult(readObject.Return());
+            return Task.FromResult(readObject.Maybe());
         }
 
         public Task<IEnumerable<T>> GetAll()
@@ -43,7 +43,7 @@ namespace Common.Infrastructure
         {
             var readObject = Checkpoint.FirstOrDefault(where.Compile());
 
-            return Task.FromResult(readObject.Return());
+            return Task.FromResult(readObject.Maybe());
         }
 
         public Task Update(T t)

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Common.Core;
 using Newtonsoft.Json;
 
-namespace CalculationEngine.Domain
+namespace Common.Core.Events
 {
     public class CurveCalculationFailed : Event
     {

@@ -18,7 +18,7 @@ namespace Common.Core
         {
         }
 
-        public Maybe<TO> Bind<TO>(Func<T, TO> func) where TO : class => _value != null ? func(_value).Return() : Maybe<TO>.None();
+        public Maybe<TO> Bind<TO>(Func<T, TO> func) where TO : class => _value != null ? func(_value).Maybe() : Maybe<TO>.None();
 
         public T Coalesce(T otherwise) => _value ?? otherwise;
         public T Coalesce(Func<T> otherwise) => _value ?? otherwise();
@@ -31,9 +31,15 @@ namespace Common.Core
 
     public static class MaybeExtensions
     {
-        public static Maybe<T> Return<T>(this T value) where T : class
+        public static Maybe<T> Maybe<T>(this T value) where T : class
         {
-            return value != null ? new Maybe<T>(value) : Maybe<T>.None();
+            return value != null ? new Maybe<T>(value) : Core.Maybe<T>.None();
+        }
+
+        public static async Task<Maybe<T>> Maybe<T>(this Task<T> task) where T : ReadObject
+        {
+            var value = await task;
+            return value.Maybe();
         }
 
         public static async Task<Result<T>> ToResult<T>(this Task<Maybe<T>> task) where T : class
