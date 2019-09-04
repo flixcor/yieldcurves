@@ -49,12 +49,12 @@ namespace CalculationEngine.Service.ActorModel.Actors
 
                 for (var i = 0; i <= max; i++)
                 {
-                    var date = e.AsAtDate.Date.AddDays(i);
+                    var date = e.AsOfDate.Date.AddDays(i);
 
                     var actor = GetDateActor(date);
 
                     actor.Tell(e);
-                    actor.Tell(new SendMeCalculate(_dateLags.Values));
+                    actor.Tell(new SendMeCalculate(_dateLags.Values.ToList()));
                 }
             }
         }
@@ -67,7 +67,7 @@ namespace CalculationEngine.Service.ActorModel.Actors
 
                 for (var i = 0; i <= max; i++)
                 {
-                    var date = e.AsAtDate.Date.AddDays(i);
+                    var date = e.AsOfDate.Date.AddDays(i);
 
                     if (!_dateTimes.Any(x => x == date))
                     {
@@ -84,13 +84,10 @@ namespace CalculationEngine.Service.ActorModel.Actors
             var recipeActor = GetRecipeActor(e.Id);
             recipeActor.Tell(e);
 
-            if (_recipeIds.Contains(e.Id))
+            foreach (var item in _dateTimes)
             {
-                foreach (var item in _dateTimes)
-                {
-                    var dateActor = GetDateActor(item);
-                    dateActor.Tell(new SendMeCalculate(_dateLags.Values), recipeActor);
-                }
+                var dateActor = GetDateActor(item);
+                dateActor.Tell(new SendMeCalculate(_dateLags.Values.ToList()), recipeActor);
             }
         }
 
@@ -119,7 +116,7 @@ namespace CalculationEngine.Service.ActorModel.Actors
 
             if (!_marketCurvesForDate.TryGetValue(date, out var marketCurveForDateActor))
             {
-                marketCurveForDateActor = Context.ActorOf(Props.Create<MarketCurveForDateActor>(_marketCurveId, date));
+                marketCurveForDateActor = Context.ActorOf(Props.Create<MarketCurveForDateActor>(_marketCurveId, date), $"date-{asOfDate.ToString("yyyyMMdd")}");
                 _marketCurvesForDate.Add(asOfDate, marketCurveForDateActor);
             }
 
@@ -130,7 +127,7 @@ namespace CalculationEngine.Service.ActorModel.Actors
         {
             if (!_recipeActors.TryGetValue(id, out var recipeActor))
             {
-                recipeActor = Context.ActorOf(Props.Create<RecipeActor>(id));
+                recipeActor = Context.ActorOf(Props.Create<RecipeActor>(id), $"recipe-{id}");
                 _recipeActors.Add(id, recipeActor);
             }
 

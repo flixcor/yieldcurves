@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Akka.Actor;
 using CalculationEngine.Domain;
 using CalculationEngine.Service.ActorModel.Commands;
@@ -26,12 +27,15 @@ namespace CalculationEngine.Service.ActorModel.Actors
 
         private void Handle(Calculate obj)
         {
-            var result = CurveCalculation.Calculate(obj.AsOfDate, _recipe, obj.CurvePoints, obj.Pricings);
-            var calc = new CurveCalculationResult(Guid.NewGuid(), _id, obj.AsOfDate, result);
+            if (obj.CurvePoints.All(x=> obj.Pricings.Any(y=> y.InstrumentId == x.InstrumentId)))
+            {
+                var result = CurveCalculation.Calculate(obj.AsOfDate, _recipe, obj.CurvePoints, obj.Pricings);
+                var calc = new CurveCalculationResult(Guid.NewGuid(), _id, obj.AsOfDate, result);
 
-            using var serviceScope = Context.CreateScope();
-            var repo = serviceScope.ServiceProvider.GetService<IRepository>();
-            repo.SaveAsync(calc).PipeTo(Self);
+                using var serviceScope = Context.CreateScope();
+                var repo = serviceScope.ServiceProvider.GetService<IRepository>();
+                repo.SaveAsync(calc).PipeTo(Self); 
+            }
         }
 
         private void Recover(CurveRecipeCreated e)

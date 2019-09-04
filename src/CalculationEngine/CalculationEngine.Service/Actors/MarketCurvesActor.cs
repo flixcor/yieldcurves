@@ -23,7 +23,7 @@ namespace CalculationEngine.Service.ActorModel.Actors
         {
             if (!_marketCurves.TryGetValue(id, out var marketCurveActor))
             {
-                marketCurveActor = Context.ActorOf(Props.Create<MarketCurveActor>(id));
+                marketCurveActor = Context.ActorOf(Props.Create<MarketCurveActor>(id), id.ToString());
                 _marketCurves.Add(id, marketCurveActor);
             }
 

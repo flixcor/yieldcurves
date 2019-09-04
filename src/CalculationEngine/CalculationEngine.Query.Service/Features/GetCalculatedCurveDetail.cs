@@ -52,7 +52,7 @@ namespace CalculationEngine.Query.Service.Features
                         Currency = p.Currency,
                         Maturity = p.Maturity,
                         Value = p.Value
-                    })
+                    }).ToList()
                 });
             }
 
@@ -79,7 +79,7 @@ namespace CalculationEngine.Query.Service.Features
             public string CurveRecipeName { get; set; }
             public DateTime AsOfDate { get; set; }
             public DateTime AsAtDate { get; set; }
-            public IEnumerable<Point> Points { get; set; }
+            public ICollection<Point> Points { get; set; }
 
             public class Point : ReadObject
             {
