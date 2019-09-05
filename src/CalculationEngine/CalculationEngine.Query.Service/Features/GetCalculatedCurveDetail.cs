@@ -27,12 +27,18 @@ namespace CalculationEngine.Query.Service.Features
                 _db = db;
             }
 
-            public Task<Maybe<Dto>> Handle(GetCalculatedCurveDetail query, CancellationToken cancellationToken)
+            public async Task<Maybe<Dto>> Handle(GetCalculatedCurveDetail query, CancellationToken cancellationToken)
             {
-                return _db.Set<Dto>()
+                var res = await _db.Set<Dto>()
                     .Include(x => x.Points)
-                    .FirstOrDefaultAsync(x => x.CurveRecipeId == query.CurveRecipeId && x.AsOfDate == query.AsOfDate)
-                    .Maybe();
+                    .FirstOrDefaultAsync(x => x.CurveRecipeId == query.CurveRecipeId && x.AsOfDate == query.AsOfDate);
+
+                if (res != null)
+                {
+                    res.Points = res.Points.OrderBy(x => x.Maturity).ToList();
+                }
+                
+                return res.Maybe();
             }
 
             public async Task Handle(CurveCalculated @event, CancellationToken cancellationToken)

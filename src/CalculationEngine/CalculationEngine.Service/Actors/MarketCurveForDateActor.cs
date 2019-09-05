@@ -43,6 +43,6 @@ namespace CalculationEngine.Service.ActorModel.Actors
         }
 
 
-        public override string PersistenceId => $"{_marketCurveId}|{_asOfDate.Date}";
+        public override string PersistenceId => $"{_marketCurveId}|{_asOfDate.Date.ToString("yyyy-MM-dd")}";
     }
 }
