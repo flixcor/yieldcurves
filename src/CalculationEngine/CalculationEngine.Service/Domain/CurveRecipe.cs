@@ -32,19 +32,18 @@ namespace CalculationEngine.Domain
         public OutputFrequency OutputFrequency { get; }
         public OutputType OutputType { get; }
 
-        public ImmutableArray<CurvePoint> ApplyTo(ICollection<CurvePoint> points) => 
+        public ImmutableArray<CurvePoint> ApplyTo(ImmutableArray<CurvePoint> points) => 
             _transformations
                 .OrderBy(x => x.Order)
                 .Select(x => x.Transformation)
                 .Aggregate(ResolveAllMaturities(points), (p, t) => t.Transform(p))
                 .ToImmutableArray();
 
-        private ImmutableArray<CurvePoint> ResolveAllMaturities(ICollection<CurvePoint> points) => 
+        private IEnumerable<CurvePoint> ResolveAllMaturities(ImmutableArray<CurvePoint> points) => 
             OutputFrequency.GetMaturities()
-                .Select(maturity => ResolveMaturity(maturity, points))
-                .ToImmutableArray();
+                .Select(maturity => ResolveMaturity(maturity, points));
 
-        public CurvePoint ResolveMaturity(Maturity maturity, ICollection<CurvePoint> points)
+        private CurvePoint ResolveMaturity(Maturity maturity, ImmutableArray<CurvePoint> points)
         {
             var alreadyExistingPoint = points.FirstOrDefault(p => p.Maturity == maturity);
 
@@ -53,22 +52,33 @@ namespace CalculationEngine.Domain
                     return alreadyExistingPoint;
                 }
 
-                var minPoint = points.OrderBy(p => p.Maturity).First();
+                var minPoint = points
+                    .OrderBy(p => p.Maturity)
+                    .First();
 
                 if (maturity < minPoint.Maturity)
                 {
                     return ExtrapolationShort.Solve(minPoint, maturity);
                 }
 
-                var maxPoint = points.OrderBy(p => p.Maturity).Last();
+                var maxPoint = points
+                    .OrderBy(p => p.Maturity)
+                    .Last();
 
                 if (maturity > maxPoint.Maturity)
                 {
                     return ExtrapolationLong.Solve(maxPoint, maturity);
                 }
 
-                var before = points.Where(p => p.Maturity < maturity).OrderBy(p => p.Maturity).Last();
-                var after = points.Where(p => p.Maturity > maturity).OrderBy(p => p.Maturity).First();
+                var before = points
+                    .Where(p => p.Maturity < maturity)
+                    .OrderBy(p => p.Maturity)
+                    .Last();
+
+                var after = points
+                    .Where(p => p.Maturity > maturity)
+                    .OrderBy(p => p.Maturity)
+                    .First();
 
                 return Interpolation.Solve(before, after, maturity);
         }

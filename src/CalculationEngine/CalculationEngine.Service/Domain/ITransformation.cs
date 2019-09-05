@@ -7,6 +7,6 @@ namespace CalculationEngine.Domain
 {
     public interface ITransformation
     {
-        ImmutableArray<CurvePoint> Transform(ICollection<CurvePoint> points);
+        IEnumerable<CurvePoint> Transform(IEnumerable<CurvePoint> points);
     }
 }

@@ -55,7 +55,7 @@ namespace Common.Core
         }
 
         public bool IsSuccessful { get; }
-        public ICollection<string> Messages { get; }
+        public ImmutableArray<string> Messages { get; }
     }
 
     public class Result<T> : Result

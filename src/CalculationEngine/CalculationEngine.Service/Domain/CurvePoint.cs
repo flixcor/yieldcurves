@@ -14,19 +14,11 @@ namespace CalculationEngine.Domain
         public Maturity Maturity { get; }
         public Price Price { get; }
 
-        public Point ToPoint()
-        {
-            return new Point(Maturity.ToX(), Price.ToY());
-        }
+        public Point ToPoint() => new Point(Maturity.ToX(), Price.ToY());
 
-        public static CurvePoint FromPoint(Point point, string currency)
-        {
-            return new CurvePoint(Maturity.FromX(point.X), Price.FromY(point.Y, currency));
-        }
+        public static CurvePoint FromPoint(Point point, string currency) => 
+            new CurvePoint(Maturity.FromX(point.X), Price.FromY(point.Y, currency));
 
-        public int CompareTo(CurvePoint other)
-        {
-            return Maturity.CompareTo(other.Maturity);
-        }
+        public int CompareTo(CurvePoint other) => Maturity.CompareTo(other.Maturity);
     }
 }

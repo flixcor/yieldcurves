@@ -32,7 +32,6 @@ namespace CalculationEngine.Service.Domain
         private static Result<ImmutableArray<CurvePoint>> GetPointsFromPricings(Date asOfDate, ICollection<PointRecipe> recipes, ICollection<PublishedPricing> pricings) => 
             recipes
                 .Select(x => x.GetPoint(pricings, asOfDate))
-                .ToImmutableArray()
                 .Convert();
 
         private static Result<PointRecipe> TryMap(CurvePointAdded e)
