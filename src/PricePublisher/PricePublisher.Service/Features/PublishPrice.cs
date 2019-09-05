@@ -8,7 +8,7 @@ using PricePublisher.Domain;
 
 namespace PricePublisher.Service.Features
 {
-    public class PublishPrice
+    public static class PublishPrice
     {
         public class Command : ICommand
         {
@@ -84,7 +84,7 @@ namespace PricePublisher.Service.Features
             {
                 public Command Command { get; set; } = new Command();
 
-                public string[] PriceTypes { get; } = Enum.GetNames(typeof(PriceType));
+                public ICollection<string> PriceTypes { get; } = Enum.GetNames(typeof(PriceType));
                 public IEnumerable<InstrumentDto> Instruments { get; set; } = new List<InstrumentDto>();
             }
         }

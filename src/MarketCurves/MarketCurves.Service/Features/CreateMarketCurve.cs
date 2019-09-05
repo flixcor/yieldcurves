@@ -7,7 +7,7 @@ using MarketCurves.Domain;
 
 namespace MarketCurves.Service.Features
 {
-    public class CreateMarketCurve
+    public static class CreateMarketCurve
     {
         public class Command : ICommand
         {

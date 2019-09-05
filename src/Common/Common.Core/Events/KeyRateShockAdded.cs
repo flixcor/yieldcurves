@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 
 namespace Common.Core.Events
 {
@@ -22,6 +23,6 @@ namespace Common.Core.Events
         public int Order { get; }
         public string ShockTarget { get; }
         public double Shift { get; }
-        public double[] Maturities { get; }
+        public ICollection<double> Maturities { get; }
     }
 }

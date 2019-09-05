@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace CurveRecipes.Service.Features
         public int Order { get; set; }
         public ShockTarget ShockTarget { get; set; }
         public double Shift { get; set; }
-        public double[] Maturities { get; set; } = new double[] {};
+        public ICollection<double> Maturities { get; set; } = Array.Empty<double>();
 
         public class Handler : IHandleCommand<AddKeyRateShock>
         {

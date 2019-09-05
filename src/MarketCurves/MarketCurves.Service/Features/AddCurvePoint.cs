@@ -9,7 +9,7 @@ using MarketCurves.Domain;
 
 namespace MarketCurves.Service.Features
 {
-    public class AddCurvePoint
+    public static class AddCurvePoint
     {
         public class Command : ICommand
         {

@@ -91,7 +91,7 @@ namespace Common.Infrastructure
             return InstanceName() + id.ToString("N");
         }
 
-        private string InstanceName()
+        private static string InstanceName()
         {
             var type = typeof(T);
             return string.Format("{0}:", type.FullName);

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MarketCurves.Query.Service.Features
 {
-    public class GetMarketCurveList
+    public static class GetMarketCurveList
     {
         public class Result
         {

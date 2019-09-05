@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CurveRecipes.Domain
@@ -24,6 +25,6 @@ namespace CurveRecipes.Domain
 
         public ShockTarget ShockTarget { get; }
         public Shift Shift { get; }
-        public Maturity[] Maturities { get; }
+        public ICollection<Maturity> Maturities { get; }
     }
 }

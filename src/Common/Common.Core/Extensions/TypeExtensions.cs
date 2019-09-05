@@ -42,7 +42,7 @@ namespace Common.Core.Extensions
 
         public static T CreateInstance<T>(this Type type, params Type[] genericTypeArguments)
         {
-            return type.CreateInstance<T>(new object[] { }, genericTypeArguments);
+            return type.CreateInstance<T>(Array.Empty<object>(), genericTypeArguments);
         }
 
         public static T CreateInstance<T>(this Type type, object[] args, params Type[] genericTypeArguments)

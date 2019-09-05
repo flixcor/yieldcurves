@@ -15,8 +15,6 @@ namespace Common.Infrastructure.EfCore
 
         public Task SaveChanges()
         {
-            var changes = _db.ChangeTracker.Entries().ToList();
-
             return _db.SaveChangesAsync();
         }
     }

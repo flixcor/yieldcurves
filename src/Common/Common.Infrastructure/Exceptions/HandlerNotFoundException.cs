@@ -14,5 +14,17 @@ namespace Common.Infrastructure.Exceptions
             : base(info, context)
         {
         }
+
+        public HandlerNotFoundException()
+        {
+        }
+
+        public HandlerNotFoundException(string message) : base(message)
+        {
+        }
+
+        public HandlerNotFoundException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
     }
 }

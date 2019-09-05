@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -20,7 +20,7 @@ namespace CurveRecipes.Service.Features
                 Commands.Add(nameof(ParallelShock), new AddParallelShock { Id = id });
             }
 
-            public string[] ShockTargets { get; } = Enum.GetNames(typeof(ShockTarget)).ToArray();
+            public ICollection<string> ShockTargets { get; } = Enum.GetNames(typeof(ShockTarget)).ToArray();
 
             public Dictionary<string, ICommand> Commands { get; } = new Dictionary<string, ICommand>();
         }

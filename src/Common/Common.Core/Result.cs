@@ -17,7 +17,7 @@ namespace Common.Core
 
         public static Result Fail(params string[] messages) => new Result(false, messages);
 
-        public static Result<T> Ok<T>(T obj) => new Result<T>(true, new string[0], obj);
+        public static Result<T> Ok<T>(T obj) => new Result<T>(true, Array.Empty<string>(), obj);
 
         public static Result<T> Fail<T>(params string[] messages) => new Result<T>(false, messages);
 
@@ -25,14 +25,14 @@ namespace Common.Core
         {
             return IsSuccessful 
                 ? onSuccess()
-                : Fail<TOut>(Messages);
+                : Fail<TOut>(Messages.ToArray());
         }
 
         public Result<T> Promise<T>(Func<T> onSuccess)
         {
             return IsSuccessful
                 ? Ok(onSuccess())
-                : Fail<T>(Messages);
+                : Fail<T>(Messages.ToArray());
         }
 
         public async Task<Result> Promise(Func<Task> onSuccess)
@@ -43,7 +43,7 @@ namespace Common.Core
                 return Ok();
             }
 
-            return Fail(Messages);
+            return Fail(Messages.ToArray());
         }
 
         public static Result Combine(params Result[] results)
@@ -54,7 +54,7 @@ namespace Common.Core
         }
 
         public bool IsSuccessful { get; }
-        public string[] Messages { get; }
+        public ICollection<string> Messages { get; }
     }
 
     public class Result<T> : Result
@@ -68,7 +68,7 @@ namespace Common.Core
         {
             return IsSuccessful
                 ? Ok(onSuccess(Content))
-                : Fail<TOut>(Messages);
+                : Fail<TOut>(Messages.ToArray());
         }
 
         public async Task<Result> Promise(Func<T, Task> onSuccess)
@@ -79,7 +79,7 @@ namespace Common.Core
                 return Ok();
             }
 
-            return Fail(Messages);
+            return Fail(Messages.ToArray());
         }
 
         public Result Promise(Action<T> onSuccess)
@@ -90,14 +90,14 @@ namespace Common.Core
                 return Ok();
             }
 
-            return Fail(Messages);
+            return Fail(Messages.ToArray());
         }
 
         public async Task<Result> Promise(Func<T, Task<Result>> onSuccess)
         {
             return IsSuccessful
                 ? await onSuccess(Content)
-                : Fail(Messages);
+                : Fail(Messages.ToArray());
         }
 
         public T Content { get; }
@@ -152,7 +152,7 @@ namespace Common.Core
                 return await onSuccesTask;
             }
 
-            return Result.Fail<TOut>(result.Messages);
+            return Result.Fail<TOut>(result.Messages.ToArray());
         }
 
         public static async Task<Result> Promise<T>(this Task<Result<T>> task, Func<T, Task> onSuccess)
@@ -166,7 +166,7 @@ namespace Common.Core
                 return Result.Ok();
             }
 
-            return Result.Fail(result.Messages);
+            return Result.Fail(result.Messages.ToArray());
         }
 
         public static async Task<Result<TOut>> Promise<T,TOut>(this Task<Result<T>> task, Func<T, Task<TOut>> onSuccess)
@@ -179,7 +179,7 @@ namespace Common.Core
                 return Result.Ok(await t);
             }
 
-            return Result.Fail<TOut>(result.Messages);
+            return Result.Fail<TOut>(result.Messages.ToArray());
         }
 
         public static async Task<Result> Promise<T>(this Task<Result<T>> task, Func<T, Task<Result>> onSuccess)
@@ -192,7 +192,7 @@ namespace Common.Core
                 return await t;
             }
 
-            return Result.Fail(result.Messages);
+            return Result.Fail(result.Messages.ToArray());
         }
     }
 

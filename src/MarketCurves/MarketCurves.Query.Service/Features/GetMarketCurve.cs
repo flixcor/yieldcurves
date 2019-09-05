@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MarketCurves.Query.Service.Features
 {
-    public class GetMarketCurve
+    public static class GetMarketCurve
     {
         public class Query : IQuery<Maybe<Dto>>
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Common.Core.Events
@@ -22,6 +23,6 @@ namespace Common.Core.Events
         public Guid CurveRecipeId { get; }
         public DateTime AsOfDate { get; }
         public DateTime AsAtDate { get; }
-        public string[] Messages { get; }
+        public ICollection<string> Messages { get; }
     }
 }
