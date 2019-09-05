@@ -1,5 +1,6 @@
 ﻿using Akka.Actor;
 using CalculationEngine.Service.ActorModel.Actors;
+using CalculationEngine.Service.Helpers;
 using Common.Core;
 using Common.Infrastructure;
 using Common.Infrastructure.Extensions;
@@ -28,8 +29,9 @@ namespace CalculationEngine.Service
             services.AddSingleton(provider =>
             {
                 var serviceScopeFactory = provider.GetService<IServiceScopeFactory>();
+                var hocon = HoconLoader.FromFile("akka.net.hocon");
 
-                var actorSystem = ActorSystem.Create("calculationengine");
+                var actorSystem = ActorSystem.Create("calculationengine", hocon);
                 actorSystem.AddServiceScopeFactory(serviceScopeFactory);
                 return actorSystem;
             });
