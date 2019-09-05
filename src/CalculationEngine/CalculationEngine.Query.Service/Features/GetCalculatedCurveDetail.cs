@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,7 +36,7 @@ namespace CalculationEngine.Query.Service.Features
 
                 if (res != null)
                 {
-                    res.Points = res.Points.OrderBy(x => x.Maturity).ToList();
+                    res.Points = res.Points.OrderBy(x => x.Maturity).ToImmutableArray();
                 }
                 
                 return res.Maybe();
@@ -58,7 +59,7 @@ namespace CalculationEngine.Query.Service.Features
                         Currency = p.Currency,
                         Maturity = p.Maturity,
                         Value = p.Value
-                    }).ToList()
+                    }).ToImmutableArray()
                 });
             }
 

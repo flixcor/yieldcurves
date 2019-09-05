@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using CalculationEngine.Domain;
 using Common.Core;
@@ -9,7 +10,7 @@ namespace CalculationEngine.Service.Domain
 {
     public static class CurveCalculation
     {
-        public static Result<IEnumerable<CurvePoint>> Calculate(DateTime asOfDate, CurveRecipeCreated recipe, IEnumerable<CurvePointAdded> marketCurve, IEnumerable<InstrumentPricingPublished> pricings)
+        public static Result<ImmutableArray<CurvePoint>> Calculate(DateTime asOfDate, CurveRecipeCreated recipe, ICollection<CurvePointAdded> marketCurve, ICollection<InstrumentPricingPublished> pricings)
         {
             var matchingPricesResult = TryGetAllMatchingPrices(asOfDate, marketCurve, pricings);
             var recipeResult = TryMap(recipe);
@@ -18,7 +19,7 @@ namespace CalculationEngine.Service.Domain
                 .Promise(()=> recipeResult.Content.ApplyTo(matchingPricesResult.Content));
         }
 
-        public static Result<IEnumerable<CurvePoint>> TryGetAllMatchingPrices(DateTime asOfDate, IEnumerable<CurvePointAdded> marketCurve, IEnumerable<InstrumentPricingPublished> pricings)
+        public static Result<ImmutableArray<CurvePoint>> TryGetAllMatchingPrices(DateTime asOfDate, ICollection<CurvePointAdded> marketCurve, ICollection<InstrumentPricingPublished> pricings)
         {
             var pricingResult = pricings.Select(TryMap).Convert();
             var pointResult = marketCurve.Select(TryMap).Convert();
@@ -28,10 +29,11 @@ namespace CalculationEngine.Service.Domain
                 .Promise(() => GetPointsFromPricings(date, pointResult.Content, pricingResult.Content));
         }
 
-        private static Result<IEnumerable<CurvePoint>> GetPointsFromPricings(Date asOfDate, IEnumerable<PointRecipe> recipes, IEnumerable<PublishedPricing> pricings)
-        {
-            return recipes.Select(x => x.GetPoint(pricings, asOfDate)).Convert();
-        }
+        private static Result<ImmutableArray<CurvePoint>> GetPointsFromPricings(Date asOfDate, ICollection<PointRecipe> recipes, ICollection<PublishedPricing> pricings) => 
+            recipes
+                .Select(x => x.GetPoint(pricings, asOfDate))
+                .ToImmutableArray()
+                .Convert();
 
         private static Result<PointRecipe> TryMap(CurvePointAdded e)
         {

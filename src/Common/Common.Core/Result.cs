@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,7 +11,7 @@ namespace Common.Core
         internal Result(bool isSuccessful, params string[] messages)
         {
             IsSuccessful = isSuccessful;
-            Messages = messages;
+            Messages = messages.ToImmutableArray();
         }
 
         public static Result Ok() => new Result(true);
@@ -105,15 +106,28 @@ namespace Common.Core
 
     public static class ResultExtensions
     {
-        public static Result<IEnumerable<T>> Convert<T>(this IEnumerable<Result<T>> results)
+        public static Result<ImmutableArray<T>> Convert<T>(this IEnumerable<Result<T>> results)
         {
             if (results.Any(x => !x.IsSuccessful))
             {
                 var failureMessages = results.SelectMany(x => x.Messages).ToArray();
-                return Result.Fail<IEnumerable<T>>(failureMessages);
+                return Result.Fail<ImmutableArray<T>>(failureMessages);
             }
 
-            var objects = results.Select(x => x.Content);
+            var objects = results.Select(x => x.Content).ToImmutableArray();
+
+            return Result.Ok(objects);
+        }
+
+        public static Result<ImmutableArray<T>> Convert<T>(this ImmutableArray<Result<T>> results)
+        {
+            if (results.Any(x => !x.IsSuccessful))
+            {
+                var failureMessages = results.SelectMany(x => x.Messages).ToArray();
+                return Result.Fail<ImmutableArray<T>>(failureMessages);
+            }
+
+            var objects = results.Select(x => x.Content).ToImmutableArray();
 
             return Result.Ok(objects);
         }

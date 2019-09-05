@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,13 +17,16 @@ namespace CurveRecipes.Service.Features
         {
             public Result(Guid id)
             {
-                Commands.Add(nameof(KeyRateShock), new AddKeyRateShock { Id = id });
-                Commands.Add(nameof(ParallelShock), new AddParallelShock { Id = id });
+                Commands = new Dictionary<string, ICommand>()
+                {
+                    { nameof(KeyRateShock), new AddKeyRateShock { Id = id } },
+                    { nameof(ParallelShock), new AddParallelShock { Id = id } }
+                }.ToImmutableDictionary();
             }
 
-            public ICollection<string> ShockTargets { get; } = Enum.GetNames(typeof(ShockTarget)).ToArray();
+            public ImmutableArray<string> ShockTargets { get; } = Enum.GetNames(typeof(ShockTarget)).ToImmutableArray();
 
-            public Dictionary<string, ICommand> Commands { get; } = new Dictionary<string, ICommand>();
+            public ImmutableDictionary<string, ICommand> Commands { get; } = ImmutableDictionary<string, ICommand>.Empty;
         }
 
         public class Handler : IHandleQuery<GetAddTransformation, GetAddTransformation.Result>

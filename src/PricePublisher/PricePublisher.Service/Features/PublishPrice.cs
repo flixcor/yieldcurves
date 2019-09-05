@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
@@ -84,7 +85,7 @@ namespace PricePublisher.Service.Features
             {
                 public Command Command { get; set; } = new Command();
 
-                public ICollection<string> PriceTypes { get; } = Enum.GetNames(typeof(PriceType));
+                public ImmutableArray<string> PriceTypes { get; } = Enum.GetNames(typeof(PriceType)).ToImmutableArray();
                 public IEnumerable<InstrumentDto> Instruments { get; set; } = new List<InstrumentDto>();
             }
         }

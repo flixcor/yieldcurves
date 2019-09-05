@@ -54,7 +54,7 @@ namespace CalculationEngine.Service.ActorModel.Actors
                     var actor = GetDateActor(date);
 
                     actor.Tell(e);
-                    actor.Tell(new SendMeCalculate(_dateLags.Values.ToList()));
+                    actor.Tell(new SendMeCalculate(_dateLags.Values));
                 }
             }
         }

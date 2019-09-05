@@ -38,7 +38,7 @@ namespace CalculationEngine.Service.ActorModel.Actors
         {
             if (q.CurvePoints.All(x => _pricings.ContainsKey(x.InstrumentId)))
             {
-                Sender.Tell(new Calculate(_asOfDate, q.CurvePoints.ToList(), _pricings.Values.ToList()), Self);
+                Sender.Tell(new Calculate(_asOfDate, q.CurvePoints, _pricings.Values), Self);
             }
         }
 

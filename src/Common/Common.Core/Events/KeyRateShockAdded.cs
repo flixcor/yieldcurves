@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Common.Core.Events
 {
@@ -11,7 +12,7 @@ namespace Common.Core.Events
             Order = order;
             ShockTarget = shockTarget;
             Shift = shift;
-            Maturities = maturities;
+            Maturities = maturities.ToImmutableArray();
         }
 
         [JsonConstructor]
@@ -23,6 +24,6 @@ namespace Common.Core.Events
         public int Order { get; }
         public string ShockTarget { get; }
         public double Shift { get; }
-        public ICollection<double> Maturities { get; }
+        public ImmutableArray<double> Maturities { get; }
     }
 }
