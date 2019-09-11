@@ -4,6 +4,7 @@ open System
 open System.Text.RegularExpressions
 
 type Date = private Date of DateTime
+type FuturesContract = FuturesContract of Date
 
 type Calendar = { weekendDays:System.DayOfWeek Set; holidays:Date Set }
 
@@ -12,14 +13,14 @@ type Tenor = { years:int; months:int; days:int; }
 type Period = { startDate:Date; endDate:Date }
 
 type DayCountConvention =
-    |Actual360
+    | Actual360
 
 type RollRule =
-    | Actual = 0
-    | Following = 1
-    | Previous = 2
-    | ModifiedFollowing = 3
-    | ModifiedPrevious = 4
+    | Actual
+    | Following
+    | Previous
+    | ModifiedFollowing
+    | ModifiedPrevious
 
 
 
@@ -28,6 +29,34 @@ module Date =
 
     let create (dateTime:DateTime) =
         Date dateTime.Date
+
+    let private tryCreateSingle (s:string) =
+        System.DateTime.TryParse s
+        //(couldParse, parsedDate)
+
+    let tryCreate (s:string) =
+        let couldParse, parsedDate = System.DateTime.TryParse(s)
+        if couldParse then
+            parsedDate |> create |> Ok
+        else
+            Error "Not valid"
+    
+    
+
+    let tryCreateAll (s:string Set) =
+        Set.map tryCreate s
+        |> List.ofSeq
+        |> Result.sequence
+        |> Result.map Set.ofList
+
+
+
+module FuturesContract =
+    let tryCreate s = 
+        Date.tryCreate s
+        |> Result.map FuturesContract
+
+    
 
     
         
@@ -106,8 +135,7 @@ module Test =
         let secondDate' = Date.value secondDate
         firstDate'.Month = secondDate'.Month
 
-    
-
+  
 
     let getMaturity period dcc =
         match dcc with
@@ -217,21 +245,15 @@ module Test =
     let roll rule calendar date =
         match rule with
         | RollRule.Actual -> 
-            Ok date
+            date
         | RollRule.Following -> 
             rollFollowing calendar date
-            |> Ok
         | RollRule.Previous -> 
             rollPrevious calendar date
-            |> Ok
         | RollRule.ModifiedFollowing -> 
             rollModifiedFollowing calendar date
-            |> Ok
         | RollRule.ModifiedPrevious -> 
             rollModifiedPrevious calendar date
-            |> Ok
-        | _ -> 
-            Error "Invalid RollRule"
     
 
     let rec rollByFollowing x calendar date =
@@ -272,31 +294,25 @@ module Test =
 
     let rollBy n rule calendar (date:Date) =
         match n with
-        | 0 -> Ok date
+        | 0 -> date
         | x -> 
             match rule with
             | RollRule.Actual -> 
                 addDays x date 
-                |> Ok
             | RollRule.Following -> 
                 rollByFollowing x calendar date
-                |> Ok
             | RollRule.Previous -> 
                 rollByPrevious x calendar date
-                |> Ok
             | RollRule.ModifiedFollowing -> 
                 rollByModifiedFollowing x calendar date
-                |> Ok
             | RollRule.ModifiedPrevious -> 
                 rollByModifiedPrevious x calendar date
-                |> Ok
-            | _ -> 
-                Error "Invalid RollRule"
     
     let rec findDf interpolate sampleDate =
         function
             // exact match
-            (dpDate:Date, dpFactor:double) :: tail when dpDate = sampleDate
+            (dpDate:Date, dpFactor:double) :: tail 
+                when dpDate = sampleDate
             -> dpFactor
                         
             // falls between two points - interpolate    
@@ -372,8 +388,8 @@ module Test =
                 | BasisPoints bp -> bp
         end
                     
-    type FuturesContract = Date
-    let contract d = date d
+    
+    let contract d = Date.tryCreate d
     
     type QuoteType =
     | Overnight                     // the overnight rate (one day period)
@@ -431,56 +447,83 @@ module Test =
             bootstrapSwaps dayCount spotDate calendar tail ((qDate, newDf) :: discountCurve)
             | [] -> discountCurve
     
-    let USD = { weekendDays = Set [ System.DayOfWeek.Saturday; System.DayOfWeek.Sunday ]; 
-                holidays = Set [ date "2009-01-01"; 
-                                 date "2009-01-19"; 
-                                 date "2009-02-16"; 
-                                 date "2009-05-25"; 
-                                 date "2009-07-03"; 
-                                 date "2009-09-07"; 
-                                 date "2009-10-12"; 
-                                 date "2009-11-11"; 
-                                 date "2009-11-26"; 
-                                 date "2009-12-25" ] }
+    let USD = 
+        let ding d = 
+            { weekendDays = Set [ System.DayOfWeek.Saturday; System.DayOfWeek.Sunday ]; holidays = d}
+        Set [
+            "2009-01-01"; 
+            "2009-01-19"; 
+            "2009-02-16"; 
+            "2009-05-25"; 
+            "2009-07-03"; 
+            "2009-09-07"; 
+            "2009-10-12"; 
+            "2009-11-11"; 
+            "2009-11-26"; 
+            "2009-12-25" ]
+            |> Date.tryCreateAll
+            |> Result.map ding 
+
+        
+
+        
             
-    let curveDate = date "2009-05-01"
-    let spotDate = rollBy 2 RollRule.Following USD curveDate
+    let curveDate = Date.tryCreate "2009-05-01"
+        
+
+    let spotDate = Result.lift2 (rollBy 2 RollRule.Following) USD curveDate
     
-    let quotes = [ (Overnight, 0.045);
-                   (TomorrowNext, 0.045);
-                   (Cash (tenor "1W"), 0.0462);
-                   (Cash (tenor "2W"), 0.0464);
-                   (Cash (tenor "3W"), 0.0465);
-                   (Cash (tenor "1M"), 0.0467);
-                   (Cash (tenor "3M"), 0.0493);
-                   (Futures (contract "Jun2009"), 95.150);
-                   (Futures (contract "Sep2009"), 95.595);
-                   (Futures (contract "Dec2009"), 95.795);
-                   (Futures (contract "Mar2010"), 95.900);
-                   (Futures (contract "Jun2010"), 95.910);
-                   (Swap (tenor "2Y"), 0.04404);
-                   (Swap (tenor "3Y"), 0.04474);
-                   (Swap (tenor "4Y"), 0.04580);
-                   (Swap (tenor "5Y"), 0.04686);
-                   (Swap (tenor "6Y"), 0.04772);
-                   (Swap (tenor "7Y"), 0.04857);
-                   (Swap (tenor "8Y"), 0.04924);
-                   (Swap (tenor "9Y"), 0.04983);
-                   (Swap (tenor "10Y"), 0.0504);
-                   (Swap (tenor "12Y"), 0.05119);
-                   (Swap (tenor "15Y"), 0.05201);
-                   (Swap (tenor "20Y"), 0.05276);
-                   (Swap (tenor "25Y"), 0.05294);
-                   (Swap (tenor "30Y"), 0.05306) ]
+    let dd r a =
+        (a, r)
+
+    let tryParse c parser str value =
+        parser str
+        |> Result.map c
+        |> Result.map (dd value)
+
+
+
+        
+
+    let quotes = [ (Overnight, 0.045) |> Ok;
+                   (TomorrowNext, 0.045) |> Ok;
+                   tryParse Cash Tenor.create "1W" 0.0462;
+                   tryParse Cash Tenor.create "2W" 0.0464;
+                   tryParse Cash Tenor.create "3W" 0.0465;
+                   tryParse Cash Tenor.create "1M" 0.0467;
+                   tryParse Cash Tenor.create "3M" 0.0493;
+                   tryParse Futures FuturesContract.tryCreate "Jun2009" 95.150;
+                   tryParse Futures FuturesContract.tryCreate "Jun2009" 95.150;
+                   tryParse Futures FuturesContract.tryCreate "Sep2009" 95.595;
+                   tryParse Futures FuturesContract.tryCreate "Dec2009" 95.795;
+                   tryParse Futures FuturesContract.tryCreate "Mar2010" 95.900;
+                   tryParse Futures FuturesContract.tryCreate "Jun2010" 95.910;
+                   tryParse Swap Tenor.create "2Y" 0.04404;
+                   tryParse Swap Tenor.create "3Y" 0.04474;
+                   tryParse Swap Tenor.create "4Y" 0.04580;
+                   tryParse Swap Tenor.create "5Y" 0.04686;
+                   tryParse Swap Tenor.create "6Y" 0.04772;
+                   tryParse Swap Tenor.create "7Y" 0.04857;
+                   tryParse Swap Tenor.create "8Y" 0.04924;
+                   tryParse Swap Tenor.create "9Y" 0.04983;
+                   tryParse Swap Tenor.create "10Y" 0.0504;
+                   tryParse Swap Tenor.create "12Y" 0.05119;
+                   tryParse Swap Tenor.create "15Y" 0.05201;
+                   tryParse Swap Tenor.create "20Y" 0.05276;
+                   tryParse Swap Tenor.create "25Y" 0.05294;
+                   tryParse Swap Tenor.create "30Y" 0.05306 ]
+                   |> Result.sequence
     
     let spotPoints = quotes
-                        |> List.choose (fun (t, q) -> 
-                            match t with
-                            | Overnight _ -> Some (rollBy 1 RollRule.Following USD curveDate, q)
-                            | TomorrowNext _ -> Some (rollBy 2 RollRule.Following USD curveDate, q)
-                            | TomorrowTomorrowNext _ -> Some (rollBy 3 RollRule.Following USD curveDate, q)
-                            | _ -> None)
-                        |> List.sortBy (fun (d, _) -> d)
+                        |> Result.map 
+                            (List.choose (fun (t, q) -> 
+                                match t with
+                                | Overnight _ -> Some (rollBy 1 RollRule.Following USD curveDate, q)
+                                | TomorrowNext _ -> Some (rollBy 2 RollRule.Following USD curveDate, q)
+                                | TomorrowTomorrowNext _ -> Some (rollBy 3 RollRule.Following USD curveDate, q)
+                                | _ -> None))
+                        |> Result.map 
+                            (List.sortBy (fun (d, _) -> d))
     
     let cashPoints = quotes
                         |> List.choose (fun (t, q) -> 
@@ -500,7 +543,7 @@ module Test =
     let (ec, _) = futuresQuotes.[futuresQuotes.Length - 1]   
     let futuresStartDate = findNthWeekDay 3 System.DayOfWeek.Wednesday sc 
                             |> roll RollRule.ModifiedFollowing USD
-    let futuresEndDate = (new Date(ec.Year, ec.Month, 1)).AddMonths(3)
+    let futuresEndDate = (new DateTime(ec.Year, ec.Month, 1)).AddMonths(3)
     
     // "invent" an additional contract to capture the end of the futures schedule
     let endContract = (futuresEndDate, 0.0)
@@ -519,12 +562,14 @@ module Test =
                             | _ -> None)
                         |> List.sortBy (fun (d, _) -> d)
     
-    let discountFactors = [ (curveDate, 1.0) ]
-                            |> bootstrap Actual360 spotPoints 
-                            |> bootstrapCash Actual360 spotDate cashPoints
-                            |> bootstrapFutures Actual360 (Some futuresStartDate) futuresPoints
-                            |> bootstrapSwaps Actual360 spotDate USD swapPoints
-                            |> Seq.sortBy (fun (qDate, _) -> qDate)
+    let discountFactors = 
+        let actual360 period = getMaturity period Actual360
+        [ (curveDate, 1.0) ]
+        |> bootstrap actual360 spotPoints 
+        |> bootstrapCash actual360 spotDate cashPoints
+        |> bootstrapFutures actual360 (Some futuresStartDate) futuresPoints
+        |> bootstrapSwaps actual360 spotDate USD swapPoints
+        |> Seq.sortBy (fun (qDate, _) -> qDate)
     
     printfn "Discount Factors"
     Seq.iter (fun (d:Date, v) -> printfn "\t%s\t%.13F" (d.ToString("yyyy-MM-dd")) v) discountFactors
