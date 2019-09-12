@@ -40,9 +40,8 @@ namespace PricePublisher.Service.Features
                     var instrumentResult = await _readModelRepository.Get(command.InstrumentId).ToResult();
                     var currencyResult = Currency.FromString(command.PriceCurrency);
 
-                    return await Result
-                        .Combine(instrumentResult, currencyResult)
-                        .Promise(() =>
+                    var result = await Result
+                        .Combine(instrumentResult, currencyResult, (i, c) =>
                         {
                             var currency = currencyResult.Content;
 
@@ -51,6 +50,8 @@ namespace PricePublisher.Service.Features
 
                             return _repository.SaveAsync(pricing);
                         });
+
+                    return result;
                 }
 
                 public Task Handle(InstrumentCreated @event, CancellationToken cancellationToken)

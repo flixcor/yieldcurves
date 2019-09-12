@@ -15,8 +15,7 @@ namespace CalculationEngine.Service.Domain
             var matchingPricesResult = TryGetAllMatchingPrices(asOfDate, marketCurve, pricings);
             var recipeResult = TryMap(recipe);
 
-            return Result.Combine(matchingPricesResult, recipeResult)
-                .Promise(()=> recipeResult.Content.ApplyTo(matchingPricesResult.Content));
+            return Result.Combine(matchingPricesResult, recipeResult, (p, r) => r.ApplyTo(p));
         }
 
         public static Result<ImmutableArray<CurvePoint>> TryGetAllMatchingPrices(DateTime asOfDate, ICollection<CurvePointAdded> marketCurve, ICollection<InstrumentPricingPublished> pricings)
@@ -25,8 +24,7 @@ namespace CalculationEngine.Service.Domain
             var pointResult = marketCurve.Select(TryMap).Convert();
             var date = Date.FromDateTime(asOfDate);
 
-            return Result.Combine(pricingResult, pointResult)
-                .Promise(() => GetPointsFromPricings(date, pointResult.Content, pricingResult.Content));
+            return Result.Combine(pricingResult, pointResult, (pr, p) => GetPointsFromPricings(date, p, pr));
         }
 
         private static Result<ImmutableArray<CurvePoint>> GetPointsFromPricings(Date asOfDate, ICollection<PointRecipe> recipes, ICollection<PublishedPricing> pricings) => 
@@ -41,11 +39,10 @@ namespace CalculationEngine.Service.Domain
             var tenorResult = e.Tenor.TryParseEnum<Tenor>();
 
             return Result
-                .Combine(priceTypeResult, tenorResult)
-                .Promise(() =>
+                .Combine(priceTypeResult, tenorResult, (p, t) =>
                 {
                     var dateLag = new DateLag(e.DateLag);
-                    return new PointRecipe(e.InstrumentId, tenorResult.Content, dateLag, priceTypeResult.Content);
+                    return new PointRecipe(e.InstrumentId, t, dateLag, p);
                 });
         }
 
