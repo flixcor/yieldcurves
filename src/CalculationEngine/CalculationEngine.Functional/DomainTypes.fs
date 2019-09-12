@@ -4,7 +4,6 @@ open System
 open System.Text.RegularExpressions
 
 type Date = private Date of DateTime
-type FuturesContract = FuturesContract of Date
 
 type Calendar = { weekendDays:System.DayOfWeek Set; holidays:Date Set }
 
@@ -22,6 +21,46 @@ type RollRule =
     | ModifiedFollowing
     | ModifiedPrevious
 
+[<Measure>] type bp
+[<Measure>] type percent
+[<Measure>] type price
+
+
+type InterestRateQuote =
+    | Rate of float
+    | Percent of float<percent>
+    | BasisPoints of float<bp>
+    with
+        member x.ToRate() =
+            match x with
+            | Rate r -> r
+            | Percent p -> p / 100.0<percent>
+            | BasisPoints bp -> bp / 10000.0<bp>
+                    
+        member x.ToPercentage() =
+            match x with
+            | Rate r -> r * 100.0<percent>
+            | Percent p -> p
+            | BasisPoints bp -> bp / 100.0<bp/percent>
+                    
+        member x.ToBasisPoints() =
+            match x with
+            | Rate r -> r * 10000.0<bp>
+            | Percent p -> p * 100.0<bp/percent>
+            | BasisPoints bp -> bp
+    end
+
+
+type QuoteType =
+    | Overnight                     // the overnight rate (one day period)
+    | TomorrowNext                  // the one day period starting "tomorrow"
+    | TomorrowTomorrowNext          // the one day period starting the day after "tomorrow"
+    | Cash of Tenor                 // cash deposit period in days, weeks, months
+    | Futures of Date    // year and month of futures contract expiry
+    | Swap of Tenor                 // swap period in years
+
+
+ type Quote = QuoteType * float
 
 
 module Date = 
@@ -40,6 +79,10 @@ module Date =
             parsedDate |> create |> Ok
         else
             Error "Not valid"
+
+    let toString d s =
+        let d' = value d
+        d'.ToString(s:string)
     
     
 
@@ -50,15 +93,6 @@ module Date =
         |> Result.map Set.ofList
 
 
-
-module FuturesContract =
-    let tryCreate s = 
-        Date.tryCreate s
-        |> Result.map FuturesContract
-
-    
-
-    
         
 
 
@@ -357,47 +391,13 @@ module Test =
             _computeSwapDf -1.0 spotDate qQuote guessDiscountCurve swapSchedule
         spotDf * (swapVal + swapDf)
     
-    [<Measure>] type bp
-    [<Measure>] type percent
-    [<Measure>] type price
+    
             
     let convertPercentToRate (x:float<percent>) = x / 100.0<percent>
     let convertPriceToRate (x:float<price>) = (100.0<price> - x) / 100.0<price>
-            
-    type InterestRateQuote =
-        | Rate of float
-        | Percent of float<percent>
-        | BasisPoints of float<bp>
-        with
-            member x.ToRate() =
-                match x with
-                | Rate r -> r
-                | Percent p -> p / 100.0<percent>
-                | BasisPoints bp -> bp / 10000.0<bp>
-                        
-            member x.ToPercentage() =
-                match x with
-                | Rate r -> r * 100.0<percent>
-                | Percent p -> p
-                | BasisPoints bp -> bp / 100.0<bp/percent>
-                        
-            member x.ToBasisPoints() =
-                match x with
-                | Rate r -> r * 10000.0<bp>
-                | Percent p -> p * 100.0<bp/percent>
-                | BasisPoints bp -> bp
-        end
-                    
-    
+
     let contract d = Date.tryCreate d
     
-    type QuoteType =
-    | Overnight                     // the overnight rate (one day period)
-    | TomorrowNext                  // the one day period starting "tomorrow"
-    | TomorrowTomorrowNext          // the one day period starting the day after "tomorrow"
-    | Cash of Tenor                 // cash deposit period in days, weeks, months
-    | Futures of FuturesContract    // year and month of futures contract expiry
-    | Swap of Tenor                 // swap period in years
     
     // Bootstrap the next discount factor from the previous one
     let rec bootstrap dayCount quotes discountCurve =
@@ -447,136 +447,104 @@ module Test =
             bootstrapSwaps dayCount spotDate calendar tail ((qDate, newDf) :: discountCurve)
             | [] -> discountCurve
     
-    let USD = 
-        let ding d = 
-            { weekendDays = Set [ System.DayOfWeek.Saturday; System.DayOfWeek.Sunday ]; holidays = d}
-        Set [
-            "2009-01-01"; 
-            "2009-01-19"; 
-            "2009-02-16"; 
-            "2009-05-25"; 
-            "2009-07-03"; 
-            "2009-09-07"; 
-            "2009-10-12"; 
-            "2009-11-11"; 
-            "2009-11-26"; 
-            "2009-12-25" ]
-            |> Date.tryCreateAll
-            |> Result.map ding 
 
-        
-
-        
-            
-    let curveDate = Date.tryCreate "2009-05-01"
-        
-
-    let spotDate = Result.lift2 (rollBy 2 RollRule.Following) USD curveDate
-    
-    let dd r a =
-        (a, r)
-
-    let tryParse c parser str value =
-        parser str
-        |> Result.map c
-        |> Result.map (dd value)
-
-
-
-        
-
-    let quotes = [ (Overnight, 0.045) |> Ok;
-                   (TomorrowNext, 0.045) |> Ok;
-                   tryParse Cash Tenor.create "1W" 0.0462;
-                   tryParse Cash Tenor.create "2W" 0.0464;
-                   tryParse Cash Tenor.create "3W" 0.0465;
-                   tryParse Cash Tenor.create "1M" 0.0467;
-                   tryParse Cash Tenor.create "3M" 0.0493;
-                   tryParse Futures FuturesContract.tryCreate "Jun2009" 95.150;
-                   tryParse Futures FuturesContract.tryCreate "Jun2009" 95.150;
-                   tryParse Futures FuturesContract.tryCreate "Sep2009" 95.595;
-                   tryParse Futures FuturesContract.tryCreate "Dec2009" 95.795;
-                   tryParse Futures FuturesContract.tryCreate "Mar2010" 95.900;
-                   tryParse Futures FuturesContract.tryCreate "Jun2010" 95.910;
-                   tryParse Swap Tenor.create "2Y" 0.04404;
-                   tryParse Swap Tenor.create "3Y" 0.04474;
-                   tryParse Swap Tenor.create "4Y" 0.04580;
-                   tryParse Swap Tenor.create "5Y" 0.04686;
-                   tryParse Swap Tenor.create "6Y" 0.04772;
-                   tryParse Swap Tenor.create "7Y" 0.04857;
-                   tryParse Swap Tenor.create "8Y" 0.04924;
-                   tryParse Swap Tenor.create "9Y" 0.04983;
-                   tryParse Swap Tenor.create "10Y" 0.0504;
-                   tryParse Swap Tenor.create "12Y" 0.05119;
-                   tryParse Swap Tenor.create "15Y" 0.05201;
-                   tryParse Swap Tenor.create "20Y" 0.05276;
-                   tryParse Swap Tenor.create "25Y" 0.05294;
-                   tryParse Swap Tenor.create "30Y" 0.05306 ]
-                   |> Result.sequence
-    
-    let spotPoints = quotes
-                        |> Result.map 
+    let getSpotPoints quotes calendar curveDate = 
+                            quotes
+                            |>
                             (List.choose (fun (t, q) -> 
                                 match t with
-                                | Overnight _ -> Some (rollBy 1 RollRule.Following USD curveDate, q)
-                                | TomorrowNext _ -> Some (rollBy 2 RollRule.Following USD curveDate, q)
-                                | TomorrowTomorrowNext _ -> Some (rollBy 3 RollRule.Following USD curveDate, q)
+                                | Overnight _ -> Some (rollBy 1 RollRule.Following calendar curveDate, q)
+                                | TomorrowNext _ -> Some (rollBy 2 RollRule.Following calendar curveDate, q)
+                                | TomorrowTomorrowNext _ -> Some (rollBy 3 RollRule.Following calendar curveDate, q)
                                 | _ -> None))
-                        |> Result.map 
+                            |>
                             (List.sortBy (fun (d, _) -> d))
     
-    let cashPoints = quotes
+    let getCashPoints quotes calendar spotDate = 
+                        quotes
                         |> List.choose (fun (t, q) -> 
                             match t with
-                            | Cash c -> Some (offset c spotDate |> roll RollRule.Following USD, q)
+                            | Cash c -> Some (offset c spotDate |> roll RollRule.Following calendar, q)
                             | _ -> None)
                         |> List.sortBy (fun (d, _) -> d)
     
-    let futuresQuotes = quotes
+    let getFuturesQuotes quotes = 
+                        quotes
                         |> List.choose (fun (t, q) -> 
                             match t with
                             | Futures f -> Some (f, q)
                             | _ -> None)
                         |> List.sortBy (fun (c, _) -> c)
                                     
-    let (sc, _) = List.head futuresQuotes
-    let (ec, _) = futuresQuotes.[futuresQuotes.Length - 1]   
-    let futuresStartDate = findNthWeekDay 3 System.DayOfWeek.Wednesday sc 
-                            |> roll RollRule.ModifiedFollowing USD
-    let futuresEndDate = (new DateTime(ec.Year, ec.Month, 1)).AddMonths(3)
+
+    let getFuturesStartDate futuresQuotes calendar = 
+        let (sc, _) = List.head futuresQuotes
+        findNthWeekDay 3 System.DayOfWeek.Wednesday sc 
+                            |> Result.map (roll RollRule.ModifiedFollowing calendar)
+
+    let getFuturesEndDate (futuresQuotes : (Date * float) list) =
+        let (ec, _) = futuresQuotes.[futuresQuotes.Length - 1]
+        let ec' = Date.value ec
+        (new DateTime(ec'.Year, ec'.Month, 1)).AddMonths(3)
+        |> Date.create
     
-    // "invent" an additional contract to capture the end of the futures schedule
-    let endContract = (futuresEndDate, 0.0)
+
+    let getFuturesPoints futuresQuotes (calendar:Calendar) = 
+        let futuresEndDate = getFuturesEndDate futuresQuotes
+
+            // "invent" an additional contract to capture the end of the futures schedule
+        let endContract = (futuresEndDate, 0.0)
+        Seq.append futuresQuotes [endContract]
+        |> Seq.pairwise
+        |> Seq.map (fun ((_, q1), (c2, _)) -> 
+            (findNthWeekDay 3 System.DayOfWeek.Wednesday c2 
+                |> Result.map (roll RollRule.ModifiedFollowing calendar)
+                |> Result.map (fun d-> d, (100.0 - q1) / 100.0)))
+        |> Seq.toList
+        |> Result.sequence
                 
-    let futuresPoints = Seq.append futuresQuotes [endContract]
-                        |> Seq.pairwise
-                        |> Seq.map (fun ((_, q1), (c2, _)) -> 
-                            (findNthWeekDay 3 System.DayOfWeek.Wednesday c2 
-                                |> roll RollRule.ModifiedFollowing USD, (100.0 - q1) / 100.0))
-                        |> Seq.toList            
-                
-    let swapPoints = quotes
+    let getSwapPoints quotes spotDate calendar = 
+                        quotes
                         |> List.choose (fun (t, q) -> 
                             match t with
-                            | Swap s -> Some (offset s spotDate |> roll RollRule.Following USD, q)
+                            | Swap s -> Some (offset s spotDate |> roll RollRule.Following calendar, q)
                             | _ -> None)
                         |> List.sortBy (fun (d, _) -> d)
     
-    let discountFactors = 
-        let actual360 period = getMaturity period Actual360
+    let getDiscountFactors dcc quotes calendar curveDate spotDate = 
+        let spotPoints = getSpotPoints quotes calendar curveDate
+        let cashPoints = getCashPoints quotes calendar spotDate
+        let futuresQuotes = getFuturesQuotes quotes
+        let swapPoints = getSwapPoints quotes spotDate calendar
+
+        let futuresStartDate = getFuturesStartDate futuresQuotes calendar
+        let futuresPoints = getFuturesPoints futuresQuotes calendar
+
+        let getMaturityForDate period = getMaturity period dcc
+
+        let bootstrapFuturesFixed d = bootstrapFutures getMaturityForDate (Some d)
+        let ding d = Result.lift3 bootstrapFuturesFixed futuresStartDate futuresPoints (Ok d)
+        
+
+        
+
         [ (curveDate, 1.0) ]
-        |> bootstrap actual360 spotPoints 
-        |> bootstrapCash actual360 spotDate cashPoints
-        |> bootstrapFutures actual360 (Some futuresStartDate) futuresPoints
-        |> bootstrapSwaps actual360 spotDate USD swapPoints
-        |> Seq.sortBy (fun (qDate, _) -> qDate)
+        |> bootstrap getMaturityForDate spotPoints 
+        |> bootstrapCash getMaturityForDate spotDate cashPoints
+        |> ding
+        |> Result.map (bootstrapSwaps getMaturityForDate spotDate calendar swapPoints)
+        |> Result.map (Seq.sortBy (fun (qDate, _) -> qDate))
+
+    let getZeroCouponRates discountFactors curveDate = 
+        discountFactors 
+        |> Seq.map (fun (d, f) -> (d, 100.0 * -log(f) * 365.25 / double (dateDiff d curveDate).Days))
+
+
+// TEST SET
+//let discountFactors = getDiscountFactors 
     
-    printfn "Discount Factors"
-    Seq.iter (fun (d:Date, v) -> printfn "\t%s\t%.13F" (d.ToString("yyyy-MM-dd")) v) discountFactors
+//    printfn "Discount Factors"
+//    Seq.iter (fun (d:Date, v) -> printfn "\t%s\t%.13F" (Date.toString d "yyyy-MM-dd") v) discountFactors
                 
-    let zeroCouponRates = discountFactors 
-                          |> Seq.map (fun (d, f) 
-                                        -> (d, 100.0 * -log(f) * 365.25 / double (d - curveDate).Days))
-    
-    printfn "Zero-Coupon Rates"
-    Seq.iter (fun (d:Date, v) -> printfn "\t%s\t%.13F" (d.ToString("yyyy-MM-dd")) v) zeroCouponRates
+//    printfn "Zero-Coupon Rates"
+//    Seq.iter (fun (d:Date, v) -> printfn "\t%s\t%.13F" (Date.toString d "yyyy-MM-dd") v) zeroCouponRates
