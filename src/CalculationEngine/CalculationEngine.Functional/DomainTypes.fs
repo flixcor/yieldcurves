@@ -511,22 +511,19 @@ module Test =
                             | _ -> None)
                         |> List.sortBy (fun (d, _) -> d)
     
-    let getDiscountFactors dcc quotes calendar curveDate spotDate = 
+    let getDiscountFactors dcc calendar curveDate quotes = 
+        let spotDate = rollBy 2 RollRule.Following calendar curveDate
         let spotPoints = getSpotPoints quotes calendar curveDate
         let cashPoints = getCashPoints quotes calendar spotDate
         let futuresQuotes = getFuturesQuotes quotes
         let swapPoints = getSwapPoints quotes spotDate calendar
 
-        let futuresStartDate = getFuturesStartDate futuresQuotes calendar
-        let futuresPoints = getFuturesPoints futuresQuotes calendar
-
         let getMaturityForDate period = getMaturity period dcc
 
+        let futuresStartDate = getFuturesStartDate futuresQuotes calendar
+        let futuresPoints = getFuturesPoints futuresQuotes calendar
         let bootstrapFuturesFixed d = bootstrapFutures getMaturityForDate (Some d)
         let ding d = Result.lift3 bootstrapFuturesFixed futuresStartDate futuresPoints (Ok d)
-        
-
-        
 
         [ (curveDate, 1.0) ]
         |> bootstrap getMaturityForDate spotPoints 
@@ -535,16 +532,60 @@ module Test =
         |> Result.map (bootstrapSwaps getMaturityForDate spotDate calendar swapPoints)
         |> Result.map (Seq.sortBy (fun (qDate, _) -> qDate))
 
-    let getZeroCouponRates discountFactors curveDate = 
+    let getZeroCouponRates curveDate discountFactors  = 
         discountFactors 
         |> Seq.map (fun (d, f) -> (d, 100.0 * -log(f) * 365.25 / double (dateDiff d curveDate).Days))
 
 
+module Tester =
 // TEST SET
-//let discountFactors = getDiscountFactors 
+    let buildQuote quoteTypeMaker parser string value =
+        parser string |> Result.map quoteTypeMaker |> Result.map (fun d -> (d,value))
+
+    let noHolidays = { weekendDays = Set [ System.DayOfWeek.Saturday; System.DayOfWeek.Sunday ]; holidays =  Set.empty }
+
+    let curveDate = DateTime.Parse("2009-05-01") |> Date.create
+
+    let getDiscountFactorsWithAssumptions = Test.getDiscountFactors DayCountConvention.Actual360 noHolidays curveDate
+    let getZeroCouponRatesWithAssumptions discountFactors = Test.getZeroCouponRates curveDate discountFactors
+
     
-//    printfn "Discount Factors"
-//    Seq.iter (fun (d:Date, v) -> printfn "\t%s\t%.13F" (Date.toString d "yyyy-MM-dd") v) discountFactors
-                
-//    printfn "Zero-Coupon Rates"
-//    Seq.iter (fun (d:Date, v) -> printfn "\t%s\t%.13F" (Date.toString d "yyyy-MM-dd") v) zeroCouponRates
+
+    let disCountResult = [ Ok (Overnight, 0.045);
+            Ok (TomorrowNext, 0.045);
+            buildQuote Cash Tenor.create "1W" 0.0462;
+            buildQuote Cash Tenor.create "2W" 0.0464;
+            buildQuote Cash Tenor.create "3W" 0.0465;
+            buildQuote Cash Tenor.create "1M" 0.0467;
+            buildQuote Cash Tenor.create "3M" 0.0493;
+            buildQuote Futures Date.tryCreate "Jun2009" 95.150;
+            buildQuote Futures Date.tryCreate "Sep2009" 95.595;
+            buildQuote Futures Date.tryCreate "Dec2009" 95.795;
+            buildQuote Futures Date.tryCreate "Mar2010" 95.900;
+            buildQuote Futures Date.tryCreate "Jun2010" 95.910;
+            buildQuote Swap Tenor.create "2Y" 0.04404;
+            buildQuote Swap Tenor.create "3Y" 0.04474;
+            buildQuote Swap Tenor.create "4Y" 0.04580;
+            buildQuote Swap Tenor.create "5Y" 0.04686;
+            buildQuote Swap Tenor.create "6Y" 0.04772;
+            buildQuote Swap Tenor.create "7Y" 0.04857;
+            buildQuote Swap Tenor.create "8Y" 0.04924;
+            buildQuote Swap Tenor.create "9Y" 0.04983;
+            buildQuote Swap Tenor.create "10Y" 0.0504;
+            buildQuote Swap Tenor.create "12Y" 0.05119;
+            buildQuote Swap Tenor.create "15Y" 0.05201;
+            buildQuote Swap Tenor.create "20Y" 0.05276;
+            buildQuote Swap Tenor.create "25Y" 0.05294;
+            buildQuote Swap Tenor.create "30Y" 0.05306 ] |> Result.sequence |> Result.bind getDiscountFactorsWithAssumptions
+
+    let zeroResult = disCountResult |> Result.map getZeroCouponRatesWithAssumptions
+
+    printfn "Discount Factors"
+    match disCountResult with
+        | Ok d -> Seq.iter (fun (d:Date, v) -> printfn "\t%s\t%.13F" (Date.toString d "yyyy-MM-dd") v) d
+        | Error e -> printfn "%s" e
+    
+    printfn "Zero-Coupon Rates"
+    match zeroResult with
+        | Ok z -> Seq.iter (fun (d:Date, v) -> printfn "\t%s\t%.13F" (Date.toString d "yyyy-MM-dd") v) z
+        | Error e -> printfn "%s" e
