@@ -71,9 +71,8 @@ namespace MarketCurves.Query.Service.Features
                 var curveResult = await _curveRepo.Get(@event.Id).ToResult();
                 var instrumentResult = await _instrumentRepo.Get(@event.InstrumentId).ToResult();
 
-                await Result
-                    .Combine(curveResult, instrumentResult)
-                    .Promise(() => 
+                var ding = Result
+                    .Combine(curveResult, instrumentResult, (c,i) =>
                     {
                         var curve = curveResult.Content;
                         var instrument = instrumentResult.Content;

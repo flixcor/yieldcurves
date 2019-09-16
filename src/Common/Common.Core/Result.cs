@@ -54,6 +54,45 @@ namespace Common.Core
                 : Ok();
         }
 
+        public static Result<C> Combine<A, B, C>(Result<A> resultA, Result<B> resultB, Func<A, B, C> onSuccess)
+        {
+            if (resultA.IsSuccessful && resultB.IsSuccessful)
+            {
+                var result = onSuccess(resultA.Content, resultB.Content);
+                return Ok(result);
+            }
+
+            var messages = resultA.Messages.Concat(resultB.Messages).ToArray();
+
+            return Fail<C>(messages);
+        }
+
+        public static async Task<Result> Combine<A, B>(Result<A> resultA, Result<B> resultB, Func<A, B, Task> onSuccess)
+        {
+            if (resultA.IsSuccessful && resultB.IsSuccessful)
+            {
+                var result = onSuccess(resultA.Content, resultB.Content);
+                await result;
+                return Ok();
+            }
+
+            var messages = resultA.Messages.Concat(resultB.Messages).ToArray();
+
+            return Fail(messages);
+        }
+
+        public static Result<C> Combine<A, B, C>(Result<A> resultA, Result<B> resultB, Func<A, B, Result<C>> onSuccess)
+        {
+            if (resultA.IsSuccessful && resultB.IsSuccessful)
+            {
+                return onSuccess(resultA.Content, resultB.Content);
+            }
+
+            var messages = resultA.Messages.Concat(resultB.Messages).ToArray();
+
+            return Fail<C>(messages);
+        }
+
         public bool IsSuccessful { get; }
         public ImmutableArray<string> Messages { get; }
     }
