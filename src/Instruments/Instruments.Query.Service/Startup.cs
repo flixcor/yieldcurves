@@ -1,5 +1,6 @@
 ﻿using Common.Infrastructure.Extensions;
 using Instruments.Query.Service.Features;
+using Instruments.Query.Service.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +26,7 @@ namespace Instruments.Query.Service
         {
             services.AddControllers();
 
-            
+            services.AddSignalR();
 
             services
                 .AddMediator(typeof(GetInstrumentList).Assembly)
@@ -61,6 +62,7 @@ namespace Instruments.Query.Service
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<InstrumentHub>("/instrumenthub");
             });
 
             

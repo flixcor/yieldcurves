@@ -4,6 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
 using Common.Core.Events;
+using Instruments.Query.Service.Infrastructure;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Instruments.Query.Service.Features
 {
@@ -26,10 +28,12 @@ namespace Instruments.Query.Service.Features
             IHandleEvent<InstrumentCreated>
         {
             private readonly IReadModelRepository<InstrumentDto> _repository;
+            private readonly IHubContext<InstrumentHub> _instrumentHub;
 
-            public Handler(IReadModelRepository<InstrumentDto> repository)
+            public Handler(IReadModelRepository<InstrumentDto> repository, IHubContext<InstrumentHub> instrumentHub)
             {
                 _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+                _instrumentHub = instrumentHub;
             }
 
             public async Task<Result> Handle(GetInstrumentList query, CancellationToken cancellationToken)
@@ -38,7 +42,7 @@ namespace Instruments.Query.Service.Features
                 return new Result(instruments);
             }
 
-            public Task Handle(InstrumentCreated @event, CancellationToken cancellationToken)
+            public async Task Handle(InstrumentCreated @event, CancellationToken cancellationToken)
             {
                 var dto = new InstrumentDto
                 {
@@ -47,7 +51,8 @@ namespace Instruments.Query.Service.Features
                     Vendor = @event.Vendor
                 };
 
-                return _repository.Insert(dto);
+                await _repository.Insert(dto);
+                await _instrumentHub.Clients.All.SendAsync(@event.GetType().Name, @event);
             }
         }
     }
