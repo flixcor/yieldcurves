@@ -37,10 +37,16 @@ export default {
   },
   methods: {
     insert(e){
-      this.$refs.compRef.insert(e);
+      const comp = this.$refs.compRef;
+      if (typeof comp.insert === "function") {
+        comp.insert(e); 
+      }
     },
     update(e){
-      this.$refs.compRef.update(e);
+      const comp = this.$refs.compRef;
+      if (typeof comp.update === "function") {
+        comp.update(e); 
+      }
     }
   },
 };
