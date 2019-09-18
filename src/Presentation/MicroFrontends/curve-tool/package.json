@@ -16,7 +16,7 @@
     "vuelidate": "^0.7.4"
   },
   "devDependencies": {
-    "@aspnet/signalr": "^1.1.4",
+    "@aspnet/signalr": "^3.0.0-preview6.19307.2",
     "@vue/cli-plugin-babel": "^3.9.0",
     "@vue/cli-plugin-eslint": "^3.9.0",
     "@vue/cli-service": "^3.9.0",

@@ -51,8 +51,10 @@ namespace Instruments.Query.Service.Features
                     Vendor = @event.Vendor
                 };
 
-                await _repository.Insert(dto);
-                await _instrumentHub.Clients.All.SendAsync(@event.GetType().Name, @event);
+                var repoTask = _repository.Insert(dto);
+                var hubTask = _instrumentHub.Clients.All.SendAsync("insert", dto);
+
+                await Task.WhenAll(repoTask, hubTask);
             }
         }
     }

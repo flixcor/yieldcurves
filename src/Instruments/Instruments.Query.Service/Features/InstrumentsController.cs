@@ -23,7 +23,7 @@ namespace Instruments.Query.Service.Features
         {
             var query = new GetInstrumentList();
             var result = await _mediator.Send(query);
-            return this.ComponentActionResult(result, "get-instrument-list");
+            return this.ComponentActionResult(result, "get-instrument-list", "instrumenthub");
         }
     }
 }

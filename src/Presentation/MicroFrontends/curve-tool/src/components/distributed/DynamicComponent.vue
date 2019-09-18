@@ -2,6 +2,7 @@
   <Component
     :is="computedComponent"
     v-bind="props"
+    ref="compRef"
     v-on="$listeners"
   />
 </template>
@@ -33,6 +34,14 @@ export default {
         this.computedComponent = () => externalComponent(this.component);
       },
     },
+  },
+  methods: {
+    insert(e){
+      this.$refs.compRef.insert(e);
+    },
+    update(e){
+      this.$refs.compRef.update(e);
+    }
   },
 };
 </script>

@@ -15,6 +15,11 @@ namespace Common.Core
         {
             return new FrontendComponent<T>(url, data);
         }
+
+        public static RealtimeFrontendComponent<T> Create<T>(T data, string url, string hub) where T : class
+        {
+            return new RealtimeFrontendComponent<T>(url, hub, data);
+        }
     }
 
     public class FrontendComponent<T> : FrontendComponent
@@ -25,5 +30,15 @@ namespace Common.Core
         }
 
         public T Data { get; }
+    }
+
+    public class RealtimeFrontendComponent<T> : FrontendComponent<T>
+    {
+        internal RealtimeFrontendComponent(string url, string hub, T data): base(url, data)
+        {
+            Hub = hub;
+        }
+
+        public string Hub { get; }
     }
 }

@@ -8,9 +8,12 @@ namespace Common.Infrastructure.Extensions
 {
     public static class ControllerExtensions
     {
+        private static string GetBaseUrl(this ControllerBase controller) => 
+            $"{controller.Request.Scheme}://{controller.Request.Host}{controller.Request.PathBase}";
+
         private static string GetComponentUrl(this ControllerBase controller, string componentName)
         {
-            var baseUrl = $"{controller.Request.Scheme}://{controller.Request.Host}{controller.Request.PathBase}";
+            var baseUrl = controller.GetBaseUrl();
 
             using var physicalProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
             var contents = physicalProvider.GetDirectoryContents("wwwroot");
@@ -50,6 +53,17 @@ namespace Common.Infrastructure.Extensions
             return result.IsSuccessful
                 ? (ActionResult)controller.Ok(FrontendComponent.Create(result.Content, url))
                 : controller.BadRequest(result.Messages);
+        }
+
+        public static IActionResult ComponentActionResult<T>(this ControllerBase controller, T t, string componentName, string hubName) where T : class
+        {
+            var hub = $"{controller.GetBaseUrl()}/{hubName}";
+
+            var url = controller.GetComponentUrl(componentName);
+            
+            return t != null
+                ? (ActionResult)controller.Ok(FrontendComponent.Create(t, url, hub))
+                : controller.NotFound();
         }
     }
 }
