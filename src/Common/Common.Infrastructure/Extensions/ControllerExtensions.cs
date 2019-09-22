@@ -55,9 +55,9 @@ namespace Common.Infrastructure.Extensions
                 : controller.BadRequest(result.Messages);
         }
 
-        public static IActionResult ComponentActionResult<T>(this ControllerBase controller, T t, string componentName, string hubName) where T : class
+        public static IActionResult HubComponentActionResult<T>(this ControllerBase controller, T t, string componentName) where T : class
         {
-            var hub = $"{controller.GetBaseUrl()}/{hubName}";
+            var hub = $"{controller.GetBaseUrl()}/hub";
 
             var url = controller.GetComponentUrl(componentName);
             

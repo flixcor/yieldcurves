@@ -10,11 +10,11 @@ namespace Common.Infrastructure.EfCore
 {
     public class GenericDbContext : DbContext
     {
-        private readonly IList<Type> _readModelTypes;
+        private readonly IEnumerable<Type> _readModelTypes;
 
-        public GenericDbContext(DbContextOptions options, params Assembly[] assembliesToScan) : base(options)
+        public GenericDbContext(DbContextOptions options, IEnumerable<Type> types) : base(options)
         {
-            _readModelTypes = typeof(ReadObject).GetDescendantTypes(assembliesToScan).ToList();
+            _readModelTypes = types;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

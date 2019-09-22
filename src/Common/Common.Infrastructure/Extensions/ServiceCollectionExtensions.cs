@@ -1,6 +1,8 @@
 ﻿using Common.Core;
 using Common.Core.Extensions;
+using Common.Infrastructure.DependencyInjection;
 using Common.Infrastructure.EfCore;
+using Common.Infrastructure.SignalR;
 using EventStore.ClientAPI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +14,7 @@ namespace Common.Infrastructure.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddRedis(this IServiceCollection services, string connectionString, params Assembly[] assembliesToScan)
+        public static IReadModelImplementation AddRedis(this IServiceCollection services, string connectionString, params Assembly[] assembliesToScan)
         {
             services
                 .AddScoped<IConnectionMultiplexer>(x => ConnectionMultiplexer.Connect(connectionString))
@@ -34,7 +36,7 @@ namespace Common.Infrastructure.Extensions
 
             services.AddScoped<IReadModelRepository<EventPosition>, RedisReadModelRepository<EventPosition>>();
 
-            return services;
+            return new ReadModelImplementation(services, readObjects);
         }
 
         public static IServiceCollection AddMediator(this IServiceCollection services, params Assembly[] assembliesToScan)
@@ -66,21 +68,47 @@ namespace Common.Infrastructure.Extensions
                 .AddScoped<IRepository>(x=> new EventStoreRepository(connectionString));
         }
 
-        public static IServiceCollection AddEfCore(this IServiceCollection services, string connectionString, Assembly assemblyToScan)
+        public static IReadModelImplementation AddEfCore(this IServiceCollection services, string connectionString, params Assembly[] assemblyToScan)
         {
-            return services
+            var readModelTypes = typeof(ReadObject).GetDescendantTypes(assemblyToScan).ToList();
+
+            var result = services
                 .AddScoped(_ => 
                 {
                     var optionsBuilder = new DbContextOptionsBuilder<GenericDbContext>();
                     optionsBuilder.UseSqlServer(connectionString);
 
-                    var context = new GenericDbContext(optionsBuilder.Options, assemblyToScan);
+                    var context = new GenericDbContext(optionsBuilder.Options, readModelTypes);
                     context.Database.EnsureCreated();
 
                     return context;
                 })
                 .AddScoped<IReadModelRepository<EventPosition>, EfCoreRepository<EventPosition>>()
                 .AddScoped<IUnitOfWork, EfCoreUnitOfWork>();
+
+            return new ReadModelImplementation(services, readModelTypes);
+        }
+
+        public static IServiceCollection WithSignalR(this IReadModelImplementation readModelImplementation)
+        {
+            var services = readModelImplementation.GetServiceCollection();
+
+            var usedTypes = readModelImplementation.GetUsedTypes();
+            
+            var decorators = usedTypes
+                .Select(r => new
+                {
+                    @interface = typeof(IReadModelRepository<>).MakeGenericType(r),
+                    implementation = typeof(SignalRRepositoryDecorator<>).MakeGenericType(r)
+                });
+
+
+            foreach (var decorator in decorators)
+            {
+                services.Decorate(decorator.@interface, decorator.implementation);
+            }
+
+            return services;
         }
     }
 }

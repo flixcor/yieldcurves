@@ -3,7 +3,6 @@ using Instruments.Query.Service.Features;
 using Instruments.Query.Service.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -31,6 +30,7 @@ namespace Instruments.Query.Service
             services
                 .AddMediator(typeof(GetInstrumentList).Assembly)
                 .AddRedis("localhost:6379", typeof(InstrumentDto).Assembly)
+                    .WithSignalR()
                 .AddEventStore(Configuration.GetConnectionString("EventStore"));
 
             services.AddCors(options =>
@@ -38,7 +38,7 @@ namespace Instruments.Query.Service
                 options.AddPolicy(MyAllowSpecificOrigins,
                 builder =>
                 {
-                    builder.WithOrigins("http://localhost:8081","http://127.0.0.1:8081").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
+                    builder.WithOrigins("http://localhost:8081", "http://127.0.0.1:8081").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
                 });
             });
         }
@@ -62,13 +62,13 @@ namespace Instruments.Query.Service
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<InstrumentHub>("/instrumenthub");
+                endpoints.MapHub<InstrumentHub>("/hub");
             });
 
-            
 
-            
-            
+
+
+
         }
     }
 }

@@ -35,6 +35,7 @@ namespace PricePublisher.Query.Service
 
             services
                 .AddEfCore(Configuration.GetConnectionString("SqlServer"), typeof(GetPriceList).Assembly)
+                    .WithSignalR()
                 .AddEventStore(Configuration.GetConnectionString("EventStore"))
                 .AddMediator(typeof(GetPriceList).Assembly);
         }
