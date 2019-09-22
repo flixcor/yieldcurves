@@ -1,8 +1,9 @@
 ﻿using Common.Infrastructure.Extensions;
 using Instruments.Query.Service.Features;
-using Instruments.Query.Service.Infrastructure;
+using Instruments.Query.Service.Features.GetInstrumentList;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -28,8 +29,8 @@ namespace Instruments.Query.Service
             services.AddSignalR();
 
             services
-                .AddMediator(typeof(GetInstrumentList).Assembly)
-                .AddRedis("localhost:6379", typeof(InstrumentDto).Assembly)
+                .AddMediator(typeof(Features.GetInstrumentList.Query).Assembly)
+                .AddRedis("localhost:6379", typeof(Dto).Assembly)
                     .WithSignalR()
                 .AddEventStore(Configuration.GetConnectionString("EventStore"));
 
@@ -65,7 +66,7 @@ namespace Instruments.Query.Service
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<InstrumentHub>("/hub");
+                endpoints.MapHub<Hub>("/hub");
             });
 
 

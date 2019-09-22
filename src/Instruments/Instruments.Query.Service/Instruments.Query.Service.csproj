@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\GetInstrumentList\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

@@ -1,5 +1,5 @@
 <template>
-  <dynamic-component ref="compRef" :component="comp" :props="props" v-on="$listeners" />
+  <dynamic-component :component="comp" :props="props" v-on="$listeners" />
 </template>
 
 <script>
@@ -41,12 +41,22 @@ export default {
     },
     async init(){
       await this.fetch();
-      if (this.hub) {
+      if (this.hub && Array.isArray(this.props.entities)) {
         const conn = await getConnection(this.hub);
-        conn.on("insert", e => this.$refs.compRef.insert(e));
-        conn.on("update", e => this.$refs.compRef.update(e));
+        conn.on("insert", e => this.insert(e));
+        conn.on("update", e => this.update(e));
         await conn.start();
       }
+    },
+    update(e){
+      this.props.entities = this.props.entities.map((x) => {
+        if (x.id === e.id) return e;
+        return x;
+      });
+    },
+    insert(e){
+      if (this.props.entities.find(x => x.data.id === e.id)) return;
+      this.props.entities = [e, ...this.props.entities];
     },
   }
 };

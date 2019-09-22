@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "vue-cli-service build --target lib --formats umd --no-clean --name get-instrument-list.[chunkhash] ./src/components/GetInstrumentList.vue",
+    "build": "vue-cli-service build --target lib --formats umd --no-clean --name get-instrument-list.[chunkhash] ./Features/GetInstrumentList/Component.vue",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

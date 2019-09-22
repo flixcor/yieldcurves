@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Common.Core;
 using Microsoft.AspNetCore.Mvc;
@@ -63,6 +64,19 @@ namespace Common.Infrastructure.Extensions
             
             return t != null
                 ? (ActionResult)controller.Ok(FrontendComponent.Create(t, url, hub))
+                : controller.NotFound();
+        }
+
+        public static IActionResult HubComponentActionResult<T>(this ControllerBase controller, IEnumerable<T> t, string componentName) where T : class
+        {
+            var hub = $"{controller.GetBaseUrl()}/hub";
+
+            var url = controller.GetComponentUrl(componentName);
+
+            var entitiesWrapped = t.Wrap();
+
+            return t != null
+                ? (ActionResult)controller.Ok(FrontendComponent.Create(entitiesWrapped, url, hub))
                 : controller.NotFound();
         }
     }

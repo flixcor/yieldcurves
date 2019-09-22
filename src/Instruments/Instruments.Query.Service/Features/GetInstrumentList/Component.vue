@@ -12,7 +12,7 @@
           <md-table-head>Vendor</md-table-head>
           <md-table-head>Description</md-table-head>
         </md-table-row>
-        <md-table-row v-for="instrument of instruments" :key="instrument.id">
+        <md-table-row v-for="instrument of entities" :key="instrument.id">
           <md-table-cell>{{instrument.vendor}}</md-table-cell>
           <md-table-cell>{{instrument.description}}</md-table-cell>
         </md-table-row>
@@ -22,13 +22,10 @@
 </template>
 <script>
 export default {
-  props: ["instruments"],
+  props: ["entities"],
   methods: {
     onCreateClick() {
       this.$emit("create");
-    },
-    insert(e) {
-      this.instruments = [e, ...this.instruments];
     },
   }
 };
