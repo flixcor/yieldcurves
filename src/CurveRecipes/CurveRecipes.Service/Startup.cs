@@ -32,8 +32,9 @@ namespace CurveRecipes.Service
 
             
 
-            services.AddRedis("localhost:6379", typeof(MarketCurveDto).Assembly)
-                .AddMediator(typeof(CreateCurveRecipe).Assembly)
+            services.AddRedis("localhost:6379", typeof(MarketCurveDto).Assembly);
+
+            services.AddMediator(typeof(CreateCurveRecipe).Assembly)
                 .AddEventStore(Configuration.GetConnectionString("EventStore"))
                 .AddAutoMapper(typeof(CreateCurveRecipe).Assembly, typeof(Shift).Assembly);
 

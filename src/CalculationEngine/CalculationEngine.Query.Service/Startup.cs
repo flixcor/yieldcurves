@@ -2,6 +2,7 @@
 using Common.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,12 +31,15 @@ namespace CalculationEngine.Query.Service
                     builder.WithOrigins("http://localhost:8081", "http://127.0.0.1:8081").WithMethods("GET", "POST").AllowAnyHeader();
                 });
             });
+            
+            services.AddSignalR();
 
             services.AddControllers();
 
             services
-                .AddEfCore(Configuration.GetConnectionString("SqlServer"), typeof(GetCalculatedCurveDetail).Assembly)
-                .AddEventStore(Configuration.GetConnectionString("EventStore"))
+                .AddEfCore(Configuration.GetConnectionString("SqlServer"), typeof(GetCalculatedCurveDetail).Assembly);
+
+            services.AddEventStore(Configuration.GetConnectionString("EventStore"))
                 .AddMediator(typeof(GetCalculatedCurveDetail).Assembly);
         }
 
@@ -58,6 +62,7 @@ namespace CalculationEngine.Query.Service
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<Hub>("/hub");
             });
 
             app.UseStaticFiles();

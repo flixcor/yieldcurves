@@ -30,12 +30,13 @@ namespace MarketCurves.Service
 
             // Register the Swagger services
 
-            
+
 
             services
                 .AddMediator(typeof(CreateMarketCurve).Assembly)
-                .AddRedis("localhost:6379", typeof(Instrument).Assembly)
-                .AddEventStore(Configuration.GetConnectionString("EventStore"));
+                .AddRedis("localhost:6379", typeof(Instrument).Assembly);
+
+            services.AddEventStore(Configuration.GetConnectionString("EventStore"));
 
             services.AddControllers();
 

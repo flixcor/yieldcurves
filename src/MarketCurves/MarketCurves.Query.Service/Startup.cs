@@ -3,6 +3,7 @@ using MarketCurves.Query.Service.Features;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -28,7 +29,7 @@ namespace MarketCurves.Query.Service
                 .AddNewtonsoftJson(x => x.SerializerSettings.Converters.Add(new StringEnumConverter()))
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-            
+            services.AddSignalR();
 
             services
                 .AddMediator(typeof(GetMarketCurve).Assembly)
@@ -40,10 +41,12 @@ namespace MarketCurves.Query.Service
 
             services.AddCors(options =>
             {
-                options.AddPolicy(MyAllowSpecificOrigins,
-                builder =>
+                options.AddPolicy(MyAllowSpecificOrigins, builder =>
                 {
-                    builder.WithOrigins("http://localhost:8081","http://127.0.0.1:8081").WithMethods("GET").AllowAnyHeader();
+                    builder.WithOrigins("http://localhost:8081","http://127.0.0.1:8081")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
                 });
             });
         }
@@ -61,6 +64,7 @@ namespace MarketCurves.Query.Service
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<Hub>("hub");
             });
 
             app.UseStaticFiles();

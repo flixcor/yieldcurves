@@ -31,7 +31,7 @@ namespace MarketCurves.Query.Service.Features
         public async Task<IActionResult> Get(Guid id)
         {
             var result = await _requestMediator.Send(new GetMarketCurve.Query { Id = id });
-            return this.ComponentActionResult(result, "get-market-curve");
+            return this.HubComponentActionResult(result, "get-market-curve");
         }
     }
 }

@@ -3,6 +3,7 @@ using CurveRecipes.Query.Service.Features;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,9 +26,10 @@ namespace CurveRecipes.Query.Service
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-            
+            services.AddSignalR();
 
             services.AddRedis("localhost:6379", typeof(GetCurveRecipeDetail).Assembly)
+                    .WithSignalR()
                 .AddMediator(typeof(GetCurveRecipeDetail).Assembly)
                 .AddEventStore(Configuration.GetConnectionString("EventStore"));
 
@@ -38,7 +40,10 @@ namespace CurveRecipes.Query.Service
                 options.AddPolicy(MyAllowSpecificOrigins,
                 builder =>
                 {
-                    builder.WithOrigins("http://localhost:8081","http://127.0.0.1:8081").WithMethods("GET").AllowAnyHeader();
+                    builder.WithOrigins("http://localhost:8081","http://127.0.0.1:8081")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
                 });
             });
         }
@@ -53,6 +58,7 @@ namespace CurveRecipes.Query.Service
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<Hub>("/hub");
             });
 
             app.UseHttpsRedirection();

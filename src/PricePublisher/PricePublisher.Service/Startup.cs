@@ -35,8 +35,9 @@ namespace PricePublisher.Service
 
             services
                 .AddMediator(typeof(PublishPrice).Assembly)
-                .AddRedis("localhost:6379", typeof(InstrumentDto).Assembly)
-                .AddEventStore(Configuration.GetConnectionString("EventStore"))
+                .AddRedis("localhost:6379", typeof(InstrumentDto).Assembly);
+
+            services.AddEventStore(Configuration.GetConnectionString("EventStore"))
                 .AddSingleton<Func<DateTime>>(() => DateTime.UtcNow);
 
             services.AddControllers();

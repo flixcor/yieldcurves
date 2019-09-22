@@ -4,8 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
 using Common.Core.Events;
-using Instruments.Query.Service.Infrastructure;
-using Microsoft.AspNetCore.SignalR;
 
 namespace Instruments.Query.Service.Features
 {

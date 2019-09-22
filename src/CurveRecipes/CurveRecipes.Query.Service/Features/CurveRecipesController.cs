@@ -22,7 +22,7 @@ namespace CurveRecipes.Query.Service.Features
         public async Task<IActionResult> Get()
         {
             var result = await _requestMediator.Send(new GetCurveRecipeList());
-            return this.ComponentActionResult(result, "get-curve-recipe-list");
+            return this.HubComponentActionResult(result, "get-curve-recipe-list");
         }
 
         // GET api/5
