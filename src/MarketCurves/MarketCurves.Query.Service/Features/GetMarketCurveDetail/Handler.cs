@@ -46,7 +46,7 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
             var curveResult = await _curveRepo.Get(@event.Id).ToResult();
             var instrumentResult = await _instrumentRepo.Get(@event.InstrumentId).ToResult();
 
-            var ding = Result
+            await Result
                 .Combine(curveResult, instrumentResult, (c, i) =>
                 {
                     var curve = curveResult.Content;
