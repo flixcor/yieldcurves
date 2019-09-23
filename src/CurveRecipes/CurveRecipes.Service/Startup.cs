@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using CurveRecipes.Domain;
-using CurveRecipes.Service.Features;
 using Common.Infrastructure.Extensions;
+using CurveRecipes.Domain;
+using CurveRecipes.Service.Features.CreateCurveRecipe;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -30,13 +30,13 @@ namespace CurveRecipes.Service
                 .AddNewtonsoftJson(x => x.SerializerSettings.Converters.Add(new StringEnumConverter()))
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-            
+
 
             services.AddRedis("localhost:6379", typeof(MarketCurveDto).Assembly);
 
-            services.AddMediator(typeof(CreateCurveRecipe).Assembly)
+            services.AddMediator(typeof(Command).Assembly)
                 .AddEventStore(Configuration.GetConnectionString("EventStore"))
-                .AddAutoMapper(typeof(CreateCurveRecipe).Assembly, typeof(Shift).Assembly);
+                .AddAutoMapper(typeof(Command).Assembly, typeof(Shift).Assembly);
 
             services.AddControllers();
 
@@ -45,7 +45,7 @@ namespace CurveRecipes.Service
                 options.AddPolicy(MyAllowSpecificOrigins,
                 builder =>
                 {
-                    builder.WithOrigins("http://localhost:8081","http://127.0.0.1:8081").WithMethods("GET","POST").AllowAnyHeader();
+                    builder.WithOrigins("http://localhost:8081", "http://127.0.0.1:8081").WithMethods("GET", "POST").AllowAnyHeader();
                 });
             });
         }
@@ -71,8 +71,8 @@ namespace CurveRecipes.Service
                 app.UseDeveloperExceptionPage();
             }
 
-            
-            
+
+
         }
     }
 }

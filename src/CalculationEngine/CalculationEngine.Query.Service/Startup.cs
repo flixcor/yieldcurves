@@ -1,5 +1,4 @@
-﻿using CalculationEngine.Query.Service.Features;
-using Common.Infrastructure.Extensions;
+﻿using Common.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SignalR;
@@ -31,16 +30,16 @@ namespace CalculationEngine.Query.Service
                     builder.WithOrigins("http://localhost:8081", "http://127.0.0.1:8081").WithMethods("GET", "POST").AllowAnyHeader();
                 });
             });
-            
+
             services.AddSignalR();
 
             services.AddControllers();
 
             services
-                .AddEfCore(Configuration.GetConnectionString("SqlServer"), typeof(GetCalculatedCurveDetail).Assembly);
+                .AddEfCore(Configuration.GetConnectionString("SqlServer"), typeof(Features.GetCalculatedCurveDetail.Query).Assembly);
 
             services.AddEventStore(Configuration.GetConnectionString("EventStore"))
-                .AddMediator(typeof(GetCalculatedCurveDetail).Assembly);
+                .AddMediator(typeof(Features.GetCalculatedCurveDetail.Query).Assembly);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

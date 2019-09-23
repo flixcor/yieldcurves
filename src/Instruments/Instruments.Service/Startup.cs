@@ -1,6 +1,4 @@
 ﻿using Common.Infrastructure.Extensions;
-using Instruments.Service.Application;
-using Instruments.Service.Features;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +28,7 @@ namespace Instruments.Service
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services
-                .AddMediator(typeof(CreateRegularInstrument).Assembly)
+                .AddMediator(typeof(Features.CreateRegularInstrument.Command).Assembly)
                 .AddRedis("localhost:6379");
 
             services.AddEventStore(Configuration.GetConnectionString("EventStore"));
