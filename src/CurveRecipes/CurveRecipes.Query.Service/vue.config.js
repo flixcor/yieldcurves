@@ -1,6 +1,6 @@
 // vue.config.js
 module.exports = {
-  outputDir: '../wwwroot/',
+  outputDir: './wwwroot/',
   filenameHashing: false,
   css: {
     loaderOptions: {
