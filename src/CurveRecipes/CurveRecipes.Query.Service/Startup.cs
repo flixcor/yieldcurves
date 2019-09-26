@@ -28,9 +28,9 @@ namespace CurveRecipes.Query.Service
 
             services.AddSignalR();
 
-            services.AddRedis("localhost:6379", typeof(GetCurveRecipeDetail).Assembly)
+            services.AddRedis("localhost:6379", typeof(Features.GetCurveRecipeDetail.Query).Assembly)
                     .WithSignalR()
-                .AddMediator(typeof(GetCurveRecipeDetail).Assembly)
+                .AddMediator(typeof(Features.GetCurveRecipeDetail.Query).Assembly)
                 .AddEventStore(Configuration.GetConnectionString("EventStore"));
 
             services.AddControllers();

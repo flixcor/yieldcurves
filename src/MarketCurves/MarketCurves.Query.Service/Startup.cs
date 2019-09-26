@@ -1,5 +1,6 @@
 ﻿using Common.Infrastructure.Extensions;
 using MarketCurves.Query.Service.Features;
+using MarketCurves.Query.Service.Features.GetMarketCurveDetail;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +33,7 @@ namespace MarketCurves.Query.Service
             services.AddSignalR();
 
             services
-                .AddMediator(typeof(GetMarketCurve).Assembly)
+                .AddMediator(typeof(Features.GetMarketCurveDetail.Query).Assembly)
                 .AddRedis("localhost:6379", typeof(InstrumentDto).Assembly)
                     .WithSignalR()
                 .AddEventStore(Configuration.GetConnectionString("EventStore"));

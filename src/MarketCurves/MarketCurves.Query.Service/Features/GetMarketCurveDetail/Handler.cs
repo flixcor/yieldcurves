@@ -104,4 +104,3 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
         }
     }
 }
-}
