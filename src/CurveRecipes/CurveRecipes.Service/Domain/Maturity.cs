@@ -1,18 +1,16 @@
 ﻿using System;
 using Common.Core;
+using LanguageExt;
 
 namespace CurveRecipes.Domain
 {
-    public class Maturity : ValueObject
+    public class Maturity : Record<Maturity>
     {
         public static Result<Maturity> TryCreate(double value)
         {
-            if (value < 0)
-            {
-                return Result.Fail<Maturity>($"{nameof(value)} Must be => 0");
-            }
-
-            return Result.Ok(new Maturity(value));
+            return value < 0 
+                ? Result.Fail<Maturity>($"{nameof(value)} Must be => 0") 
+                : Result.Ok(new Maturity(value));
         }
 
         private Maturity(double value)

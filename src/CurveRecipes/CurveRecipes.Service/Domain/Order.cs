@@ -1,6 +1,8 @@
-﻿namespace CurveRecipes.Domain
+﻿using LanguageExt;
+
+namespace CurveRecipes.Domain
 {
-    public class Order
+    public class Order : Record<Order>
     {
         public Order(int value)
         {

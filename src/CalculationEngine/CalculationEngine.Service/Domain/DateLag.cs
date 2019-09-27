@@ -1,6 +1,8 @@
-﻿namespace CalculationEngine.Domain
+﻿using LanguageExt;
+
+namespace CalculationEngine.Domain
 {
-    public class DateLag
+    public class DateLag : Record<DateLag>
     {
         public DateLag(short value)
         {

@@ -1,5 +1,4 @@
-﻿using System;
-using Common.Core;
+﻿using Common.Core;
 
 namespace CurveRecipes.Domain
 {

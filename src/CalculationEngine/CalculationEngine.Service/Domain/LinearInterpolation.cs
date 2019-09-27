@@ -4,24 +4,24 @@
     {
         public static Point SolveForY(Point a, Point b, X x)
         {
-            var min = a.X.Value < b.X.Value
+            var min = a.X < b.X
                 ? a
                 : b;
 
-            var max = a.X.Value > b.X.Value
+            var max = a.X > b.X
                 ? a
                 : b;
 
-            var deltaXAB = (max.X - min.X);
-            var deltaYAB = (max.Y - min.Y);
+            var deltaX = (max.X - min.X);
+            var deltaY = (max.Y - min.Y);
 
-            var ratio = deltaYAB / deltaXAB;
+            var ratio = deltaY / deltaX;
 
             var delta = x - min.X;
 
-            var value = delta.Value * ratio;
+            var newCoordinate = delta * ratio;
 
-            return new Point(x, new Y(value));
+            return new Point(x, newCoordinate.ToY());
         }
     }
 }

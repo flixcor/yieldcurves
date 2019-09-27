@@ -1,6 +1,8 @@
-﻿namespace CurveRecipes.Domain
+﻿using LanguageExt;
+
+namespace CurveRecipes.Domain
 {
-    public class OutputFrequency
+    public class OutputFrequency : Record<OutputFrequency>
     {
         public OutputFrequency(OutputSeries outputSeries, Maturity maximumMaturity)
         {

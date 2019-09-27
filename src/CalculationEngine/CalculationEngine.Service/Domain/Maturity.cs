@@ -1,9 +1,9 @@
 ﻿using System;
-using Common.Core;
+using LanguageExt;
 
 namespace CalculationEngine.Domain
 {
-    public class Maturity : ValueObject, IComparable<Maturity>
+    public class Maturity : Record<Maturity>, IComparable<Maturity>
     {
         public Maturity(double value)
         {
@@ -25,11 +25,6 @@ namespace CalculationEngine.Domain
         public static Maturity FromX(X x)
         {
             return new Maturity(x.Value);
-        }
-
-        public int CompareTo(Maturity other)
-        {
-            return (int)Math.Floor((Value - other.Value) * 100000);
         }
 
         public static bool operator <(Maturity a, Maturity b)

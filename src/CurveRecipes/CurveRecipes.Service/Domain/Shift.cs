@@ -1,6 +1,8 @@
-﻿namespace CurveRecipes.Domain
+﻿using LanguageExt;
+
+namespace CurveRecipes.Domain
 {
-    public class Shift
+    public class Shift : Record<Shift>
     {
         public Shift(double value)
         {

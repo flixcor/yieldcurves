@@ -1,8 +1,9 @@
 ﻿using System;
+using LanguageExt;
 
 namespace CurveRecipes.Domain
 {
-    public class OrderedTransformation
+    public class OrderedTransformation : Record<OrderedTransformation>
     {
         public OrderedTransformation(Order order, ITransformation transformation)
         {

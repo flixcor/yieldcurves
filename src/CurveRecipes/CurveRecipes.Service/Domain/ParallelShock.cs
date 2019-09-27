@@ -1,8 +1,9 @@
 ﻿using System;
+using LanguageExt;
 
 namespace CurveRecipes.Domain
 {
-    public class ParallelShock : ITransformation
+    public class ParallelShock : Record<ParallelShock>, ITransformation
     {
         public ParallelShock(ShockTarget shockTarget, Shift shift)
         {

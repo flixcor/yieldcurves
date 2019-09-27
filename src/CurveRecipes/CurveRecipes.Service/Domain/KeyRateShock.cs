@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LanguageExt;
 
 namespace CurveRecipes.Domain
 {
-    public class KeyRateShock : ITransformation
+    public class KeyRateShock : Record<KeyRateShock>, ITransformation
     {
         public KeyRateShock(ShockTarget shockTarget, Shift shift, Maturity[] maturities)
         {

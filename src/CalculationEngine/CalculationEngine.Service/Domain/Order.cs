@@ -1,6 +1,8 @@
-﻿namespace CalculationEngine.Domain
+﻿using LanguageExt;
+
+namespace CalculationEngine.Domain
 {
-    public class Order
+    public class Order : Record<Order>
     {
         public Order(int value)
         {

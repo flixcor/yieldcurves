@@ -1,9 +1,9 @@
 ﻿using System;
-using Common.Core;
+using LanguageExt;
 
 namespace CalculationEngine.Domain
 {
-    public class CurvePoint : ValueObject, IComparable<CurvePoint>
+    public class CurvePoint : Record<CurvePoint>
     {
         public CurvePoint(Maturity maturity, Price price)
         {
@@ -16,9 +16,7 @@ namespace CalculationEngine.Domain
 
         public Point ToPoint() => new Point(Maturity.ToX(), Price.ToY());
 
-        public static CurvePoint FromPoint(Point point, string currency) => 
+        public static CurvePoint FromPoint(Point point, string currency) =>
             new CurvePoint(Maturity.FromX(point.X), Price.FromY(point.Y, currency));
-
-        public int CompareTo(CurvePoint other) => Maturity.CompareTo(other.Maturity);
     }
 }

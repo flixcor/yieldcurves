@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using LanguageExt;
 
 namespace CalculationEngine.Domain
 {
-    public class OutputFrequency
+    public class OutputFrequency : Record<OutputFrequency>
     {
         public OutputFrequency(OutputSeries outputSeries, Maturity maximumMaturity)
         {

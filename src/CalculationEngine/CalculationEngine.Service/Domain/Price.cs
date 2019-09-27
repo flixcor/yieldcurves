@@ -1,8 +1,8 @@
-﻿using Common.Core;
+﻿using LanguageExt;
 
 namespace CalculationEngine.Domain
 {
-    public class Price : ValueObject
+    public class Price : Record<Price>
     {
         public Price(string currency, double value)
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using LanguageExt;
 
 namespace Common.Core
 {
@@ -8,7 +9,7 @@ namespace Common.Core
         int Version { get; }
     }
 
-    public class Event : ValueObject, IEvent
+    public class Event : Record<Event>, IEvent
     {
         protected Event(Guid id)
         {
