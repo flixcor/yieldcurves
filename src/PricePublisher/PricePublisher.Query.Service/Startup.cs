@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PricePublisher.Query.Service.Features;
 
 namespace PricePublisher.Query.Service
 {
@@ -34,10 +33,10 @@ namespace PricePublisher.Query.Service
             services.AddControllers();
 
             services
-                .AddEfCore(Configuration.GetConnectionString("SqlServer"), typeof(GetPriceList).Assembly);
+                .AddEfCore(Configuration.GetConnectionString("SqlServer"), typeof(Features.GetPricesOverview.Query).Assembly);
 
             services.AddEventStore(Configuration.GetConnectionString("EventStore"))
-                .AddMediator(typeof(GetPriceList).Assembly);
+                .AddMediator(typeof(Features.GetPricesOverview.Query).Assembly);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

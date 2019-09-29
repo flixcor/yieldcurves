@@ -10,9 +10,9 @@ namespace Common.Infrastructure.SignalR
     public class SignalRRepositoryDecorator<T> : IReadModelRepository<T> where T : ReadObject
     {
         private readonly IReadModelRepository<T> _decorated;
-        private readonly IHubClients _clients;
+        private readonly IHubCallerClients _clients;
 
-        public SignalRRepositoryDecorator(IReadModelRepository<T> decorated, IHubClients clients)
+        public SignalRRepositoryDecorator(IReadModelRepository<T> decorated, IHubCallerClients clients)
         {
             _decorated = decorated ?? throw new ArgumentNullException(nameof(decorated));
             _clients = clients;

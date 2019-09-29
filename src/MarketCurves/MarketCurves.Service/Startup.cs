@@ -33,8 +33,8 @@ namespace MarketCurves.Service
 
 
             services
-                .AddMediator(typeof(CreateMarketCurve).Assembly)
-                .AddRedis("localhost:6379", typeof(Instrument).Assembly);
+                .AddMediator(typeof(Features.CreateMarketCurve.Query).Assembly)
+                .AddRedis("localhost:6379", typeof(Features.AddCurvePoint.Instrument).Assembly);
 
             services.AddEventStore(Configuration.GetConnectionString("EventStore"));
 

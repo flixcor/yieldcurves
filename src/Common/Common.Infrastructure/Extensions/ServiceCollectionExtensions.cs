@@ -4,6 +4,7 @@ using Common.Infrastructure.DependencyInjection;
 using Common.Infrastructure.EfCore;
 using Common.Infrastructure.SignalR;
 using EventStore.ClientAPI;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
@@ -92,7 +93,6 @@ namespace Common.Infrastructure.Extensions
         public static IServiceCollection WithSignalR(this IReadModelImplementation readModelImplementation)
         {
             var services = readModelImplementation.GetServiceCollection();
-
             var usedTypes = readModelImplementation.GetUsedTypes();
             
             var decorators = usedTypes
@@ -107,6 +107,8 @@ namespace Common.Infrastructure.Extensions
             {
                 services.Decorate(decorator.@interface, decorator.implementation);
             }
+
+            services.AddTransient(s => s.GetService<Hub>().Clients);
 
             return services;
         }
