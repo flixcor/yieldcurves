@@ -1,4 +1,5 @@
 ﻿using Common.Infrastructure.Extensions;
+using Common.Infrastructure.SignalR;
 using MarketCurves.Query.Service.Features;
 using MarketCurves.Query.Service.Features.GetMarketCurveDetail;
 using Microsoft.AspNetCore.Builder;
@@ -65,7 +66,7 @@ namespace MarketCurves.Query.Service
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<Hub>("hub");
+                endpoints.MapHub<GenericHub>("hub");
             });
 
             app.UseStaticFiles();

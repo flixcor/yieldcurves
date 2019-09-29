@@ -108,8 +108,6 @@ namespace Common.Infrastructure.Extensions
                 services.Decorate(decorator.@interface, decorator.implementation);
             }
 
-            services.AddTransient(s => s.GetService<Hub>().Clients);
-
             return services;
         }
     }

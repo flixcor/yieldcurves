@@ -1,9 +1,8 @@
 ﻿using Common.Infrastructure.Extensions;
-using Instruments.Query.Service.Features;
+using Common.Infrastructure.SignalR;
 using Instruments.Query.Service.Features.GetInstrumentList;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -66,7 +65,7 @@ namespace Instruments.Query.Service
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<Hub>("/hub");
+                endpoints.MapHub<GenericHub>("/hub");
             });
 
 

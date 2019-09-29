@@ -1,4 +1,5 @@
 ﻿using Common.Infrastructure.Extensions;
+using Common.Infrastructure.SignalR;
 using CurveRecipes.Query.Service.Features;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -58,7 +59,7 @@ namespace CurveRecipes.Query.Service
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<Hub>("/hub");
+                endpoints.MapHub<GenericHub>("/hub");
             });
 
             app.UseHttpsRedirection();

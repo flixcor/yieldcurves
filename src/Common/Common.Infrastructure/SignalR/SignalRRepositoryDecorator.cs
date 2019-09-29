@@ -10,12 +10,12 @@ namespace Common.Infrastructure.SignalR
     public class SignalRRepositoryDecorator<T> : IReadModelRepository<T> where T : ReadObject
     {
         private readonly IReadModelRepository<T> _decorated;
-        private readonly IHubCallerClients _clients;
+        private readonly IHubContext<GenericHub> _context;
 
-        public SignalRRepositoryDecorator(IReadModelRepository<T> decorated, IHubCallerClients clients)
+        public SignalRRepositoryDecorator(IReadModelRepository<T> decorated, IHubContext<GenericHub> context)
         {
             _decorated = decorated ?? throw new ArgumentNullException(nameof(decorated));
-            _clients = clients;
+            _context = context;
         }
 
         public Task<Maybe<T>> Get(Guid id) => _decorated.Get(id);
@@ -29,7 +29,7 @@ namespace Common.Infrastructure.SignalR
         public Task Insert(T t)
         {
             var repoTask = _decorated.Insert(t);
-            var hubTask = _clients.All.SendAsync("insert", t);
+            var hubTask = _context.Clients.All.SendAsync("insert", t);
 
             return Task.WhenAll(repoTask, hubTask);
         }
@@ -37,7 +37,7 @@ namespace Common.Infrastructure.SignalR
         public Task Update(T t)
         {
             var repoTask = _decorated.Update(t);
-            var hubTask = _clients.All.SendAsync("update", t);
+            var hubTask = _context.Clients.All.SendAsync("update", t);
 
             return Task.WhenAll(repoTask, hubTask);
         }
