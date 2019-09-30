@@ -10,13 +10,13 @@
       </md-button>
     </md-card-header>
     <md-card-content>
-      <md-table v-if="curves && curves.length">
+      <md-table v-if="entities && entities.length">
         <md-table-row>
           <md-table-head>Name</md-table-head>
         </md-table-row>
 
         <md-table-row
-          v-for="curve of curves"
+          v-for="curve of entities"
           :key="curve.id"
           v-on:click="emitDetailClicked(curve.id)"
         >
@@ -35,7 +35,7 @@
 export default {
   name: 'get-market-curves',
   props: {
-    curves: {
+    entities: {
       required: true,
       type: Array,
     },

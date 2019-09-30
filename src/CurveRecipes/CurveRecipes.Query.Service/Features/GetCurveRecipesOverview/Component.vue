@@ -10,12 +10,12 @@
       </md-button>
     </md-card-header>
     <md-card-content>
-      <md-table v-if="recipes && recipes.length">
+      <md-table v-if="entities && entities.length">
         <md-table-row>
           <md-table-head>Name</md-table-head>
         </md-table-row>
         <md-table-row
-          v-for="curve of recipes"
+          v-for="curve of entities"
           :key="curve.id"
           v-on:click="emitDetailClicked(curve.id)"
         >
@@ -30,7 +30,7 @@
 
 export default {
   name: 'GetCurveRecipes',
-  props: ['recipes'],
+  props: ['entities'],
   methods: {
     emitDetailClicked(id) {
       this.$emit('detailClicked', id);

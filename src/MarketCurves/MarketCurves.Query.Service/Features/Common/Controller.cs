@@ -20,8 +20,9 @@ namespace MarketCurves.Query.Service.Features.Common
         // GET api/values
         [HttpGet]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
-        public async Task<IActionResult> Get([FromQuery] GetMarketCurvesOverview.Query query)
+        public async Task<IActionResult> Get()
         {
+            var query = new GetMarketCurvesOverview.Query();
             var result = await _requestMediator.Send(query);
             return this.HubComponentActionResult(result, "get-market-curves");
         }
