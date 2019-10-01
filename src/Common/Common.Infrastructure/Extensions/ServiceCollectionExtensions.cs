@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -71,15 +73,20 @@ namespace Common.Infrastructure.Extensions
 
         public static IReadModelImplementation AddEfCore(this IServiceCollection services, string connectionString, params Assembly[] assemblyToScan)
         {
+            return AddEfCore<GenericDbContext>(services, connectionString, assemblyToScan);
+        }
+
+        public static IReadModelImplementation AddEfCore<T>(this IServiceCollection services, string connectionString, params Assembly[] assemblyToScan) where T :GenericDbContext
+        {
             var readModelTypes = typeof(ReadObject).GetDescendantTypes(assemblyToScan).ToList();
 
             var result = services
-                .AddScoped(_ => 
+                .AddScoped<GenericDbContext>(_ =>
                 {
-                    var optionsBuilder = new DbContextOptionsBuilder<GenericDbContext>();
+                    var optionsBuilder = new DbContextOptionsBuilder<T>();
                     optionsBuilder.UseSqlServer(connectionString);
 
-                    var context = new GenericDbContext(optionsBuilder.Options, readModelTypes);
+                    var context = (T)Activator.CreateInstance(typeof(T), optionsBuilder.Options, readModelTypes);
                     context.Database.EnsureCreated();
 
                     return context;

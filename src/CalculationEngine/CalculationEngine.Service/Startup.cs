@@ -37,9 +37,7 @@ namespace CalculationEngine.Service
             });
 
             services.AddEventStore(Configuration.GetConnectionString("EventStore"));
-
-            services.AddSingleton<IReadModelRepository<EventPosition>>(new InMemoryReadModelRepository<EventPosition>());
-
+            services.AddEfCore<AkkaPersistenceContext>(Configuration.GetConnectionString("SqlServer"));
             services.AddLogging();
 
             services.AddScoped(x =>

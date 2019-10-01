@@ -9,7 +9,7 @@ akka.persistence{
 			plugin-dispatcher = "akka.actor.default-dispatcher"
 
 			# connection string used for database access
-			connection-string = "server=localhost;user id=sa;password=8jkGh47hnDw89Haq8LN2;database=AkkaPersistence;"
+			connection-string = "server=localhost;user id=sa;password=8jkGh47hnDw89Haq8LN2;database=CalculationEngine;"
 
 			# default SQL commands timeout
 			connection-timeout = 30s
@@ -42,7 +42,7 @@ akka.persistence{
 			plugin-dispatcher = ""akka.actor.default-dispatcher""
 
 			# connection string used for database access
-			connection-string = "server=localhost;user id=sa;password=8jkGh47hnDw89Haq8LN2;database=AkkaPersistence;"
+			connection-string = "server=localhost;user id=sa;password=8jkGh47hnDw89Haq8LN2;database=CalculationEngine;"
 
 			# default SQL commands timeout
 			connection-timeout = 30s
