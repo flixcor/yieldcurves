@@ -1,7 +1,7 @@
 <template>
   <md-card class="md-layout-item md-size-50 md-small-size-100">
     <md-card-header>
-      <div class="md-title">Create new instrument</div>
+      <div class="md-title">Publish a price</div>
     </md-card-header>
     <md-progress-bar v-if="loading" md-mode="indeterminate"></md-progress-bar>
     <md-card-content v-else>

@@ -22,5 +22,12 @@ namespace PricePublisher.Query.Service.Features.Common
             var result = await _requestMediator.Send(query);
             return this.ComponentActionResult(result, "get-price-list");
         }
+
+        [HttpGet("get-price-dates")]
+        public async Task<IActionResult> Handle([FromQuery] GetPriceDates.Query query)
+        {
+            var result = await _requestMediator.Send(query);
+            return Ok(result);
+        }
     }
 }
