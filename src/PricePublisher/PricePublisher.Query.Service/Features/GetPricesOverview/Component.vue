@@ -9,7 +9,7 @@
       <md-table-head>Amount</md-table-head>
       <md-table-head>Price Type</md-table-head>
     </md-table-row>
-    <md-table-row v-for="price of prices" :key="price.id">
+    <md-table-row v-for="price of entities" :key="price.id">
       <md-table-cell>{{price.asOfDate.substring(0,10)}}</md-table-cell>
       <md-table-cell>{{price.asAtDate.substring(0,16)}}</md-table-cell>
       <md-table-cell>{{price.vendor}}</md-table-cell>
@@ -23,11 +23,6 @@
 <script>
 
 export default {
-  props: ['prices'],
-  methods: {
-    onCreateClick() {
-      this.$emit("create");
-    }
-  }
+  props: ['entities']
 };
 </script>

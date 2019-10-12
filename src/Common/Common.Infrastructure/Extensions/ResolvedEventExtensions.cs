@@ -10,7 +10,7 @@ namespace Common.Infrastructure.Extensions
 {
     internal static class ResolvedEventExtensions
     {
-        private const string _eventClrTypeHeader = "EventClrTypeName";
+        private const string EventClrTypeHeader = "EventClrTypeName";
 
         internal static Event Deserialize(this ResolvedEvent resolvedEvent)
         {
@@ -21,7 +21,7 @@ namespace Common.Infrastructure.Extensions
 
             if (!string.IsNullOrWhiteSpace(metadataString))
             {
-                var eventClrTypeName = JObject.Parse(metadataString).Property(_eventClrTypeHeader)?.Value;
+                var eventClrTypeName = JObject.Parse(metadataString).Property(EventClrTypeHeader)?.Value;
 
                 if (eventClrTypeName != null)
                 {
