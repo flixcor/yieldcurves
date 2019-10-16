@@ -20,7 +20,7 @@ export default {
       type: String
     }
   },
-  data() {
+  data () {
     return {
       props: {},
       comp: "",
@@ -28,22 +28,28 @@ export default {
     };
   },
   watch: {
-    endpoint: function() {
+    endpoint: function () {
       this.fetch();
     }
   },
-  created() {
+  created () {
     // Fetch initial data.
     this.init();
   },
   methods: {
-    async fetch() {
+    async fetch () {
       const { data } = await axios.get(this.endpoint);
-      this.props = data.data;
+      var props = data.data;
+
+      if (Array.isArray(props)) {
+        props = { entities: props };
+      }
+
+      this.props = props;
       this.comp = data.url;
       this.hub = data.hub;
     },
-    async init(){
+    async init () {
       await this.fetch();
       if (this.hub && Array.isArray(this.props.entities)) {
         const conn = await getConnection(this.hub);
@@ -52,13 +58,13 @@ export default {
         await conn.start();
       }
     },
-    update(e){
+    update (e) {
       this.props.entities = this.props.entities.map((x) => {
         if (x.id === e.id) return e;
         return x;
       });
     },
-    insert(e){
+    insert (e) {
       if (this.props.entities.find(x => x.id === e.id)) return;
       this.props.entities = [e, ...this.props.entities];
     },

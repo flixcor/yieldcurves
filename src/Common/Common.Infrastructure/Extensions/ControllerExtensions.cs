@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using Common.Core;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +8,7 @@ namespace Common.Infrastructure.Extensions
 {
     public static class ControllerExtensions
     {
-        private static string GetBaseUrl(this ControllerBase controller) => 
+        private static string GetBaseUrl(this ControllerBase controller) =>
             $"{controller.Request.Scheme}://{controller.Request.Host}{controller.Request.PathBase}";
 
         private static string GetComponentUrl(this ControllerBase controller, string componentName)
@@ -32,7 +31,7 @@ namespace Common.Infrastructure.Extensions
         public static IActionResult ComponentActionResult<T>(this ControllerBase controller, T obj, string componentName) where T : class
         {
             var url = controller.GetComponentUrl(componentName);
-            
+
             return obj != null
                 ? (ActionResult)controller.Ok(FrontendComponent.Create(obj, url))
                 : controller.NotFound();
@@ -41,7 +40,7 @@ namespace Common.Infrastructure.Extensions
         public static IActionResult ComponentActionResult<T>(this ControllerBase controller, Maybe<T> maybe, string componentName) where T : class
         {
             var url = controller.GetComponentUrl(componentName);
-            
+
             return maybe.Found
                 ? (ActionResult)controller.Ok(FrontendComponent.Create(maybe.ToResult().Content, url))
                 : controller.NotFound();
@@ -50,7 +49,7 @@ namespace Common.Infrastructure.Extensions
         public static IActionResult ComponentActionResult<T>(this ControllerBase controller, Result<T> result, string componentName) where T : class
         {
             var url = controller.GetComponentUrl(componentName);
-            
+
             return result.IsSuccessful
                 ? (ActionResult)controller.Ok(FrontendComponent.Create(result.Content, url))
                 : controller.BadRequest(result.Messages);
@@ -61,33 +60,9 @@ namespace Common.Infrastructure.Extensions
             var hub = $"{controller.GetBaseUrl()}/hub";
 
             var url = controller.GetComponentUrl(componentName);
-            
+
             return t != null
                 ? (ActionResult)controller.Ok(FrontendComponent.Create(t, url, hub))
-                : controller.NotFound();
-        }
-
-        public static IActionResult HubComponentActionResult<T>(this ControllerBase controller, IEnumerable<T> t, string componentName) where T : class
-        {
-            var hub = $"{controller.GetBaseUrl()}/hub";
-
-            var url = controller.GetComponentUrl(componentName);
-
-            var entitiesWrapped = t.Wrap();
-
-            return t != null
-                ? (ActionResult)controller.Ok(FrontendComponent.Create(entitiesWrapped, url, hub))
-                : controller.NotFound();
-        }
-
-        public static IActionResult ComponentActionResult<T>(this ControllerBase controller, IEnumerable<T> t, string componentName) where T : class
-        {
-            var url = controller.GetComponentUrl(componentName);
-
-            var entitiesWrapped = t.Wrap();
-
-            return t != null
-                ? (ActionResult)controller.Ok(FrontendComponent.Create(entitiesWrapped, url))
                 : controller.NotFound();
         }
     }
