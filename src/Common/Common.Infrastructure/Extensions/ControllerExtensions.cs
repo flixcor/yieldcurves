@@ -79,5 +79,16 @@ namespace Common.Infrastructure.Extensions
                 ? (ActionResult)controller.Ok(FrontendComponent.Create(entitiesWrapped, url, hub))
                 : controller.NotFound();
         }
+
+        public static IActionResult ComponentActionResult<T>(this ControllerBase controller, IEnumerable<T> t, string componentName) where T : class
+        {
+            var url = controller.GetComponentUrl(componentName);
+
+            var entitiesWrapped = t.Wrap();
+
+            return t != null
+                ? (ActionResult)controller.Ok(FrontendComponent.Create(entitiesWrapped, url))
+                : controller.NotFound();
+        }
     }
 }

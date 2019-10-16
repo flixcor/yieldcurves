@@ -1,6 +1,6 @@
 docker-compose pull &
 dotnet build &
-docker-compose up &
+start docker-compose up &
 start full.stack.microservice .\src\CurveRecipes\CurveRecipes.Service &
 start full.stack.microservice .\src\CurveRecipes\CurveRecipes.Query.Service &
 start full.stack.microservice .\src\MarketCurves\MarketCurves.Service &

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --target lib --formats umd --no-clean --name get-price-list.[chunkhash] ./Features/GetPricesOverview/Component.vue",
+    "build": "vue-cli-service build --target lib --formats umd --no-clean --name get-prices-overview.[chunkhash] ./Features/GetPricesOverview/Component.vue && vue-cli-service build --target lib --formats umd --no-clean --name get-price-dates.[chunkhash] ./Features/GetPriceDates/Component.vue",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

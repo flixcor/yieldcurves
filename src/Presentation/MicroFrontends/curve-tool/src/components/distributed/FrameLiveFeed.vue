@@ -1,5 +1,9 @@
 <template>
-  <dynamic-component :component="comp" :props="props" v-on="$listeners" />
+  <dynamic-component
+    :component="comp"
+    :props="props"
+    v-on="$listeners"
+  />
 </template>
 
 <script>
@@ -23,14 +27,14 @@ export default {
       hub: null
     };
   },
-  created() {
-    // Fetch initial data.
-    this.init();
-  },
   watch: {
     endpoint: function() {
       this.fetch();
     }
+  },
+  created() {
+    // Fetch initial data.
+    this.init();
   },
   methods: {
     async fetch() {
@@ -55,7 +59,7 @@ export default {
       });
     },
     insert(e){
-      if (this.props.entities.find(x => x.data.id === e.id)) return;
+      if (this.props.entities.find(x => x.id === e.id)) return;
       this.props.entities = [e, ...this.props.entities];
     },
   }

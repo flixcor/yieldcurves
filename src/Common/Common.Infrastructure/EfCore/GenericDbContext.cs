@@ -25,7 +25,12 @@ namespace Common.Infrastructure.EfCore
 
             foreach (var readModelType in _readModelTypes)
             {
+                var splitName = readModelType.FullName.Split('.');
+                var lastTwo = splitName.Skip(Math.Max(0, splitName.Count() - 2));
+                var qualifiedName = string.Join("_", lastTwo);
+
                 var entity = modelBuilder.Entity(readModelType);
+                entity.ToTable(qualifiedName);
 
                 var classProperties = readModelType.GetProperties().Where(x => x.PropertyType.IsClass && x.PropertyType.AssemblyQualifiedName == readModelType.AssemblyQualifiedName);
 

@@ -94,6 +94,18 @@ namespace Common.Infrastructure.Extensions
                 .AddScoped<IReadModelRepository<EventPosition>, EfCoreRepository<EventPosition>>()
                 .AddScoped<IUnitOfWork, EfCoreUnitOfWork>();
 
+            var repos = readModelTypes
+                .Select(r => new
+                {
+                    @interface = typeof(IReadModelRepository<>).MakeGenericType(r),
+                    implementation = typeof(EfCoreRepository<>).MakeGenericType(r)
+                });
+
+            foreach (var pair in repos)
+            {
+                services.AddScoped(pair.@interface, pair.implementation);
+            }
+
             return new ReadModelImplementation(services, readModelTypes);
         }
 

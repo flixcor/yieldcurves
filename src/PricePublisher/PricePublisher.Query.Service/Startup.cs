@@ -1,4 +1,5 @@
 ﻿using Common.Infrastructure.Extensions;
+using Common.Infrastructure.SignalR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -26,14 +27,20 @@ namespace PricePublisher.Query.Service
                 options.AddPolicy(MyAllowSpecificOrigins,
                 builder =>
                 {
-                    builder.WithOrigins("http://localhost:8081", "http://127.0.0.1:8081").WithMethods("GET", "POST").AllowAnyHeader();
+                    builder.WithOrigins("http://localhost:8081", "http://127.0.0.1:8081")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
                 });
             });
+
+            services.AddSignalR();
 
             services.AddControllers();
 
             services
-                .AddEfCore(Configuration.GetConnectionString("SqlServer"), typeof(Features.GetPricesOverview.Query).Assembly);
+                .AddEfCore(Configuration.GetConnectionString("SqlServer"), typeof(Features.GetPricesOverview.Query).Assembly)
+                .WithSignalR();
 
             services.AddEventStore(Configuration.GetConnectionString("EventStore"))
                 .AddMediator(typeof(Features.GetPricesOverview.Query).Assembly);
@@ -58,6 +65,7 @@ namespace PricePublisher.Query.Service
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<GenericHub>("/hub");
             });
 
             app.UseStaticFiles();

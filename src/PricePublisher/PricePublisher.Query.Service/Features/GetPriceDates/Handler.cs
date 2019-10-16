@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
@@ -24,11 +24,12 @@ namespace PricePublisher.Query.Service.Features.GetPriceDates
 
         public async Task Handle(InstrumentPricingPublished @event, CancellationToken cancellationToken)
         {
-            var existing = await _repository.Single(x => x.AsOfDate == @event.AsOfDate);
+            var asOfDateString = @event.AsOfDate.ToString("yyyy-MM-dd");
+            var existing = await _repository.Single(x => x.AsOfDate == asOfDateString);
 
             if (!existing.Found)
             {
-                var newDto = new Dto { AsOfDate = @event.AsOfDate };
+                var newDto = new Dto { AsOfDate = asOfDateString };
                 await _repository.Insert(newDto);
             }
         }

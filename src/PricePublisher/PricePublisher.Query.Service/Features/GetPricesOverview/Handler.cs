@@ -34,9 +34,9 @@ namespace PricePublisher.Query.Service.Features.GetPricesOverview
                 : "1 = 1";
 
             var querystring = @$"SELECT dto1.*
-                                    FROM [PricePublisherQuery].[dbo].[Dto] dto1
+                                    FROM [PricePublisherQuery].[dbo].[GetPricesOverview_Dto] dto1
                                     inner join (select Instrument, Max(AsAtDate) AsAtDate 
-                                                from [dbo].[Dto] 
+                                                from [dbo].[GetPricesOverview_Dto] 
                                                 WHERE {asAtDatePart} AND {asOfDatePart}
                                                 group by instrument, PriceType
                                     ) as dto2
