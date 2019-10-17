@@ -4,7 +4,7 @@
     v-model="selectedDate"
     md-immediately
     :md-disabled-dates="disabledDates"
-    @change="$emit('change', $event)"
+    @input="$emit('input', $event)"
   />
 </template>
 
@@ -23,7 +23,7 @@ export default {
       showCreate: false,
       disabledDates: date => {
         const dateString = this.toDateString(date);
-        const dates = this.getDates().map(x => this.toDateString(x));
+        const dates = this.entities;
         const isMissing = !dates.some(x => x === dateString);
 
         return isMissing;
