@@ -1,83 +1,26 @@
-﻿using Common.Infrastructure.Extensions;
-using Common.Infrastructure.SignalR;
-using MarketCurves.Query.Service.Features;
+﻿using Common.Infrastructure.DependencyInjection;
+using Common.Infrastructure.Extensions;
 using MarketCurves.Query.Service.Features.GetMarketCurveDetail;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json.Converters;
 
 namespace MarketCurves.Query.Service
 {
-    public class Startup
+    public class Startup : YieldCurvesStartupBase
     {
-        private const string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration) : base(configuration, "http://localhost:8081", true, typeof(Handler).Assembly)
         {
-            Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public override void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc()
-                .AddNewtonsoftJson(x => x.SerializerSettings.Converters.Add(new StringEnumConverter()))
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-
-            services.AddSignalR();
+            base.ConfigureServices(services);
 
             services
                 .AddMediator(typeof(Features.GetMarketCurveDetail.Query).Assembly)
                 .AddRedis("localhost:6379", typeof(InstrumentDto).Assembly)
                     .WithSignalR()
                 .AddEventStore(Configuration.GetConnectionString("EventStore"));
-
-            services.AddControllers();
-
-            services.AddCors(options =>
-            {
-                options.AddPolicy(MyAllowSpecificOrigins, builder =>
-                {
-                    builder.WithOrigins("http://localhost:8081","http://127.0.0.1:8081")
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials();
-                });
-            });
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            app.UseCors(MyAllowSpecificOrigins);
-
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
-
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-                endpoints.MapHub<GenericHub>("hub");
-            });
-
-            app.UseStaticFiles();
-
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            
-            
         }
     }
 }
