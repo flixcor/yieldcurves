@@ -8,10 +8,10 @@ namespace Common.Infrastructure.Extensions
 {
     public static class ControllerExtensions
     {
-        private static string GetBaseUrl(this ControllerBase controller) =>
+        public static string GetBaseUrl(this ControllerBase controller) =>
             $"{controller.Request.Scheme}://{controller.Request.Host}{controller.Request.PathBase}";
 
-        private static string GetComponentUrl(this ControllerBase controller, string componentName)
+        public static string GetComponentUrl(this ControllerBase controller, string componentName)
         {
             var baseUrl = controller.GetBaseUrl();
 

@@ -113,12 +113,14 @@ namespace Common.Infrastructure.Extensions
         {
             var services = readModelImplementation.GetServiceCollection();
             var usedTypes = readModelImplementation.GetUsedTypes();
+
+            services.AddTransient<ISocketContext, GenericHubContext>();
             
             var decorators = usedTypes
                 .Select(r => new
                 {
                     @interface = typeof(IReadModelRepository<>).MakeGenericType(r),
-                    implementation = typeof(SignalRRepositoryDecorator<>).MakeGenericType(r)
+                    implementation = typeof(SocketRepositoryDecorator<>).MakeGenericType(r)
                 });
 
 

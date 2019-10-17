@@ -1,7 +1,9 @@
 ﻿using System.Reflection;
+using Common.Infrastructure.Controller;
 using Common.Infrastructure.SignalR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,7 +29,10 @@ namespace Common.Infrastructure.DependencyInjection
 
         public virtual void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers(o => o.Conventions.Add(new GenericControllerRouteConvention()))
+                .ConfigureApplicationPartManager(apm => apm.FeatureProviders
+                    .Add(new QueryControllerFeatureProvider(AssembliesToScan)))
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             if (!string.IsNullOrWhiteSpace(_frontEndUrl))
             {
@@ -75,6 +80,7 @@ namespace Common.Infrastructure.DependencyInjection
                 if (_withSignalR)
                 {
                     endpoints.MapHub<GenericHub>("/hub");
+                    endpoints.MapControllers();
                 }
             });
         }
