@@ -24,7 +24,7 @@ export default {
       disabledDates: date => {
         const dateString = this.toDateString(date);
         const dates = this.entities;
-        const isMissing = !dates.some(x => x === dateString);
+        const isMissing = !dates.some(x => x.asOfDate === dateString);
 
         return isMissing;
       }
