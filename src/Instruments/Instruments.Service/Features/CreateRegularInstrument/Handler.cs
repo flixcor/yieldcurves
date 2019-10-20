@@ -18,8 +18,11 @@ namespace Instruments.Service.Features.CreateRegularInstrument
 
         public Task<Result> Handle(Command command, CancellationToken cancellationToken)
         {
-            var instrumentResult = RegularInstrument.TryCreate(command.Id, command.Vendor, command.Name);
-            return instrumentResult.Promise(i => _repository.SaveAsync(i));
+            return command.Vendor.TryParseEnum<Vendor>().Promise(v =>
+                RegularInstrument.TryCreate(command.Id, v, command.Name).Promise(i =>
+                    _repository.SaveAsync(i)
+                )
+            );
         }
     }
 }

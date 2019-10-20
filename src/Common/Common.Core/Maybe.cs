@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Common.Core
 {
-    public class Maybe<T> where T : class
+    public class Maybe<T> : IMaybe where T : class
     {
         private readonly T _value;
 

@@ -28,42 +28,30 @@ namespace Common.Infrastructure.Extensions
                 : $"{baseUrl}/{fileName}";
         }
 
-        public static IActionResult ComponentActionResult<T>(this ControllerBase controller, T obj, string componentName) where T : class
+        public static IActionResult ComponentActionResult(this ControllerBase controller, object t, string componentName, string hubName = null)
         {
-            var url = controller.GetComponentUrl(componentName);
+            if (t == null)
+            {
+                return controller.NotFound();
+            }
 
-            return obj != null
-                ? (ActionResult)controller.Ok(FrontendComponent.Create(obj, url))
-                : controller.NotFound();
-        }
+            if (t is IMaybe maybe)
+            {
+                if (!maybe.Found)
+                {
+                    return controller.NotFound();
+                }
 
-        public static IActionResult ComponentActionResult<T>(this ControllerBase controller, Maybe<T> maybe, string componentName) where T : class
-        {
-            var url = controller.GetComponentUrl(componentName);
+                t = ((dynamic)t).ToResult().Content;
+            }
 
-            return maybe.Found
-                ? (ActionResult)controller.Ok(FrontendComponent.Create(maybe.ToResult().Content, url))
-                : controller.NotFound();
-        }
+            var componentUrl = controller.GetComponentUrl(componentName);
 
-        public static IActionResult ComponentActionResult<T>(this ControllerBase controller, Result<T> result, string componentName) where T : class
-        {
-            var url = controller.GetComponentUrl(componentName);
+            var hubUrl = !string.IsNullOrWhiteSpace(hubName)
+                ? $"{controller.GetBaseUrl()}/hubName"
+                : null;
 
-            return result.IsSuccessful
-                ? (ActionResult)controller.Ok(FrontendComponent.Create(result.Content, url))
-                : controller.BadRequest(result.Messages);
-        }
-
-        public static IActionResult HubComponentActionResult<T>(this ControllerBase controller, T t, string componentName) where T : class
-        {
-            var hub = $"{controller.GetBaseUrl()}/hub";
-
-            var url = controller.GetComponentUrl(componentName);
-
-            return t != null
-                ? (ActionResult)controller.Ok(FrontendComponent.Create(t, url, hub))
-                : controller.NotFound();
+            return controller.Ok(FrontendComponent.Create(t, componentUrl, hubUrl));
         }
     }
 }

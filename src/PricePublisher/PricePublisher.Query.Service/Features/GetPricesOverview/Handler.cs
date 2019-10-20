@@ -14,7 +14,14 @@ namespace PricePublisher.Query.Service.Features.GetPricesOverview
             IHandleEvent<InstrumentCreated>,
             IHandleEvent<InstrumentPricingPublished>
     {
+        private const string GetPricesOverView = nameof(GetPricesOverview);
+        private const string AsAtDate = nameof(Query.AsAtDate);
+        private const string Instrument = nameof(Instrument);
+        private const string PriceType = nameof(PriceType);
+
+
         private readonly GenericDbContext _db;
+
 
         public Handler(GenericDbContext db)
         {
@@ -34,13 +41,13 @@ namespace PricePublisher.Query.Service.Features.GetPricesOverview
                 : "1 = 1";
 
             var querystring = @$"SELECT dto1.*
-                                    FROM [PricePublisherQuery].[dbo].[GetPricesOverview_Dto] dto1
-                                    inner join (select Instrument, Max(AsAtDate) AsAtDate 
-                                                from [dbo].[GetPricesOverview_Dto] 
+                                    FROM [PricePublisherQuery].[dbo].[{GetPricesOverView}_Dto] dto1
+                                    inner join (select {Instrument}, Max({AsAtDate}) {AsAtDate} 
+                                                from [dbo].[{GetPricesOverView}_Dto] 
                                                 WHERE {asAtDatePart} AND {asOfDatePart}
-                                                group by instrument, PriceType
+                                                group by {Instrument}, {PriceType}
                                     ) as dto2
-                                    on dto1.AsAtDate = dto2.AsAtDate AND dto1.Instrument = dto2.Instrument";
+                                    on dto1.{AsAtDate} = dto2.{AsAtDate} AND dto1.{Instrument} = dto2.{Instrument}";
 
             return connection.QueryAsync<Dto>(querystring);
         }

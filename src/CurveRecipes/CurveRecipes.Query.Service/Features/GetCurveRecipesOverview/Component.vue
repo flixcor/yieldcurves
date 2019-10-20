@@ -1,10 +1,12 @@
 <template>
   <md-card>
     <md-card-header>
-      <div class="md-title">Curve Recipes</div>
+      <div class="md-title">
+        Curve Recipes
+      </div>
       <md-button
         class="md-primary md-fab md-fab-top-right md-mini"
-        v-on:click="emitCreateClicked()"
+        @click="emitCreateClicked()"
       >
         <md-icon>add</md-icon>
       </md-button>
@@ -17,9 +19,9 @@
         <md-table-row
           v-for="curve of entities"
           :key="curve.id"
-          v-on:click="emitDetailClicked(curve.id)"
+          @click="emitDetailClicked(curve.id)"
         >
-          <md-table-cell>{{curve.name}}</md-table-cell>
+          <md-table-cell>{{ curve.name }}</md-table-cell>
         </md-table-row>
       </md-table>
     </md-card-content>

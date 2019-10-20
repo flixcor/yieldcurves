@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
+using Common.Core.Extensions;
 using Common.Infrastructure.Extensions;
 using Common.Infrastructure.SignalR;
 using Microsoft.AspNetCore.Mvc;
@@ -10,11 +12,15 @@ namespace Common.Infrastructure.Controller
 {
     public class QueryController<TQuery, TDto> : ControllerBase where TQuery : IQuery<TDto> where TDto : class
     {
-        private static readonly string _featureName = GetFeatureName();
+        private static readonly string s_featureName = GetFeatureName();
+        private readonly IHandleQuery<TQuery, TDto> _handler;
 
-        private bool HasSocket() => HttpContext.RequestServices.GetService<ISocketContext>() != null;
+        public QueryController(IHandleQuery<TQuery, TDto> handler)
+        {
+            _handler = handler;
+        }
 
-        private IRequestMediator GetMediator() => HttpContext.RequestServices.GetService<IRequestMediator>();
+        private ISocketContext GetSocket() => HttpContext.RequestServices.GetService<ISocketContext>();
 
         private static string GetFeatureName()
         {
@@ -25,13 +31,14 @@ namespace Common.Infrastructure.Controller
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] TQuery query)
+        public async Task<IActionResult> Get([FromQuery] TQuery query, CancellationToken ct = default)
         {
-            var result = await GetMediator().Send(query);
+            var result = await _handler.Handle(query, ct);
+            var socket = GetSocket();
 
-            return HasSocket() 
-                ? this.HubComponentActionResult(result, _featureName) 
-                : this.ComponentActionResult(result, _featureName);
+            return socket != null
+                ? this.ComponentActionResult(result, s_featureName, s_featureName)
+                : this.ComponentActionResult(result, s_featureName);
         }
     }
 }

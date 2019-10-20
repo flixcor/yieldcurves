@@ -11,7 +11,7 @@ namespace Instruments.Service.Features.CreateRegularInstrument
         public Command Command { get; set; } = new Command
         {
             Id = Guid.NewGuid(),
-            Vendor = Vendor.UBS,
+            Vendor = Vendor.UBS.ToString(),
             Name = string.Empty
         };
     }

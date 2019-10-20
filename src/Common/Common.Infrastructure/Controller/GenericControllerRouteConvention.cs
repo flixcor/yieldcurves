@@ -20,7 +20,7 @@ namespace Common.Infrastructure.Controller
                     AttributeRouteModel = new AttributeRouteModel(new RouteAttribute($"features/{feature}")),
                 };
 
-                selectorModel.ActionConstraints.Add(new HttpMethodActionConstraint(new[] { "GET" }));
+                //selectorModel.ActionConstraints.Add(new HttpMethodActionConstraint(new[] { "GET" }));
 
                 controller.Selectors.Add(selectorModel);
             }

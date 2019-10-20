@@ -31,7 +31,7 @@ namespace Common.Infrastructure.DependencyInjection
         {
             services.AddControllers(o => o.Conventions.Add(new GenericControllerRouteConvention()))
                 .ConfigureApplicationPartManager(apm => apm.FeatureProviders
-                    .Add(new QueryControllerFeatureProvider(AssembliesToScan)))
+                    .Add(new GenericControllerFeatureProvider(AssembliesToScan)))
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             if (!string.IsNullOrWhiteSpace(_frontEndUrl))

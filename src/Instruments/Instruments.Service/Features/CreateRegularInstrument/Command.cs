@@ -8,6 +8,6 @@ namespace Instruments.Service.Features.CreateRegularInstrument
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public Vendor Vendor { get; set; }
+        public string Vendor { get; set; }
     }
 }
