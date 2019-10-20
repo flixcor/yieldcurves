@@ -25,7 +25,7 @@
     </md-card>
     <FrameLiveFeed
       v-if="showCreate"
-      endpoint="https://localhost:5013/api"
+      endpoint="https://localhost:5013/features/publish-price"
       class="comp md-layout-item md-size-50 md-small-size-100"
       @success="showCreate = false"
     />

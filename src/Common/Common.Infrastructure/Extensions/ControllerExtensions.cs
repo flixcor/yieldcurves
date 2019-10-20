@@ -48,7 +48,7 @@ namespace Common.Infrastructure.Extensions
             var componentUrl = controller.GetComponentUrl(componentName);
 
             var hubUrl = !string.IsNullOrWhiteSpace(hubName)
-                ? $"{controller.GetBaseUrl()}/hubName"
+                ? $"{controller.GetBaseUrl()}/{hubName}"
                 : null;
 
             return controller.Ok(FrontendComponent.Create(t, componentUrl, hubUrl));

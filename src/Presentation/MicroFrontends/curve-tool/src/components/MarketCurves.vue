@@ -15,13 +15,13 @@
     />
     <FrameLiveFeed
       v-if="showCreate"
-      endpoint="https://localhost:5001/api"
+      endpoint="https://localhost:5001/features/create-market-curve"
       class="comp md-layout-item md-size-50 md-small-size-100"
       @success="showCreate = false"
     />
     <FrameLiveFeed
       v-if="id && showAdd"
-      :endpoint="`https://localhost:5001/api/curvepoint/${id}`"
+      :endpoint="`https://localhost:5001/features/add-curve-point?marketCurveId=${id}`"
       class="comp md-layout-item md-size-50 md-small-size-100"
       @success="showAdd = false"
     />

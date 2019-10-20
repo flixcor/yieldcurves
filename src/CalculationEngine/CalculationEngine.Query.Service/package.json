@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --target lib --formats umd --no-clean --name get-calculated-curve-detail.[chunkhash] ./Features/GetCalculatedCurveDetail/Component.vue",
+    "build": "vue-cli-service build --target lib --formats umd --no-clean --name get-calculated-curve-detail.[chunkhash] ./Features/GetCalculatedCurveDetail/Component.vue && vue-cli-service build --target lib --formats umd --no-clean --name get-calculation-dates.[chunkhash] ./Features/GetCalculationDates/Component.vue && vue-cli-service build --target lib --formats umd --no-clean --name get-calculations-overview-for-date.[chunkhash] ./Features/GetCalculationsOverviewForDate/Component.vue",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

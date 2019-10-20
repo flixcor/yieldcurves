@@ -33,11 +33,11 @@ namespace PricePublisher.Query.Service.Features.GetPricesOverview
             var connection = _db.Database.GetDbConnection();
 
             var asAtDatePart = query.AsAtDate.HasValue
-                ? $"AsAtDate <= '{query.AsAtDate.Value}'"
+                ? $"AsAtDate <= '{query.AsAtDate.Value.ToString("yyyy-MM-dd HH:mm:ss.fff")}'"
                 : "1 = 1";
 
             var asOfDatePart = query.AsOfDate.HasValue
-                ? $"AsOfDate = '{query.AsOfDate.Value.Date}'"
+                ? $"AsOfDate = '{query.AsOfDate.Value.Date.ToString("yyyy-MM-dd")}'"
                 : "1 = 1";
 
             var querystring = @$"SELECT dto1.*

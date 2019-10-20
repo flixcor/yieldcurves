@@ -8,7 +8,7 @@
     />
     <FrameLiveFeed
       v-if="createComponent"
-      endpoint="https://localhost:5007/api"
+      endpoint="https://localhost:5007/features/create-curve-recipe"
       class="comp md-layout-item md-size-50 md-small-size-100"
       @success="createComponent = false"
     />
@@ -21,7 +21,7 @@
     />
     <FrameLiveFeed
       v-if="addTransformationComponent && id"
-      :endpoint="`https://localhost:5007/api/${id}/addtransformation`"
+      :endpoint="`https://localhost:5007/features/add-transformation?recipeId=${id}`"
       class="comp md-layout-item md-size-50 md-small-size-100"
       @success="addTransformationComponent = false"
     />

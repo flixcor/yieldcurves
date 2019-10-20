@@ -1,0 +1,51 @@
+﻿<template>
+  <mt-select
+    id="calculationsOverviewDropdown"
+    v-model="currentRecipe"
+    label="Recipe"
+    :options="recipeNames"
+  />
+</template>
+
+<script>
+import MtSelect from '../Common/Material/MtSelect.vue'
+
+export default {
+  components: {
+    MtSelect
+  },
+  props: {
+    recipes: {
+      type: Array,
+      required: true
+    }
+  },
+  data() {
+    return {
+      value: null,
+    };
+  },
+  computed: {
+    recipeNames() {
+      return this.recipes.map(x=> x.name)
+    },
+    currentRecipe: {
+      get() {
+        return this.value
+          ? this.recipes.find(x=> x.id === this.value).name
+          : null;
+      },
+      set(val){
+        if (val) {
+          this.value = this.recipes.find(x=> x.name === val).id;
+        }
+        else{
+          this.value = null;
+        }
+
+        this.$emit('change', this.value);
+      }
+    }
+  },
+};
+</script>

@@ -16,7 +16,7 @@ namespace Common.Infrastructure.Controller
         public GenericControllerFeatureProvider(params Assembly[] assemblies)
         {
             var queryTypes = GetAllTypesImplementingOpenGenericType(typeof(IQuery<>), assemblies);
-            var commandTypes = GetAllTypesImplementingOpenGenericType(typeof(ICommand), assemblies);
+            var commandTypes = assemblies.SelectMany(x=> x.GetTypes()).Where(x=> typeof(IRequest).IsAssignableFrom(x));
 
             var queryControllers = queryTypes.Select(GetQueryControllerType);
             var commandControllers = commandTypes.Select(GetCommandControllerType);

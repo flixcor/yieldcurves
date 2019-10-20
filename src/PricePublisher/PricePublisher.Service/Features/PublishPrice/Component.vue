@@ -1,11 +1,20 @@
 <template>
   <md-card class="md-layout-item md-size-50 md-small-size-100">
     <md-card-header>
-      <div class="md-title">Publish a price</div>
+      <div class="md-title">
+        Publish a price
+      </div>
     </md-card-header>
-    <md-progress-bar v-if="loading" md-mode="indeterminate"></md-progress-bar>
+    <md-progress-bar
+      v-if="loading"
+      md-mode="indeterminate"
+    />
     <md-card-content v-else>
-      <md-datepicker id="asOfDatePicker" v-model="asOfDate" md-immediately />
+      <md-datepicker
+        id="asOfDatePicker"
+        v-model="asOfDate"
+        md-immediately
+      />
       <mt-select
         id="instrumentDropdown"
         v-model="command.instrumentId"
@@ -13,11 +22,11 @@
         :options="instruments.map(x=> x.id)"
       />
       <mt-select
+        v-if="hasPriceType"
         id="priceTypeDropdown"
         v-model="command.priceType"
         label="Price type"
         :options="priceTypes"
-        v-if="hasPriceType"
       />
       <text-box
         id="priceCurrencyBox"
@@ -30,11 +39,19 @@
         label="Price amount"
       />
       <ul v-if="errors.length">
-        <li v-for="error in errors" :key="error">
-          {{error}}
+        <li
+          v-for="error in errors"
+          :key="error"
+        >
+          {{ error }}
         </li>
       </ul>
-      <md-button v-on:click="this.submit" class="md-raised md-primary">Submit</md-button>
+      <md-button
+        class="md-raised md-primary"
+        @click="submit"
+      >
+        Submit
+      </md-button>
     </md-card-content>
   </md-card>
 </template>
@@ -45,7 +62,7 @@ import axios from 'axios';
 import MtSelect from '../Common/Material/MtSelect.vue';
 import TextBox from '../Common/Material/TextBox.vue';
 
-const endpoint = 'https://localhost:5013/api';
+const endpoint = 'https://localhost:5013/features/publish-price';
 
 export default {
   components: {

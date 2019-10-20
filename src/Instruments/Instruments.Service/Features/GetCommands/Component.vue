@@ -1,9 +1,14 @@
 <template>
   <md-card class="md-layout-item md-size-50 md-small-size-100">
     <md-card-header>
-      <div class="md-title">Create new instrument</div>
+      <div class="md-title">
+        Create new instrument
+      </div>
     </md-card-header>
-    <md-progress-bar v-if="loading" md-mode="indeterminate"></md-progress-bar>
+    <md-progress-bar
+      v-if="loading"
+      md-mode="indeterminate"
+    />
     <md-card-content v-else>
       <mt-select
         id="vendorDropdown"
@@ -11,14 +16,28 @@
         label="Vendor"
         :options="regular.vendors"
       />
-      <bloomberg-instrument v-if="isBloomberg" v-model="bloomberg" />
-      <regular-instrument v-else v-model="regular" />
+      <bloomberg-instrument
+        v-if="isBloomberg"
+        v-model="bloomberg"
+      />
+      <regular-instrument
+        v-else
+        v-model="regular"
+      />
       <ul v-if="errors.length">
-        <li v-for="error in errors" :key="error">
-          {{error}}
+        <li
+          v-for="error in errors"
+          :key="error"
+        >
+          {{ error }}
         </li>
       </ul>
-      <md-button v-on:click="this.submit" class="md-raised md-primary">Submit</md-button>
+      <md-button
+        class="md-raised md-primary"
+        @click="submit"
+      >
+        Submit
+      </md-button>
     </md-card-content>
   </md-card>
 </template>
@@ -37,17 +56,17 @@ export default {
     MtSelect,
   },
   props: ['regular', 'bloomberg'],
-  computed: {
-    isBloomberg() {
-      if (!this.regular) return false;
-      return this.regular.command.vendor === 'Bloomberg';
-    },
-  },
   data() {
     return {
       loading: false,
       errors: [],
     };
+  },
+  computed: {
+    isBloomberg() {
+      if (!this.regular) return false;
+      return this.regular.command.vendor === 'Bloomberg';
+    },
   },
   methods: {
     submit() {
@@ -57,7 +76,7 @@ export default {
         ? this.bloomberg.command
         : this.regular.command;
 
-      const route = isBB() ? '/api/bloomberg' : '/api';
+      const route = isBB() ? '/features/create-bloomberg-instrument/' : '/features/create-regular-instrument';
 
       axios
         .post(endpoint + route, obj)

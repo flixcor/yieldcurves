@@ -5,10 +5,14 @@
         <div class="md-title">
           Calculated curves
         </div>
-        <md-datepicker
-          id="asOfDatePicker"
-          v-model="selectedDate"
-          md-immediately
+        <FrameLiveFeed
+          endpoint="https://localhost:44393/features/get-calculation-dates"
+          @change="selectedDate = $event"
+        />
+        <FrameLiveFeed
+          v-if="selectedDate"
+          :endpoint="`https://localhost:44393/features/get-calculations-overview-for-date?asOfDate=${jsonAsOfDate}`"
+          @change="selectedRecipe = $event"
         />
         <md-button
           class="md-primary md-fab md-fab-top-right md-mini"
@@ -19,7 +23,8 @@
       </md-card-header>
       <md-card-content>
         <FrameLiveFeed
-          :endpoint="`https://localhost:44393/features/get-calculated-curve-detail?curveRecipeId=5C4FEF4E-D475-4CAD-8A84-206D9F6528D1&asOfDate=${jsonAsAtDate}`"
+          :v-if="selectedDate && selectedRecipe"
+          :endpoint="`https://localhost:44393/features/get-calculated-curves-overview?curveRecipeId=${selectedRecipe}&asOfDate=${jsonAsOfDate}`"
         />
       </md-card-content>
     </md-card>
@@ -37,11 +42,12 @@ export default {
   data() {
     return {
       selectedDate: this.tMinus1(),
+      selectedRecipe: null,
       showCreate: false
     };
   },
   computed: {
-    jsonAsAtDate() {
+    jsonAsOfDate() {
       return this.selectedDate;
     }
   },

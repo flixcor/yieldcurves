@@ -1,7 +1,9 @@
 <template>
   <md-card class="md-layout-item md-size-50 md-small-size-100">
     <md-card-header>
-      <div class="md-title">Create new market curve</div>
+      <div class="md-title">
+        Create new market curve
+      </div>
     </md-card-header>
     <md-card-content>
       <mt-select
@@ -23,11 +25,19 @@
         :options="['N/A', ...floatingLegs]"
       />
       <ul v-if="errors.length">
-        <li v-for="error in errors" :key="error">
-          {{error}}
+        <li
+          v-for="error in errors"
+          :key="error"
+        >
+          {{ error }}
         </li>
       </ul>
-      <md-button v-on:click="this.submit" class="md-raised md-primary">Submit</md-button>
+      <md-button
+        class="md-raised md-primary"
+        @click="submit"
+      >
+        Submit
+      </md-button>
     </md-card-content>
   </md-card>
 </template>
@@ -37,13 +47,30 @@ import axios from 'axios';
 
 import MtSelect from '../Common/Material/MtSelect.vue';
 
-const endpoint = 'https://localhost:5001';
+const endpoint = 'https://localhost:5001/features/create-market-curve';
 
 export default {
   components: {
     MtSelect,
   },
-  props: ['command', 'countries', 'floatingLegs', 'curveTypes'],
+  props: {
+    command: {
+      type: Object,
+      required: true
+    },
+    countries: {
+      type: Array,
+      required: true
+    },
+    floatingLegs: {
+      type: Array,
+      required: true
+    },
+    curveTypes: {
+      type: Array,
+      required: true
+    }
+  },
   data() {
     return {
       errors: [],
@@ -56,15 +83,12 @@ export default {
       }
 
       axios
-        .post(`${endpoint}/api`, this.command)
+        .post(endpoint, this.command)
         .then(() => this.$emit('success'))
         .catch((e) => {
           if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
         });
     },
-  },
-  created() {
-    this.initialize();
   },
 };
 </script>

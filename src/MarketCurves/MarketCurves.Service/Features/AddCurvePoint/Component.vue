@@ -1,7 +1,9 @@
 <template>
   <md-card>
     <md-card-header>
-      <div class="md-title">Add new curve point</div>
+      <div class="md-title">
+        Add new curve point
+      </div>
     </md-card-header>
     <md-card-content>
       <mt-select
@@ -17,33 +19,42 @@
         :options="instruments.map(x=> x.id)"
       />
       <text-box
+        id="dateLagBox"
+        v-model="command.dateLag"
         type="number"
         max="0"
-        v-model="this.command.dateLag"
         label="DateLag"
-        id="dateLagBox"
-      ></text-box>
+      />
 
       <md-checkbox
         v-model="command.isMandatory"
-        >Mandatory
+      >
+        Mandatory
       </md-checkbox>
 
-      <br/>
+      <br>
 
       <mt-select
+        v-if="hasPriceType"
         id="priceTypeDropdown"
         v-model="command.priceType"
         label="Price Type"
         :options="priceTypes"
-        v-if="hasPriceType"
       />
       <ul v-if="errors.length">
-        <li v-for="error in errors" :key="error">
-          {{error}}
+        <li
+          v-for="error in errors"
+          :key="error"
+        >
+          {{ error }}
         </li>
       </ul>
-      <md-button v-on:click="this.submit" class="md-raised md-primary">Submit</md-button>
+      <md-button
+        class="md-raised md-primary"
+        @click="submit"
+      >
+        Submit
+      </md-button>
     </md-card-content>
   </md-card>
 </template>
@@ -54,7 +65,7 @@ import axios from 'axios';
 import MtSelect from '../Common/Material/MtSelect.vue';
 import TextBox from '../Common/Material/TextBox.vue';
 
-const endpoint = 'https://localhost:5001/api/curvepoint';
+const endpoint = 'https://localhost:5001/features/add-curve-point';
 
 export default {
   components: {

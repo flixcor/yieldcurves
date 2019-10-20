@@ -7,7 +7,7 @@
     />
     <FrameLiveFeed
       v-if="showCreate"
-      endpoint="https://localhost:5011/api"
+      endpoint="https://localhost:5011/features/get-commands"
       class="comp md-layout-item md-size-50 md-small-size-100"
       @success="showCreate = false"
     />
