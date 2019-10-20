@@ -1,6 +1,6 @@
 ﻿using Common.Core;
 
-namespace Instruments.Query.Service.Features.GetInstrumentList
+namespace Instruments.Query.Service.Features.GetInstrumentsOverview
 {
     public class Dto : ReadObject
     {

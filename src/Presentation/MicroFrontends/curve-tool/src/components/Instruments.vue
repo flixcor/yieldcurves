@@ -1,15 +1,15 @@
 <template>
   <div>
     <FrameLiveFeed
-      endpoint="https://localhost:5009/api"
+      endpoint="https://localhost:5009/features/get-instruments-overview"
       class="comp md-layout-item md-size-50 md-small-size-100"
-      v-on:create="showCreate = !showCreate"
+      @create="showCreate = !showCreate"
     />
     <FrameLiveFeed
+      v-if="showCreate"
       endpoint="https://localhost:5011/api"
       class="comp md-layout-item md-size-50 md-small-size-100"
-      v-if="showCreate"
-      v-on:success="showCreate = false"
+      @success="showCreate = false"
     />
   </div>
 </template>

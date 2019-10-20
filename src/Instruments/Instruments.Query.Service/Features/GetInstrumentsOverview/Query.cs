@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Common.Core;
 
-namespace Instruments.Query.Service.Features.GetInstrumentList
+namespace Instruments.Query.Service.Features.GetInstrumentsOverview
 {
     public class Query : IQuery<IEnumerable<Dto>>
     {

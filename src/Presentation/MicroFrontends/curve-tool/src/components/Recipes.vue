@@ -1,29 +1,29 @@
 <template>
   <div>
     <FrameLiveFeed
-      endpoint="https://localhost:5005/api"
+      endpoint="https://localhost:5005/features/get-curve-recipes-overview"
       class="comp md-layout-item md-size-50 md-small-size-100"
-      v-on:createClicked="onCreateClicked()"
-      v-on:detailClicked="onDetailClicked($event)"
+      @createClicked="onCreateClicked()"
+      @detailClicked="onDetailClicked($event)"
     />
     <FrameLiveFeed
+      v-if="createComponent"
       endpoint="https://localhost:5007/api"
       class="comp md-layout-item md-size-50 md-small-size-100"
-      v-if="createComponent"
-      v-on:success="createComponent = false"
+      @success="createComponent = false"
     />
     <FrameLiveFeed
-      :endpoint="`https://localhost:5005/api/${id}`"
-      class="comp md-layout-item md-size-50 md-small-size-100"
       v-if="detailComponent && id"
-      v-on:success="detailComponent = false"
-      v-on:createClicked="addTransformationComponent = true"
+      :endpoint="`https://localhost:5005/features/get-curve-recipe-detail?id=${id}`"
+      class="comp md-layout-item md-size-50 md-small-size-100"
+      @success="detailComponent = false"
+      @createClicked="addTransformationComponent = true"
     />
     <FrameLiveFeed
+      v-if="addTransformationComponent && id"
       :endpoint="`https://localhost:5007/api/${id}/addtransformation`"
       class="comp md-layout-item md-size-50 md-small-size-100"
-      v-if="addTransformationComponent && id"
-      v-on:success="addTransformationComponent = false"
+      @success="addTransformationComponent = false"
     />
   </div>
 </template>

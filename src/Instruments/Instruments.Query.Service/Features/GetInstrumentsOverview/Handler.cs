@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Common.Core;
 using Common.Core.Events;
 
-namespace Instruments.Query.Service.Features.GetInstrumentList
+namespace Instruments.Query.Service.Features.GetInstrumentsOverview
 {
     public class Handler :
             IHandleQuery<Query, IEnumerable<Dto>>,

@@ -1,29 +1,29 @@
 <template>
   <div>
     <FrameLiveFeed
-      endpoint="https://localhost:5003/api"
+      endpoint="https://localhost:5003/features/get-market-curves-overview"
       class="comp md-layout-item md-size-50 md-small-size-100"
-      v-on:detailClicked="onDetailClicked($event)"
-      v-on:createClicked="onCreateClicked()"
+      @detailClicked="onDetailClicked($event)"
+      @createClicked="onCreateClicked()"
     />
     <FrameLiveFeed
       v-if="id && showDetail"
-      :endpoint="`https://localhost:5003/api/${id}`"
+      :endpoint="`https://localhost:5003/features/get-market-curve-detail?id=${id}`"
       class="comp md-layout-item md-size-50 md-small-size-100"
-      v-on:createClicked="onDetailCreateClicked()"
-      v-on:success="showDetail = false"
+      @createClicked="onDetailCreateClicked()"
+      @success="showDetail = false"
     />
     <FrameLiveFeed
       v-if="showCreate"
       endpoint="https://localhost:5001/api"
       class="comp md-layout-item md-size-50 md-small-size-100"
-      v-on:success="showCreate = false"
+      @success="showCreate = false"
     />
     <FrameLiveFeed
       v-if="id && showAdd"
       :endpoint="`https://localhost:5001/api/curvepoint/${id}`"
       class="comp md-layout-item md-size-50 md-small-size-100"
-      v-on:success="showAdd = false"
+      @success="showAdd = false"
     />
   </div>
 </template>

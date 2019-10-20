@@ -1,6 +1,6 @@
 ﻿using Common.Infrastructure.DependencyInjection;
 using Common.Infrastructure.Extensions;
-using Instruments.Query.Service.Features.GetInstrumentList;
+using Instruments.Query.Service.Features.GetInstrumentsOverview;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,7 +17,7 @@ namespace Instruments.Query.Service
             base.ConfigureServices(services);
 
             services
-                .AddMediator(typeof(Features.GetInstrumentList.Query).Assembly)
+                .AddMediator(typeof(Features.GetInstrumentsOverview.Query).Assembly)
                 .AddRedis("localhost:6379", typeof(Dto).Assembly)
                     .WithSignalR()
                 .AddEventStore(Configuration.GetConnectionString("EventStore"));

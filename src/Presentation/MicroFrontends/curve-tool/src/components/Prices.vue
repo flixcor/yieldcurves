@@ -6,7 +6,7 @@
           Prices
         </div>
         <FrameLiveFeed
-          endpoint="https://localhost:44390/api/get-price-dates"
+          endpoint="https://localhost:44390/features/get-price-dates"
           @change="selectedDate = $event"
         />
         <md-button
@@ -18,7 +18,7 @@
       </md-card-header>
       <md-card-content>
         <FrameLiveFeed
-          :endpoint="`https://localhost:44390/api/get-prices-overview?asOfDate=${jsonAsAtDate}`"
+          :endpoint="`https://localhost:44390/features/get-prices-overview?asOfDate=${jsonAsAtDate}`"
           @create="showCreate = !showCreate"
         />
       </md-card-content>
