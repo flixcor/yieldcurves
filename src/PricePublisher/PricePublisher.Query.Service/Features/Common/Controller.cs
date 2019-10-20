@@ -16,18 +16,18 @@ namespace PricePublisher.Query.Service.Features.Common
             _requestMediator = requestMediator;
         }
 
-        [HttpGet]
+        [HttpGet("get-prices-overview")]
         public async Task<IActionResult> Handle([FromQuery] GetPricesOverview.Query query)
         {
             var result = await _requestMediator.Send(query);
-            return this.ComponentActionResult(result, "get-price-list");
+            return this.ComponentActionResult(result, "get-prices-overview");
         }
 
         [HttpGet("get-price-dates")]
         public async Task<IActionResult> Handle([FromQuery] GetPriceDates.Query query)
         {
             var result = await _requestMediator.Send(query);
-            return Ok(result);
+            return this.HubComponentActionResult(result, "get-price-dates");
         }
     }
 }

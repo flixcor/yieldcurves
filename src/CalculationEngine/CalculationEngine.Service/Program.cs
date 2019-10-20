@@ -6,9 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace CalculationEngine.Service
 {
-    class Program
+    public class Program
     {
-        static async Task Main()
+        public static async Task Main()
         {
             IServiceCollection services = new ServiceCollection();
             // Startup.cs finally :)

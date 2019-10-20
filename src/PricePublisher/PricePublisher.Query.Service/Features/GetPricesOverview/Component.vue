@@ -9,20 +9,33 @@
       <md-table-head>Amount</md-table-head>
       <md-table-head>Price Type</md-table-head>
     </md-table-row>
-    <md-table-row v-for="price of entities" :key="price.id">
-      <md-table-cell>{{price.asOfDate.substring(0,10)}}</md-table-cell>
-      <md-table-cell>{{price.asAtDate.substring(0,16)}}</md-table-cell>
-      <md-table-cell>{{price.vendor}}</md-table-cell>
-      <md-table-cell>{{price.instrument}}</md-table-cell>
-      <md-table-cell>{{price.priceCurrency}}</md-table-cell>
-      <md-table-cell>{{price.priceAmount}}</md-table-cell>
-      <md-table-cell>{{price.priceType}}</md-table-cell>
+    <md-table-row
+      v-for="price of entities"
+      :key="price.id"
+    >
+      <md-table-cell>{{ price.asOfDate.substring(0,10) }}</md-table-cell>
+      <md-table-cell>{{ price.asAtDate.substring(0,16) }}</md-table-cell>
+      <md-table-cell>{{ price.vendor }}</md-table-cell>
+      <md-table-cell>{{ price.instrument }}</md-table-cell>
+      <md-table-cell>{{ price.priceCurrency }}</md-table-cell>
+      <md-table-cell>{{ price.priceAmount }}</md-table-cell>
+      <md-table-cell>{{ price.priceType }}</md-table-cell>
     </md-table-row>
   </md-table>
 </template>
 <script>
 
 export default {
-  props: ['entities']
+  props: {
+    entities: {
+      type: Array,
+      required: true
+    }
+  },
+  methods: {
+    onCreateClick () {
+      this.$emit("create");
+    }
+  }
 };
 </script>

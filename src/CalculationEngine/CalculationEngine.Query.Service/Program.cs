@@ -1,22 +1,12 @@
-﻿using System.Threading.Tasks;
-using Common.Infrastructure.Extensions;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-
-namespace CalculationEngine.Query.Service
+﻿namespace CalculationEngine.Query.Service
 {
+    using System.Threading.Tasks;
+    using Common.Infrastructure.DependencyInjection;
     public static class Program
     {
         public static async Task Main(string[] args)
         {
-            await CreateHostBuilder(args).RunAsync();
+            await Program<Startup>.Main(args);
         }
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.UseStartup<Startup>();
-            });
     }
 }

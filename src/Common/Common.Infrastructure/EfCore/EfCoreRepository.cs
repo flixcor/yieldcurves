@@ -14,7 +14,7 @@ namespace Common.Infrastructure.EfCore
 
         public EfCoreRepository(GenericDbContext db) => _db = db;
 
-        public async Task<Maybe<T>> Get(Guid id) => (await _db.FindAsync<T>(id)).Maybe();
+        public async Task<Maybe<T>> Get(Guid id) => (await _db.Set<T>().FindAsync(id)).Maybe();
 
         public async Task<IEnumerable<T>> GetAll() => await _db.Set<T>().ToListAsync();
 

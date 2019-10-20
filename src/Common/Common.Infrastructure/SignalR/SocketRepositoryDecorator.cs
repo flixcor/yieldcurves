@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Common.Core;
-using Microsoft.AspNetCore.SignalR;
 
 namespace Common.Infrastructure.SignalR
 {
-    public class SignalRRepositoryDecorator<T> : IReadModelRepository<T> where T : ReadObject
+    public class SocketRepositoryDecorator<T> : IReadModelRepository<T> where T : ReadObject
     {
         private readonly IReadModelRepository<T> _decorated;
-        private readonly IHubContext<GenericHub> _context;
+        private readonly ISocketContext _context;
 
-        public SignalRRepositoryDecorator(IReadModelRepository<T> decorated, IHubContext<GenericHub> context)
+        public SocketRepositoryDecorator(IReadModelRepository<T> decorated, ISocketContext context)
         {
             _decorated = decorated ?? throw new ArgumentNullException(nameof(decorated));
             _context = context;
@@ -29,7 +28,7 @@ namespace Common.Infrastructure.SignalR
         public Task Insert(T t)
         {
             var repoTask = _decorated.Insert(t);
-            var hubTask = _context.Clients.All.SendAsync("insert", t);
+            var hubTask = _context.SendToAll(t, false);
 
             return Task.WhenAll(repoTask, hubTask);
         }
@@ -37,7 +36,7 @@ namespace Common.Infrastructure.SignalR
         public Task Update(T t)
         {
             var repoTask = _decorated.Update(t);
-            var hubTask = _context.Clients.All.SendAsync("update", t);
+            var hubTask = _context.SendToAll(t, true);
 
             return Task.WhenAll(repoTask, hubTask);
         }
