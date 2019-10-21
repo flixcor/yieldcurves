@@ -14,12 +14,6 @@
           :endpoint="`https://localhost:44393/features/get-calculations-overview-for-date?asOfDate=${jsonAsOfDate}`"
           @change="selectedRecipe = $event"
         />
-        <md-button
-          class="md-primary md-fab md-fab-top-right md-mini"
-          @click="showCreate = !showCreate"
-        >
-          <md-icon>add</md-icon>
-        </md-button>
       </md-card-header>
       <md-card-content>
         <FrameLiveFeed
@@ -39,7 +33,7 @@ export default {
   components: {
     FrameLiveFeed,
   },
-  data() {
+  data () {
     return {
       selectedDate: this.tMinus1(),
       selectedRecipe: null,
@@ -47,15 +41,15 @@ export default {
     };
   },
   computed: {
-    jsonAsOfDate() {
+    jsonAsOfDate () {
       return this.selectedDate;
     }
   },
   methods: {
-    tMinus1() {
+    tMinus1 () {
       var someDate = new Date();
       var numberOfDaysToAdd = 1;
-      someDate.setDate(someDate.getDate() - numberOfDaysToAdd); 
+      someDate.setDate(someDate.getDate() - numberOfDaysToAdd);
       return someDate.toISOString().split('T')[0];
     },
   }
