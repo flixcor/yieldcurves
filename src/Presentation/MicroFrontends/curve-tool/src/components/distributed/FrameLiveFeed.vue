@@ -53,21 +53,34 @@ export default {
       await this.fetch();
       if (this.hub && Array.isArray(this.props.entities)) {
         const conn = await getConnection(this.hub);
-        conn.on("insert", e => this.insert(e));
-        conn.on("update", e => this.update(e));
+        conn.on("insert", obj => this.insert(obj));
+        conn.on("update", obj => this.insert(obj));
+        conn.on("insert", (propertyName, obj) => this.insert(obj, propertyName));
+        conn.on("update", (propertyName, obj) => this.update(obj, propertyName));
         await conn.start();
       }
     },
-    update (e) {
-      this.props.entities = this.props.entities.map((x) => {
-        if (x.id === e.id) return e;
-        return x;
-      });
+    update (obj, propertyName = "entities") {
+      const prop = this.props[propertyName];
+      if (prop && obj && Array.isArray(prop) && obj.id) {
+
+        this.props[propertyName] = prop.map((x) => {
+          if (x.id === obj.id) return obj;
+          return x;
+
+        });
+      }
     },
-    insert (e) {
-      if (this.props.entities.find(x => x.id === e.id)) return;
-      this.props.entities = [e, ...this.props.entities];
+    insert (obj, propertyName = "entities") {
+      const prop = this.props[propertyName];
+      if (prop && obj && Array.isArray(prop) && obj.id) {
+
+        if (prop.find(x => x.id === obj.id)) return;
+        this.props[propertyName] = [obj, ...prop];
+
+      }
     },
+
   }
 };
 </script>

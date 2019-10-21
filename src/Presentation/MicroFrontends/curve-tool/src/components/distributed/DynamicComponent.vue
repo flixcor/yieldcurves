@@ -2,7 +2,6 @@
   <Component
     :is="computedComponent"
     v-bind="props"
-    ref="compRef"
     v-on="$listeners"
   />
 </template>
@@ -21,7 +20,7 @@ export default {
       type: Object,
     },
   },
-  data() {
+  data () {
     return {
       computedComponent: null,
     };
@@ -29,25 +28,11 @@ export default {
   watch: {
     component: {
       immediate: true,
-      handler(newComponent, prevComponent = ``) {
+      handler (newComponent, prevComponent = ``) {
         if (newComponent === prevComponent) return;
         this.computedComponent = () => externalComponent(this.component);
       },
     },
-  },
-  methods: {
-    insert(e){
-      const comp = this.$refs.compRef;
-      if (typeof comp.insert === "function") {
-        comp.insert(e); 
-      }
-    },
-    update(e){
-      const comp = this.$refs.compRef;
-      if (typeof comp.update === "function") {
-        comp.update(e); 
-      }
-    }
-  },
+  }
 };
 </script>

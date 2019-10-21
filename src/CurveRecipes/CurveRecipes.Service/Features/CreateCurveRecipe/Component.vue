@@ -1,15 +1,24 @@
 <template>
   <md-card>
     <md-card-header>
-      <div class="md-title">Create new curve recipe</div>
+      <div class="md-title">
+        Create new curve recipe
+      </div>
     </md-card-header>
-    <md-progress-bar v-if="loading" md-mode="indeterminate"></md-progress-bar>
+    <md-progress-bar
+      v-if="loading"
+      md-mode="indeterminate"
+    />
     <md-card-content v-else>
-      <text-box label="ShortName" id="shortNameBox" v-model="command.shortName" />
       <text-box
-        label="Description"
+        id="shortNameBox"
+        v-model="command.shortName"
+        label="ShortName"
+      />
+      <text-box
         id="descriptionBox"
         v-model="command.description"
+        label="Description"
       />
       <mt-select
         id="marketCurveDropdown"
@@ -55,14 +64,14 @@
         :options="outputSeries"
       />
       <text-box
+        id="maximumMaturityBox"
+        v-model="command.outputFrequency.maximumMaturity"
         type="number"
         max="100"
         min="0"
         step="0.1"
-        v-model="command.outputFrequency.maximumMaturity"
         label="Maximum maturity"
-        id="maximumMaturityBox"
-      ></text-box>
+      />
       <mt-select
         id="outputTypeDropdown"
         v-model="command.outputType"
@@ -70,11 +79,19 @@
         :options="outputTypes"
       />
       <ul v-if="errors.length">
-        <li v-for="error in errors" :key="error">
-          {{error}}
+        <li
+          v-for="error in errors"
+          :key="error"
+        >
+          {{ error }}
         </li>
       </ul>
-      <md-button v-on:click="this.submit" class="md-raised md-primary">Submit</md-button>
+      <md-button
+        class="md-raised md-primary"
+        @click="submit"
+      >
+        Submit
+      </md-button>
     </md-card-content>
   </md-card>
 </template>
@@ -85,7 +102,7 @@ import axios from 'axios';
 import MtSelect from '../Common/Material/MtSelect.vue';
 import TextBox  from '../Common/Material/TextBox.vue';
 
-const endpoint = 'https://localhost:5007/api';
+const endpoint = 'https://localhost:5007/features/create-curve-recipe';
 
 export default {
   components: {
@@ -93,6 +110,12 @@ export default {
     TextBox,
   },
   props: ['command', 'marketCurves', 'tenors', 'dayCountConventions', 'interpolations', 'extrapolationShorts', 'extrapolationLongs', 'outputSeries', 'outputTypes'],
+  data() {
+    return {
+      loading: false,
+      errors: [],
+    };
+  },
   computed: {
     matchingTenors() {
       const match = this.marketCurves
@@ -102,12 +125,6 @@ export default {
       }
       return false;
     },
-  },
-  data() {
-    return {
-      loading: false,
-      errors: [],
-    };
   },
   methods: {
     submit() {

@@ -7,7 +7,7 @@
         </div>
         <FrameLiveFeed
           endpoint="https://localhost:44390/features/get-price-dates"
-          @change="selectedDate = $event"
+          @input="onDateChange($event)"
         />
         <md-button
           class="md-primary md-fab md-fab-top-right md-mini"
@@ -58,6 +58,9 @@ export default {
       someDate.setDate(someDate.getDate() - numberOfDaysToAdd);
       return someDate.toISOString().split('T')[0];
     },
+    onDateChange(e){
+      this.selectedDate = e;
+    }
   }
 };
 </script>
