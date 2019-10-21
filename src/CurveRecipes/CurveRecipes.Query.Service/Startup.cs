@@ -18,7 +18,7 @@ namespace CurveRecipes.Query.Service
 
             services
                 .AddRedis("localhost:6379", typeof(Features.GetCurveRecipeDetail.Query).Assembly)
-                    .WithSignalR()
+                    .WithWebSockets()
                 .AddMediator(typeof(Features.GetCurveRecipeDetail.Query).Assembly)
                 .AddEventStore(Configuration.GetConnectionString("EventStore"));
         }

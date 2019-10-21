@@ -109,7 +109,7 @@ namespace Common.Infrastructure.Extensions
             return new ReadModelImplementation(services, readModelTypes);
         }
 
-        public static IServiceCollection WithSignalR(this IReadModelImplementation readModelImplementation)
+        public static IServiceCollection WithWebSockets(this IReadModelImplementation readModelImplementation)
         {
             var services = readModelImplementation.GetServiceCollection();
             var usedTypes = readModelImplementation.GetUsedTypes();

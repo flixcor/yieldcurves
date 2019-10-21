@@ -18,7 +18,7 @@ namespace PricePublisher.Query.Service
 
             services
                 .AddEfCore(Configuration.GetConnectionString("SqlServer"), typeof(Features.GetPricesOverview.Query).Assembly)
-                .WithSignalR();
+                .WithWebSockets();
 
             services.AddEventStore(Configuration.GetConnectionString("EventStore"))
                 .AddMediator(typeof(Features.GetPricesOverview.Query).Assembly);

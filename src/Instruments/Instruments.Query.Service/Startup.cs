@@ -19,7 +19,7 @@ namespace Instruments.Query.Service
             services
                 .AddMediator(typeof(Features.GetInstrumentsOverview.Query).Assembly)
                 .AddRedis("localhost:6379", typeof(Dto).Assembly)
-                    .WithSignalR()
+                    .WithWebSockets()
                 .AddEventStore(Configuration.GetConnectionString("EventStore"));
         }
     }

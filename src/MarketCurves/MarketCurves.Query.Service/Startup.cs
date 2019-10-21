@@ -19,7 +19,7 @@ namespace MarketCurves.Query.Service
             services
                 .AddMediator(typeof(Features.GetMarketCurveDetail.Query).Assembly)
                 .AddRedis("localhost:6379", typeof(InstrumentDto).Assembly)
-                    .WithSignalR()
+                    .WithWebSockets()
                 .AddEventStore(Configuration.GetConnectionString("EventStore"));
         }
     }
