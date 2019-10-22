@@ -5,7 +5,7 @@ using CalculationEngine.Domain;
 using CalculationEngine.Service.ActorModel.Commands;
 using CalculationEngine.Service.Domain;
 using Common.Core;
-using Common.Core.Events;
+using Common.Events;
 using Common.Infrastructure.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 

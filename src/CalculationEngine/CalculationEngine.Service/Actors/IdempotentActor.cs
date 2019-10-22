@@ -10,7 +10,7 @@ namespace CalculationEngine.Service.ActorModel
 
         private readonly IDictionary<Guid, int> _eventVersions = new Dictionary<Guid, int>();
 
-        public void IdempotentEvent<T>(Action<T> commandHandler, Action<T> recoveryHandler = null, Func<T, bool> validation = null) where T : Common.Core.Event
+        public void IdempotentEvent<T>(Action<T> commandHandler, Action<T> recoveryHandler = null, Func<T, bool> validation = null) where T : Common.Core.IEvent
         {
             var r = recoveryHandler ?? Ignore;
             var v = validation ?? (_ => true);
@@ -31,7 +31,7 @@ namespace CalculationEngine.Service.ActorModel
             Recover(wrapped);
         }
 
-        Action<T> WrapRecoveryHandler<T>(Action<T> action) where T : Common.Core.Event
+        Action<T> WrapRecoveryHandler<T>(Action<T> action) where T : Common.Core.IEvent
         {
             return x =>
             {
@@ -40,12 +40,12 @@ namespace CalculationEngine.Service.ActorModel
             };
         }
 
-        private int GetVersion<T>(T e) where T : Common.Core.Event
+        private int GetVersion<T>(T e) where T : Common.Core.IEvent
         {
             return _eventVersions.TryGetValue(e.Id, out var version) ? version : -1;
         }
 
-        private void AddVersion<T>(T e) where T : Common.Core.Event
+        private void AddVersion<T>(T e) where T : Common.Core.IEvent
         {
             if (!_eventVersions.ContainsKey(e.Id))
             {

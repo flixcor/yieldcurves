@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
-using Common.Core.Events;
+using Common.Events;
 using MarketCurves.Domain;
 
 namespace MarketCurves.Service.Features.AddCurvePoint

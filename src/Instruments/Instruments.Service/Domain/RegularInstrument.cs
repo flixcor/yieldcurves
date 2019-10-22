@@ -1,5 +1,5 @@
 ﻿using Common.Core;
-using Common.Core.Events;
+using Common.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;

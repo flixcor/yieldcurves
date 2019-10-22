@@ -1,5 +1,5 @@
 ﻿using Akka.Actor;
-using Common.Core.Events;
+using Common.Events;
 
 namespace CalculationEngine.Service.ActorModel.Actors
 {
@@ -10,7 +10,7 @@ namespace CalculationEngine.Service.ActorModel.Actors
 
         public CalculationEngineActor()
         {
-            Receive<Common.Core.Event>(e => 
+            Receive<Common.Core.IEvent>(e => 
             {
                 switch (e)
                 {

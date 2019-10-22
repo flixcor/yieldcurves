@@ -1,5 +1,5 @@
 ﻿using System;
-using Common.Core.Events;
+using Common.Events;
 using Common.Tests;
 using MarketCurves.Domain;
 using NUnit.Framework;

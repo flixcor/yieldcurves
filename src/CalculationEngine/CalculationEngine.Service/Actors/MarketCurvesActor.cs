@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Akka.Actor;
 using Akka.Util.Internal;
-using Common.Core.Events;
+using Common.Events;
 
 namespace CalculationEngine.Service.ActorModel.Actors
 {

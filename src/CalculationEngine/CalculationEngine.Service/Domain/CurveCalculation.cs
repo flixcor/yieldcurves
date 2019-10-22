@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using CalculationEngine.Domain;
 using Common.Core;
-using Common.Core.Events;
+using Common.Events;
 
 namespace CalculationEngine.Service.Domain
 {

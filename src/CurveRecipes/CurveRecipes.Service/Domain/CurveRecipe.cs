@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Common.Core;
-using Common.Core.Events;
+using Common.Events;
 
 namespace CurveRecipes.Domain
 {

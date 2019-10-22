@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
-using Common.Core.Events;
+using Common.Events;
 
 namespace CurveRecipes.Query.Service.Features.GetCurveRecipesOverview
 {

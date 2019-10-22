@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
-using Common.Core.Events;
+using Common.Events;
 using Common.Core.Extensions;
 
 namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail

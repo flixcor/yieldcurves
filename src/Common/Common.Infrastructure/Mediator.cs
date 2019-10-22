@@ -18,7 +18,7 @@ namespace Common.Infrastructure
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
-        public async Task Publish<T>(T @event, CancellationToken cancellationToken = default) where T : Event
+        public async Task Publish<T>(T @event, CancellationToken cancellationToken = default) where T : IEvent
         {
             var handlerType = typeof(IHandleEvent<>)
                 .MakeGenericType(@event.GetType());

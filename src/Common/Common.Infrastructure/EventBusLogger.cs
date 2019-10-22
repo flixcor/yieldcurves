@@ -15,7 +15,7 @@ namespace Common.Infrastructure
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
         }
 
-        public async Task Publish<T>(T @event, CancellationToken cancellationToken = default) where T : Event
+        public async Task Publish<T>(T @event, CancellationToken cancellationToken = default) where T : IEvent
         {
             var eventName = @event.GetType().Name;
 

@@ -9,7 +9,7 @@ namespace Common.Tests
     {
         protected T Aggregate { get; private set; } = (T)Activator.CreateInstance(typeof(T), true);
 
-        protected void Given(params Event[] events)
+        protected void Given(params IEvent[] events)
         {
             Aggregate.LoadStateFromHistory(events);
         }
@@ -24,7 +24,7 @@ namespace Common.Tests
             action(Aggregate);
         }
 
-        protected virtual void Then(params Event[] events)
+        protected virtual void Then(params IEvent[] events)
         {
             var count = events.Count();
 
@@ -37,7 +37,7 @@ namespace Common.Tests
             }
         }
 
-        protected bool EventsMatch(Event a, Event b)
+        protected bool EventsMatch(IEvent a, IEvent b)
         {
             if (a.GetType() != b.GetType())
             {

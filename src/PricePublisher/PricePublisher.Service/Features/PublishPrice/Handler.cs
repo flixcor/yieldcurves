@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
-using Common.Core.Events;
+using Common.Events;
 using PricePublisher.Domain;
 
 namespace PricePublisher.Service.Features.PublishPrice

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
-using Common.Core.Events;
+using Common.Events;
 using Common.Infrastructure.EfCore;
 using Microsoft.EntityFrameworkCore;
 

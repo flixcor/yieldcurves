@@ -1,14 +1,14 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using Common.Core;
 
-namespace Common.Core.Events
+namespace Common.Events
 {
-    public class CurveRecipeCreated : Event
+    public class CurveRecipeCreated : IEvent
     {
-        public CurveRecipeCreated(Guid id, Guid marketCurveId, string shortName, string description, string lastLiquidTenor, string dayCountConvention, string interpolation, 
-            string extrapolationShort, string extrapolationLong, string outputSeries, double maximumMaturity, string outputType) : 
-            base(id)
+        public CurveRecipeCreated(Guid id, Guid marketCurveId, string shortName, string description, string lastLiquidTenor, string dayCountConvention, string interpolation,
+            string extrapolationShort, string extrapolationLong, string outputSeries, double maximumMaturity, string outputType, int version = 0)
         {
+            Id = id;
             MarketCurveId = marketCurveId;
             ShortName = shortName;
             Description = description;
@@ -20,16 +20,11 @@ namespace Common.Core.Events
             OutputSeries = outputSeries;
             MaximumMaturity = maximumMaturity;
             OutputType = outputType;
-        }
-
-        [JsonConstructor]
-        protected CurveRecipeCreated(Guid id, Guid marketCurveId, string shortName, string description, string lastLiquidTenor, string dayCountConvention, string interpolation,
-            string extrapolationShort, string extrapolationLong, string outputSeries, double maximumMaturity, string outputType, int version) : 
-            this(id, marketCurveId, shortName, description, lastLiquidTenor, dayCountConvention, interpolation, extrapolationShort, extrapolationLong, outputSeries, maximumMaturity, outputType)
-        {
             Version = version;
         }
 
+        public Guid Id { get; }
+        public int Version { get; }
         public Guid MarketCurveId { get; }
         public string ShortName { get; }
         public string Description { get; }
@@ -41,5 +36,6 @@ namespace Common.Core.Events
         public string OutputSeries { get; }
         public double MaximumMaturity { get; }
         public string OutputType { get; }
+
     }
 }

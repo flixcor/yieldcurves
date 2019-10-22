@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using Common.Core.Events;
+using Common.Events;
 
 namespace CalculationEngine.Service.ActorModel.Commands
 {

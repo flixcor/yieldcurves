@@ -5,10 +5,10 @@ namespace Common.Core
 {
     public abstract class Aggregate<TAggregate> where TAggregate : Aggregate<TAggregate>
     {
-        private static readonly IDictionary<Type, Action<Aggregate<TAggregate>, Event>> s_actions = new Dictionary<Type, Action<Aggregate<TAggregate>, Event>>();
-        private readonly List<Event> _events = new List<Event>();
+        private static readonly IDictionary<Type, Action<Aggregate<TAggregate>, IEvent>> s_actions = new Dictionary<Type, Action<Aggregate<TAggregate>, IEvent>>();
+        private readonly List<IEvent> _events = new List<IEvent>();
 
-        protected static void RegisterApplyMethod<TEvent>(Action<TAggregate, TEvent> action) where TEvent : Event
+        protected static void RegisterApplyMethod<TEvent>(Action<TAggregate, TEvent> action) where TEvent : IEvent
         {
             s_actions.Add(typeof(TEvent), (x, y) => action((TAggregate)x, (TEvent)y));
         }
@@ -16,7 +16,7 @@ namespace Common.Core
         public Guid Id { get; protected set; }
         public int Version { get; private set; } = -1;
 
-        public IEnumerable<Event> GetUncommittedEvents()
+        public IEnumerable<IEvent> GetUncommittedEvents()
         {
             return _events.AsReadOnly();
         }
@@ -26,7 +26,7 @@ namespace Common.Core
             _events.Clear();
         }
 
-        public void LoadStateFromHistory(IEnumerable<Event> history)
+        public void LoadStateFromHistory(IEnumerable<IEvent> history)
         {
             foreach (var e in history)
             {
@@ -34,12 +34,12 @@ namespace Common.Core
             }
         }
 
-        protected void ApplyEvent(Event @event)
+        protected void ApplyEvent(IEvent @event)
         {
             ApplyEvent(@event, true);
         }
 
-        private void ApplyEvent(Event @event, bool isNew)
+        private void ApplyEvent(IEvent @event, bool isNew)
         {
             if (s_actions.TryGetValue(@event.GetType(), out var action))
             {

@@ -1,6 +1,6 @@
 ﻿using System;
 using Common.Core;
-using Common.Core.Events;
+using Common.Events;
 
 namespace PricePublisher.Domain
 {

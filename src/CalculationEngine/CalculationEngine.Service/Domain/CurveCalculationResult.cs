@@ -2,7 +2,7 @@
 using System.Collections.Immutable;
 using System.Linq;
 using Common.Core;
-using Common.Core.Events;
+using Common.Events;
 
 namespace CalculationEngine.Domain
 {
@@ -27,7 +27,7 @@ namespace CalculationEngine.Domain
         public CurveCalculationResult(Guid id, Guid recipeId, DateTime asOfDate, Result<ImmutableArray<CurvePoint>> result)
         {
             var e = result.IsSuccessful
-                ? (Event)new CurveCalculated(id, recipeId, asOfDate, DateTime.Now, result.Content.Select(x => new CurveCalculated.Point(x.Maturity.Value, x.Price.Currency, x.Price.Value)))
+                ? (IEvent)new CurveCalculated(id, recipeId, asOfDate, DateTime.Now, result.Content.Select(x => new CurveCalculated.Point(x.Maturity.Value, x.Price.Currency, x.Price.Value)))
                 : new CurveCalculationFailed(id, recipeId, asOfDate, DateTime.Now, result.Messages.ToArray());
 
             ApplyEvent(e);

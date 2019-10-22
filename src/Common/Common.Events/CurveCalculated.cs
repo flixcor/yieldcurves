@@ -1,28 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using Common.Core;
 using Newtonsoft.Json;
 
-namespace Common.Core.Events
+namespace Common.Events
 {
-    public class CurveCalculated : Event
+    public class CurveCalculated : IEvent
     {
-        [JsonConstructor]
-        private CurveCalculated(Guid id, Guid curveRecipeId, DateTime asOfDate, DateTime asAtDate, IEnumerable<Point> points, int version) : this(id, curveRecipeId, asOfDate, asAtDate, points)
+        public CurveCalculated(Guid id, Guid curveRecipeId, DateTime asOfDate, DateTime asAtDate, IEnumerable<Point> points, int version = 0)
         {
-            Version = version;
-        }
-
-        public CurveCalculated(Guid id, Guid curveRecipeId, DateTime asOfDate, DateTime asAtDate, IEnumerable<Point> points) : base(id)
-        {
+            Id = id;
             CurveRecipeId = curveRecipeId;
             AsOfDate = asOfDate;
             AsAtDate = asAtDate;
             Points = points ?? throw new ArgumentNullException(nameof(points));
+            Version = version;
         }
+
+        public Guid Id { get; }
+        public int Version { get; }
         public Guid CurveRecipeId { get; }
         public DateTime AsOfDate { get; }
         public DateTime AsAtDate { get; }
         public IEnumerable<Point> Points { get; }
+
 
         public class Point
         {

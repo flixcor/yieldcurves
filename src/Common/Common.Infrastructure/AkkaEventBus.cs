@@ -15,7 +15,7 @@ namespace Common.Infrastructure
             _actorRef = actorRef ?? throw new ArgumentNullException(nameof(actorRef));
         }
 
-        public Task Publish<T>(T @event, CancellationToken cancellationToken = default) where T : Event
+        public Task Publish<T>(T @event, CancellationToken cancellationToken = default) where T : IEvent
         {
             _actorRef.Tell(@event);
             return Task.CompletedTask;

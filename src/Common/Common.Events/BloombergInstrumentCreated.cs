@@ -1,22 +1,21 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using Common.Core;
 
-namespace Common.Core.Events
+namespace Common.Events
 {
-    public class BloombergInstrumentCreated : Event
+    public class BloombergInstrumentCreated : IEvent
     {
-        public BloombergInstrumentCreated(Guid id, string ticker, string pricingSource, string yellowKey) : base(id)
+        public BloombergInstrumentCreated(Guid id, string ticker, string pricingSource, string yellowKey, int version = 0)
         {
+            Id = id;
             Ticker = ticker ?? throw new ArgumentNullException(nameof(ticker));
             PricingSource = pricingSource ?? throw new ArgumentNullException(nameof(pricingSource));
             YellowKey = yellowKey ?? throw new ArgumentNullException(nameof(yellowKey));
-        }
-
-        [JsonConstructor]
-        protected BloombergInstrumentCreated(Guid id, string ticker, string pricingSource, string yellowKey, int version) : this(id, ticker, pricingSource, yellowKey)
-        {
             Version = version;
         }
+
+        public Guid Id { get; }
+        public int Version { get; }
 
         public string Ticker { get; }
         public string PricingSource { get; }
