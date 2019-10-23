@@ -6,11 +6,11 @@ namespace Common.Core
     {
         protected Event(Guid id, int version = 0)
         {
-            Id = id;
+            AggregateId = id;
             Version = version;
         }
 
-        public Guid Id { get; }
+        public Guid AggregateId { get; }
         public int Version { get; private set; }
 
         public virtual Event WithVersion(int version)

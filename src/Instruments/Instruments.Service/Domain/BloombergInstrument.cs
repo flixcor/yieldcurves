@@ -34,7 +34,7 @@ namespace Instruments.Domain
 
         private static void Apply(BloombergInstrument i, BloombergInstrumentCreated e)
         {
-            i.Id = e.Id;
+            i.Id = e.AggregateId;
         }
     }
 }

@@ -81,7 +81,7 @@ namespace CalculationEngine.Service.ActorModel.Actors
         #region CurveRecipeCreated
         private void Handle(CurveRecipeCreated e)
         {
-            var recipeActor = GetRecipeActor(e.Id);
+            var recipeActor = GetRecipeActor(e.AggregateId);
             recipeActor.Tell(e);
 
             foreach (var item in _dateTimes)
@@ -93,7 +93,7 @@ namespace CalculationEngine.Service.ActorModel.Actors
 
         private void Recover(CurveRecipeCreated e)
         {
-            _recipeIds.Add(e.Id);
+            _recipeIds.Add(e.AggregateId);
         }
         #endregion
         #endregion

@@ -42,18 +42,18 @@ namespace CalculationEngine.Service.ActorModel
 
         private int GetVersion<T>(T e) where T : Common.Core.IEvent
         {
-            return _eventVersions.TryGetValue(e.Id, out var version) ? version : -1;
+            return _eventVersions.TryGetValue(e.AggregateId, out var version) ? version : -1;
         }
 
         private void AddVersion<T>(T e) where T : Common.Core.IEvent
         {
-            if (!_eventVersions.ContainsKey(e.Id))
+            if (!_eventVersions.ContainsKey(e.AggregateId))
             {
-                _eventVersions.Add(e.Id, e.Version);
+                _eventVersions.Add(e.AggregateId, e.Version);
             }
             else
             {
-                _eventVersions[e.Id] = e.Version;
+                _eventVersions[e.AggregateId] = e.Version;
             }
         }
     }

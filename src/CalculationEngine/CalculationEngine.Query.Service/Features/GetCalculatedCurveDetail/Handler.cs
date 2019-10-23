@@ -42,7 +42,7 @@ namespace CalculationEngine.Query.Service.Features.GetCalculatedCurveDetail
 
             _db.Add(new Dto
             {
-                Id = @event.Id,
+                Id = @event.AggregateId,
                 AsAtDate = @event.AsAtDate,
                 AsOfDate = @event.AsOfDate,
                 CurveRecipeId = @event.CurveRecipeId,
@@ -61,7 +61,7 @@ namespace CalculationEngine.Query.Service.Features.GetCalculatedCurveDetail
         {
             _db.Add(new CurveRecipe
             {
-                Id = @event.Id,
+                Id = @event.AggregateId,
                 Name = @event.ShortName
             });
 

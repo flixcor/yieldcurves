@@ -56,7 +56,7 @@ namespace MarketCurves.Service.Features.AddCurvePoint
         {
             var instrument = new Instrument
             {
-                Id = @event.Id,
+                Id = @event.AggregateId,
                 Vendor = @event.Vendor,
                 Name = @event.Description,
                 HasPriceType = @event.HasPriceType
@@ -99,12 +99,12 @@ namespace MarketCurves.Service.Features.AddCurvePoint
 
         public async Task Handle(CurvePointAdded @event, CancellationToken cancellationToken)
         {
-            var dto = await (await _usedValues.Get(@event.Id))
+            var dto = await (await _usedValues.Get(@event.AggregateId))
             .Coalesce(async () =>
             {
                 var newDto = new UsedValues
                 {
-                    Id = @event.Id
+                    Id = @event.AggregateId
                 };
 
                 await _usedValues.Insert(newDto);

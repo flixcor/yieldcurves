@@ -29,7 +29,7 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurvesOverview
         {
             var curve = new Dto
             {
-                Id = @event.Id,
+                Id = @event.AggregateId,
                 Name = GenerateName(@event)
             };
 

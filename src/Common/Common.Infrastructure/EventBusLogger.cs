@@ -19,15 +19,15 @@ namespace Common.Infrastructure
         {
             var eventName = @event.GetType().Name;
 
-            Console.WriteLine($"processing event of type {eventName} with id {@event.Id} and version {@event.Version}");
+            Console.WriteLine($"processing event of type {eventName} with id {@event.AggregateId} and version {@event.Version}");
             try
             {
                 await _eventBus.Publish(@event, cancellationToken);
-                Console.WriteLine($"successfully processed event of type {eventName} with id {@event.Id} and version {@event.Version}");
+                Console.WriteLine($"successfully processed event of type {eventName} with id {@event.AggregateId} and version {@event.Version}");
             }
             catch (Exception)
             {
-                Console.WriteLine($"something went wrong while processing event of type {eventName} with id {@event.Id} and version {@event.Version}");
+                Console.WriteLine($"something went wrong while processing event of type {eventName} with id {@event.AggregateId} and version {@event.Version}");
                 throw;
             }
         }

@@ -18,7 +18,7 @@ namespace PricePublisher.Domain
 
         private static void Apply(InstrumentPricing i, InstrumentPricingPublished e)
         {
-            i.Id = e.Id;
+            i.Id = e.AggregateId;
         }
     }
 }

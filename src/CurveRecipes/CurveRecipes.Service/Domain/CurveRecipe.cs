@@ -105,7 +105,7 @@ namespace CurveRecipes.Domain
 
         private static void Apply(CurveRecipe curve, CurveRecipeCreated e)
         {
-            curve.Id = e.Id;
+            curve.Id = e.AggregateId;
         }
     }
 }

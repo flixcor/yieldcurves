@@ -63,7 +63,7 @@ namespace MarketCurves.Domain
 
         private static void Apply(MarketCurve c, MarketCurveCreated e)
         {
-            c.Id = e.Id;
+            c.Id = e.AggregateId;
         }
     }
 }

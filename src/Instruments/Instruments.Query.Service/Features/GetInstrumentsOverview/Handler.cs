@@ -27,7 +27,7 @@ namespace Instruments.Query.Service.Features.GetInstrumentsOverview
         {
             var dto = new Dto
             {
-                Id = @event.Id,
+                Id = @event.AggregateId,
                 Description = @event.Description,
                 Vendor = @event.Vendor
             };

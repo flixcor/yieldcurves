@@ -67,7 +67,7 @@ namespace CalculationEngine.Service.Domain
 
             return Result
                 .Combine(lastLiquidTenor, dcc, inter, exShort, exLong, outSeries, outType)
-                .Promise(() => new CurveRecipe(e.Id, lastLiquidTenor.Content, dcc.Content, inter.Content, exShort.Content, exLong.Content, new OutputFrequency(outSeries.Content, new Maturity(e.MaximumMaturity)), outType.Content));
+                .Promise(() => new CurveRecipe(e.AggregateId, lastLiquidTenor.Content, dcc.Content, inter.Content, exShort.Content, exLong.Content, new OutputFrequency(outSeries.Content, new Maturity(e.MaximumMaturity)), outType.Content));
         }
     }
 }

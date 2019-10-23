@@ -44,7 +44,7 @@ namespace PricePublisher.Service.Features.PublishPrice
 
         public Task Handle(InstrumentCreated @event, CancellationToken cancellationToken)
         {
-            var dto = new InstrumentDto { Id = @event.Id, HasPriceType = @event.HasPriceType, Name = @event.Description, Vendor = @event.Vendor };
+            var dto = new InstrumentDto { Id = @event.AggregateId, HasPriceType = @event.HasPriceType, Name = @event.Description, Vendor = @event.Vendor };
             return _readModelRepository.Insert(dto);
         }
 

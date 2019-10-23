@@ -38,7 +38,7 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
                 {
                     var dto = new Dto
                     {
-                        Id = @event.Id,
+                        Id = @event.AggregateId,
                         Name = GenerateName(@event, curve)
                     };
 
@@ -76,7 +76,7 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
                     }
             };
 
-            await _readModelRepository.Get(@event.Id)
+            await _readModelRepository.Get(@event.AggregateId)
                 .ToResult()
                 .Promise(recipe =>
                 {
@@ -106,7 +106,7 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
                     }
             };
 
-            await _readModelRepository.Get(@event.Id)
+            await _readModelRepository.Get(@event.AggregateId)
                 .ToResult()
                 .Promise(recipe =>
                 {
@@ -120,7 +120,7 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
         {
             var dto = new MarketCurveNamePartDto
             {
-                Id = @event.Id,
+                Id = @event.AggregateId,
                 Value = GenerateName(@event)
             };
 

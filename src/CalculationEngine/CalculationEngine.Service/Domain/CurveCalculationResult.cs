@@ -16,12 +16,12 @@ namespace CalculationEngine.Domain
 
         private static void Apply(CurveCalculationResult r, CurveCalculationFailed e)
         {
-            r.Id = e.Id;
+            r.Id = e.AggregateId;
         }
 
         private static void Apply(CurveCalculationResult r, CurveCalculated e)
         {
-            r.Id = e.Id;
+            r.Id = e.AggregateId;
         }
 
         public CurveCalculationResult(Guid id, Guid recipeId, DateTime asOfDate, Result<ImmutableArray<CurvePoint>> result)
