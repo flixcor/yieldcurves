@@ -5,17 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.10.0" />
-    <PackageReference Include="Google.Protobuf.Tools" Version="3.10.0" />
-    <PackageReference Include="Grpc" Version="2.24.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.24.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <Protobuf Include="**/*.proto" />
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="**/*.proto" />
+    <PackageReference Include="protobuf-net" Version="2.4.1" />
   </ItemGroup>
 
   <ItemGroup>

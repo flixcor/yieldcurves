@@ -45,7 +45,6 @@ namespace Common.Infrastructure.Extensions
         public static IServiceCollection AddMediator(this IServiceCollection services, params Assembly[] assembliesToScan)
         {
             return services
-                .AddTransient<IRequestMediator, InternalEventBus>()
                 .AddTransient<IEventBus, InternalEventBus>()
                 .Scan(scan => scan.FromAssemblies(assembliesToScan)
                     .AddClasses(classes => classes.AssignableToAny(typeof(IHandleQuery<,>), typeof(IHandleCommand<>), typeof(IHandleEvent<>)))
@@ -80,7 +79,7 @@ namespace Common.Infrastructure.Extensions
         {
             var readModelTypes = typeof(ReadObject).GetDescendantTypes(assemblyToScan).ToList();
 
-            var result = services
+            services
                 .AddScoped<GenericDbContext>(_ =>
                 {
                     var optionsBuilder = new DbContextOptionsBuilder<T>();

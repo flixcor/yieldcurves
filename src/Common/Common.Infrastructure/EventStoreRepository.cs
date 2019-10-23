@@ -2,8 +2,10 @@
 using Common.Infrastructure.Extensions;
 using EventStore.ClientAPI;
 using Newtonsoft.Json;
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -98,7 +100,7 @@ namespace Common.Infrastructure
 
             var streamName = AggregateIdToStreamName(aggregate.GetType(), aggregate.Id);
             var eventsToPublish = aggregate.GetUncommittedEvents();
-            var newEvents = eventsToPublish.Cast<object>().ToList();
+            var newEvents = eventsToPublish.ToList();
             var originalVersion = aggregate.Version - newEvents.Count;
             var expectedVersion = originalVersion == -1 ? ExpectedVersion.NoStream : originalVersion;
             var eventsToSave = newEvents.Select(e => ToEventData(Guid.NewGuid(), e, commitHeaders)).ToList();
@@ -143,9 +145,9 @@ namespace Common.Infrastructure
             return string.Format("{0}-{1}", char.ToLower(type.Name[0]) + type.Name.Substring(1), id.ToString("N"));
         }
 
-        private static EventData ToEventData(Guid eventId, object @event, IDictionary<string, object> headers)
+        private static EventData ToEventData(Guid eventId, IEvent @event, IDictionary<string, object> headers)
         {
-            var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(@event, s_serializationSettings));
+            var data = ToByteArray(@event);
 
             var eventHeaders = new Dictionary<string, object>(headers)
             {
@@ -157,6 +159,13 @@ namespace Common.Infrastructure
             var typeName = @event.GetType().Name;
 
             return new EventData(eventId, typeName, true, data, metadata);
+        }
+
+        private static byte[] ToByteArray(IEvent @event)
+        {
+            using var stream = new MemoryStream();
+            Serializer.Serialize(stream, @event);
+            return stream.ToArray();
         }
     }
 }
