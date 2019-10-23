@@ -9,7 +9,7 @@ namespace Common.Tests
     {
         protected T Aggregate { get; private set; } = (T)Activator.CreateInstance(typeof(T), true);
 
-        protected void Given(params IEvent[] events)
+        protected void Given(params Event[] events)
         {
             Aggregate.LoadStateFromHistory(events);
         }

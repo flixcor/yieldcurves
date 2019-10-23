@@ -27,7 +27,7 @@ namespace CalculationEngine.Domain
         public CurveCalculationResult(Guid id, Guid recipeId, DateTime asOfDate, Result<ImmutableArray<CurvePoint>> result)
         {
             var e = result.IsSuccessful
-                ? (IEvent)new CurveCalculated(id, recipeId, asOfDate, DateTime.Now, result.Content.Select(x => new CurveCalculated.Point(x.Maturity.Value, x.Price.Currency, x.Price.Value)))
+                ? (Event)new CurveCalculated(id, recipeId, asOfDate, DateTime.Now, result.Content.Select(x => new CurveCalculated.Point(x.Maturity.Value, x.Price.Currency, x.Price.Value)))
                 : new CurveCalculationFailed(id, recipeId, asOfDate, DateTime.Now, result.Messages.ToArray());
 
             ApplyEvent(e);

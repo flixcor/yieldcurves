@@ -12,7 +12,7 @@ namespace Common.Infrastructure.Extensions
     {
         private const string EventClrTypeHeader = "EventClrTypeName";
 
-        internal static IEvent Deserialize(this ResolvedEvent resolvedEvent)
+        internal static Event Deserialize(this ResolvedEvent resolvedEvent)
         {
             var metadata = resolvedEvent.OriginalEvent.Metadata;
             var data = resolvedEvent.OriginalEvent.Data;
@@ -26,9 +26,9 @@ namespace Common.Infrastructure.Extensions
                 if (eventClrTypeName != null)
                 {
                     var @event = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(data), Type.GetType((string)eventClrTypeName));
-                    if ((@event is IEvent))
+                    if ((@event is Event))
                     {
-                        return @event as IEvent;
+                        return @event as Event;
                     }
                 }
             }

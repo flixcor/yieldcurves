@@ -3,18 +3,13 @@ using Common.Core;
 
 namespace Common.Events
 {
-    public class CurveCalculatorCreated : IEvent
+    public class CurveCalculatorCreated : Event
     {
-        public CurveCalculatorCreated(Guid id, Guid marketCurveId, DateTime asOfDate, int version = 0)
+        public CurveCalculatorCreated(Guid id, Guid marketCurveId, DateTime asOfDate) : base(id)
         {
-            Id = id;
             MarketCurveId = marketCurveId;
             AsOfDate = asOfDate;
-            Version = version;
         }
-
-        public Guid Id { get; }
-        public int Version { get; }
 
         public Guid MarketCurveId { get; }
         public DateTime AsOfDate { get; }
