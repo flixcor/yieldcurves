@@ -12,9 +12,9 @@ namespace CalculationEngine.Service.ActorModel
 
         public void IdempotentEvent<T>(Action<T> commandHandler, Action<T> recoveryHandler = null, Func<T, bool> validation = null) where T : Common.Core.IEvent
         {
-            var r = recoveryHandler ?? Ignore;
+            var r = recoveryHandler ?? (_ => { });
             var v = validation ?? (_ => true);
-            var wrapped = WrapRecoveryHandler(recoveryHandler);
+            var wrapped = WrapRecoveryHandler(r);
 
             Command<T>(e =>
             {
