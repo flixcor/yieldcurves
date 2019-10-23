@@ -45,8 +45,8 @@ namespace Common.Infrastructure.Extensions
         public static IServiceCollection AddMediator(this IServiceCollection services, params Assembly[] assembliesToScan)
         {
             return services
-                .AddTransient<IRequestMediator, Mediator>()
-                .AddTransient<IEventBus, Mediator>()
+                .AddTransient<IRequestMediator, InternalEventBus>()
+                .AddTransient<IEventBus, InternalEventBus>()
                 .Scan(scan => scan.FromAssemblies(assembliesToScan)
                     .AddClasses(classes => classes.AssignableToAny(typeof(IHandleQuery<,>), typeof(IHandleCommand<>), typeof(IHandleEvent<>)))
                         .AsImplementedInterfaces()
