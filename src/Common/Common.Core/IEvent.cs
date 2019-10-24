@@ -6,5 +6,7 @@ namespace Common.Core
     {
         Guid AggregateId { get; }
         int Version { get; }
+
+        public IEvent WithVersion(int version);
     }
 }

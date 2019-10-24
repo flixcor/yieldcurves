@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common.Core\Common.Core.csproj" />
+    <ProjectReference Include="..\Common.Events\Common.Events.csproj" />
   </ItemGroup>
 
 </Project>

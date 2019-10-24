@@ -4,10 +4,12 @@ using Common.Core;
 
 namespace Common.Events
 {
-    public class CurveCalculationFailed : Event
+    public class CurveCalculationFailed : IEvent
     {
-        public CurveCalculationFailed(Guid id, Guid curveRecipeId, DateTime asOfDate, DateTime asAtDate, string[] messages) : base(id)
+        public CurveCalculationFailed(Guid aggregateId, Guid curveRecipeId, DateTime asOfDate, DateTime asAtDate, string[] messages, int version = 0)
         {
+            AggregateId = aggregateId;
+            Version = version;
             CurveRecipeId = curveRecipeId;
             AsOfDate = asOfDate;
             AsAtDate = asAtDate;
@@ -19,5 +21,12 @@ namespace Common.Events
         public DateTime AsOfDate { get; }
         public DateTime AsAtDate { get; }
         public ICollection<string> Messages { get; }
+        public Guid AggregateId { get; }
+        public int Version { get; }
+		
+		public IEvent WithVersion(int version)
+		{
+			throw new NotImplementedException();
+		}
     }
 }

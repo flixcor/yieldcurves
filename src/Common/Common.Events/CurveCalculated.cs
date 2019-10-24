@@ -4,10 +4,12 @@ using Common.Core;
 
 namespace Common.Events
 {
-    public class CurveCalculated : Event
+    public class CurveCalculated : IEvent
     {
-        public CurveCalculated(Guid id, Guid curveRecipeId, DateTime asOfDate, DateTime asAtDate, IEnumerable<Point> points) : base(id)
+        public CurveCalculated(Guid aggregateId, Guid curveRecipeId, DateTime asOfDate, DateTime asAtDate, IEnumerable<Point> points, int version = 0)
         {
+            AggregateId = aggregateId;
+            Version = version;
             CurveRecipeId = curveRecipeId;
             AsOfDate = asOfDate;
             AsAtDate = asAtDate;
@@ -32,5 +34,12 @@ namespace Common.Events
             public string Currency { get; }
             public double Value { get; }
         }
+        public Guid AggregateId { get; }
+        public int Version { get; }
+		
+		public IEvent WithVersion(int version)
+		{
+			throw new NotImplementedException();
+		}
     }
 }

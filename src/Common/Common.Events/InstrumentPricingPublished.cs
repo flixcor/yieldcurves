@@ -3,10 +3,12 @@ using Common.Core;
 
 namespace Common.Events
 {
-    public class InstrumentPricingPublished : Event
+    public class InstrumentPricingPublished : IEvent
     {
-        public InstrumentPricingPublished(Guid id, DateTime asOfDate, DateTime asAtDate, Guid instrumentId, string priceCurrency, double priceAmount, string priceType = null) : base(id)
+        public InstrumentPricingPublished(Guid aggregateId, DateTime asOfDate, DateTime asAtDate, Guid instrumentId, string priceCurrency, double priceAmount, string priceType = null, int version = 0)
         {
+            AggregateId = aggregateId;
+            Version = version;
             AsOfDate = asOfDate;
             AsAtDate = asAtDate;
             InstrumentId = instrumentId;
@@ -22,5 +24,12 @@ namespace Common.Events
         public double PriceAmount { get; }
         public string PriceType { get; }
 
+        public Guid AggregateId { get; }
+        public int Version { get; }
+		
+		public IEvent WithVersion(int version)
+		{
+			throw new NotImplementedException();
+		}
     }
 }

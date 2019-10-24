@@ -3,10 +3,10 @@ using Common.Core;
 
 namespace Common.Events
 {
-    public class CurveRecipeCreated : Event
+    public class CurveRecipeCreated : IEvent
     {
         public CurveRecipeCreated(Guid id, Guid marketCurveId, string shortName, string description, string lastLiquidTenor, string dayCountConvention, string interpolation,
-            string extrapolationShort, string extrapolationLong, string outputSeries, double maximumMaturity, string outputType) : base(id)
+            string extrapolationShort, string extrapolationLong, string outputSeries, double maximumMaturity, string outputType)
         {
             MarketCurveId = marketCurveId;
             ShortName = shortName;
@@ -33,5 +33,12 @@ namespace Common.Events
         public double MaximumMaturity { get; }
         public string OutputType { get; }
 
+        public Guid AggregateId { get; }
+        public int Version { get; }
+		
+		public IEvent WithVersion(int version)
+		{
+			throw new NotImplementedException();
+		}
     }
 }

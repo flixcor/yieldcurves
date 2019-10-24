@@ -3,10 +3,12 @@ using Common.Core;
 
 namespace Common.Events
 {
-    public class ParallelShockAdded : Event
+    public class ParallelShockAdded : IEvent
     {
-        public ParallelShockAdded(Guid id, int order, string shockTarget, double shift) : base(id)
+        public ParallelShockAdded(Guid aggregateId, int order, string shockTarget, double shift, int version = 0)
         {
+            AggregateId = aggregateId;
+            Version = version;
             Order = order;
             ShockTarget = shockTarget;
             Shift = shift;
@@ -16,5 +18,12 @@ namespace Common.Events
         public string ShockTarget { get; }
         public double Shift { get; }
 
+        public Guid AggregateId { get; }
+        public int Version { get; }
+		
+		public IEvent WithVersion(int version)
+		{
+			throw new NotImplementedException();
+		}
     }
 }

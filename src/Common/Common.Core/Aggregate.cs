@@ -26,7 +26,7 @@ namespace Common.Core
             _events.Clear();
         }
 
-        public void LoadStateFromHistory(IEnumerable<Event> history)
+        public void LoadStateFromHistory(IEnumerable<IEvent> history)
         {
             foreach (var e in history)
             {
@@ -34,12 +34,12 @@ namespace Common.Core
             }
         }
 
-        protected void ApplyEvent(Event @event)
+        protected void ApplyEvent(IEvent @event)
         {
             ApplyEvent(@event, true);
         }
 
-        private void ApplyEvent(Event @event, bool isNew)
+        private void ApplyEvent(IEvent @event, bool isNew)
         {
             if (s_actions.TryGetValue(@event.GetType(), out var action))
             {
