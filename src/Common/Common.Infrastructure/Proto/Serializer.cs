@@ -37,6 +37,7 @@ namespace Common.Infrastructure.Proto
         public static byte[] Serialize(object obj)
         {
             using var stream = new MemoryStream();
+            stream.Seek(0, SeekOrigin.Begin);
             ProtoBuf.Serializer.Serialize(stream, obj);
             return stream.ToArray();
         }
