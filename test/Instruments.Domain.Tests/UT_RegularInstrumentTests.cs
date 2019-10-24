@@ -16,7 +16,7 @@ namespace UnitTests
             var desc = "description";
 
             WhenCreated(() => RegularInstrument.TryCreate(id, vendor, desc).Content);
-            Then(new RegularInstrumentCreated(id, vendor.ToString(), desc));
+            Then(new RegularInstrumentCreated(id, vendor.ToString(), desc), new InstrumentCreated(id, vendor.ToString(), desc));
         }
 
         [Test]
