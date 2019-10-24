@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Common.Core;
 
 namespace CalculationEngine.Query.Service.Features.GetCalculationsOverviewForDate
@@ -7,7 +6,7 @@ namespace CalculationEngine.Query.Service.Features.GetCalculationsOverviewForDat
     public class Dto : ReadObject
     {
         public string AsOfDate { get; set; }
-        public IEnumerable<RecipeDto> Recipes { get; set; } = Enumerable.Empty<RecipeDto>();
+        public ICollection<RecipeDto> Recipes { get; set; }
     }
 
     public class RecipeDto : ReadObject

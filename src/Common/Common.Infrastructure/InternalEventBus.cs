@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
@@ -24,9 +23,10 @@ namespace Common.Infrastructure
 
             IEnumerable<dynamic> handlers = _serviceProvider.GetServices(handlerType) ?? new List<dynamic>();
 
-            var tasks = handlers.Select(handler => handler.Handle((dynamic)@event, cancellationToken)).Cast<Task>();
-
-            await Task.WhenAll(tasks);
+            foreach (var handler in handlers)
+            {
+                await handler.Handle((dynamic)@event, cancellationToken);
+            }
         }
     }
 }

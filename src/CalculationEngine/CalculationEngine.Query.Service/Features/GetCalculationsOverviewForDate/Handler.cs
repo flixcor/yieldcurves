@@ -4,6 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
 using Common.Events;
+using Common.Infrastructure.EfCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace CalculationEngine.Query.Service.Features.GetCalculationsOverviewForDate
 {
@@ -14,11 +16,13 @@ namespace CalculationEngine.Query.Service.Features.GetCalculationsOverviewForDat
     {
         private readonly IReadModelRepository<Dto> _dtoRepository;
         private readonly IReadModelRepository<RecipeDto> _recipeRepository;
+        private readonly GenericDbContext _genericDbContext;
 
-        public Handler(IReadModelRepository<Dto> dtoRepository, IReadModelRepository<RecipeDto> recipeRepository)
+        public Handler(IReadModelRepository<Dto> dtoRepository, IReadModelRepository<RecipeDto> recipeRepository, GenericDbContext genericDbContext)
         {
             _dtoRepository = dtoRepository ?? throw new ArgumentNullException(nameof(dtoRepository));
             _recipeRepository = recipeRepository ?? throw new ArgumentNullException(nameof(recipeRepository));
+            _genericDbContext = genericDbContext;
         }
 
         public async Task Handle(CurveCalculated @event, CancellationToken cancellationToken)
@@ -65,9 +69,14 @@ namespace CalculationEngine.Query.Service.Features.GetCalculationsOverviewForDat
             });
         }
 
-        public Task<Maybe<Dto>> Handle(Query query, CancellationToken cancellationToken)
+        public async Task<Maybe<Dto>> Handle(Query query, CancellationToken cancellationToken)
         {
-            return _dtoRepository.Single(x => x.AsOfDate == query.AsOfDate);
+            var result = await _genericDbContext
+                .Set<Dto>()
+                .Include(x => x.Recipes)
+                .FirstOrDefaultAsync(x => x.AsOfDate == query.AsOfDate);
+
+            return result.Maybe();
         }
     }
 }

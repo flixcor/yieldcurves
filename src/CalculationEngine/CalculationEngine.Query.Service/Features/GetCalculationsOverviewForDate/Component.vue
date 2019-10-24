@@ -20,32 +20,35 @@ export default {
       required: true
     }
   },
-  data() {
+  data () {
     return {
-      value: null,
+      value: this.recipes.map(x => x.id)[0],
     };
   },
   computed: {
-    recipeNames() {
-      return this.recipes.map(x=> x.name)
+    recipeNames () {
+      return this.recipes.map(x => x.name)
     },
     currentRecipe: {
-      get() {
+      get () {
         return this.value
-          ? this.recipes.find(x=> x.id === this.value).name
+          ? this.recipes.find(x => x.id === this.value).name
           : null;
       },
-      set(val){
+      set (val) {
         if (val) {
-          this.value = this.recipes.find(x=> x.name === val).id;
+          this.value = this.recipes.find(x => x.name === val).id;
         }
-        else{
+        else {
           this.value = null;
         }
 
         this.$emit('change', this.value);
       }
     }
+  },
+  mounted() {
+    this.$emit('change', this.value);
   },
 };
 </script>

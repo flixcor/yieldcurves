@@ -18,7 +18,7 @@
       <md-card-content>
         <FrameLiveFeed
           :v-if="selectedDate && selectedRecipe"
-          :endpoint="`https://localhost:44393/features/get-calculated-curves-overview?curveRecipeId=${selectedRecipe}&asOfDate=${jsonAsOfDate}`"
+          :endpoint="`https://localhost:44393/features/get-calculated-curve-detail?curveRecipeId=${selectedRecipe}&asOfDate=${jsonAsOfDate}`"
         />
       </md-card-content>
     </md-card>
