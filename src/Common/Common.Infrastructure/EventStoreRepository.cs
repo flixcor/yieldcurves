@@ -1,30 +1,18 @@
-﻿using Common.Core;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Common.Core;
 using Common.Infrastructure.Extensions;
 using Common.Infrastructure.Proto;
 using EventStore.ClientAPI;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Common.Infrastructure
 {
     internal class EventStoreRepository : IRepository
     {
         private readonly string _connectionString;
-        private const string EventClrTypeHeader = "EventClrTypeName";
-        private const string AggregateClrTypeHeader = "AggregateClrTypeName";
-        private const string CommitIdHeader = "CommitId";
         private const int WritePageSize = 500;
         private const int ReadPageSize = 500;
-
-        private static readonly JsonSerializerSettings s_serializationSettings = new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.None
-        };
 
         public EventStoreRepository(string connectionString)
         {
@@ -72,7 +60,7 @@ namespace Common.Infrastructure
                 } while (version >= currentSlice.NextEventNumber && !currentSlice.IsEndOfStream);
             }
 
-            
+
 
             //if (aggregate.Version != version && version < int.MaxValue)
             //{
@@ -91,18 +79,14 @@ namespace Common.Infrastructure
 
         public async Task SaveAsync<TAggregate>(TAggregate aggregate) where TAggregate : Aggregate<TAggregate>
         {
-            var commitHeaders = new Dictionary<string, object>
-            {
-                {CommitIdHeader, aggregate.Id},
-                {AggregateClrTypeHeader, aggregate.GetType().AssemblyQualifiedName}
-            };
+            var assemblyQualifiedName = aggregate.GetType().AssemblyQualifiedName;
 
             var streamName = AggregateIdToStreamName(aggregate.GetType(), aggregate.Id);
             var eventsToPublish = aggregate.GetUncommittedEvents();
             var newEvents = eventsToPublish.ToList();
             var originalVersion = aggregate.Version - newEvents.Count;
             var expectedVersion = originalVersion == -1 ? ExpectedVersion.NoStream : originalVersion;
-            var eventsToSave = newEvents.Select(e => ToEventData(Guid.NewGuid(), e, commitHeaders)).ToList();
+            var eventsToSave = newEvents.Select(e => ToEventData(Guid.NewGuid(), e, aggregate.Id, assemblyQualifiedName)).ToList();
 
 
             using (var connection = EventStoreConnection.Create(_connectionString))
@@ -144,17 +128,18 @@ namespace Common.Infrastructure
             return string.Format("{0}-{1}", char.ToLower(type.Name[0]) + type.Name.Substring(1), id.ToString("N"));
         }
 
-        private static EventData ToEventData(Guid eventId, IEvent @event, IDictionary<string, object> headers)
+        private static EventData ToEventData(Guid eventId, IEvent @event, Guid aggregateId, string aggregateClrTypeName)
         {
             var data = Serializer.Serialize(@event);
 
-            var eventHeaders = new Dictionary<string, object>(headers)
+            var eventHeaders = new EventHeaders
             {
-                {
-                    EventClrTypeHeader, @event.GetType().AssemblyQualifiedName
-                }
+                CommitId = aggregateId,
+                AggregateClrTypeName = aggregateClrTypeName,
+                EventClrTypeName = @event.GetType().AssemblyQualifiedName
             };
-            var metadata = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(eventHeaders, s_serializationSettings));
+
+            var metadata = Serializer.Serialize(eventHeaders);
             var typeName = @event.GetType().Name;
 
             return new EventData(eventId, typeName, true, data, metadata);

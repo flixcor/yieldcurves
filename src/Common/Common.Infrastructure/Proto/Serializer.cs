@@ -14,7 +14,7 @@ namespace Common.Infrastructure.Proto
             Setup();
         }
 
-        public static IEvent Deserialize(byte[] byteArray, Type type)
+        public static IEvent DeserializeEvent(byte[] byteArray, Type type)
         {
             using var stream = new MemoryStream(byteArray);
             stream.Seek(0, SeekOrigin.Begin);
@@ -24,10 +24,20 @@ namespace Common.Infrastructure.Proto
                 : default;
         }
 
-        public static byte[] Serialize(IEvent @event)
+        public static T Deserialize<T>(byte[] byteArray)
+        {
+            using var stream = new MemoryStream(byteArray);
+            stream.Seek(0, SeekOrigin.Begin);
+            var obj = ProtoBuf.Serializer.Deserialize(typeof(T), stream);
+            return obj is T t
+                ? t
+                : default;
+        }
+
+        public static byte[] Serialize(object obj)
         {
             using var stream = new MemoryStream();
-            ProtoBuf.Serializer.Serialize(stream, @event);
+            ProtoBuf.Serializer.Serialize(stream, obj);
             return stream.ToArray();
         }
 
@@ -42,6 +52,11 @@ namespace Common.Infrastructure.Proto
                 @event.Add(properties.ToArray());
                 @event.UseConstructor = false;
             }
+
+            var eventHeaders = RuntimeTypeModel.Default.Add(typeof(EventHeaders), false);
+            eventHeaders.AddField(1, nameof(EventHeaders.CommitId));
+            eventHeaders.AddField(2, nameof(EventHeaders.AggregateClrTypeName));
+            eventHeaders.AddField(3, nameof(EventHeaders.EventClrTypeName));
         }
     }
 }
