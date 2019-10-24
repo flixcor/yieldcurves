@@ -1,6 +1,6 @@
 ﻿using Common.Core;
-using Common.Events.Proto;
 using Common.Infrastructure.Extensions;
+using Common.Infrastructure.Proto;
 using EventStore.ClientAPI;
 using Newtonsoft.Json;
 using System;

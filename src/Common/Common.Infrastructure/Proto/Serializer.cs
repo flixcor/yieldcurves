@@ -2,9 +2,10 @@
 using System.IO;
 using System.Linq;
 using Common.Core;
+using Common.Events;
 using ProtoBuf.Meta;
 
-namespace Common.Events.Proto
+namespace Common.Infrastructure.Proto
 {
     public static class Serializer
     {
@@ -32,8 +33,8 @@ namespace Common.Events.Proto
 
         private static void Setup()
         {
-            var eventTypes = typeof(Serializer).Assembly.GetTypes().Where(x => typeof(IEvent).IsAssignableFrom(x));
-            
+            var eventTypes = typeof(CurveCalculated).Assembly.GetTypes().Where(x => typeof(IEvent).IsAssignableFrom(x));
+
             foreach (var eventType in eventTypes)
             {
                 var @event = RuntimeTypeModel.Default.Add(eventType, false);

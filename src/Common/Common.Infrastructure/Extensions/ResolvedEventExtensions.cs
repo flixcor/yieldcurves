@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 using Common.Core;
-using Common.Events.Proto;
+using Common.Infrastructure.Proto;
 using EventStore.ClientAPI;
 using Newtonsoft.Json.Linq;
 
