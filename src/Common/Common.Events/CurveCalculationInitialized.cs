@@ -5,10 +5,9 @@ namespace Common.Events
 {
     public class CurveCalculationInitialized : IEvent
     {
-        public CurveCalculationInitialized(Guid aggregateId, Guid recipeId, DateTime asOfDate, int version = 0)
+        public CurveCalculationInitialized(Guid aggregateId, Guid recipeId, DateTime asOfDate)
         {
             AggregateId = aggregateId;
-            Version = version;
             RecipeId = recipeId;
             AsOfDate = asOfDate;
         }
@@ -21,7 +20,7 @@ namespace Common.Events
 		
 		public IEvent WithVersion(int version)
 		{
-			var clone = (dynamic)MemberwiseClone();
+			var clone = (CurveCalculationInitialized)MemberwiseClone();
 			clone.Version = version;
 			return clone;
 		}

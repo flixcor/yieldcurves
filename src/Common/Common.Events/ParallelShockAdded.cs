@@ -5,10 +5,9 @@ namespace Common.Events
 {
     public class ParallelShockAdded : IEvent
     {
-        public ParallelShockAdded(Guid aggregateId, int order, string shockTarget, double shift, int version = 0)
+        public ParallelShockAdded(Guid aggregateId, int order, string shockTarget, double shift)
         {
             AggregateId = aggregateId;
-            Version = version;
             Order = order;
             ShockTarget = shockTarget;
             Shift = shift;
@@ -23,7 +22,7 @@ namespace Common.Events
 		
 		public IEvent WithVersion(int version)
 		{
-			var clone = (dynamic)MemberwiseClone();
+			var clone = (ParallelShockAdded)MemberwiseClone();
 			clone.Version = version;
 			return clone;
 		}

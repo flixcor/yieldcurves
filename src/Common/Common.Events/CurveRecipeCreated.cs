@@ -39,7 +39,7 @@ namespace Common.Events
 		
 		public IEvent WithVersion(int version)
 		{
-			var clone = (dynamic)MemberwiseClone();
+			var clone = (CurveRecipeCreated)MemberwiseClone();
 			clone.Version = version;
 			return clone;
 		}

@@ -6,10 +6,9 @@ namespace Common.Events
 {
     public class KeyRateShockAdded : IEvent
     {
-        public KeyRateShockAdded(Guid aggregateId, int order, string shockTarget, double shift, double[] maturities, int version = 0)
+        public KeyRateShockAdded(Guid aggregateId, int order, string shockTarget, double shift, double[] maturities)
         {
             AggregateId = aggregateId;
-            Version = version;
             Order = order;
             ShockTarget = shockTarget;
             Shift = shift;
@@ -26,7 +25,7 @@ namespace Common.Events
 		
 		public IEvent WithVersion(int version)
 		{
-			var clone = (dynamic)MemberwiseClone();
+			var clone = (KeyRateShockAdded)MemberwiseClone();
 			clone.Version = version;
 			return clone;
 		}

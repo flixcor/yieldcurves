@@ -5,10 +5,9 @@ namespace Common.Events
 {
     public class InstrumentPricingPublished : IEvent
     {
-        public InstrumentPricingPublished(Guid aggregateId, DateTime asOfDate, DateTime asAtDate, Guid instrumentId, string priceCurrency, double priceAmount, string priceType = null, int version = 0)
+        public InstrumentPricingPublished(Guid aggregateId, DateTime asOfDate, DateTime asAtDate, Guid instrumentId, string priceCurrency, double priceAmount, string priceType = null)
         {
             AggregateId = aggregateId;
-            Version = version;
             AsOfDate = asOfDate;
             AsAtDate = asAtDate;
             InstrumentId = instrumentId;
@@ -29,7 +28,7 @@ namespace Common.Events
 		
 		public IEvent WithVersion(int version)
 		{
-			var clone = (dynamic)MemberwiseClone();
+			var clone = (InstrumentPricingPublished)MemberwiseClone();
 			clone.Version = version;
 			return clone;
 		}

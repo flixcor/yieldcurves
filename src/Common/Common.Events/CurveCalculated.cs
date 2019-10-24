@@ -6,10 +6,9 @@ namespace Common.Events
 {
     public class CurveCalculated : IEvent
     {
-        public CurveCalculated(Guid aggregateId, Guid curveRecipeId, DateTime asOfDate, DateTime asAtDate, IEnumerable<Point> points, int version = 0)
+        public CurveCalculated(Guid aggregateId, Guid curveRecipeId, DateTime asOfDate, DateTime asAtDate, IEnumerable<Point> points)
         {
             AggregateId = aggregateId;
-            Version = version;
             CurveRecipeId = curveRecipeId;
             AsOfDate = asOfDate;
             AsAtDate = asAtDate;
@@ -39,7 +38,7 @@ namespace Common.Events
 		
 		public IEvent WithVersion(int version)
 		{
-			var clone = (dynamic)MemberwiseClone();
+			var clone = (CurveCalculated)MemberwiseClone();
 			clone.Version = version;
 			return clone;
 		}

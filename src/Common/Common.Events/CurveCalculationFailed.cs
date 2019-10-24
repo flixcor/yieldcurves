@@ -6,10 +6,9 @@ namespace Common.Events
 {
     public class CurveCalculationFailed : IEvent
     {
-        public CurveCalculationFailed(Guid aggregateId, Guid curveRecipeId, DateTime asOfDate, DateTime asAtDate, string[] messages, int version = 0)
+        public CurveCalculationFailed(Guid aggregateId, Guid curveRecipeId, DateTime asOfDate, DateTime asAtDate, string[] messages)
         {
             AggregateId = aggregateId;
-            Version = version;
             CurveRecipeId = curveRecipeId;
             AsOfDate = asOfDate;
             AsAtDate = asAtDate;
@@ -26,7 +25,7 @@ namespace Common.Events
 		
 		public IEvent WithVersion(int version)
 		{
-			var clone = (dynamic)MemberwiseClone();
+			var clone = (CurveCalculationFailed)MemberwiseClone();
 			clone.Version = version;
 			return clone;
 		}

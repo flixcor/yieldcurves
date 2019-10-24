@@ -5,10 +5,9 @@ namespace Common.Events
 {
     public class BloombergInstrumentCreated : IEvent
     {
-        public BloombergInstrumentCreated(Guid aggregateId, string ticker, string pricingSource, string yellowKey, int version = 0)
+        public BloombergInstrumentCreated(Guid aggregateId, string ticker, string pricingSource, string yellowKey)
         {
             AggregateId = aggregateId;
-            Version = version;
             Ticker = ticker ?? throw new ArgumentNullException(nameof(ticker));
             PricingSource = pricingSource ?? throw new ArgumentNullException(nameof(pricingSource));
             YellowKey = yellowKey ?? throw new ArgumentNullException(nameof(yellowKey));
@@ -23,7 +22,7 @@ namespace Common.Events
 		
 		public IEvent WithVersion(int version)
 		{
-			var clone = (dynamic)MemberwiseClone();
+			var clone = (BloombergInstrumentCreated)MemberwiseClone();
 			clone.Version = version;
 			return clone;
 		}

@@ -5,10 +5,9 @@ namespace Common.Events
 {
     public class InstrumentCreated : IEvent
     {
-        public InstrumentCreated(Guid aggregateId, string vendor, string description, bool hasPriceType = false, int version = 0)
+        public InstrumentCreated(Guid aggregateId, string vendor, string description, bool hasPriceType = false)
         {
             AggregateId = aggregateId;
-            Version = version;
             Vendor = vendor ?? throw new ArgumentNullException(nameof(vendor));
             Description = description ?? throw new ArgumentNullException(nameof(description));
             HasPriceType = hasPriceType;
@@ -23,7 +22,7 @@ namespace Common.Events
 		
 		public IEvent WithVersion(int version)
 		{
-			var clone = (dynamic)MemberwiseClone();
+			var clone = (InstrumentCreated)MemberwiseClone();
 			clone.Version = version;
 			return clone;
 		}

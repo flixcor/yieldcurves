@@ -5,10 +5,9 @@ namespace Common.Events
 {
     public class CurvePointAdded : IEvent
     {
-        public CurvePointAdded(Guid aggregateId, string tenor, Guid instrumentId, short dateLag, bool isMandatory, string priceType, int version = 0)
+        public CurvePointAdded(Guid aggregateId, string tenor, Guid instrumentId, short dateLag, bool isMandatory, string priceType)
         {
             AggregateId = aggregateId;
-            Version = version;
             Tenor = tenor;
             InstrumentId = instrumentId;
             DateLag = dateLag;
@@ -27,7 +26,7 @@ namespace Common.Events
 		
 		public IEvent WithVersion(int version)
 		{
-			var clone = (dynamic)MemberwiseClone();
+			var clone = (CurvePointAdded)MemberwiseClone();
 			clone.Version = version;
 			return clone;
 		}

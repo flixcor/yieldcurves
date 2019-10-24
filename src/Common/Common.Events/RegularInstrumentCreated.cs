@@ -5,10 +5,9 @@ namespace Common.Events
 {
     public class RegularInstrumentCreated : IEvent
     {
-        public RegularInstrumentCreated(Guid aggregateId, string vendor, string description, int version = 0)
+        public RegularInstrumentCreated(Guid aggregateId, string vendor, string description)
         {
             AggregateId = aggregateId;
-            Version = version;
             Vendor = vendor ?? throw new ArgumentNullException(nameof(vendor));
             Description = description ?? throw new ArgumentNullException(nameof(description));
         }
@@ -20,7 +19,7 @@ namespace Common.Events
 		
 		public IEvent WithVersion(int version)
 		{
-			var clone = (dynamic)MemberwiseClone();
+			var clone = (RegularInstrumentCreated)MemberwiseClone();
 			clone.Version = version;
 			return clone;
 		}
