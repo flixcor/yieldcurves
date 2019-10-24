@@ -1,10 +1,9 @@
-﻿using Common.Core;
-using EventStore.ClientAPI;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Text;
+using Common.Core;
+using Common.Events.Proto;
+using EventStore.ClientAPI;
+using Newtonsoft.Json.Linq;
 
 namespace Common.Infrastructure.Extensions
 {
@@ -25,11 +24,7 @@ namespace Common.Infrastructure.Extensions
 
                 if (eventClrTypeName != null)
                 {
-                    var @event = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(data), Type.GetType((string)eventClrTypeName));
-                    if ((@event is IEvent))
-                    {
-                        return @event as IEvent;
-                    }
+                    return Serializer.Deserialize(data, Type.GetType((string)eventClrTypeName));
                 }
             }
 

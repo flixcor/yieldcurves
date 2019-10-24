@@ -1,8 +1,8 @@
 ﻿using Common.Core;
+using Common.Events.Proto;
 using Common.Infrastructure.Extensions;
 using EventStore.ClientAPI;
 using Newtonsoft.Json;
-using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -146,7 +146,7 @@ namespace Common.Infrastructure
 
         private static EventData ToEventData(Guid eventId, IEvent @event, IDictionary<string, object> headers)
         {
-            var data = ToByteArray(@event);
+            var data = Serializer.Serialize(@event);
 
             var eventHeaders = new Dictionary<string, object>(headers)
             {
@@ -158,13 +158,6 @@ namespace Common.Infrastructure
             var typeName = @event.GetType().Name;
 
             return new EventData(eventId, typeName, true, data, metadata);
-        }
-
-        private static byte[] ToByteArray(IEvent @event)
-        {
-            using var stream = new MemoryStream();
-            Serializer.Serialize(stream, @event);
-            return stream.ToArray();
         }
     }
 }

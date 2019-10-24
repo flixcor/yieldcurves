@@ -16,11 +16,13 @@ namespace Common.Events
         public string Vendor { get; set; }
         public string Description { get; set; }
         public Guid AggregateId { get; }
-        public int Version { get; }
+        public int Version { get; private set; }
 		
 		public IEvent WithVersion(int version)
 		{
-			throw new NotImplementedException();
+			var clone = (dynamic)MemberwiseClone();
+			clone.Version = version;
+			return clone;
 		}
     }
 }

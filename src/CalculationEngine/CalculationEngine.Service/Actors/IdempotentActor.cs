@@ -6,19 +6,21 @@ namespace CalculationEngine.Service.ActorModel
 {
     public abstract class IdempotentActor : ReceivePersistentActor
     {
-        protected const Action<dynamic> Ignore = default;
+        protected static readonly Action<dynamic> Ignore = _ => { };
         protected static readonly Func<dynamic, bool> DefaultValidation = _ => true;
 
         private readonly IDictionary<Guid, int> _eventVersions = new Dictionary<Guid, int>();
 
-        public void IdempotentEvent<T>(Action<T> commandHandler, Action<T> recoveryHandler = Ignore, Func<T, bool> validation = null) where T : class, Common.Core.IEvent
+        public void IdempotentEvent<T>(Action<T> commandHandler, Action<T> recoveryHandler = null, Func<T, bool> validation = null) where T : class, Common.Core.IEvent
         {
-            var v = validation ?? DefaultValidation;
+            recoveryHandler ??= Ignore;
+            validation ??= DefaultValidation;
+
             var wrapped = WrapRecoveryHandler(recoveryHandler);
 
             Command<T>(e =>
             {
-                if (GetVersion(e) < e.Version && v(e))
+                if (GetVersion(e) < e.Version && validation(e))
                 {
                     Persist(e, ev =>
                     {

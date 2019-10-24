@@ -35,11 +35,13 @@ namespace Common.Events
             public double Value { get; }
         }
         public Guid AggregateId { get; }
-        public int Version { get; }
+        public int Version { get; private set; }
 		
 		public IEvent WithVersion(int version)
 		{
-			throw new NotImplementedException();
+			var clone = (dynamic)MemberwiseClone();
+			clone.Version = version;
+			return clone;
 		}
     }
 }

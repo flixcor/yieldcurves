@@ -5,9 +5,10 @@ namespace Common.Events
 {
     public class CurveRecipeCreated : IEvent
     {
-        public CurveRecipeCreated(Guid id, Guid marketCurveId, string shortName, string description, string lastLiquidTenor, string dayCountConvention, string interpolation,
+        public CurveRecipeCreated(Guid aggregateId, Guid marketCurveId, string shortName, string description, string lastLiquidTenor, string dayCountConvention, string interpolation,
             string extrapolationShort, string extrapolationLong, string outputSeries, double maximumMaturity, string outputType)
         {
+            AggregateId = aggregateId;
             MarketCurveId = marketCurveId;
             ShortName = shortName;
             Description = description;
@@ -34,11 +35,13 @@ namespace Common.Events
         public string OutputType { get; }
 
         public Guid AggregateId { get; }
-        public int Version { get; }
+        public int Version { get; private set; }
 		
 		public IEvent WithVersion(int version)
 		{
-			throw new NotImplementedException();
+			var clone = (dynamic)MemberwiseClone();
+			clone.Version = version;
+			return clone;
 		}
     }
 }
