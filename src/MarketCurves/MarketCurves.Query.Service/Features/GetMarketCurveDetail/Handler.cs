@@ -64,7 +64,7 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
                         Vendor = instrument.Vendor
                     });
 
-                    curve.CurvePoints = points;
+                    curve.CurvePoints = points.OrderBy(x=> x.Tenor).ToList();
 
                     return _curveRepo.Update(curve);
                 });

@@ -24,7 +24,8 @@ export default {
     return {
       props: {},
       comp: "",
-      hub: null
+      hubUrl: null,
+      hubConnection: null
     };
   },
   watch: {
@@ -35,6 +36,9 @@ export default {
   created () {
     // Fetch initial data.
     this.init();
+  },
+  destroyed() {
+    if (this.hubConnection) this.hubConnection.stop();
   },
   methods: {
     async fetch () {
@@ -47,15 +51,15 @@ export default {
 
       this.props = props;
       this.comp = data.url;
-      this.hub = data.hub;
+      this.hubUrl = data.hub;
     },
     async init () {
       await this.fetch();
-      if (this.hub && Array.isArray(this.props.entities)) {
-        const conn = await getConnection(this.hub);
-        conn.on("insert", obj => this.insert(obj));
-        conn.on("update", obj => this.insert(obj));
-        await conn.start();
+      if (this.hubUrl) {
+        this.hubConnection = await getConnection(this.hubUrl);
+        this.hubConnection.on("insert", obj => this.insert(obj));
+        this.hubConnection.on("update", obj => this.update(obj));
+        await this.hubConnection.start();
       }
     },
     update (obj) {

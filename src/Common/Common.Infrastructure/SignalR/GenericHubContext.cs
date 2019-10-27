@@ -29,7 +29,9 @@ namespace Common.Infrastructure.SignalR
                 ? "update"
                 : "insert";
 
-            return _hubContext.Clients.Group(group).SendAsync(message, readObject, cancellationToken);
+            var hubGroup = _hubContext.Clients.Group(group);
+
+            return hubGroup.SendAsync(message, readObject, cancellationToken);
         }
     }
 }
