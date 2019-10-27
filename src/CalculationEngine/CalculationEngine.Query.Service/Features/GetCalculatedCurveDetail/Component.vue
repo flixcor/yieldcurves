@@ -18,6 +18,11 @@
 
 <script>
 export default {
-  props: ['points'],
+  props: {
+    points: {
+      type: Array,
+      required: true
+    }
+  },
 };
 </script>

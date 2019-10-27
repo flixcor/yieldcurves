@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Common.Core;
+using static Common.Infrastructure.Controller.HelperMethods;
 
 namespace Common.Infrastructure.SignalR
 {
@@ -10,6 +11,7 @@ namespace Common.Infrastructure.SignalR
     {
         private readonly IReadModelRepository<T> _decorated;
         private readonly ISocketContext _context;
+        private static readonly string s_featureName = GetFeatureName(typeof(T));
 
         public SocketRepositoryDecorator(IReadModelRepository<T> decorated, ISocketContext context)
         {
@@ -28,7 +30,7 @@ namespace Common.Infrastructure.SignalR
         public Task Insert(T t)
         {
             var repoTask = _decorated.Insert(t);
-            var hubTask = _context.SendToAll(t, false);
+            var hubTask = _context.SendToGroup(s_featureName, t, false);
 
             return Task.WhenAll(repoTask, hubTask);
         }
@@ -36,7 +38,7 @@ namespace Common.Infrastructure.SignalR
         public Task Update(T t)
         {
             var repoTask = _decorated.Update(t);
-            var hubTask = _context.SendToAll(t, true);
+            var hubTask = _context.SendToGroup(s_featureName, t, true);
 
             return Task.WhenAll(repoTask, hubTask);
         }

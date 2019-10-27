@@ -55,32 +55,30 @@ export default {
         const conn = await getConnection(this.hub);
         conn.on("insert", obj => this.insert(obj));
         conn.on("update", obj => this.insert(obj));
-        conn.on("insert", (propertyName, obj) => this.insert(obj, propertyName));
-        conn.on("update", (propertyName, obj) => this.update(obj, propertyName));
         await conn.start();
       }
     },
-    update (obj, propertyName = "entities") {
-      const prop = this.props[propertyName];
-      if (prop && obj && Array.isArray(prop) && obj.id) {
-
-        this.props[propertyName] = prop.map((x) => {
+    update (obj) {
+      const { entities, id } = this.props;
+      if (Array.isArray(entities)) {
+        this.props.entities = entities.map((x) => {
           if (x.id === obj.id) return obj;
           return x;
-
-        });
+        })
+      }
+      else if (id === obj.id) {
+        this.props = obj;
       }
     },
-    insert (obj, propertyName = "entities") {
-      const prop = this.props[propertyName];
-      if (prop && obj && Array.isArray(prop) && obj.id) {
+    insert (obj) {
+      const { entities } = this.props;
+      if (Array.isArray(entities) && obj.id) {
 
-        if (prop.find(x => x.id === obj.id)) return;
-        this.props[propertyName] = [obj, ...prop];
+        if (entities.find(x => x.id === obj.id)) return;
+        this.props.entities = [obj, ...entities];
 
       }
     },
-
   }
 };
 </script>

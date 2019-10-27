@@ -37,7 +37,7 @@ namespace Common.Infrastructure.Controller
             var socket = GetSocket();
 
             return socket != null
-                ? this.ComponentActionResult(result, s_featureName, "hub")
+                ? this.ComponentActionResult(result, s_featureName, s_featureName)
                 : this.ComponentActionResult(result, s_featureName);
         }
     }
