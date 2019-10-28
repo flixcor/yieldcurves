@@ -25,6 +25,11 @@ namespace CalculationEngine.Domain
             return new X(a.Value - b.Value);
         }
 
+        public static X operator +(X a, X b)
+        {
+            return new X(a.Value + b.Value);
+        }
+
         public static X operator /(X a, X b)
         {
             return new X(a.Value / b.Value);
@@ -48,6 +53,11 @@ namespace CalculationEngine.Domain
         public static Coordinate operator -(Coordinate a, Coordinate b)
         {
             return new Coordinate(a.Value - b.Value);
+        }
+
+        public static Coordinate operator +(Coordinate a, Coordinate b)
+        {
+            return new Coordinate(a.Value + b.Value);
         }
 
         public static Coordinate operator /(Coordinate a, Coordinate b)

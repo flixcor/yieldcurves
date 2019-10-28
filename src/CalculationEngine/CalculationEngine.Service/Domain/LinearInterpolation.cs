@@ -19,7 +19,7 @@
 
             var delta = x - min.X;
 
-            var newCoordinate = delta * ratio;
+            var newCoordinate = (delta * ratio) + min.Y;
 
             return new Point(x, newCoordinate.ToY());
         }
