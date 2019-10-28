@@ -24,7 +24,7 @@
         id="marketCurveDropdown"
         v-model="command.marketCurveId"
         label="Market curve"
-        :options="marketCurves.map(x=> x.id)"
+        :options="marketCurveOptions"
       />
       <mt-select
         v-if="matchingTenors"
@@ -125,6 +125,11 @@ export default {
       }
       return false;
     },
+    marketCurveOptions() {
+      return this.marketCurves.map(x=> {
+        return { key: x.id, value: x.name };
+      });
+    }
   },
   methods: {
     submit() {

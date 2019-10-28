@@ -16,7 +16,7 @@
         id="instrumentDropdown"
         v-model="command.instrumentId"
         label="Instrument"
-        :options="instruments.map(x=> x.id)"
+        :options="instrumentOptions"
       />
       <text-box
         id="dateLagBox"
@@ -26,9 +26,7 @@
         label="DateLag"
       />
 
-      <md-checkbox
-        v-model="command.isMandatory"
-      >
+      <md-checkbox v-model="command.isMandatory">
         Mandatory
       </md-checkbox>
 
@@ -73,13 +71,13 @@ export default {
     TextBox,
   },
   props: ['command', 'priceTypes', 'instruments', 'tenors'],
-  data() {
+  data () {
     return {
       errors: [],
     };
   },
   computed: {
-    hasPriceType() {
+    hasPriceType () {
       const match = this.instruments
         .find(x => x.id === this.command.instrumentId);
 
@@ -87,9 +85,16 @@ export default {
 
       return hasPriceType;
     },
+    instrumentOptions () {
+      return this.instruments.map(x => {
+        return {
+          key: x.id, value: x.name
+        };
+      });
+    }
   },
   methods: {
-    submit() {
+    submit () {
       if (!this.hasPriceType) {
         this.command.priceType = null;
       }

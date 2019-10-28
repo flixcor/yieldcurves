@@ -1,39 +1,49 @@
 <template>
   <md-card>
     <md-card-header>
-      <div class="md-title">Add Transformation</div>
+      <div class="md-title">
+        Add Transformation
+      </div>
     </md-card-header>
-    <md-progress-bar v-if="loading" md-mode="indeterminate"></md-progress-bar>
+    <md-progress-bar
+      v-if="loading"
+      md-mode="indeterminate"
+    />
     <md-card-content v-else>
       <mt-select
         id="transformationDropdown"
         v-model="currentTransformation"
         label="Transformation"
         :options="Object
-                    .getOwnPropertyNames(commands)
-                    .map(x=> x.toString())
-                    .filter(x=> x !== '__ob__')"
+          .getOwnPropertyNames(commands)
+          .map(x=> x.toString())
+          .filter(x=> x !== '__ob__')"
       />
       <add-shock
-        v-model="commands.ParallelShock"
-        :shockTargets="shockTargets"
         v-if="currentTransformation === 'ParallelShock'"
+        v-model="commands.ParallelShock"
+        :shock-targets="shockTargets"
       />
       <add-shock
-        v-model="commands.KeyRateShock"
-        :shockTargets="shockTargets"
         v-if="currentTransformation === 'KeyRateShock'"
+        v-model="commands.KeyRateShock"
+        :shock-targets="shockTargets"
       />
       <ul v-if="errors.length">
-        <li v-for="error in errors" :key="error">
-          {{error}}
+        <li
+          v-for="error in errors"
+          :key="error"
+        >
+          {{ error }}
         </li>
       </ul>
       <md-button
         v-if="commands[currentTransformation] && currentTransformation !== '__ob__'"
-        v-on:click="this.submit"
         class="md-raised md-primary"
-        >Submit</md-button>
+        @click="submit"
+      >
+        Submit
+      </md-button>
     </md-card-content>
   </md-card>
 </template>
@@ -52,7 +62,7 @@ export default {
     MtSelect,
   },
   props: ['commands', 'shockTargets'],
-  data() {
+  data () {
     return {
       loading: false,
       currentTransformation: 'ParallelShock',
@@ -60,7 +70,7 @@ export default {
     };
   },
   methods: {
-    submit() {
+    submit () {
       const transformationName = this.currentTransformation;
       this.loading = true;
       axios.post(`${endpoint}/add${transformationName}`, this.commands[transformationName])

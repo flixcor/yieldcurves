@@ -19,7 +19,7 @@
         id="instrumentDropdown"
         v-model="command.instrumentId"
         label="Instrument"
-        :options="instruments.map(x=> x.id)"
+        :options="instrumentOptions"
       />
       <mt-select
         v-if="hasPriceType"
@@ -93,6 +93,11 @@ export default {
         this.command.asOfDate = new Date(newVal).toJSON();
       },
     },
+    instrumentOptions() {
+      return this.instruments.map(i=> {
+        return { key: i.id, value: i.name };
+      });
+    }
   },
   methods: {
     submit() {
