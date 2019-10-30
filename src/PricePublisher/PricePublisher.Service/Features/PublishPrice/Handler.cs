@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
 using Common.Events;
+using Common.Infrastructure.Extensions;
 using PricePublisher.Domain;
 
 namespace PricePublisher.Service.Features.PublishPrice
@@ -52,7 +53,7 @@ namespace PricePublisher.Service.Features.PublishPrice
         {
             return new Dto
             {
-                Instruments = await _readModelRepository.GetAll()
+                Instruments = await _readModelRepository.GetAll().AsEnumerableAsync()
             };
         }
     }

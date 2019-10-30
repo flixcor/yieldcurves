@@ -1,29 +1,15 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Common.Infrastructure.Extensions
 {
     public static class AsyncEnumerableExtensions
     {
-        public static async Task<List<T>> ToListAsync<T>(this IAsyncEnumerable<T> asyncEnumerable)
+        //we will want to refactor so this isn't necessary
+        public static async Task<IEnumerable<T>> AsEnumerableAsync<T>(this IAsyncEnumerable<T> asyncEnumerable)
         {
-            var list = new List<T>();
-            await foreach (var item in asyncEnumerable)
-            {
-                list.Add(item);
-            }
-
-            return list;
-        }
-
-        public static async Task<T> FirstOrDefaultAsync<T>(this IAsyncEnumerable<T> asyncEnumerable)
-        {
-            await foreach (var item in asyncEnumerable)
-            {
-                return item;
-            }
-
-            return default;
+            return await asyncEnumerable.ToListAsync();
         }
     }
 }

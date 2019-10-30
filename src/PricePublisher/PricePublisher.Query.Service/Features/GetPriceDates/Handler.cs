@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
 using Common.Events;
+using Common.Infrastructure.Extensions;
 
 namespace PricePublisher.Query.Service.Features.GetPriceDates
 {
@@ -19,7 +20,7 @@ namespace PricePublisher.Query.Service.Features.GetPriceDates
 
         public Task<IEnumerable<Dto>> Handle(Query query, CancellationToken cancellationToken)
         {
-            return _repository.GetAll();
+            return _repository.GetAll().AsEnumerableAsync();
         }
 
         public async Task Handle(InstrumentPricingPublished @event, CancellationToken cancellationToken)

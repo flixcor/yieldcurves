@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
 using Common.Events;
+using Common.Infrastructure.Extensions;
 
 namespace Instruments.Query.Service.Features.GetInstrumentsOverview
 {
@@ -20,7 +21,7 @@ namespace Instruments.Query.Service.Features.GetInstrumentsOverview
 
         public Task<IEnumerable<Dto>> Handle(Query query, CancellationToken cancellationToken)
         {
-            return _repository.GetAll();
+            return _repository.GetAll().AsEnumerableAsync();
         }
 
         public Task Handle(InstrumentCreated @event, CancellationToken cancellationToken)

@@ -6,11 +6,14 @@ using Common.Core;
 using Common.Events;
 using Common.Core.Extensions;
 using CurveRecipes.Domain;
+using Common.Infrastructure.Extensions;
+using System.Linq;
 
 namespace CurveRecipes.Service.Features.CreateCurveRecipe
 {
     public class CommandHandler :
             IHandleCommand<Command>,
+            IHandleQuery<Query, Dto>,
             IHandleEvent<MarketCurveCreated>,
             IHandleEvent<CurvePointAdded>
     {
@@ -64,6 +67,20 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
                     x.Tenors.Add(@event.Tenor);
                     return _readModelRepository.Update(x);
                 });
+        }
+
+        public async Task<Dto> Handle(Query query, CancellationToken cancellationToken)
+        {
+            var curves = await _readModelRepository.GetMany(x => x.Tenors.Any()).ToListAsync(cancellationToken);
+
+            return new Dto
+            {
+                Command = new Command
+                {
+                    Id = Guid.NewGuid()
+                },
+                MarketCurves = curves
+            };
         }
 
         private string GenerateName(MarketCurveCreated @event)

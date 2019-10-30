@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Common.Core;
 using Common.Events;
 using Common.Core.Extensions;
+using Common.Infrastructure.Extensions;
 
 namespace MarketCurves.Query.Service.Features.GetMarketCurvesOverview
 {
@@ -22,7 +23,7 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurvesOverview
 
         public Task<IEnumerable<Dto>> Handle(Query query, CancellationToken cancellationToken)
         {
-            return _readModelRepository.GetAll();
+            return _readModelRepository.GetAll().AsEnumerableAsync();
         }
 
         public Task Handle(MarketCurveCreated @event, CancellationToken cancellationToken)

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
 using Common.Events;
+using Common.Infrastructure.Extensions;
 using MarketCurves.Domain;
 
 namespace MarketCurves.Service.Features.AddCurvePoint
@@ -67,11 +68,13 @@ namespace MarketCurves.Service.Features.AddCurvePoint
 
         public async Task<Dto> Handle(Query query, CancellationToken cancellationToken)
         {
-            var existing =
-            (await _usedValues.Get(query.MarketCurveId))
-            .Coalesce(new UsedValues());
+            var existing = (await _usedValues.Get(query.MarketCurveId))
+                .Coalesce(new UsedValues());
 
-            var instruments = await _instruments.GetAll();
+            var instruments = await _instruments
+                .GetAll()
+                .Where(x => !existing.Instruments.Contains(x.Id))
+                .ToListAsync();
 
             var dto = new Dto
             {
@@ -80,15 +83,7 @@ namespace MarketCurves.Service.Features.AddCurvePoint
                     MarketCurveId = query.MarketCurveId,
                 },
 
-                Instruments = instruments
-                    .Where(x => !existing.Instruments.Contains(x.Id))
-                    .Select(x => new Instrument
-                    {
-                        Id = x.Id,
-                        HasPriceType = x.HasPriceType,
-                        Vendor = x.Vendor,
-                        Name = x.Name
-                    }),
+                Instruments = instruments,
 
                 Tenors = Enum.GetNames(typeof(Tenor))
                     .Where(x => !existing.Tenors.Contains(x))

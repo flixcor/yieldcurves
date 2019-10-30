@@ -36,6 +36,12 @@ namespace Common.Core
             return value != null ? new Maybe<T>(value) : Core.Maybe<T>.None();
         }
 
+        public static async Task<Maybe<T>> Maybe<T>(this ValueTask<T> valueTask) where T : class
+        {
+            var valueResult = await valueTask;
+            return valueResult != null ? new Maybe<T>(valueResult) : Core.Maybe<T>.None();
+        }
+
         public static async Task<Maybe<T>> Maybe<T>(this Task<T> task) where T : ReadObject
         {
             var value = await task;

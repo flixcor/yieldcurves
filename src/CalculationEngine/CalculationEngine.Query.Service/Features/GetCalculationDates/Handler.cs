@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
 using Common.Events;
+using Common.Infrastructure.Extensions;
 
 namespace CalculationEngine.Query.Service.Features.GetCalculationDates
 {
@@ -20,7 +21,7 @@ namespace CalculationEngine.Query.Service.Features.GetCalculationDates
 
         public Task<IEnumerable<Dto>> Handle(Query query, CancellationToken cancellationToken)
         {
-            return _readModelRepository.GetAll();
+            return _readModelRepository.GetAll().AsEnumerableAsync();
         }
 
         public async Task Handle(CurveCalculated @event, CancellationToken cancellationToken)
