@@ -46,22 +46,28 @@ namespace Common.Infrastructure
             return dto.Maybe();
         }
 
-        public async Task<IEnumerable<T>> GetAll()
+        public async IAsyncEnumerable<T> GetAll()
         {
             var get = new RedisValue[] { InstanceName() + "*" };
             var result = await _db.SortAsync(SetName(), sortType: SortType.Alphabetic, by: "nosort", get: get);
 
-            var readObjects = result.Select(v => JsonConvert.DeserializeObject<T>(v)).AsEnumerable();
-            return readObjects.ToList();
+            foreach (var item in result)
+            {
+                yield return JsonConvert.DeserializeObject<T>(item);
+            }
         }
 
-        public async Task<IEnumerable<T>> GetMany(Expression<Func<T, bool>> where)
+        public async IAsyncEnumerable<T> GetMany(Expression<Func<T, bool>> where)
         {
             var get = new RedisValue[] { InstanceName() + "*" };
             var result = await _db.SortAsync(SetName(), sortType: SortType.Alphabetic, by: "nosort", get: get);
 
             var readObjects = result.Select(v => JsonConvert.DeserializeObject<T>(v)).AsQueryable().Where(where);
-            return readObjects.ToList();
+
+            foreach (var item in readObjects)
+            {
+                yield return item;
+            }
         }
 
         public async Task Insert(T t)

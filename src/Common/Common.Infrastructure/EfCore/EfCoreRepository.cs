@@ -14,11 +14,11 @@ namespace Common.Infrastructure.EfCore
 
         public EfCoreRepository(GenericDbContext db) => _db = db;
 
-        public async Task<Maybe<T>> Get(Guid id) => (await _db.Set<T>().FindAsync(id)).Maybe();
+        public Task<Maybe<T>> Get(Guid id) => _db.Set<T>().FirstOrDefaultAsync(x=> x.Id == id).Maybe();
 
-        public async Task<IEnumerable<T>> GetAll() => await _db.Set<T>().ToListAsync();
+        public IAsyncEnumerable<T> GetAll() => _db.Set<T>().AsAsyncEnumerable();
 
-        public async Task<IEnumerable<T>> GetMany(Expression<Func<T, bool>> where) => await _db.Set<T>().Where(where).ToListAsync();
+        public IAsyncEnumerable<T> GetMany(Expression<Func<T, bool>> where) => _db.Set<T>().AsAsyncEnumerable();
 
         public Task Insert(T t)
         {
@@ -26,7 +26,7 @@ namespace Common.Infrastructure.EfCore
             return Task.CompletedTask;
         }
 
-        public async Task<Maybe<T>> Single(Expression<Func<T, bool>> where) => (await _db.Set<T>().Where(where).FirstOrDefaultAsync()).Maybe();
+        public Task<Maybe<T>> Single(Expression<Func<T, bool>> where) => _db.Set<T>().Where(where).FirstOrDefaultAsync().Maybe();
 
         public Task Update(T t)
         {

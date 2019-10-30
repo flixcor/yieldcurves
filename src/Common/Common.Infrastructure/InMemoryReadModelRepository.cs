@@ -9,49 +9,51 @@ namespace Common.Infrastructure
 {
     public class InMemoryReadModelRepository<T> : IReadModelRepository<T> where T : ReadObject
     {
-        public InMemoryReadModelRepository(IList<T> checkpoint = null)
+        public InMemoryReadModelRepository(IEnumerable<T> checkpoint = null)
         {
-            Checkpoint = checkpoint ?? new List<T>();
+            _checkpoint = checkpoint ?? Enumerable.Empty<T>();
         }
 
-        public IList<T> Checkpoint { get; }
+        private IEnumerable<T> _checkpoint;
 
         public Task<Maybe<T>> Get(Guid id)
         {
-            var readObject = Checkpoint.FirstOrDefault(x => x.Id == id);
+            var readObject = _checkpoint.FirstOrDefault(x => x.Id == id);
 
             return Task.FromResult(readObject.Maybe());
         }
 
-        public Task<IEnumerable<T>> GetAll()
+        public async IAsyncEnumerable<T> GetAll()
         {
-            return Task.FromResult(Checkpoint.AsEnumerable());
+            foreach (var item in _checkpoint)
+            {
+                yield return item;
+            }
         }
 
-        public Task<IEnumerable<T>> GetMany(Expression<Func<T, bool>> where)
+        public async IAsyncEnumerable<T> GetMany(Expression<Func<T, bool>> where)
         {
-            return Task.FromResult(Checkpoint.Where(where.Compile()));
+            foreach (var item in _checkpoint.AsQueryable().Where(where))
+            {
+                yield return item;
+            }
         }
 
         public Task Insert(T t)
         {
-            Checkpoint.Add(t);
+            _checkpoint = _checkpoint.Concat(new T[] { t });
             return Task.CompletedTask;
         }
 
         public Task<Maybe<T>> Single(Expression<Func<T, bool>> where)
         {
-            var readObject = Checkpoint.FirstOrDefault(where.Compile());
-
+            var readObject = _checkpoint.AsQueryable().FirstOrDefault(where);
             return Task.FromResult(readObject.Maybe());
         }
 
         public Task Update(T t)
         {
-            var current = Checkpoint.FirstOrDefault(x => x.Id == t.Id);
-            Checkpoint.Remove(current);
-            Checkpoint.Add(t);
-
+            _checkpoint = _checkpoint.Select(x=> x.Id == t.Id? t : x).ToList();
             return Task.CompletedTask;
         }
     }

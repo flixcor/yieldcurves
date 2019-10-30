@@ -21,9 +21,9 @@ namespace Common.Infrastructure.SignalR
 
         public Task<Maybe<T>> Get(Guid id) => _decorated.Get(id);
 
-        public Task<IEnumerable<T>> GetAll() => _decorated.GetAll();
+        public IAsyncEnumerable<T> GetAll() => _decorated.GetAll();
 
-        public Task<IEnumerable<T>> GetMany(Expression<Func<T, bool>> where) => _decorated.GetMany(where);
+        public IAsyncEnumerable<T> GetMany(Expression<Func<T, bool>> where) => _decorated.GetMany(where);
 
         public Task<Maybe<T>> Single(Expression<Func<T, bool>> where) => _decorated.Single(where);
 

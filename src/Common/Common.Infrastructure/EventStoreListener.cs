@@ -76,9 +76,9 @@ namespace Common.Infrastructure
             }
         }
 
-        private async Task<EventPosition> GetCurrentPosition()
+        private Task<EventPosition> GetCurrentPosition()
         {
-            return (await _currentPositionRepository.GetMany(x => x.ApplicationName == _applicationName)).FirstOrDefault();
+            return _currentPositionRepository.GetMany(x => x.ApplicationName == _applicationName).FirstOrDefaultAsync();
         }
     }
 }
