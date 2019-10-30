@@ -50,6 +50,38 @@ namespace PricePublisher.Query.Service.Features.GetPricesOverview
                                     on dto1.{AsAtDate} = dto2.{AsAtDate} AND dto1.{Instrument} = dto2.{Instrument}";
 
             return connection.QueryAsync<Dto>(querystring);
+
+            /*
+                alternative using LINQ, probably a little less performant:
+
+
+                IQueryable<Dto> inputQueryable = _db.Set<Dto>();
+
+                if (query.AsOfDate.HasValue)
+                {
+                    inputQueryable = inputQueryable.Where(x=> x.AsOfDate.Date == query.AsOfDate.Value.Date);
+                }
+
+                if (query.AsAtDate.HasValue)
+                {
+                    inputQueryable = inputQueryable.Where(x=> x.AsAtDate <= query.AsAtDate.Value);
+                }
+
+                var maxes = inputQueryable
+                    .GroupBy(x=> new {x.Instrument, x.PriceType, x.AsOfDate})
+                    .Select(x=> new {x.Key.Instrument, x.Key.PriceType, x.Key.AsOfDate, AsAtDate = x.Max(x=> x.AsAtDate)});
+
+                var joined = _db.Set<Dto>()
+                    .Join(
+                        inner: maxes,
+                        outerKeySelector: x=> new {x.Instrument, x.PriceType, x.AsOfDate.Date, x.AsAtDate },
+                        innerKeySelector: x=> new {x.Instrument, x.PriceType, x.AsOfDate.Date, x.AsAtDate },
+                        resultSelector: (x, y)=> x
+                        );
+
+                return await joined.ToListAsync();
+
+             */
         }
 
         public async Task Handle(InstrumentPricingPublished @event, CancellationToken cancellationToken)

@@ -30,6 +30,14 @@ export default {
       }
     };
   },
+  watch: {
+    entities: {
+      deep: true,
+      handler () {
+        if (!this.selectedDate) this.selectedDate = this.toDateString(this.getMaxDate());
+      }
+    },
+  },
   methods: {
     getMaxDate () {
       const dates = this.getDates();
@@ -47,11 +55,11 @@ export default {
       var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
       const offSetDate = (new Date(date - tzoffset));
 
-      return offSetDate.toISOString().split('T')[0]
+      return offSetDate.toISOString().split('T')[0];
     },
     getDates () {
       return this.entities.map(x => new Date(x.asOfDate));
-    }
+    },
   }
 };
 </script>

@@ -30,6 +30,14 @@ export default {
       }
     };
   },
+  watch: {
+    entities: {
+      deep: true,
+      handler () {
+        if (!this.selectedDate) this.selectedDate = this.toDateString(this.getMaxDate());
+      }
+    },
+  },
   methods: {
     getMaxDate () {
       const dates = this.getDates();
