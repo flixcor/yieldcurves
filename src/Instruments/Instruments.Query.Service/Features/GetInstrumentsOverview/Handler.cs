@@ -4,12 +4,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
 using Common.Events;
-using Common.Infrastructure.Extensions;
 
 namespace Instruments.Query.Service.Features.GetInstrumentsOverview
 {
     public class Handler :
-            IHandleQuery<Query, IEnumerable<Dto>>,
+            IHandleListQuery<Query, Dto>,
             IHandleEvent<InstrumentCreated>
     {
         private readonly IReadModelRepository<Dto> _repository;
@@ -19,9 +18,9 @@ namespace Instruments.Query.Service.Features.GetInstrumentsOverview
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        public Task<IEnumerable<Dto>> Handle(Query query, CancellationToken cancellationToken)
+        public IAsyncEnumerable<Dto> Handle(Query query, CancellationToken cancellationToken)
         {
-            return _repository.GetAll().AsEnumerableAsync();
+            return _repository.GetAll();
         }
 
         public Task Handle(InstrumentCreated @event, CancellationToken cancellationToken)

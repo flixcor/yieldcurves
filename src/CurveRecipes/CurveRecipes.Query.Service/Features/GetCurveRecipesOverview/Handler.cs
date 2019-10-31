@@ -4,12 +4,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
 using Common.Events;
-using Common.Infrastructure.Extensions;
 
 namespace CurveRecipes.Query.Service.Features.GetCurveRecipesOverview
 {
     public class Handler :
-            IHandleQuery<Query, IEnumerable<Dto>>,
+            IHandleListQuery<Query, Dto>,
             IHandleEvent<CurveRecipeCreated>
     {
         private readonly IReadModelRepository<Dto> _readModelRepository;
@@ -30,9 +29,9 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipesOverview
             return _readModelRepository.Insert(dto);
         }
 
-        public Task<IEnumerable<Dto>> Handle(Query query, CancellationToken cancellationToken)
+        public IAsyncEnumerable<Dto> Handle(Query query, CancellationToken cancellationToken)
         {
-            return _readModelRepository.GetAll().AsEnumerableAsync();
+            return _readModelRepository.GetAll();
         }
     }
 }

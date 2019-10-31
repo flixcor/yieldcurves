@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
 using Common.Events;
-using Common.Infrastructure.Extensions;
 using PricePublisher.Domain;
 
 namespace PricePublisher.Service.Features.PublishPrice
@@ -51,9 +51,11 @@ namespace PricePublisher.Service.Features.PublishPrice
 
         public async Task<Dto> Handle(Query query, CancellationToken cancellationToken)
         {
+            var instruments = await _readModelRepository.GetAll().ToListAsync(cancellationToken);
+
             return new Dto
             {
-                Instruments = await _readModelRepository.GetAll().AsEnumerableAsync()
+                Instruments = instruments
             };
         }
     }

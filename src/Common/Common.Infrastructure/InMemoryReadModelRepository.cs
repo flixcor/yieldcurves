@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
 
@@ -23,20 +24,15 @@ namespace Common.Infrastructure
             return Task.FromResult(readObject.Maybe());
         }
 
-        public async IAsyncEnumerable<T> GetAll()
+        public IAsyncEnumerable<T> GetAll()
         {
-            foreach (var item in _checkpoint)
-            {
-                yield return item;
-            }
+            return new FakeAsyncEnumerable<T>(_checkpoint);
         }
 
-        public async IAsyncEnumerable<T> GetMany(Expression<Func<T, bool>> where)
+        public IAsyncEnumerable<T> GetMany(Expression<Func<T, bool>> where)
         {
-            foreach (var item in _checkpoint.AsQueryable().Where(where))
-            {
-                yield return item;
-            }
+            var enumerable = _checkpoint.AsQueryable().Where(where);
+            return new FakeAsyncEnumerable<T>(enumerable);
         }
 
         public Task Insert(T t)
@@ -57,4 +53,49 @@ namespace Common.Infrastructure
             return Task.CompletedTask;
         }
     }
+
+    internal class FakeAsyncEnumerable<T> : IAsyncEnumerable<T>
+    {
+        private readonly IEnumerable<T> _enumerable;
+
+        public FakeAsyncEnumerable(IEnumerable<T> enumerable) 
+        {
+            _enumerable = enumerable;
+        } 
+
+        public IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        {
+            return new TestDbAsyncEnumerator<T>(_enumerable.GetEnumerator()); 
+        }
+    } 
+
+    internal class TestDbAsyncEnumerator<T> : IAsyncEnumerator<T> 
+    { 
+        private readonly IEnumerator<T> _inner; 
+
+        public TestDbAsyncEnumerator(IEnumerator<T> inner) 
+        { 
+            _inner = inner; 
+        } 
+
+        public void Dispose() 
+        { 
+            _inner.Dispose(); 
+        } 
+
+        public ValueTask<bool> MoveNextAsync()
+        {
+            return new ValueTask<bool>(_inner.MoveNext());
+        }
+
+        public ValueTask DisposeAsync()
+        {
+            return new ValueTask();
+        }
+
+        public T Current 
+        { 
+            get { return _inner.Current; } 
+        } 
+    } 
 }

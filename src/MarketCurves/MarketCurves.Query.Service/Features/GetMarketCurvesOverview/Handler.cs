@@ -4,14 +4,13 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
-using Common.Events;
 using Common.Core.Extensions;
-using Common.Infrastructure.Extensions;
+using Common.Events;
 
 namespace MarketCurves.Query.Service.Features.GetMarketCurvesOverview
 {
     public class Handler :
-            IHandleQuery<Query, IEnumerable<Dto>>,
+            IHandleListQuery<Query, Dto>,
             IHandleEvent<MarketCurveCreated>
     {
         private readonly IReadModelRepository<Dto> _readModelRepository;
@@ -21,9 +20,9 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurvesOverview
             _readModelRepository = readModelRepository ?? throw new ArgumentNullException(nameof(readModelRepository));
         }
 
-        public Task<IEnumerable<Dto>> Handle(Query query, CancellationToken cancellationToken)
+        public IAsyncEnumerable<Dto> Handle(Query query, CancellationToken cancellationToken)
         {
-            return _readModelRepository.GetAll().AsEnumerableAsync();
+            return _readModelRepository.GetAll();
         }
 
         public Task Handle(MarketCurveCreated @event, CancellationToken cancellationToken)

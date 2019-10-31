@@ -3,7 +3,7 @@ using Common.Core;
 
 namespace MarketCurves.Query.Service.Features.GetMarketCurvesOverview
 {
-    public class Query : IQuery<IEnumerable<Dto>>
+    public class Query : IQuery<Dto>
     {
     }
 }

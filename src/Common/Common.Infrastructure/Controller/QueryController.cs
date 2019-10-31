@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
@@ -13,9 +14,9 @@ namespace Common.Infrastructure.Controller
     public class QueryController<TQuery, TDto> : ControllerBase where TQuery : IQuery<TDto> where TDto : class
     {
         private static readonly string s_featureName = GetFeatureName();
-        private readonly IHandleQuery<TQuery, TDto> _handler;
+        private readonly IHandleListQuery<TQuery, TDto> _handler;
 
-        public QueryController(IHandleQuery<TQuery, TDto> handler)
+        public QueryController(IHandleListQuery<TQuery, TDto> handler)
         {
             _handler = handler;
         }
@@ -33,7 +34,7 @@ namespace Common.Infrastructure.Controller
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] TQuery query, CancellationToken ct = default)
         {
-            var result = await _handler.Handle(query, ct);
+            var result = await _handler.Handle(query, ct).ToListAsync();
             var socket = GetSocket();
 
             return socket != null

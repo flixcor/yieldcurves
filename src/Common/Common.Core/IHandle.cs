@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Common.Core
@@ -19,5 +20,18 @@ namespace Common.Core
         where TQuery : IQuery<TResponse>
     {
         Task<TResponse> Handle(TQuery query, CancellationToken cancellationToken);
+    }
+
+    public interface IHandleQueryMaybe<TQuery, TResponse>
+        where TQuery : IQuery<TResponse>
+        where TResponse : class
+    {
+        Task<Maybe<TResponse>> Handle(TQuery query, CancellationToken cancellationToken);
+    }
+
+    public interface IHandleListQuery<TQuery, TResponse>
+        where TQuery : IQuery<TResponse>
+    {
+        IAsyncEnumerable<TResponse> Handle(TQuery query, CancellationToken cancellationToken);
     }
 }

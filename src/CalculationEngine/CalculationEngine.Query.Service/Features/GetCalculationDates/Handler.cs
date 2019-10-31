@@ -9,7 +9,7 @@ using Common.Infrastructure.Extensions;
 namespace CalculationEngine.Query.Service.Features.GetCalculationDates
 {
     public class Handler :
-        IHandleQuery<Query, IEnumerable<Dto>>,
+        IHandleListQuery<Query, Dto>,
         IHandleEvent<CurveCalculated>
     {
         private readonly IReadModelRepository<Dto> _readModelRepository;
@@ -19,9 +19,9 @@ namespace CalculationEngine.Query.Service.Features.GetCalculationDates
             _readModelRepository = readModelRepository ?? throw new ArgumentNullException(nameof(readModelRepository));
         }
 
-        public Task<IEnumerable<Dto>> Handle(Query query, CancellationToken cancellationToken)
+        public IAsyncEnumerable<Dto> Handle(Query query, CancellationToken cancellationToken)
         {
-            return _readModelRepository.GetAll().AsEnumerableAsync();
+            return _readModelRepository.GetAll();
         }
 
         public async Task Handle(CurveCalculated @event, CancellationToken cancellationToken)
