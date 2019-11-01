@@ -11,12 +11,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.Infrastructure.Controller
 {
-    public class QueryController<TQuery, TDto> : ControllerBase where TQuery : IQuery<TDto> where TDto : class
+    public class ListQueryController<TQuery, TDto> : ControllerBase where TQuery : IListQuery<TDto> where TDto : class
     {
         private static readonly string s_featureName = GetFeatureName();
-        private readonly IHandleQuery<TQuery, TDto> _handler;
+        private readonly IHandleListQuery<TQuery, TDto> _handler;
 
-        public QueryController(IHandleQuery<TQuery, TDto> handler)
+        public ListQueryController(IHandleListQuery<TQuery, TDto> handler)
         {
             _handler = handler;
         }
@@ -34,7 +34,7 @@ namespace Common.Infrastructure.Controller
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] TQuery query, CancellationToken ct = default)
         {
-            var result = await _handler.Handle(query, ct);
+            var result = await _handler.Handle(query, ct).ToListAsync();
             var socket = GetSocket();
 
             return socket != null

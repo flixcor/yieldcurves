@@ -3,7 +3,7 @@ using Common.Core;
 
 namespace CalculationEngine.Query.Service.Features.GetCalculationDates
 {
-    public class Query : IQuery<Dto>
+    public class Query : IListQuery<Dto>
     {
     }
 }

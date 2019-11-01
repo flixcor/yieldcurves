@@ -4,7 +4,7 @@ using Common.Core;
 
 namespace PricePublisher.Query.Service.Features.GetPriceDates
 {
-    public class Query : IQuery<Dto>
+    public class Query : IListQuery<Dto>
     {
         
     }

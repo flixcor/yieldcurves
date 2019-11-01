@@ -3,7 +3,7 @@ using Common.Core;
 
 namespace Instruments.Query.Service.Features.GetInstrumentsOverview
 {
-    public class Query : IQuery<Dto>
+    public class Query : IListQuery<Dto>
     {
         public string Vendor { get; set; }
     }

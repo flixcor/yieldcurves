@@ -30,7 +30,7 @@ namespace Common.Core
     }
 
     public interface IHandleListQuery<TQuery, TResponse>
-        where TQuery : IQuery<TResponse>
+        where TQuery : IListQuery<TResponse>
     {
         IAsyncEnumerable<TResponse> Handle(TQuery query, CancellationToken cancellationToken);
     }

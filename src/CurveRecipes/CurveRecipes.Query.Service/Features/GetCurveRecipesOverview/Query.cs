@@ -3,7 +3,7 @@ using Common.Core;
 
 namespace CurveRecipes.Query.Service.Features.GetCurveRecipesOverview
 {
-    public class Query : IQuery<Dto>
+    public class Query : IListQuery<Dto>
     {
     }
 

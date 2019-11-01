@@ -16,13 +16,18 @@ namespace Common.Infrastructure.Controller
         public GenericControllerFeatureProvider(params Assembly[] assemblies)
         {
             var queryTypes = GetAllTypesImplementingOpenGenericType(typeof(IQuery<>), assemblies);
-            var commandTypes = assemblies.SelectMany(x=> x.GetTypes()).Where(x=> typeof(IRequest).IsAssignableFrom(x));
+            var listQueryTypes = GetAllTypesImplementingOpenGenericType(typeof(IListQuery<>), assemblies);
+            var commandTypes = assemblies.SelectMany(x=> x.GetTypes()).Where(x=> typeof(ICommand).IsAssignableFrom(x));
 
             var queryControllers = queryTypes.Select(GetQueryControllerType);
+            var listQueryControllers = listQueryTypes.Select(GetListQueryControllerType);
             var commandControllers = commandTypes.Select(GetCommandControllerType);
 
 
-            _candidates = queryControllers.Concat(commandControllers).ToArray();
+            _candidates = queryControllers
+                .Concat(listQueryControllers)
+                .Concat(commandControllers)
+                .ToArray();
         }
 
         public void PopulateFeature(IEnumerable<ApplicationPart> parts, ControllerFeature feature)
@@ -37,6 +42,12 @@ namespace Common.Infrastructure.Controller
         {
             var argument2 = queryType.GetInterfaces()[0].GenericTypeArguments[0];
             return typeof(QueryController<,>).MakeGenericType(queryType, argument2).GetTypeInfo();
+        }
+
+        private static TypeInfo GetListQueryControllerType(Type listQueryType)
+        {
+            var argument2 = listQueryType.GetInterfaces()[0].GenericTypeArguments[0];
+            return typeof(ListQueryController<,>).MakeGenericType(listQueryType, argument2).GetTypeInfo();
         }
 
         private static TypeInfo GetCommandControllerType(Type commandType)
