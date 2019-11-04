@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Common.Core;
-using Common.Core.Extensions;
 using Common.Infrastructure.Extensions;
 using Common.Infrastructure.SignalR;
 using Microsoft.AspNetCore.Mvc;
@@ -23,14 +23,14 @@ namespace Common.Infrastructure.Controller
         private ISocketContext GetSocket() => HttpContext.RequestServices.GetService<ISocketContext>();
 
         [HttpGet]
-        public IAsyncEnumerable<RealtimeFrontendComponent<TDto>> Get([FromQuery] TQuery query, CancellationToken ct = default)
+        public async Task<IActionResult> Get([FromQuery] TQuery query, CancellationToken ct = default)
         {
-            var queryResult = _handler.Handle(query, ct);
+            var queryResult = await _handler.Handle(query, ct).ToListAsync(ct);
             var socket = GetSocket();
 
             var result = socket != null
-                ? this.FrontEndComponentAsyncEnumerable(queryResult, s_featureName, s_featureName)
-                : this.FrontEndComponentAsyncEnumerable(queryResult, s_featureName);
+                ? this.ComponentActionResult(queryResult, s_featureName, s_featureName)
+                : this.ComponentActionResult(queryResult, s_featureName);
 
             return result;
         }

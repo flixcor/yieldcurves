@@ -1,9 +1,6 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
-using Common.Core.Extensions;
 using Common.Infrastructure.Extensions;
 using Common.Infrastructure.SignalR;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +23,7 @@ namespace Common.Infrastructure.Controller
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] TQuery query, CancellationToken ct = default)
         {
-            var result = await _handler.Handle(query, ct);
+            var result = (await _handler.Handle(query, ct));
             var socket = GetSocket();
 
             return socket != null
