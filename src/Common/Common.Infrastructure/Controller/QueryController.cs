@@ -13,7 +13,7 @@ namespace Common.Infrastructure.Controller
 {
     public class QueryController<TQuery, TDto> : ControllerBase where TQuery : IQuery<TDto> where TDto : class
     {
-        private static readonly string s_featureName = GetFeatureName();
+        private static readonly string s_featureName = HelperMethods.GetFeatureName(typeof(TQuery));
         private readonly IHandleQuery<TQuery, TDto> _handler;
 
         public QueryController(IHandleQuery<TQuery, TDto> handler)
@@ -22,14 +22,6 @@ namespace Common.Infrastructure.Controller
         }
 
         private ISocketContext GetSocket() => HttpContext.RequestServices.GetService<ISocketContext>();
-
-        private static string GetFeatureName()
-        {
-            var nameSpaceParts = typeof(TQuery).FullName.Split('.');
-            var length = nameSpaceParts.Length();
-            var featureName = nameSpaceParts[Math.Max(0, length - 2)];
-            return featureName.PascalToKebabCase();
-        }
 
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] TQuery query, CancellationToken ct = default)

@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 using Common.Core;
 using Common.Core.Extensions;
 using Common.Infrastructure.Extensions;
@@ -13,7 +12,7 @@ namespace Common.Infrastructure.Controller
 {
     public class ListQueryController<TQuery, TDto> : ControllerBase where TQuery : IListQuery<TDto> where TDto : class
     {
-        private static readonly string s_featureName = GetFeatureName();
+        private static readonly string s_featureName = HelperMethods.GetFeatureName(typeof(TQuery));
         private readonly IHandleListQuery<TQuery, TDto> _handler;
 
         public ListQueryController(IHandleListQuery<TQuery, TDto> handler)
@@ -23,23 +22,15 @@ namespace Common.Infrastructure.Controller
 
         private ISocketContext GetSocket() => HttpContext.RequestServices.GetService<ISocketContext>();
 
-        private static string GetFeatureName()
-        {
-            var nameSpaceParts = typeof(TQuery).FullName.Split('.');
-            var length = nameSpaceParts.Length();
-            var featureName = nameSpaceParts[Math.Max(0, length - 2)];
-            return featureName.PascalToKebabCase();
-        }
-
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] TQuery query, CancellationToken ct = default)
+        public IAsyncEnumerable<FrontendComponent<TDto>> Get([FromQuery] TQuery query, CancellationToken ct = default)
         {
-            var result = await _handler.Handle(query, ct).ToListAsync();
+            var result = _handler.Handle(query, ct);
             var socket = GetSocket();
 
             return socket != null
-                ? this.ComponentActionResult(result, s_featureName, s_featureName)
-                : this.ComponentActionResult(result, s_featureName);
+                ? this.FrontEndComponentAsyncEnumerable(result, s_featureName, s_featureName)
+                : this.FrontEndComponentAsyncEnumerable(result, s_featureName);
         }
     }
 }

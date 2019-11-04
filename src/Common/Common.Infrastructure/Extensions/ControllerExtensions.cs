@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Common.Core;
 using Microsoft.AspNetCore.Mvc;
@@ -52,6 +53,17 @@ namespace Common.Infrastructure.Extensions
                 : null;
 
             return controller.Ok(FrontendComponent.Create(t, componentUrl, hubUrl));
+        }
+
+        public static IAsyncEnumerable<FrontendComponent<T>> FrontEndComponentAsyncEnumerable<T>(this ControllerBase controller, IAsyncEnumerable<T> t, string componentName, string hubName = null) where T : class
+        {
+            var componentUrl = controller.GetComponentUrl(componentName);
+
+            var hubUrl = !string.IsNullOrWhiteSpace(hubName)
+                ? $"{controller.GetBaseUrl()}/hub?feature={hubName}"
+                : null;
+
+            return t.Select(x=> FrontendComponent.Create(x, componentUrl, hubUrl))
         }
     }
 }
