@@ -97,7 +97,7 @@ namespace CurveRecipes.Domain
                     break;
 
                 default:
-                    return Result.Fail($"Did not recognize {nameof(transformation)} of type {transformation.GetType()}");
+                    return Result.Fail($"Did not recognize {nameof(transformation)} of type {transformation?.GetType()}");
             }
 
             return Result.Ok();

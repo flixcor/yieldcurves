@@ -49,7 +49,7 @@ namespace CalculationEngine.Domain
 
         private IEnumerable<Maturity> GetMonthlyMaturities()
         {
-            for (double i = 0; i <= MaximumMaturity.Value; i += 1/12)
+            for (double i = 0; i <= MaximumMaturity.Value; i += 1D / 12)
             {
                 yield return new Maturity(i);
             }

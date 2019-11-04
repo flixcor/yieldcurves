@@ -25,7 +25,7 @@ namespace Common.Infrastructure.Extensions
             return new ServiceScopeExtension();
         }
 
-        public static ServiceScopeExtensionIdProvider Instance = new ServiceScopeExtensionIdProvider();
+        public static readonly ServiceScopeExtensionIdProvider Instance = new ServiceScopeExtensionIdProvider();
     }
 
     public static class Extensions

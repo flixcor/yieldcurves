@@ -69,18 +69,13 @@ namespace Common.Infrastructure
         }
     } 
 
-    internal class TestDbAsyncEnumerator<T> : IAsyncEnumerator<T> 
+    internal class TestDbAsyncEnumerator<T> : IAsyncEnumerator<T>
     { 
         private readonly IEnumerator<T> _inner; 
 
         public TestDbAsyncEnumerator(IEnumerator<T> inner) 
         { 
             _inner = inner; 
-        } 
-
-        public void Dispose() 
-        { 
-            _inner.Dispose(); 
         } 
 
         public ValueTask<bool> MoveNextAsync()
@@ -90,6 +85,7 @@ namespace Common.Infrastructure
 
         public ValueTask DisposeAsync()
         {
+            _inner.Dispose();
             return new ValueTask();
         }
 

@@ -55,7 +55,7 @@ namespace Common.Infrastructure.Extensions
             return controller.Ok(FrontendComponent.Create(t, componentUrl, hubUrl));
         }
 
-        public static IAsyncEnumerable<FrontendComponent<T>> FrontEndComponentAsyncEnumerable<T>(this ControllerBase controller, IAsyncEnumerable<T> t, string componentName, string hubName = null) where T : class
+        public static IAsyncEnumerable<RealtimeFrontendComponent<T>> FrontEndComponentAsyncEnumerable<T>(this ControllerBase controller, IAsyncEnumerable<T> t, string componentName, string hubName = null) where T : class
         {
             var componentUrl = controller.GetComponentUrl(componentName);
 
@@ -63,7 +63,7 @@ namespace Common.Infrastructure.Extensions
                 ? $"{controller.GetBaseUrl()}/hub?feature={hubName}"
                 : null;
 
-            return t.Select(x=> FrontendComponent.Create(x, componentUrl, hubUrl))
+            return t.Select(x => FrontendComponent.Create(x, componentUrl, hubUrl));
         }
     }
 }

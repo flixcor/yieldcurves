@@ -23,14 +23,16 @@ namespace Common.Infrastructure.Controller
         private ISocketContext GetSocket() => HttpContext.RequestServices.GetService<ISocketContext>();
 
         [HttpGet]
-        public IAsyncEnumerable<FrontendComponent<TDto>> Get([FromQuery] TQuery query, CancellationToken ct = default)
+        public IAsyncEnumerable<RealtimeFrontendComponent<TDto>> Get([FromQuery] TQuery query, CancellationToken ct = default)
         {
-            var result = _handler.Handle(query, ct);
+            var queryResult = _handler.Handle(query, ct);
             var socket = GetSocket();
 
-            return socket != null
-                ? this.FrontEndComponentAsyncEnumerable(result, s_featureName, s_featureName)
-                : this.FrontEndComponentAsyncEnumerable(result, s_featureName);
+            var result = socket != null
+                ? this.FrontEndComponentAsyncEnumerable(queryResult, s_featureName, s_featureName)
+                : this.FrontEndComponentAsyncEnumerable(queryResult, s_featureName);
+
+            return result;
         }
     }
 }

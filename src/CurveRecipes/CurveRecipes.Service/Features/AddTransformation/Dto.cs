@@ -19,6 +19,6 @@ namespace CurveRecipes.Service.Features.AddTransformation
 
         public ImmutableArray<string> ShockTargets { get; } = Enum.GetNames(typeof(ShockTarget)).ToImmutableArray();
 
-        public ImmutableDictionary<string, ICommand> Commands { get; } = ImmutableDictionary<string, ICommand>.Empty;
+        public ImmutableDictionary<string, ICommand> Commands { get; }
     }
 }

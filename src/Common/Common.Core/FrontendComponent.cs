@@ -12,11 +12,9 @@ namespace Common.Core
 
         public string Url { get; }
 
-        public static FrontendComponent<T> Create<T>(T data, string componentUrl, string hubUrl = null) where T : class
+        public static RealtimeFrontendComponent<T> Create<T>(T data, string componentUrl, string hubUrl = null) where T : class
         {
-            return !string.IsNullOrWhiteSpace(hubUrl)
-                ? new RealtimeFrontendComponent<T>(componentUrl, hubUrl, data)
-                : new FrontendComponent<T>(componentUrl, data);
+            return new RealtimeFrontendComponent<T>(componentUrl, hubUrl, data);
         }
     }
 

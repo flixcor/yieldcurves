@@ -3,7 +3,7 @@ using LanguageExt;
 
 namespace CalculationEngine.Domain
 {
-    public class Maturity : Record<Maturity>, IComparable<Maturity>
+    public class Maturity : Record<Maturity>
     {
         public Maturity(double value)
         {

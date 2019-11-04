@@ -29,7 +29,7 @@ namespace Common.Core
         Task<Maybe<TResponse>> Handle(TQuery query, CancellationToken cancellationToken);
     }
 
-    public interface IHandleListQuery<TQuery, TResponse>
+    public interface IHandleListQuery<TQuery, out TResponse>
         where TQuery : IListQuery<TResponse>
     {
         IAsyncEnumerable<TResponse> Handle(TQuery query, CancellationToken cancellationToken);

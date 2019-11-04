@@ -106,7 +106,7 @@ namespace CurveRecipes.Domain
             switch (tenor.ToString()[0])
             {
                 case 'M':
-                    multiplier = 1 / 12;
+                    multiplier = 1D / 12;
                     break;
                 case 'Y':
                 default:
