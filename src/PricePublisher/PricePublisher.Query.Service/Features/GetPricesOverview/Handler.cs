@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Common.Core;
 using Common.Events;
 using Common.Infrastructure.EfCore;
+using Common.Infrastructure.SignalR;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,11 +22,12 @@ namespace PricePublisher.Query.Service.Features.GetPricesOverview
 
 
         private readonly GenericDbContext _db;
+        private readonly ISocketContext _socketContext;
 
-
-        public Handler(GenericDbContext db)
+        public Handler(GenericDbContext db, ISocketContext socketContext)
         {
             _db = db;
+            _socketContext = socketContext;
         }
 
         public Task<IEnumerable<Dto>> Handle(Query query, CancellationToken cancellationToken)
@@ -99,8 +101,9 @@ namespace PricePublisher.Query.Service.Features.GetPricesOverview
                 PriceAmount = @event.PriceAmount,
                 Vendor = instrument.Vendor
             };
-
+            var task = _socketContext.SendToGroup(nameof(GetPricesOverView), dto);
             _db.Add(dto);
+            await task;
         }
 
         public Task Handle(InstrumentCreated @event, CancellationToken cancellationToken)
