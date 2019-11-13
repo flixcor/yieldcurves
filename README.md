@@ -53,7 +53,7 @@ https://github.com/jbogard/ContosoUniversityDotNetCore
 > having equal credit quality but differing maturity. 
 > The slope of the yield curve gives an idea of future interest 
 > rate changes and economic activity.
-> -- <cite> [Investopedia](https://www.investopedia.com/terms/y/yieldcurve.asp)</cite>
+> https://www.investopedia.com/terms/y/yieldcurve.asp
 
 To construct a yield curve, you need data from the stock market (e.g. instrument prices), as wel as certain models that can be applied to this data. This application offers the following functionality:
 
