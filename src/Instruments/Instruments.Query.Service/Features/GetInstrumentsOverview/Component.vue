@@ -4,6 +4,13 @@
       <span>
         Instruments
       </span>
+      <v-spacer />
+      <v-btn
+        fab
+        @click="onCreateClick"
+      >
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
     </v-card-title>
     <v-card-text>
       <v-simple-table>
@@ -26,15 +33,6 @@
         </template>
       </v-simple-table>
     </v-card-text>
-    <v-card-actions>
-      <v-spacer />
-      <v-btn
-        fab
-        @click="onCreateClick"
-      >
-        <v-icon>mdi-plus</v-icon>
-      </v-btn>
-    </v-card-actions>
   </v-card>
 </template>
 <script>

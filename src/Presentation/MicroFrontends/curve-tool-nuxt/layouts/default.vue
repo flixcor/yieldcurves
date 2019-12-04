@@ -36,18 +36,6 @@
       >
         <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
       </v-btn>
-      <v-btn
-        icon
-        @click.stop="clipped = !clipped"
-      >
-        <v-icon>mdi-application</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        @click.stop="fixed = !fixed"
-      >
-        <v-icon>mdi-minus</v-icon>
-      </v-btn>
       <v-toolbar-title v-text="title" />
       <v-spacer />
     </v-app-bar>
@@ -60,7 +48,7 @@
       :fixed="fixed"
       app
     >
-      <span>&copy; 2019</span>
+      <span>&copy; {{ year }}</span>
     </v-footer>
   </v-app>
 </template>
@@ -69,6 +57,7 @@
 export default {
   data () {
     return {
+      year: new Date().getFullYear(),
       clipped: false,
       drawer: false,
       fixed: false,
@@ -86,8 +75,7 @@ export default {
       ],
       miniVariant: false,
       right: true,
-      rightDrawer: false,
-      title: 'Vuetify.js'
+      title: 'Curve tool'
     }
   }
 }
