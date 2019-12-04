@@ -1,34 +1,18 @@
 <template>
-  <div>
-    <h5>{{datasource.command.vendor}} instrument</h5>
-
-    <text-box
-      v-model="datasource.command.name"
-      id="nameField"
-      label="Name"
-      v-on:input="emitChange()"
-    />
-  </div>
+  <v-text-field
+    v-model="datasource.command.name"
+    label="Name"
+  />
 </template>
 
 
 <script>
-import TextBox from '../Common/Material/TextBox.vue';
-
 export default {
-  data() {
-    return {
-      datasource: this.value,
-    };
-  },
-  components: {
-    TextBox,
-  },
-  props: ['value'],
-  methods: {
-    emitChange() {
-      this.$emit('input', this.datasource);
-    },
-  },
+  props: {
+    datasource: {
+      type: Object,
+      required: true
+    }
+  }
 };
 </script>

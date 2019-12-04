@@ -1,30 +1,47 @@
 <template>
-  <md-card>
-    <md-card-header>
-      <div class="md-title">Instruments</div>
-      <md-button class="md-primary md-fab md-fab-top-right md-mini" v-on:click="onCreateClick">
-        <md-icon>add</md-icon>
-      </md-button>
-    </md-card-header>
-    <md-card-content>
-      <md-table>
-        <md-table-row>
-          <md-table-head>Vendor</md-table-head>
-          <md-table-head>Description</md-table-head>
-        </md-table-row>
-        <md-table-row v-for="instrument of entities" :key="instrument.id">
-          <md-table-cell>{{instrument.vendor}}</md-table-cell>
-          <md-table-cell>{{instrument.description}}</md-table-cell>
-        </md-table-row>
-      </md-table>
-    </md-card-content>
-  </md-card>
+  <v-card>
+    <v-card-title>
+      <span>
+        Instruments
+      </span>
+    </v-card-title>
+    <v-card-text>
+      <v-simple-table>
+        <template v-slot:default>
+          <thead>
+            <tr>
+              <th>Vendor</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="instrument of entities"
+              :key="instrument.id"
+            >
+              <td>{{ instrument.vendor }}</td>
+              <td>{{ instrument.description }}</td>
+            </tr>
+          </tbody>
+        </template>
+      </v-simple-table>
+    </v-card-text>
+    <v-card-actions>
+      <v-spacer />
+      <v-btn
+        fab
+        @click="onCreateClick"
+      >
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 <script>
 export default {
   props: ["entities"],
   methods: {
-    onCreateClick() {
+    onCreateClick () {
       this.$emit("create");
     },
   }

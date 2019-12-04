@@ -1,52 +1,70 @@
 <template>
   <div>
-    <h5>Bloomberg instrument</h5>
+    <p>Pricing source</p>
+    <v-btn-toggle
+      v-model="togglePricingSource"
+      mandatory
+    >
+      <v-btn
+        v-for="(pricingSource, index) in datasource.pricingSources"
+        :key="index"
+      >
+        {{ pricingSource }}
+      </v-btn>
+    </v-btn-toggle>
 
-    <mt-select
-      id="pricingSourceSelect"
-      v-model="datasource.command.pricingSource"
-      label="Pricing Source"
-      :options="datasource.pricingSources"
-      v-on:input="emitChange()"
-    />
+    <p>Yellow key</p>
+    <v-btn-toggle
+      v-model="toggleYellowKey"
+      mandatory
+    >
+      <v-btn
+        v-for="(yellowKey, index) in datasource.yellowKeys"
+        :key="index"
+      >
+        {{ yellowKey }}
+      </v-btn>
+    </v-btn-toggle>
 
-    <mt-select
-      id="yellowKeySelect"
-      v-model="datasource.command.yellowKey"
-      label="Yellow Key"
-      :options="datasource.yellowKeys"
-      v-on:input="emitChange()"
-    />
-
-    <text-box
+    <v-text-field
       v-model="datasource.command.ticker"
-      id="tickerField"
       label="Ticker"
-      v-on:input="emitChange()"
     />
   </div>
 </template>
 
 
 <script>
-import TextBox from '../Common/Material/TextBox.vue';
-import MtSelect from '../Common/Material/MtSelect.vue';
-
 export default {
-  components: {
-    TextBox,
-    MtSelect,
+  props: {
+    datasource: {
+      type: Object,
+      required: true
+    }
   },
-  data() {
+  data () {
     return {
-      datasource: this.value,
+      togglePricingSource: 0,
+      toggleYellowKey: 0
     };
   },
-  props: ['value'],
-  methods: {
-    emitChange() {
-      this.$emit('input', this.datasource);
+  computed: {
+    currentPricingSource () {
+      return this.datasource &&
+        this.datasource.pricingSources[this.togglePricingSource]
     },
+    currentYellowKey () {
+      return this.datasource &&
+        this.datasource.yellowKeys[this.toggleYellowKey]
+    }
+  },
+  watch: {
+    togglePricingSource () {
+      this.datasource.command.pricingSource = this.currentPricingSource
+    },
+    toggleYellowKey () {
+      this.datasource.command.yellowKey = this.currentYellowKey
+    }
   },
 };
 </script>

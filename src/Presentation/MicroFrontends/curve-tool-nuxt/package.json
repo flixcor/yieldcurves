@@ -1,0 +1,35 @@
+{
+  "name": "curve-tool",
+  "version": "1.0.0",
+  "description": "Project to try out new technologies and patterns",
+  "author": "Felix Cornelissen",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt --port 8081",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@aspnet/signalr": "^3.0.0-preview6.19307.2",
+    "@nuxtjs/axios": "^5.3.6",
+    "@nuxtjs/pwa": "^3.0.0-0",
+    "nuxt": "^2.0.0"
+  },
+  "devDependencies": {
+    "@nuxtjs/eslint-config": "^2.0.0",
+    "@nuxtjs/eslint-module": "^1.1.0",
+    "@nuxtjs/stylelint-module": "^3.1.0",
+    "@nuxtjs/vuetify": "^1.0.0",
+    "@vue/test-utils": "^1.0.0-beta.27",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^24.1.0",
+    "eslint": "^6.1.0",
+    "eslint-plugin-nuxt": ">=0.5.0",
+    "jest": "^24.1.0",
+    "stylelint": "^10.1.0",
+    "vue-jest": "^4.0.0-0"
+  }
+}
