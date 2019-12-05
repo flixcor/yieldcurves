@@ -86,5 +86,14 @@ export default {
     */
     extend (config, ctx) {
     }
+  },
+  router: {
+    extendRoutes (routes, resolve) {
+      routes.push({
+        name: 'home',
+        path: '/',
+        component: resolve(__dirname, 'pages/instruments.vue')
+      })
+    }
   }
 }
