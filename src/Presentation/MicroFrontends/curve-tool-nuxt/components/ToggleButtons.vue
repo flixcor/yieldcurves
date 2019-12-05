@@ -1,8 +1,7 @@
 <template>
   <div>
-    <p v-html="label" />
+    <p>{{ label }}</p>
     <v-btn-toggle v-model="toggle" mandatory>
-
       <v-btn v-for="(option, index) in options" :key="index">
         {{ option }}
       </v-btn>
