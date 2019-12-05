@@ -12,8 +12,8 @@ namespace Instruments.Service.Features.CreateBloombergInstrument
         public Command Command { get; set; } = new Command
         {
             Id = Guid.NewGuid(),
-            PricingSource = PricingSource.CMPL,
-            YellowKey = YellowKey.INDEX,
+            PricingSource = PricingSource.CMPL.ToString(),
+            YellowKey = YellowKey.INDEX.ToString(),
             Ticker = string.Empty
         };
     }

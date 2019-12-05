@@ -8,7 +8,7 @@ namespace Instruments.Service.Features.CreateBloombergInstrument
     {
         public Guid Id { get; set; }
         public string Ticker { get; set; }
-        public PricingSource PricingSource { get; set; }
-        public YellowKey YellowKey { get; set; }
+        public string PricingSource { get; set; }
+        public string YellowKey { get; set; }
     }
 }

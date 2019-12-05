@@ -18,7 +18,13 @@ namespace Instruments.Service.Features.CreateBloombergInstrument
 
         public Task<Result> Handle(Command command, CancellationToken cancellationToken)
         {
-            var instrumentResult = BloombergInstrument.TryCreate(command.Id, command.Ticker, command.PricingSource, command.YellowKey);
+            var pricingSourceResult = command.PricingSource.TryParseEnum<PricingSource>();
+            var yellowKeyResult = command.YellowKey.TryParseEnum<YellowKey>();
+
+            var instrumentResult = Result.Combine(
+                pricingSourceResult, 
+                yellowKeyResult, 
+                (pricingSource, yellowKey) => BloombergInstrument.TryCreate(command.Id, command.Ticker, pricingSource, yellowKey));
 
             return instrumentResult.Promise(i => _repository.SaveAsync(i));
         }

@@ -6,18 +6,11 @@
       </span>
     </v-card-title>
     <v-card-text>
-      <p>Vendor</p>
-      <v-btn-toggle
-        v-model="toggle"
-        mandatory
-      >
-        <v-btn
-          v-for="(vendor, index) in regular.vendors"
-          :key="index"
-        >
-          {{ vendor }}
-        </v-btn>
-      </v-btn-toggle>
+      <toggle-buttons
+        v-model="regular.command.vendor"
+        label="Vendor"
+        :options="regular.vendors"
+      />
       <bloomberg-instrument
         v-if="isBloomberg"
         :datasource="bloomberg"
@@ -69,21 +62,12 @@ export default {
   data () {
     return {
       loading: false,
-      errors: [],
-      toggle: 0
+      errors: []
     };
   },
   computed: {
     isBloomberg () {
-      return this.currentVendor === 'Bloomberg';
-    },
-    currentVendor () {
-      return this.regular && this.regular.vendors[this.toggle]
-    }
-  },
-  watch: {
-    toggle () {
-      this.regular.command.vendor = this.currentVendor
+      return this.regular.command.vendor === 'Bloomberg';
     }
   },
   methods: {

@@ -101,19 +101,11 @@ namespace CurveRecipes.Domain
     {
         public static Result<Maturity> GetMaturity(this Tenor tenor)
         {
-            double multiplier;
-
-            switch (tenor.ToString()[0])
+            var multiplier = (tenor.ToString()[0]) switch
             {
-                case 'M':
-                    multiplier = 1D / 12;
-                    break;
-                case 'Y':
-                default:
-                    multiplier = 1;
-                    break;
-            }
-
+                'M' => 1D / 12,
+                _ => 1,
+            };
             var right = int.Parse(tenor.ToString().Substring(1));
 
             return Maturity.TryCreate(right * multiplier);

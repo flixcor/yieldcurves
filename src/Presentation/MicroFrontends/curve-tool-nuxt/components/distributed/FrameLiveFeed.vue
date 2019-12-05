@@ -7,7 +7,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import getConnection from '../../utils/websockets.js'
 import DynamicComponent from './DynamicComponent.vue'
 
@@ -42,7 +41,7 @@ export default {
   },
   methods: {
     async fetch () {
-      const { data } = await axios.get(this.endpoint)
+      const data = await this.$axios.$get(this.endpoint)
       let props = data.data
 
       if (Array.isArray(props)) {

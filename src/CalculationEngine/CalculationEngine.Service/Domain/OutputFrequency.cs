@@ -17,16 +17,12 @@ namespace CalculationEngine.Domain
 
         public IEnumerable<Maturity> GetMaturities()
         {
-            switch (OutputSeries)
+            return OutputSeries switch
             {
-                default:
-                case OutputSeries.Annual:
-                    return GetAnnualMaturities();
-                case OutputSeries.SemiAnnual:
-                    return GetSemiAnnualMaturities();
-                case OutputSeries.Monthly:
-                    return GetMonthlyMaturities();
-            }
+                OutputSeries.SemiAnnual => GetSemiAnnualMaturities(),
+                OutputSeries.Monthly => GetMonthlyMaturities(),
+                _ => GetAnnualMaturities(),
+            };
         }
 
         private IEnumerable<Maturity> GetAnnualMaturities()
