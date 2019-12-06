@@ -1,4 +1,4 @@
 import Vue from 'vue'
-import ToggleButtons from '../components/ToggleButtons.vue'
+import CtToggleButtons from '../components/Library/CtToggleButtons.vue'
 
-Vue.component('toggle-buttons', ToggleButtons)
+Vue.component('ct-toggle-buttons', CtToggleButtons)

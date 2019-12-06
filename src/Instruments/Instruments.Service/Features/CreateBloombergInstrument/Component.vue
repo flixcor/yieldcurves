@@ -1,12 +1,12 @@
 <template>
   <div>
-    <toggle-buttons
+    <ct-toggle-buttons
       v-model="datasource.command.pricingSource"
       label="Pricing source"
       :options="datasource.pricingSources"
     />
 
-    <toggle-buttons
+    <ct-toggle-buttons
       v-model="datasource.command.yellowKey"
       label="Yellow key"
       :options="datasource.yellowKeys"

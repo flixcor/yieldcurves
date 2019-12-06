@@ -6,7 +6,7 @@
       </span>
     </v-card-title>
     <v-card-text>
-      <toggle-buttons
+      <ct-toggle-buttons
         v-model="regular.command.vendor"
         label="Vendor"
         :options="regular.vendors"
