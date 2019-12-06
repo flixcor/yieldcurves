@@ -38,6 +38,10 @@
       </v-btn>
       <v-toolbar-title v-text="title" />
       <v-spacer />
+      <v-switch
+        v-model="dark"
+        label="Dark Theme"
+      />
     </v-app-bar>
     <v-content>
       <v-container>
@@ -59,8 +63,9 @@ export default {
     return {
       year: new Date().getFullYear(),
       clipped: false,
-      drawer: false,
+      drawer: true,
       fixed: false,
+      dark: true,
       items: [
         {
           icon: 'mdi-chart-bubble',
@@ -72,6 +77,12 @@ export default {
       right: true,
       title: 'Curve tool'
     }
+  },
+  watch: {
+    dark (val) {
+      this.$vuetify.theme.dark = !!val
+    }
   }
 }
+
 </script>
