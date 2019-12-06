@@ -68,7 +68,7 @@ export default {
       dark: true,
       items: [
         {
-          icon: 'mdi-chart-bubble',
+          icon: 'mdi-trumpet',
           title: 'Instruments',
           to: '/instruments'
         }

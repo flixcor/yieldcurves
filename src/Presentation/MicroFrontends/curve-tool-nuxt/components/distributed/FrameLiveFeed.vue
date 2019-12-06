@@ -34,6 +34,9 @@ export default {
   },
   created () {
     // Fetch initial data.
+    this.fetch()
+  },
+  mounted () {
     this.init()
   },
   destroyed () {
