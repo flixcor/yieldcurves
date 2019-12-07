@@ -1,43 +1,46 @@
 <template>
-  <md-card class="md-layout-item md-size-50 md-small-size-100">
-    <template>
-      <md-card-header>
-        <div class="md-title">
-          Detail for {{ name }}
-        </div>
-        <md-button
-          class="md-primary md-fab md-fab-top-right md-mini"
-          @click="emitCreateClicked()"
-        >
-          <md-icon>add</md-icon>
-        </md-button>
-      </md-card-header>
-      <md-card-content>
-        <md-table>
-          <md-table-row>
-            <md-table-head>Tenor</md-table-head>
-            <md-table-head>Vendor</md-table-head>
-            <md-table-head>Name</md-table-head>
-            <md-table-head>DateLag</md-table-head>
-            <md-table-head>IsMandatory</md-table-head>
-            <md-table-head>PriceType</md-table-head>
-          </md-table-row>
+  <ct-card>
+    <template v-slot:title>
+      <span>
+        Detail for {{ name }}
+      </span>
+      <ct-button
+        class="primary"
+        fab
+        @click="emitCreateClicked()"
+      >
+        <v-icon>mdi-plus</v-icon>
+      </ct-button>
+    </template>
 
-          <md-table-row
+    <template v-slot:content>
+      <ct-table>
+        <thead>
+          <tr>
+            <td>Tenor</td>
+            <td>Vendor</td>
+            <td>Name</td>
+            <td>DateLag</td>
+            <td>IsMandatory</td>
+            <td>PriceType</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
             v-for="point of curvePoints"
             :key="point.tenor"
           >
-            <md-table-cell>{{ point.tenor }}</md-table-cell>
-            <md-table-cell>{{ point.vendor }}</md-table-cell>
-            <md-table-cell>{{ point.name }}</md-table-cell>
-            <md-table-cell>{{ point.dateLag }}</md-table-cell>
-            <md-table-cell>{{ point.isMandatory }}</md-table-cell>
-            <md-table-cell>{{ point.priceType }}</md-table-cell>
-          </md-table-row>
-        </md-table>
-      </md-card-content>
+            <td>{{ point.tenor }}</td>
+            <td>{{ point.vendor }}</td>
+            <td>{{ point.name }}</td>
+            <td>{{ point.dateLag }}</td>
+            <td>{{ point.isMandatory }}</td>
+            <td>{{ point.priceType }}</td>
+          </tr>
+        </tbody>
+      </ct-table>
     </template>
-  </md-card>
+  </ct-card>
 </template>
 
 <script>

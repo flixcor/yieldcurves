@@ -1,39 +1,43 @@
 <template>
-  <md-card class="md-layout-item md-size-50 md-small-size-100">
-    <md-card-header>
-      <div class="md-title">Market Curves</div>
-      <md-button
-        class="md-primary md-fab md-fab-top-right md-mini"
-        v-on:click="emitCreateClicked()"
+  <ct-card>
+    <template v-slot:title>
+      <span>
+        Market Curves
+      </span>
+      <ct-spacer />
+      <ct-button
+        class="primary"
+        fab
+        @click="emitCreateClicked()"
       >
-        <md-icon>add</md-icon>
-      </md-button>
-    </md-card-header>
-    <md-card-content>
-      <md-table v-if="entities && entities.length">
-        <md-table-row>
-          <md-table-head>Name</md-table-head>
-        </md-table-row>
+        <v-icon>mdi-plus</v-icon>
+      </ct-button>
+    </template>
 
-        <md-table-row
-          v-for="curve of entities"
-          :key="curve.id"
-          v-on:click="emitDetailClicked(curve.id)"
-        >
-          <md-table-cell>{{curve.name}}</md-table-cell>
-        </md-table-row>
-      </md-table>
-
-      <ul v-if="errors && errors.length">
-        <li v-for="(error,index) of errors" :key="index">{{error.message}}</li>
-      </ul>
-    </md-card-content>
-  </md-card>
+    <template v-slot:content>
+      <ct-table>
+        <thead>
+          <tr>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="curve of entities"
+            :key="curve.id"
+            @click="emitDetailClicked(curve.id)"
+          >
+            <td>{{ curve.name }}</td>
+          </tr>
+        </tbody>
+      </ct-table>
+    </template>
+  </ct-card>
 </template>
 
 <script>
 export default {
-  name: 'get-market-curves',
+  name: 'GetMarketCurves',
   props: {
     entities: {
       required: true,

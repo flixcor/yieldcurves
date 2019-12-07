@@ -1,5 +1,5 @@
 <template>
-  <v-text-field
+  <ct-input
     v-model="datasource.command.name"
     label="Name"
   />

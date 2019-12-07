@@ -1,12 +1,11 @@
 <template>
-  <v-card class="md-layout-item md-size-50 md-small-size-100">
-    <v-card-title>
-      <span>
-        Create new instrument
-      </span>
-    </v-card-title>
-    <v-card-text>
-      <ct-toggle-buttons
+  <ct-card>
+    <template v-slot:title>
+      <span>Create new instrument</span>
+    </template>
+
+    <template v-slot:content>
+      <ct-multiple-choice
         v-model="regular.command.vendor"
         label="Vendor"
         :options="regular.vendors"
@@ -19,35 +18,30 @@
         v-else
         :datasource="regular"
       />
-      <ul v-if="errors.length">
-        <li
-          v-for="error in errors"
-          :key="error"
-        >
-          {{ error }}
-        </li>
-      </ul>
-    </v-card-text>
-    <v-card-actions>
-      <v-spacer />
-      <v-btn
+    </template>
+
+    <template v-slot:actions>
+      <ct-spacer />
+      <ct-btn
+        class="primary"
         fab
         @click="submit"
       >
-        Submit
-      </v-btn>
-    </v-card-actions>
-  </v-card>
+        <v-icon>mdi-send</v-icon>
+      </ct-btn>
+    </template>
+  </ct-card>
 </template>
 
 <script>
-import axios from 'axios';
-const endpoint = 'https://localhost:5011';
+import axios from "axios";
+const endpoint = "https://localhost:5011";
 
 export default {
   components: {
-    BloombergInstrument: () => import('../CreateBloombergInstrument/Component.vue'),
-    RegularInstrument: () => import('../CreateRegularInstrument/Component.vue')
+    BloombergInstrument: () =>
+      import("../CreateBloombergInstrument/Component.vue"),
+    RegularInstrument: () => import("../CreateRegularInstrument/Component.vue")
   },
   props: {
     regular: {
@@ -59,36 +53,35 @@ export default {
       required: true
     }
   },
-  data () {
+  data() {
     return {
       loading: false,
       errors: []
     };
   },
   computed: {
-    isBloomberg () {
-      return this.regular.command.vendor === 'Bloomberg';
+    isBloomberg() {
+      return this.regular.command.vendor === "Bloomberg";
     }
   },
   methods: {
-    submit () {
-      var isBB = this.isBloomberg
+    submit() {
+      var isBB = this.isBloomberg;
 
-      const obj = isBB
-        ? this.bloomberg.command
-        : this.regular.command
+      const obj = isBB ? this.bloomberg.command : this.regular.command;
 
       const route = isBB
-        ? '/features/create-bloomberg-instrument/'
-        : '/features/create-regular-instrument'
+        ? "/features/create-bloomberg-instrument/"
+        : "/features/create-regular-instrument";
 
       axios
         .post(endpoint + route, obj)
-        .then(() => this.$emit('success'))
-        .catch((e) => {
-          if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
+        .then(() => this.$emit("success"))
+        .catch(e => {
+          if (e.response.data && Array.isArray(e.response.data))
+            this.errors = e.response.data;
         });
-    },
-  },
+    }
+  }
 };
 </script>

@@ -2,7 +2,7 @@
   <div>
     <p>{{ label }}</p>
     <v-btn-toggle v-model="toggle" mandatory>
-      <v-btn v-for="(option, index) in options" :key="index">
+      <v-btn v-for="(option, index) in options" :key="index" class="tertiary">
         {{ option }}
       </v-btn>
     </v-btn-toggle>
@@ -21,13 +21,15 @@ export default {
       required: true
     },
     value: {
-      type: String,
+      type: [String, Number, Object],
       required: true
     }
   },
   data () {
+    const toggle =
+      this.options && this.value ? this.options.indexOf(this.value) : 0
     return {
-      toggle: 0
+      toggle
     }
   },
   computed: {
@@ -39,6 +41,7 @@ export default {
     toggle () {
       this.$emit('input', this.currentValue)
     }
-  }
+  },
+  created () {}
 }
 </script>

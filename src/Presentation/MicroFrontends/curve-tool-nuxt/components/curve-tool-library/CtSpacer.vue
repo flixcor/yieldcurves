@@ -1,0 +1,3 @@
+<template>
+  <v-spacer />
+</template>

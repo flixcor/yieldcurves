@@ -30,11 +30,14 @@ export default {
   watch: {
     endpoint () {
       this.fetch()
+    },
+    hubUrl () {
+      if (this.hubConnection) {
+        this.hubConnection.stop()
+      }
+
+      this.setupHub()
     }
-  },
-  created () {
-    // Fetch initial data.
-    this.fetch()
   },
   mounted () {
     this.init()
@@ -55,14 +58,17 @@ export default {
       this.comp = data.url
       this.hubUrl = data.hub
     },
-    async init () {
-      await this.fetch()
+    async setupHub () {
       if (this.hubUrl) {
-        this.hubConnection = getConnection(this.hubUrl)
+        this.hubConnection = await getConnection(this.hubUrl)
         this.hubConnection.on('insert', obj => this.insert(obj))
         this.hubConnection.on('update', obj => this.update(obj))
         await this.hubConnection.start()
       }
+    },
+    async init () {
+      await this.fetch()
+      await this.setupHub()
     },
     update (obj) {
       const { entities, id } = this.props

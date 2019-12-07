@@ -1,18 +1,18 @@
 <template>
   <div>
-    <ct-toggle-buttons
+    <ct-multiple-choice
       v-model="datasource.command.pricingSource"
       label="Pricing source"
       :options="datasource.pricingSources"
     />
 
-    <ct-toggle-buttons
+    <ct-multiple-choice
       v-model="datasource.command.yellowKey"
       label="Yellow key"
       :options="datasource.yellowKeys"
     />
 
-    <v-text-field
+    <ct-input
       v-model="datasource.command.ticker"
       label="Ticker"
     />
