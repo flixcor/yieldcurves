@@ -1,38 +1,50 @@
 <template>
-  <md-card>
-    <md-card-header>
-      <div class="md-title">
+  <ct-card>
+    <template v-slot:title>
+      <span>
         Curve Recipes
-      </div>
-      <md-button
-        class="md-primary md-fab md-fab-top-right md-mini"
+      </span>
+      <ct-spacer />
+      <ct-btn
+        class="primary"
+        fab
         @click="emitCreateClicked()"
       >
-        <md-icon>add</md-icon>
-      </md-button>
-    </md-card-header>
-    <md-card-content>
-      <md-table v-if="entities && entities.length">
-        <md-table-row>
-          <md-table-head>Name</md-table-head>
-        </md-table-row>
-        <md-table-row
-          v-for="curve of entities"
-          :key="curve.id"
-          @click="emitDetailClicked(curve.id)"
-        >
-          <md-table-cell>{{ curve.name }}</md-table-cell>
-        </md-table-row>
-      </md-table>
-    </md-card-content>
-  </md-card>
+        <v-icon>mdi-plus</v-icon>
+      </ct-btn>
+    </template>
+
+    <template v-slot:content>
+      <ct-table>
+        <thead>
+          <tr>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="curve of entities"
+            :key="curve.id"
+            @click="emitDetailClicked(curve.id)"
+          >
+            <td>{{ curve.name }}</td>
+          </tr>
+        </tbody>
+      </ct-table>
+    </template>
+  </ct-card>
 </template>
 
 <script>
 
 export default {
   name: 'GetCurveRecipes',
-  props: ['entities'],
+  props: {
+    entities: {
+      required: true,
+      type: Array,
+    },
+  },
   methods: {
     emitDetailClicked(id) {
       this.$emit('detailClicked', id);

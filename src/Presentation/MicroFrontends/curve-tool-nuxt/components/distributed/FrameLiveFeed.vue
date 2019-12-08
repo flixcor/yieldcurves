@@ -30,13 +30,6 @@ export default {
   watch: {
     endpoint () {
       this.fetch()
-    },
-    hubUrl () {
-      if (this.hubConnection) {
-        this.hubConnection.stop()
-      }
-
-      this.setupHub()
     }
   },
   mounted () {
@@ -87,6 +80,13 @@ export default {
         if (entities.find(x => x.id === obj.id)) { return }
         this.props.entities = [obj, ...entities]
       }
+    },
+    async reloadHub () {
+      if (this.hubConnection) {
+        await this.hubConnection.stop()
+      }
+
+      await this.setupHub()
     }
   }
 }

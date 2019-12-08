@@ -1,70 +1,57 @@
 <template>
-  <md-card>
-    <md-card-header>
-      <div class="md-title">
+  <ct-card>
+    <template v-slot:title>
+      <span>
         Create new curve recipe
-      </div>
-    </md-card-header>
-    <md-progress-bar
-      v-if="loading"
-      md-mode="indeterminate"
-    />
-    <md-card-content v-else>
-      <text-box
-        id="shortNameBox"
+      </span>
+    </template>
+
+    <template v-slot:content>
+      <ct-input
         v-model="command.shortName"
         label="ShortName"
       />
-      <text-box
-        id="descriptionBox"
+      <ct-input
         v-model="command.description"
         label="Description"
       />
-      <mt-select
-        id="marketCurveDropdown"
+      <ct-multiple-choice
         v-model="command.marketCurveId"
         label="Market curve"
         :options="marketCurveOptions"
       />
-      <mt-select
+      <ct-multiple-choice
         v-if="matchingTenors"
-        id="lastLiquidTenorDropdown"
         v-model="command.lastLiquidTenor"
         label="Last liquid tenor"
         :options="matchingTenors"
       />
-      <mt-select
-        id="dayCountConventionDropdown"
+      <ct-multiple-choice
         v-model="command.dayCountConvention"
         label="Day count convention"
         :options="dayCountConventions"
       />
-      <mt-select
-        id="interpolationDropdown"
+      <ct-multiple-choice
         v-model="command.interpolation"
         label="Interpolation"
         :options="interpolations"
       />
-      <mt-select
-        id="extrapolationShortDropdown"
+      <ct-multiple-choice
         v-model="command.extrapolationShort"
         label="Extrapolation short end"
         :options="extrapolationShorts"
       />
-      <mt-select
-        id="extrapolationLongDropdown"
+      <ct-multiple-choice
         v-model="command.extrapolationLong"
         label="Extrapolation long end"
         :options="extrapolationLongs"
       />
-      <mt-select
-        id="outputSeriesDropdown"
+      <ct-multiple-choice
         v-model="command.outputFrequency.outputSeries"
         label="Output series"
         :options="outputSeries"
       />
-      <text-box
-        id="maximumMaturityBox"
+      <ct-input
         v-model="command.outputFrequency.maximumMaturity"
         type="number"
         max="100"
@@ -72,8 +59,7 @@
         step="0.1"
         label="Maximum maturity"
       />
-      <mt-select
-        id="outputTypeDropdown"
+      <ct-multiple-choice
         v-model="command.outputType"
         label="Output type"
         :options="outputTypes"
@@ -86,64 +72,100 @@
           {{ error }}
         </li>
       </ul>
-      <md-button
-        class="md-raised md-primary"
+    </template>
+
+    <template v-slot:actions>
+      <ct-spacer />
+      <ct-btn
+        class="primary"
+        fab
         @click="submit"
       >
-        Submit
-      </md-button>
-    </md-card-content>
-  </md-card>
+        <v-icon>mdi-send</v-icon>
+      </ct-btn>
+    </template>
+  </ct-card>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
-import MtSelect from '../Common/Material/MtSelect.vue';
-import TextBox  from '../Common/Material/TextBox.vue';
-
-const endpoint = 'https://localhost:5007/features/create-curve-recipe';
+const endpoint = "https://localhost:5007/features/create-curve-recipe";
 
 export default {
-  components: {
-    MtSelect,
-    TextBox,
+  props: {
+    command: {
+      type: Object,
+      required: true
+    },
+    marketCurves: {
+      type: Array,
+      required: true
+    },
+    tenors: {
+      type: Array,
+      required: true
+    },
+    dayCountConventions: {
+      type: Array,
+      required: true
+    },
+    interpolations: {
+      type: Array,
+      required: true
+    },
+    extrapolationShorts: {
+      type: Array,
+      required: true
+    },
+    extrapolationLongs: {
+      type: Array,
+      required: true
+    },
+    outputSeries: {
+      type: Array,
+      required: true
+    },
+    outputTypes: {
+      type: Array,
+      required: true
+    }
   },
-  props: ['command', 'marketCurves', 'tenors', 'dayCountConventions', 'interpolations', 'extrapolationShorts', 'extrapolationLongs', 'outputSeries', 'outputTypes'],
   data() {
     return {
-      loading: false,
-      errors: [],
+      errors: []
     };
   },
   computed: {
     matchingTenors() {
-      const match = this.marketCurves
-        .find(x => x.id === this.command.marketCurveId);
+      const match = this.marketCurves.find(
+        x => x.id === this.command.marketCurveId
+      );
       if (match) {
         return match.tenors;
       }
       return false;
     },
     marketCurveOptions() {
-      return this.marketCurves.map(x=> {
+      return this.marketCurves.map(x => {
         return { key: x.id, value: x.name };
       });
     }
   },
   methods: {
     submit() {
-      if (this.command.floatingLeg === 'N/A') {
+      if (this.command.floatingLeg === "N/A") {
         this.command.floatingLeg = null;
       }
       this.loading = true;
-      axios.post(endpoint, this.command)
-        .then(() => this.$emit('success'))
-        .catch((e) => {
-          if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
+      axios
+        .post(endpoint, this.command)
+        .then(() => this.$emit("success", this.command.id))
+        .catch(e => {
+          if (e.response.data && Array.isArray(e.response.data))
+            this.errors = e.response.data;
         });
-      this.loading = false;
-    },
-  },
+    }
+  }
 };
 </script>

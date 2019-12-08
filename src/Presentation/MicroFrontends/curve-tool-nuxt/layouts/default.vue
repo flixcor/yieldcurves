@@ -71,6 +71,11 @@ export default {
           icon: 'mdi-trumpet',
           title: 'Instruments',
           to: '/instruments'
+        },
+        {
+          icon: 'mdi-shopping',
+          title: 'Market Curves',
+          to: '/marketcurves'
         }
       ],
       miniVariant: false,

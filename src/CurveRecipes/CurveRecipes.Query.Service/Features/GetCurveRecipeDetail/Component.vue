@@ -1,42 +1,59 @@
 <template>
-  <md-card>
-    <md-card-header>
-      <div class="md-title">
+  <ct-card>
+    <template v-slot:title>
+      <span>
         Transformations for {{ name }}
-      </div>
-      <md-button
-        class="md-primary md-fab md-fab-top-right md-mini"
+      </span>
+      <ct-spacer />
+      <ct-btn
+        class="primary"
+        fab
         @click="emitCreateClicked()"
       >
-        <md-icon>add</md-icon>
-      </md-button>
-    </md-card-header>
-    <md-card-content>
-      <md-table v-if="transformations && transformations.length">
-        <md-table-row>
-          <md-table-head>Transformation</md-table-head>
-          <md-table-head>Parameter</md-table-head>
-          <md-table-head>Value</md-table-head>
-        </md-table-row>
+        <v-icon>mdi-plus</v-icon>
+      </ct-btn>
+    </template>
+
+    <template v-slot:content>
+      <ct-table>
+        <thead>
+          <tr>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tr>
+          <th>Transformation</th>
+          <th>Parameter</th>
+          <th>Value</th>
+        </tr>
         <template v-for="(transformation, i) of transformations">
-          <md-table-row
+          <tr
             v-for="(parameter, j) of transformation.parameters"
-            :key="i + j"
+            :key="`${i}_${j}`"
           >
-            <md-table-cell>{{ transformation.name }}</md-table-cell>
-            <md-table-cell>{{ parameter.name }}</md-table-cell>
-            <md-table-cell>{{ parameter.value }}</md-table-cell>
-          </md-table-row>
+            <td>{{ transformation.name }}</td>
+            <td>{{ parameter.name }}</td>
+            <td>{{ parameter.value }}</td>
+          </tr>
         </template>
-      </md-table>
-    </md-card-content>
-  </md-card>
+      </ct-table>
+    </template>
+  </ct-card>
 </template>
 
 <script>
 export default {
   name: 'GetCurveRecipes',
-  props: ['name', 'transformations'],
+  props: {
+    name: {
+      type: String,
+      required: true
+    },
+    transformations: {
+      type: Array,
+      required: true
+    }
+  },
   methods: {
     emitCreateClicked() {
       this.$emit('createClicked');

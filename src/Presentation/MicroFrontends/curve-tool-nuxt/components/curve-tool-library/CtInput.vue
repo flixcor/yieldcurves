@@ -2,6 +2,9 @@
   <v-text-field
     :value="value"
     :label="label"
+    :min="min"
+    :max="max"
+    :type="type"
     v-on="$listeners"
   />
 </template>
@@ -15,7 +18,19 @@ export default {
     },
     value: {
       type: [String, Number, Object],
-      required: true
+      default: null
+    },
+    min: {
+      type: String,
+      default: null
+    },
+    max: {
+      type: String,
+      default: null
+    },
+    type: {
+      type: String,
+      default: null
     }
   }
 }

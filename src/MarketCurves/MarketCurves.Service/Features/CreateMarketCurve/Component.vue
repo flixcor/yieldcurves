@@ -1,25 +1,22 @@
 <template>
-  <md-card class="md-layout-item md-size-50 md-small-size-100">
-    <md-card-header>
-      <div class="md-title">
+  <ct-card>
+    <template v-slot:title>
+      <span>
         Create new market curve
-      </div>
-    </md-card-header>
-    <md-card-content>
-      <mt-select
-        id="countryDropdown"
+      </span>
+    </template>
+    <template v-slot:content>
+      <ct-multiple-choice
         v-model="command.country"
         label="Country"
         :options="countries"
       />
-      <mt-select
-        id="curveTypeDropdown"
+      <ct-multiple-choice
         v-model="command.curveType"
         label="Curve Type"
         :options="curveTypes"
       />
-      <mt-select
-        id="floatingLegDropdown"
+      <ct-multiple-choice
         v-model="command.floatingLeg"
         label="Floating Leg"
         :options="['N/A', ...floatingLegs]"
@@ -32,27 +29,25 @@
           {{ error }}
         </li>
       </ul>
-      <md-button
+    </template>
+    <template v-slot:actions>
+      <ct-spacer />
+      <ct-btn
         class="md-raised md-primary"
         @click="submit"
       >
         Submit
-      </md-button>
-    </md-card-content>
-  </md-card>
+      </ct-btn>
+    </template>
+  </ct-card>
 </template>
 
 <script>
 import axios from 'axios';
 
-import MtSelect from '../Common/Material/MtSelect.vue';
-
 const endpoint = 'https://localhost:5001/features/create-market-curve';
 
 export default {
-  components: {
-    MtSelect,
-  },
   props: {
     command: {
       type: Object,

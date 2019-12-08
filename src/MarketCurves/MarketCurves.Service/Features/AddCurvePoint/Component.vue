@@ -1,38 +1,34 @@
 <template>
-  <md-card>
-    <md-card-header>
-      <div class="md-title">
+  <ct-card>
+    <template v-slot:title>
+      <span>
         Add new curve point
-      </div>
-    </md-card-header>
-    <md-card-content>
-      <mt-select
-        id="tenorDropdown"
+      </span>
+    </template>
+
+    <template v-slot:content>
+      <ct-multiple-choice
         v-model="command.tenor"
         label="Tenor"
         :options="tenors"
       />
-      <mt-select
-        id="instrumentDropdown"
+      <ct-multiple-choice
         v-model="command.instrumentId"
         label="Instrument"
         :options="instrumentOptions"
       />
-      <text-box
-        id="dateLagBox"
+      <ct-input
         v-model="command.dateLag"
         type="number"
         max="0"
         label="DateLag"
       />
-
-      <md-checkbox v-model="command.isMandatory">
-        Mandatory
-      </md-checkbox>
-
+      <ct-switch
+        v-model="command.isMandatory"
+        label="Mandatory"
+      />
       <br>
-
-      <mt-select
+      <ct-multiple-choice
         v-if="hasPriceType"
         id="priceTypeDropdown"
         v-model="command.priceType"
@@ -47,30 +43,45 @@
           {{ error }}
         </li>
       </ul>
-      <md-button
-        class="md-raised md-primary"
+    </template>
+
+    <template v-slot:actions>
+      <ct-spacer />
+      <ct-btn
+        class="primary"
+        fab
         @click="submit"
       >
-        Submit
-      </md-button>
-    </md-card-content>
-  </md-card>
+        <v-icon>mdi-send</v-icon>
+      </ct-btn>
+    </template>
+  </ct-card>
 </template>
 
 <script>
 import axios from 'axios';
 
-import MtSelect from '../Common/Material/MtSelect.vue';
-import TextBox from '../Common/Material/TextBox.vue';
-
 const endpoint = 'https://localhost:5001/features/add-curve-point';
 
 export default {
-  components: {
-    MtSelect,
-    TextBox,
+  props: {
+    command: {
+      type: Object,
+      required: true
+    },
+    priceTypes: {
+      type: Array,
+      required: true
+    },
+    instruments: {
+      type: Array,
+      required: true
+    },
+    tenors: {
+      type: Array,
+      required: true
+    }
   },
-  props: ['command', 'priceTypes', 'instruments', 'tenors'],
   data () {
     return {
       errors: [],

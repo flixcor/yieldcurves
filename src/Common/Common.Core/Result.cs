@@ -111,6 +111,13 @@ namespace Common.Core
                 : Fail<TOut>(Messages.ToArray());
         }
 
+        public Result<TOut> Promise<TOut>(Func<T, Result<TOut>> onSuccess)
+        {
+            return IsSuccessful
+                ? onSuccess(Content)
+                : Fail<TOut>(Messages.ToArray());
+        }
+
         public async Task<Result> Promise(Func<T, Task> onSuccess)
         {
             if (IsSuccessful)
@@ -145,15 +152,15 @@ namespace Common.Core
 
     public static class ResultExtensions
     {
-        public static Result<ImmutableArray<T>> Convert<T>(this IEnumerable<Result<T>> results)
+        public static Result<IEnumerable<T>> Convert<T>(this IEnumerable<Result<T>> results)
         {
             if (results.Any(x => !x.IsSuccessful))
             {
                 var failureMessages = results.SelectMany(x => x.Messages).ToArray();
-                return Result.Fail<ImmutableArray<T>>(failureMessages);
+                return Result.Fail<IEnumerable<T>>(failureMessages);
             }
 
-            var objects = results.Select(x => x.Content).ToImmutableArray();
+            var objects = results.Select(x => x.Content);
 
             return Result.Ok(objects);
         }

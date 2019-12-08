@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using Common.Core;
 using CurveRecipes.Domain;
 
 namespace CurveRecipes.Service.Features.AddTransformation
@@ -10,15 +8,21 @@ namespace CurveRecipes.Service.Features.AddTransformation
     {
         public Dto(Guid id)
         {
-            Commands = new Dictionary<string, ICommand>()
-                {
-                    { nameof(KeyRateShock), new AddShock.AddKeyRateShock.Command { Id = id } },
-                    { nameof(ParallelShock), new AddShock.AddParallelShock.Command { Id = id } }
-                }.ToImmutableDictionary();
+            Id = id;
         }
 
-        public ImmutableArray<string> ShockTargets { get; } = Enum.GetNames(typeof(ShockTarget)).ToImmutableArray();
+        private void Add<T>(string name) where T : new()
+        {
+            Commands.Add(name, new T());
+        }
 
-        public ImmutableDictionary<string, ICommand> Commands { get; }
+        public Guid Id { get; }
+        public IEnumerable<string> ShockTargets { get; } = Enum.GetNames(typeof(ShockTarget));
+
+        public Dictionary<string, object> Commands { get; } = new Dictionary<string, object>
+        {
+            { nameof(KeyRateShock), new AddKeyRateShock() },
+            { nameof(ParallelShock), new AddParallelShock() },
+        };
     }
 }

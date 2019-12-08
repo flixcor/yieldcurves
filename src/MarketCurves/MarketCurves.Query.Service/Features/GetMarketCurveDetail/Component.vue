@@ -4,13 +4,14 @@
       <span>
         Detail for {{ name }}
       </span>
-      <ct-button
+      <ct-spacer />
+      <ct-btn
         class="primary"
         fab
         @click="emitCreateClicked()"
       >
         <v-icon>mdi-plus</v-icon>
-      </ct-button>
+      </ct-btn>
     </template>
 
     <template v-slot:content>

@@ -1,8 +1,8 @@
 <template>
   <component
     :is="computedComponent"
-    v-bind="{options, label, value}"
-    v-on="$listeners"
+    v-bind="{options: simpleOptions, label, value}"
+    @input="onInput"
   />
 </template>
 
@@ -34,6 +34,22 @@ export default {
       }
 
       return () => import('./CtSelect.vue')
+    },
+    simpleOptions () {
+      if (this.options && typeof this.options[0] === 'object') {
+        return this.options.map(x => x.value)
+      }
+
+      return this.options
+    }
+  },
+  methods: {
+    onInput (e) {
+      const val = this.options && typeof this.options[0] === 'object'
+        ? this.options.find(x => x.value === e).key
+        : e
+
+      this.$emit('input', val)
     }
   }
 }

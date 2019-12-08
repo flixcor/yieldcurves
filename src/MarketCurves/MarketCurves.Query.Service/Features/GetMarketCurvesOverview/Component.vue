@@ -5,13 +5,13 @@
         Market Curves
       </span>
       <ct-spacer />
-      <ct-button
+      <ct-btn
         class="primary"
         fab
         @click="emitCreateClicked()"
       >
         <v-icon>mdi-plus</v-icon>
-      </ct-button>
+      </ct-btn>
     </template>
 
     <template v-slot:content>

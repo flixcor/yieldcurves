@@ -1,17 +1,11 @@
 <template>
-  <md-card>
-    <md-card-header>
-      <div class="md-title">
-        Add Transformation
-      </div>
-    </md-card-header>
-    <md-progress-bar
-      v-if="loading"
-      md-mode="indeterminate"
-    />
-    <md-card-content v-else>
-      <mt-select
-        id="transformationDropdown"
+  <ct-card>
+    <template v-slot:title>
+      <span>Add Transformation</span>
+    </template>
+
+    <template v-slot:content>
+      <ct-multiple-choice
         v-model="currentTransformation"
         label="Transformation"
         :options="Object
@@ -37,49 +31,74 @@
           {{ error }}
         </li>
       </ul>
-      <md-button
-        v-if="commands[currentTransformation] && currentTransformation !== '__ob__'"
-        class="md-raised md-primary"
+    </template>
+
+    <template v-slot:actions>
+      <ct-spacer />
+      <ct-btn
+        v-if="currentTransformation !== '__ob__' && commands[currentTransformation]"
+        class="primary"
+        fab
         @click="submit"
       >
-        Submit
-      </md-button>
-    </md-card-content>
-  </md-card>
+        <v-icon>mdi-send</v-icon>
+      </ct-btn>
+    </template>
+  </ct-card>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
-import MtSelect from '../Common/Material/MtSelect.vue';
-import AddShock from './AddShock/Component.vue';
+import AddShock from "./AddShock.vue";
 
-const endpoint = 'https://localhost:5007/api';
+const endpoint = "https://localhost:5007/features";
 
 export default {
   components: {
-    AddShock,
-    MtSelect,
+    AddShock
   },
-  props: ['commands', 'shockTargets'],
-  data () {
+  props: {
+    id: {
+      type: String,
+      required: true
+    },
+    commands: {
+      type: Object,
+      required: true
+    },
+    shockTargets: {
+      type: Array,
+      required: true
+    }
+  },
+  data() {
     return {
       loading: false,
-      currentTransformation: 'ParallelShock',
-      errors: [],
+      currentTransformation: "ParallelShock",
+      errors: []
     };
   },
   methods: {
-    submit () {
+    submit() {
       const transformationName = this.currentTransformation;
+
+      const payload = {
+        id: this.id,
+        transformationName,
+        transformation: this.commands[transformationName]
+      };
+
       this.loading = true;
-      axios.post(`${endpoint}/add${transformationName}`, this.commands[transformationName])
-        .then(() => this.$emit('success'))
-        .catch((e) => {
-          if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;
+      axios
+        .post(`${endpoint}/add-transformation`, payload)
+        .then(() => this.$emit("success"))
+        .catch(e => {
+          if (e.response.data && Array.isArray(e.response.data))
+            this.errors = e.response.data;
         });
       this.loading = false;
-    },
-  },
+    }
+  }
 };
 </script>

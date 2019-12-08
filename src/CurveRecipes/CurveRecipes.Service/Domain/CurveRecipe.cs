@@ -11,7 +11,11 @@ namespace CurveRecipes.Domain
         static CurveRecipe()
         {
             RegisterApplyMethod<CurveRecipeCreated>(Apply);
+            RegisterApplyMethod<KeyRateShockAdded>(Apply);
+            RegisterApplyMethod<ParallelShockAdded>(Apply);
         }
+
+        private int _count = 0;
 
         private CurveRecipe()
         {
@@ -65,23 +69,13 @@ namespace CurveRecipes.Domain
             ApplyEvent(@event);
         }
 
-        public Result AddTransformation(Order order, ITransformation transformation)
+        public Result AddTransformation(ITransformation transformation, Order order = null)
         {
-            var errors = new List<string>();
-
-            if (order == null)
-            {
-                errors.Add($"{nameof(order)} cannot be empty");
-            }
+            order ??= new Order(_count + 1);
 
             if (transformation == null)
             {
-                errors.Add($"{nameof(transformation)} cannot be empty");
-            }
-
-            if (errors.Any())
-            {
-                return Result.Fail(errors.ToArray());
+                return Result.Fail($"{nameof(transformation)} cannot be empty");
             }
 
             switch (transformation)
@@ -106,6 +100,16 @@ namespace CurveRecipes.Domain
         private static void Apply(CurveRecipe curve, CurveRecipeCreated e)
         {
             curve.Id = e.AggregateId;
+        }
+
+        private static void Apply(CurveRecipe curve, KeyRateShockAdded e)
+        {
+            curve._count++;
+        }
+
+        private static void Apply(CurveRecipe curve, ParallelShockAdded e)
+        {
+            curve._count++;
         }
     }
 }
