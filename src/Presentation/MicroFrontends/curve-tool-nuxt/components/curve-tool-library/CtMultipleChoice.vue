@@ -1,7 +1,7 @@
 <template>
   <component
     :is="computedComponent"
-    v-bind="{options: simpleOptions, label, value}"
+    v-bind="{options: simpleOptions, label, value: currentValue}"
     @input="onInput"
   />
 </template>
@@ -22,11 +22,20 @@ export default {
       required: true
     }
   },
+  data () {
+    const currentValue = this.options && this.options.length === 1
+      ? this.options[0]
+      : this.value
+
+    return {
+      currentValue
+    }
+  },
   computed: {
     computedComponent () {
-      const optionsCount = this.options.length
-      const totalLength = this.options.map(x => x.toString()).join('').length
-      const lengthArray = this.options.map(x => x.length)
+      const optionsCount = this.simpleOptions.length
+      const totalLength = this.simpleOptions.map(x => x.toString()).join('').length
+      const lengthArray = this.simpleOptions.map(x => x.length)
       const maxLength = Math.max(...lengthArray)
 
       if (optionsCount < 10 && totalLength < 100 && maxLength < 20) {
@@ -42,6 +51,11 @@ export default {
 
       return this.options
     }
+  },
+  updated () {
+    this.currentValue = this.options && this.options.length === 1
+      ? this.options[0]
+      : this.value
   },
   methods: {
     onInput (e) {

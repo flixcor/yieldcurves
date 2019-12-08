@@ -1,40 +1,32 @@
 <template>
-  <md-card class="md-layout-item md-size-50 md-small-size-100">
-    <md-card-header>
-      <div class="md-title">
+  <ct-card>
+    <template v-slot:title>
+      <span>
         Publish a price
-      </div>
-    </md-card-header>
-    <md-progress-bar
-      v-if="loading"
-      md-mode="indeterminate"
-    />
-    <md-card-content v-else>
-      <md-datepicker
-        id="asOfDatePicker"
+      </span>
+    </template>
+
+    <template v-slot:content>
+      <ct-date-picker
         v-model="asOfDate"
-        md-immediately
+        label="As-of date"
       />
-      <mt-select
-        id="instrumentDropdown"
+      <ct-multiple-choice
         v-model="command.instrumentId"
         label="Instrument"
         :options="instrumentOptions"
       />
-      <mt-select
+      <ct-multiple-choice
         v-if="hasPriceType"
-        id="priceTypeDropdown"
         v-model="command.priceType"
         label="Price type"
         :options="priceTypes"
       />
-      <text-box
-        id="priceCurrencyBox"
+      <ct-input
         v-model="command.priceCurrency"
         label="Price currency (ISO3)"
       />
-      <text-box
-        id="priceAmountBox"
+      <ct-input
         v-model="command.priceAmount"
         label="Price amount"
       />
@@ -46,30 +38,41 @@
           {{ error }}
         </li>
       </ul>
-      <md-button
-        class="md-raised md-primary"
-        @click="submit"
-      >
-        Submit
-      </md-button>
-    </md-card-content>
-  </md-card>
+
+      <template v-slot:actions>
+        <ct-spacer />
+        <ct-btn
+          class="primary"
+          fab
+          @click="submit"
+        >
+          <v-icon>mdi-send</v-icon>
+        </ct-btn>
+      </template>
+    </template>
+  </ct-card>
 </template>
 
 <script>
 import axios from 'axios';
 
-import MtSelect from '../Common/Material/MtSelect.vue';
-import TextBox from '../Common/Material/TextBox.vue';
-
 const endpoint = 'https://localhost:5013/features/publish-price';
 
 export default {
-  components: {
-    MtSelect,
-    TextBox,
+  props: {
+    command: {
+      type: Object,
+      required: true
+    },
+    priceTypes: {
+      type: Array,
+      required: true
+    },
+    instruments: {
+      type: Array,
+      required: true
+    }
   },
-  props: ['command', 'priceTypes', 'instruments'],
   data() {
     return {
       loading: false,

@@ -9,7 +9,7 @@
 
     <v-row>
       <v-col>
-        <FrameLiveFeed
+        <frame-live-feed
           endpoint="https://localhost:5005/features/get-curve-recipes-overview"
           @detailClicked="$router.push({path: `/recipes/${$event}`})"
           @createClicked="$router.push({path: '/recipes/create'})"
@@ -20,12 +20,7 @@
 </template>
 
 <script>
-import FrameLiveFeed from '../components/distributed/FrameLiveFeed.vue'
-
 export default {
-  name: 'Recipes',
-  components: {
-    FrameLiveFeed
-  }
+  name: 'Recipes'
 }
 </script>

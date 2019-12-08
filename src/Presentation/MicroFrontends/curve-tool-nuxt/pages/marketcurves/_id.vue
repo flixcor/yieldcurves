@@ -10,7 +10,7 @@
 
     <v-row>
       <v-col>
-        <FrameLiveFeed
+        <frame-live-feed
           :endpoint="`https://localhost:5003/features/get-market-curve-detail?id=${id}`"
           @createClicked="$router.push({path: `/marketcurves/${id}/add`})"
         />
@@ -20,12 +20,7 @@
 </template>
 
 <script>
-import FrameLiveFeed from '~/components/distributed/FrameLiveFeed.vue'
-
 export default {
-  components: {
-    FrameLiveFeed
-  },
   asyncData ({ params }) {
     return {
       id: params.id

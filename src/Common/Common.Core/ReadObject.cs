@@ -6,6 +6,6 @@ namespace Common.Core
 {
     public abstract class ReadObject
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
     }
 }

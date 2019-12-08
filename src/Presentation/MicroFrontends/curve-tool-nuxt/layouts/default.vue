@@ -63,7 +63,7 @@ export default {
     return {
       year: new Date().getFullYear(),
       clipped: false,
-      drawer: true,
+      drawer: false,
       fixed: false,
       dark: true,
       items: [
@@ -81,6 +81,11 @@ export default {
           icon: 'mdi-chef-hat',
           title: 'Recipes',
           to: '/recipes'
+        },
+        {
+          icon: 'mdi-cash',
+          title: 'Prices',
+          to: '/prices'
         }
       ],
       miniVariant: false,
