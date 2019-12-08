@@ -33,10 +33,11 @@
     <template v-slot:actions>
       <ct-spacer />
       <ct-btn
-        class="md-raised md-primary"
+        class="primary"
+        fab
         @click="submit"
       >
-        Submit
+        <v-icon>mdi-send</v-icon>
       </ct-btn>
     </template>
   </ct-card>

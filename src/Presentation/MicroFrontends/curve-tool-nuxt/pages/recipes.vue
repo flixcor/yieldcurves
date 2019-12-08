@@ -2,17 +2,17 @@
   <v-container>
     <v-row>
       <v-col>
-        <FrameLiveFeed
-          endpoint="https://localhost:5005/features/get-curve-recipes-overview"
-          @detailClicked="$router.push({path: `/recipes/${$event}`})"
-          @createClicked="$router.push({path: '/recipes/create'})"
-        />
+        <nuxt-child />
       </v-col>
     </v-row>
 
     <v-row>
       <v-col>
-        <nuxt-child />
+        <FrameLiveFeed
+          endpoint="https://localhost:5005/features/get-curve-recipes-overview"
+          @detailClicked="$router.push({path: `/recipes/${$event}`})"
+          @createClicked="$router.push({path: '/recipes/create'})"
+        />
       </v-col>
     </v-row>
   </v-container>

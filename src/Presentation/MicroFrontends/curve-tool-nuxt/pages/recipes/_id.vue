@@ -2,16 +2,17 @@
   <div>
     <v-row>
       <v-col>
-        <FrameLiveFeed
-          :endpoint="`https://localhost:5005/features/get-curve-recipe-detail?id=${id}`"
-          @createClicked="$router.push({path: `/recipes/${id}/add`})"
+        <nuxt-child
+          :id="id"
         />
       </v-col>
     </v-row>
+
     <v-row>
       <v-col>
-        <nuxt-child
-          :id="id"
+        <FrameLiveFeed
+          :endpoint="`https://localhost:5005/features/get-curve-recipe-detail?id=${id}`"
+          @createClicked="$router.push({path: `/recipes/${id}/add`})"
         />
       </v-col>
     </v-row>

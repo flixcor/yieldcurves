@@ -76,6 +76,11 @@ export default {
           icon: 'mdi-shopping',
           title: 'Market Curves',
           to: '/marketcurves'
+        },
+        {
+          icon: 'mdi-chef-hat',
+          title: 'Recipes',
+          to: '/recipes'
         }
       ],
       miniVariant: false,
