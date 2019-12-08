@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <h2>Market Curves</h2>
     <v-row>
       <v-col>
         <nuxt-child />

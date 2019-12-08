@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <h2>Instruments</h2>
     <v-row>
       <v-col>
         <FrameLiveFeed

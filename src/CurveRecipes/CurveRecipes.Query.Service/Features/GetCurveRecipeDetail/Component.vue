@@ -19,23 +19,30 @@
         <thead>
           <tr>
             <th>Name</th>
+            <th>Parameters</th>
           </tr>
         </thead>
-        <tr>
-          <th>Transformation</th>
-          <th>Parameter</th>
-          <th>Value</th>
-        </tr>
-        <template v-for="(transformation, i) of transformations">
+        <tbody>
           <tr
-            v-for="(parameter, j) of transformation.parameters"
-            :key="`${i}_${j}`"
+            v-for="(transformation, i) of transformations"
+            :key="i"
           >
             <td>{{ transformation.name }}</td>
-            <td>{{ parameter.name }}</td>
-            <td>{{ parameter.value }}</td>
+            <td>
+              <ct-table>
+                <tbody>
+                  <tr
+                    v-for="(parameter, j) of transformation.parameters"
+                    :key="`${i}_${j}`"
+                  >
+                    <td>{{ parameter.name }}</td>
+                    <td>{{ parameter.value }}</td>
+                  </tr>
+                </tbody>
+              </ct-table>
+            </td>
           </tr>
-        </template>
+        </tbody>
       </ct-table>
     </template>
   </ct-card>

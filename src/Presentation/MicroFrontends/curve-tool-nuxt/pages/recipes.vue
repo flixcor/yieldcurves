@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <h2>Recipes</h2>
     <v-row>
       <v-col>
         <nuxt-child />
