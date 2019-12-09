@@ -48,8 +48,6 @@
 </template>
 
 <script>
-import axios from "axios";
-
 import AddShock from "./AddShock.vue";
 
 const endpoint = "https://localhost:5007/features";
@@ -90,8 +88,8 @@ export default {
       };
 
       this.loading = true;
-      axios
-        .post(`${endpoint}/add-transformation`, payload)
+      this.$axios
+        .$post(`${endpoint}/add-transformation`, payload)
         .then(() => this.$emit("success"))
         .catch(e => {
           if (e.response.data && Array.isArray(e.response.data))

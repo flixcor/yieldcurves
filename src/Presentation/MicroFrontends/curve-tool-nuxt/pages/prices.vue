@@ -44,6 +44,11 @@ export default {
       selectedDate: null,
       showCreate: false
     }
+  },
+  methods: {
+    onDateChange (e) {
+      this.selectedDate = e
+    }
   }
 }
 </script>

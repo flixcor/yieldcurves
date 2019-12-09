@@ -8,7 +8,7 @@
 
     <template v-slot:content>
       <ct-date-picker
-        v-model="asOfDate"
+        v-model="command.asOfDate"
         label="As-of date"
       />
       <ct-multiple-choice
@@ -38,24 +38,21 @@
           {{ error }}
         </li>
       </ul>
-
-      <template v-slot:actions>
-        <ct-spacer />
-        <ct-btn
-          class="primary"
-          fab
-          @click="submit"
-        >
-          <v-icon>mdi-send</v-icon>
-        </ct-btn>
-      </template>
+    </template>
+    <template v-slot:actions>
+      <ct-spacer />
+      <ct-btn
+        class="primary"
+        fab
+        @click="submit"
+      >
+        <v-icon>mdi-send</v-icon>
+      </ct-btn>
     </template>
   </ct-card>
 </template>
 
 <script>
-import axios from 'axios';
-
 const endpoint = 'https://localhost:5013/features/publish-price';
 
 export default {
@@ -73,14 +70,14 @@ export default {
       required: true
     }
   },
-  data() {
+  data () {
     return {
       loading: false,
       errors: [],
     };
   },
   computed: {
-    hasPriceType() {
+    hasPriceType () {
       const match = this.instruments
         .find(x => x.id === this.command.instrumentId);
 
@@ -88,28 +85,20 @@ export default {
 
       return hasPriceType;
     },
-    asOfDate: {
-      get() {
-        return new Date(this.command.asOfDate).toISOString().split('T')[0];
-      },
-      set(newVal) {
-        this.command.asOfDate = new Date(newVal).toJSON();
-      },
-    },
-    instrumentOptions() {
-      return this.instruments.map(i=> {
+    instrumentOptions () {
+      return this.instruments.map(i => {
         return { key: i.id, value: i.name };
       });
     }
   },
   methods: {
-    submit() {
+    submit () {
       if (!this.hasPriceType) {
         this.command.priceType = null;
       }
 
-      axios
-        .post(endpoint, this.command)
+      this.$axios
+        .$post(endpoint, this.command)
         .then(() => this.$emit('success'))
         .catch((e) => {
           if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;

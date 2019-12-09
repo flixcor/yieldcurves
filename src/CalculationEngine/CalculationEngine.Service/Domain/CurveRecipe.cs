@@ -32,18 +32,17 @@ namespace CalculationEngine.Domain
         public OutputFrequency OutputFrequency { get; }
         public OutputType OutputType { get; }
 
-        public ImmutableArray<CurvePoint> ApplyTo(ImmutableArray<CurvePoint> points) => 
+        public IEnumerable<CurvePoint> ApplyTo(IEnumerable<CurvePoint> points) => 
             _transformations
                 .OrderBy(x => x.Order)
                 .Select(x => x.Transformation)
-                .Aggregate(ResolveAllMaturities(points), (p, t) => t.Transform(p))
-                .ToImmutableArray();
+                .Aggregate(ResolveAllMaturities(points), (p, t) => t.Transform(p));
 
-        private IEnumerable<CurvePoint> ResolveAllMaturities(ImmutableArray<CurvePoint> points) => 
+        private IEnumerable<CurvePoint> ResolveAllMaturities(IEnumerable<CurvePoint> points) => 
             OutputFrequency.GetMaturities()
                 .Select(maturity => ResolveMaturity(maturity, points));
 
-        private CurvePoint ResolveMaturity(Maturity maturity, ImmutableArray<CurvePoint> points)
+        private CurvePoint ResolveMaturity(Maturity maturity, IEnumerable<CurvePoint> points)
         {
             var alreadyExistingPoint = points.FirstOrDefault(p => p.Maturity == maturity);
 

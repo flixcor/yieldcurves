@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Immutable;
+using System.Collections.Generic;
 using System.Linq;
 using Common.Core;
 using Common.Events;
@@ -24,7 +24,7 @@ namespace CalculationEngine.Domain
             r.Id = e.AggregateId;
         }
 
-        public CurveCalculationResult(Guid id, Guid recipeId, DateTime asOfDate, Result<ImmutableArray<CurvePoint>> result)
+        public CurveCalculationResult(Guid id, Guid recipeId, DateTime asOfDate, Result<IEnumerable<CurvePoint>> result)
         {
             var e = result.IsSuccessful
                 ? (IEvent)new CurveCalculated(id, recipeId, asOfDate, DateTime.Now, result.Content.Select(x => new CurveCalculated.Point(x.Maturity.Value, x.Price.Currency, x.Price.Value)))

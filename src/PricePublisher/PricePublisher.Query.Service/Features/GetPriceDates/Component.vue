@@ -1,9 +1,8 @@
 <template>
   <ct-date-picker
-    :value="selectedDate"
     :dates="dates"
     label="As-of date"
-    @input="$emit('input', $event)"
+    v-on="$listeners"
   />
 </template>
 

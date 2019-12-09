@@ -59,8 +59,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 const endpoint = 'https://localhost:5001/features/add-curve-point';
 
 export default {
@@ -110,7 +108,8 @@ export default {
         this.command.priceType = null;
       }
 
-      axios.post(endpoint, this.command)
+      this.$axios
+        .$post(endpoint, this.command)
         .then(() => this.$emit('success'))
         .catch((e) => {
           if (e.response.data && Array.isArray(e.response.data)) this.errors = e.response.data;

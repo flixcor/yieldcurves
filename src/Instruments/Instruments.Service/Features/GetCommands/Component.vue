@@ -34,7 +34,6 @@
 </template>
 
 <script>
-import axios from "axios";
 const endpoint = "https://localhost:5011";
 
 export default {
@@ -74,8 +73,8 @@ export default {
         ? "/features/create-bloomberg-instrument/"
         : "/features/create-regular-instrument";
 
-      axios
-        .post(endpoint + route, obj)
+      this.$axios
+        .$post(endpoint + route, obj)
         .then(() => this.$emit("success"))
         .catch(e => {
           if (e.response.data && Array.isArray(e.response.data))

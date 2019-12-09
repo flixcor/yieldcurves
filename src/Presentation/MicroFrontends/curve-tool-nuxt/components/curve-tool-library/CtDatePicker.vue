@@ -1,7 +1,6 @@
 <template>
   <v-menu
     v-model="menu"
-    :close-on-content-click="false"
     :nudge-right="40"
     transition="scale-transition"
     offset-y
@@ -18,7 +17,6 @@
     <v-date-picker
       v-model="selectedDate"
       :allowed-dates="getAllowedDates"
-      @input="onInput"
     />
   </v-menu>
 </template>
@@ -41,7 +39,7 @@ export default {
   },
   data () {
     return {
-      selectedDate: this.value || this.getMaxDate(),
+      selectedDate: null,
       menu: false
     }
   },
@@ -51,9 +49,12 @@ export default {
       handler () {
         if (!this.selectedDate) { this.selectedDate = this.getMaxDate() }
       }
+    },
+    selectedDate (val) {
+      this.$emit('input', val)
     }
   },
-  updated () {
+  mounted () {
     this.selectedDate = this.value || this.getMaxDate()
   },
   methods: {
@@ -69,7 +70,7 @@ export default {
     getAllowedDates (val) {
       return this.dates && this.dates.length
         ? this.dates.includes(val)
-        : null
+        : true
     },
     onInput (e) {
       this.menu = false

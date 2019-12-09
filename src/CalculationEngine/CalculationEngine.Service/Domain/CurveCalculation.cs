@@ -10,7 +10,7 @@ namespace CalculationEngine.Service.Domain
 {
     public static class CurveCalculation
     {
-        public static Result<ImmutableArray<CurvePoint>> Calculate(DateTime asOfDate, CurveRecipeCreated recipe, ICollection<CurvePointAdded> marketCurve, ICollection<InstrumentPricingPublished> pricings)
+        public static Result<IEnumerable<CurvePoint>> Calculate(DateTime asOfDate, CurveRecipeCreated recipe, ICollection<CurvePointAdded> marketCurve, ICollection<InstrumentPricingPublished> pricings)
         {
             var matchingPricesResult = TryGetAllMatchingPrices(asOfDate, marketCurve, pricings);
             var recipeResult = TryMap(recipe);
@@ -18,7 +18,7 @@ namespace CalculationEngine.Service.Domain
             return Result.Combine(matchingPricesResult, recipeResult, (p, r) => r.ApplyTo(p));
         }
 
-        public static Result<ImmutableArray<CurvePoint>> TryGetAllMatchingPrices(DateTime asOfDate, ICollection<CurvePointAdded> marketCurve, ICollection<InstrumentPricingPublished> pricings)
+        public static Result<IEnumerable<CurvePoint>> TryGetAllMatchingPrices(DateTime asOfDate, ICollection<CurvePointAdded> marketCurve, ICollection<InstrumentPricingPublished> pricings)
         {
             var pricingResult = pricings.Select(TryMap).Convert();
             var pointResult = marketCurve.Select(TryMap).Convert();
@@ -27,7 +27,7 @@ namespace CalculationEngine.Service.Domain
             return Result.Combine(pricingResult, pointResult, (pr, p) => GetPointsFromPricings(date, p, pr));
         }
 
-        private static Result<ImmutableArray<CurvePoint>> GetPointsFromPricings(Date asOfDate, ICollection<PointRecipe> recipes, ICollection<PublishedPricing> pricings) => 
+        private static Result<IEnumerable<CurvePoint>> GetPointsFromPricings(Date asOfDate, IEnumerable<PointRecipe> recipes, IEnumerable<PublishedPricing> pricings) => 
             recipes
                 .Select(x => x.GetPoint(pricings, asOfDate))
                 .Convert();
