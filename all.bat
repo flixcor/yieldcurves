@@ -1,7 +1,7 @@
 docker-compose pull &
 dotnet build &
 start docker-compose up &
-start npm.install.serve .\src\Presentation\MicroFrontends\curve-tool &
+start npm.install.dev .\src\Presentation\FrontEnd &
 start full.stack.microservice .\src\CurveRecipes\CurveRecipes.Service &
 start full.stack.microservice .\src\CurveRecipes\CurveRecipes.Query.Service &
 start full.stack.microservice .\src\MarketCurves\MarketCurves.Service &

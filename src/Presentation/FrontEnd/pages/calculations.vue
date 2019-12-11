@@ -5,18 +5,18 @@
       <v-col>
         <ct-card>
           <template #title>
-            <FrameLiveFeed
+            <frame-live-feed
               endpoint="https://localhost:44393/features/get-calculation-dates"
               @change="selectedDate = $event"
             />
-            <FrameLiveFeed
+            <frame-live-feed
               v-if="selectedDate"
               :endpoint="`https://localhost:44393/features/get-calculations-overview-for-date?asOfDate=${jsonAsOfDate}`"
               @change="selectedRecipe = $event"
             />
           </template>
           <template #content>
-            <FrameLiveFeed
+            <frame-live-feed
               :v-if="selectedDate && selectedRecipe"
               :endpoint="`https://localhost:44393/features/get-calculated-curve-detail?curveRecipeId=${selectedRecipe}&asOfDate=${jsonAsOfDate}`"
             />
@@ -29,26 +29,26 @@
 
 <script>
 export default {
-  name: "CalculatedCurves",
+  name: 'CalculatedCurves',
   data () {
     return {
       selectedDate: this.tMinus1(),
       selectedRecipe: null,
       showCreate: false
-    };
+    }
   },
   computed: {
     jsonAsOfDate () {
-      return this.selectedDate;
+      return this.selectedDate
     }
   },
   methods: {
     tMinus1 () {
-      var someDate = new Date();
-      var numberOfDaysToAdd = 1;
-      someDate.setDate(someDate.getDate() - numberOfDaysToAdd);
-      return someDate.toISOString().split('T')[0];
-    },
+      const someDate = new Date()
+      const numberOfDaysToAdd = 1
+      someDate.setDate(someDate.getDate() - numberOfDaysToAdd)
+      return someDate.toISOString().split('T')[0]
+    }
   }
-};
+}
 </script>

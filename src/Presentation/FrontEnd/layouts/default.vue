@@ -86,6 +86,11 @@ export default {
           icon: 'mdi-cash',
           title: 'Prices',
           to: '/prices'
+        },
+        {
+          icon: 'mdi-calculator',
+          title: 'Calculations',
+          to: '/calculations'
         }
       ],
       miniVariant: false,

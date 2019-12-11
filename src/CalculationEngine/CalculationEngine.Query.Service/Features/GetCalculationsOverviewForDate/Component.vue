@@ -1,5 +1,5 @@
 ﻿<template>
-  <ct-multiple-choice
+  <ct-select
     v-model="currentRecipe"
     label="Recipe"
     :options="recipeNames"

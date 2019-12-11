@@ -28,15 +28,15 @@ namespace Common.Infrastructure
             var eventStorePosition = new Position(preparePosition, commitPosition);
 
             await _connection.ConnectAsync();
-            _connection.SubscribeToAllFrom(eventStorePosition, CatchUpSubscriptionSettings.Default, (_, e) => PublishEvent(e, userId, cancellationToken));
+            _connection.SubscribeToAllFrom(eventStorePosition, CatchUpSubscriptionSettings.Default, (_, e) => PublishEvent(e, userId, preparePosition, commitPosition, cancellationToken));
         }
 
-        private Task PublishEvent(ResolvedEvent resolvedEvent, string userId, CancellationToken cancellationToken)
+        private Task PublishEvent(ResolvedEvent resolvedEvent, string userId, long preparePosition, long commitPosition, CancellationToken cancellationToken)
         {
             var @event = resolvedEvent.Deserialize();
 
             return !_eventTypes.Any() || _eventTypes.Contains(@event.GetType().Name)
-                ? _socketContext.SendToUser(@event, userId, cancellationToken)
+                ? _socketContext.SendToUser(@event, userId, preparePosition, commitPosition, cancellationToken)
                 : Task.CompletedTask;
         }
     }
