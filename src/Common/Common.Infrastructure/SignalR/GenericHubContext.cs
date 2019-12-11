@@ -23,6 +23,15 @@ namespace Common.Infrastructure.SignalR
             return _hubContext.Clients.All.SendAsync(message, readObject, cancellationToken);
         }
 
+        public Task SendToUser(IEvent @event, string userId, long preparePosition, long commitPosition, CancellationToken cancellationToken = default)
+        {
+            var user = _hubContext.Clients.User(userId);
+
+            return user != null
+                ? user.SendAsync(@event.GetType().Name, @event, preparePosition, commitPosition, cancellationToken)
+                : Task.CompletedTask;
+        }
+
         public Task SendToGroup(string group, ReadObject readObject, bool isUpdate = false, CancellationToken cancellationToken = default)
         {
             var message = isUpdate
