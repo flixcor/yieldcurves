@@ -1,6 +1,5 @@
 ﻿<template>
-  <mt-select
-    id="calculationsOverviewDropdown"
+  <ct-multiple-choice
     v-model="currentRecipe"
     label="Recipe"
     :options="recipeNames"
@@ -8,12 +7,7 @@
 </template>
 
 <script>
-import MtSelect from '../Common/Material/MtSelect.vue'
-
 export default {
-  components: {
-    MtSelect
-  },
   props: {
     recipes: {
       type: Array,

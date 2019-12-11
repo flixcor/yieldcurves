@@ -26,13 +26,8 @@
 </template>
 
 <script>
-import FrameLiveFeed from './distributed/FrameLiveFeed.vue';
-
 export default {
   name: "CalculatedCurves",
-  components: {
-    FrameLiveFeed,
-  },
   data () {
     return {
       selectedDate: this.tMinus1(),
