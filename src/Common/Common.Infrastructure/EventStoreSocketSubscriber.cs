@@ -1,43 +1,52 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.Core;
 using Common.Infrastructure.Extensions;
-using Common.Infrastructure.SignalR;
 using EventStore.ClientAPI;
 
 namespace Common.Infrastructure
 {
-    public class EventStoreSocketSubscriber
+    public class EventStoreSocketSubscriber : IDisposable
     {
-        private readonly IEventStoreConnection _connection;
-        private readonly ISocketContext _socketContext;
-
         private readonly List<string> _eventTypes = new List<string>();
+        private readonly IEventStoreConnection _connection;
 
-        public EventStoreSocketSubscriber(IEventStoreConnection connection, ISocketContext socketContext)
+        public EventStoreSocketSubscriber(string connectionString)
         {
-            _connection = connection;
-            _socketContext = socketContext;
+            _connection = EventStoreConnection.Create(connectionString);
+        }
+
+        public void Dispose()
+        {
+            _connection.Dispose();
         }
 
         public void RegisterEventType(string eventType) => _eventTypes.Add(eventType);
 
-        public async Task Subscribe(string userId, long preparePosition, long commitPosition, CancellationToken cancellationToken)
+        public async Task Subscribe(long preparePosition, long commitPosition, Func<IEvent, Task> action, CancellationToken cancellationToken)
         {
             var eventStorePosition = new Position(preparePosition, commitPosition);
 
             await _connection.ConnectAsync();
-            _connection.SubscribeToAllFrom(eventStorePosition, CatchUpSubscriptionSettings.Default, (_, e) => PublishEvent(e, userId, preparePosition, commitPosition, cancellationToken));
+            _connection.SubscribeToAllFrom(eventStorePosition, CatchUpSubscriptionSettings.Default, (_, e) => PublishEvent(e, action, cancellationToken));
         }
 
-        private Task PublishEvent(ResolvedEvent resolvedEvent, string userId, long preparePosition, long commitPosition, CancellationToken cancellationToken)
+        private Task PublishEvent(ResolvedEvent resolvedEvent, Func<IEvent, Task> action, CancellationToken cancellationToken)
         {
-            var @event = resolvedEvent.Deserialize();
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                var @event = resolvedEvent.Deserialize();
 
-            return !_eventTypes.Any() || _eventTypes.Contains(@event.GetType().Name)
-                ? _socketContext.SendToUser(@event, userId, preparePosition, commitPosition, cancellationToken)
-                : Task.CompletedTask;
+                if (@event != null && (!_eventTypes.Any() || _eventTypes.Contains(@event.GetType().Name)))
+                {
+                    return action(@event);
+                }
+            }
+
+            return Task.CompletedTask;
         }
     }
 }
