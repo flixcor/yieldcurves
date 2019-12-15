@@ -14,7 +14,7 @@ namespace Common.Events
     {
         public BloombergInstrumentCreated(Guid aggregateId, string ticker, string pricingSource, string yellowKey)
         {
-            AggregateId = aggregateId.ToString();
+            AggregateId = aggregateId.ToString("N");
             Ticker = ticker ?? throw new ArgumentNullException(nameof(ticker));
             PricingSource = pricingSource ?? throw new ArgumentNullException(nameof(pricingSource));
             YellowKey = yellowKey ?? throw new ArgumentNullException(nameof(yellowKey));

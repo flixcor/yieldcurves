@@ -18,7 +18,7 @@ namespace Common.Events
     {
         public CurveCalculated(Guid aggregateId, Guid curveRecipeId, string asOfDate, DateTime asAtDate, IEnumerable<IPoint> points)
         {
-            AggregateId = aggregateId.ToString();
+            AggregateId = aggregateId.ToString("N");
             CurveRecipeId = curveRecipeId.ToString();
             AsOfDate = asOfDate;
             AsAtDate = Timestamp.FromDateTime(asAtDate.ToUniversalTime());

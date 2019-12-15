@@ -18,18 +18,20 @@ namespace Common.Infrastructure.Extensions
 
             if (eventHeaders != null)
             {
-                var eventClrTypeName = eventHeaders.EventClrTypeName;
+                var eventName = eventHeaders.EventName;
+                var eventTypeName = typeof(Events.Create).Namespace + '.' + eventName;
+                var type = typeof(Events.Create).Assembly.GetType(eventTypeName);
 
-                if (eventClrTypeName != null)
+                if (type != null)
                 {
-                    return Serializer.DeserializeEvent(data, Type.GetType(eventClrTypeName));
+                    return Serializer.DeserializeEvent(data, type);
                 }
             }
 
             return default;
         }
 
-        internal static (string, byte[]) ResolveEventBytes(this ResolvedEvent resolvedEvent, params string[] eventTypes)
+        internal static (Position, string, byte[]) ResolveEventBytes(this ResolvedEvent resolvedEvent, params string[] eventTypes)
         {
             var metadata = resolvedEvent.OriginalEvent.Metadata;
             var data = resolvedEvent.OriginalEvent.Data;
@@ -38,16 +40,11 @@ namespace Common.Infrastructure.Extensions
 
             if (eventHeaders != null)
             {
-                var eventClrTypeName = eventHeaders.EventClrTypeName;
+                var eventName = eventHeaders.EventName;
 
-                if (eventClrTypeName != null)
+                if (!string.IsNullOrWhiteSpace(eventName) && (!eventTypes.Any() || eventTypes.Contains(eventName)))
                 {
-                    var type = Type.GetType(eventClrTypeName);
-
-                    if (!eventTypes.Any() || eventTypes.Contains(type.Name))
-                    {
-                        return (type.Name, data);
-                    }
+                    return (resolvedEvent.OriginalPosition.Value, eventName, data);
                 }
             }
 
@@ -56,28 +53,9 @@ namespace Common.Infrastructure.Extensions
 
         internal static IEnumerable<(Position, string, byte[])> ResolveEventBytes(this IEnumerable<ResolvedEvent> resolvedEvents, params string[] eventTypes)
         {
-            foreach (var resolvedEvent in resolvedEvents)
-            {
-                var metadata = resolvedEvent.OriginalEvent.Metadata;
-                var data = resolvedEvent.OriginalEvent.Data;
-
-                var eventHeaders = Serializer.Deserialize<EventHeaders>(metadata);
-
-                if (eventHeaders != null)
-                {
-                    var eventClrTypeName = eventHeaders.EventClrTypeName;
-
-                    if (eventClrTypeName != null)
-                    {
-                        var type = Type.GetType(eventClrTypeName);
-
-                        if (!eventTypes.Any() || eventTypes.Contains(type.Name))
-                        {
-                            yield return (resolvedEvent.OriginalPosition.Value, type.Name, data);
-                        }
-                    }
-                }
-            }
+            return resolvedEvents
+                .Select(e => e.ResolveEventBytes(eventTypes))
+                .Where((e) => e.Item3 != default);
         }
     }
 }

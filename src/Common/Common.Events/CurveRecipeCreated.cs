@@ -23,7 +23,7 @@ namespace Common.Events
         public CurveRecipeCreated(Guid aggregateId, Guid marketCurveId, string shortName, string description, string lastLiquidTenor, string dayCountConvention, string interpolation,
             string extrapolationShort, string extrapolationLong, string outputSeries, double maximumMaturity, string outputType)
         {
-            AggregateId = aggregateId.ToString();
+            AggregateId = aggregateId.ToString("N");
             MarketCurveId = marketCurveId.ToString();
             ShortName = shortName;
             Description = description;

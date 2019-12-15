@@ -14,7 +14,7 @@ namespace Common.Events
     {
         public MarketCurveCreated(Guid aggregateId, string country, string curveType, string floatingLeg = null)
         {
-            AggregateId = aggregateId.ToString();
+            AggregateId = aggregateId.ToString("N");
             Country = country ?? throw new ArgumentNullException(nameof(country));
             CurveType = curveType ?? throw new ArgumentNullException(nameof(curveType));
 

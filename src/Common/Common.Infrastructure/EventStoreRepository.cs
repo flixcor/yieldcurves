@@ -23,7 +23,7 @@ namespace Common.Infrastructure
         {
             var version = int.MaxValue;
 
-            var streamName = AggregateIdToStreamName(typeof(TAggregate), id);
+            var streamName = AggregateIdToStreamName<TAggregate>(id);
             var aggregate = ConstructAggregate<TAggregate>();
 
             var sliceStart = (long)0;
@@ -79,14 +79,14 @@ namespace Common.Infrastructure
 
         public async Task SaveAsync<TAggregate>(TAggregate aggregate) where TAggregate : Aggregate<TAggregate>
         {
-            var assemblyQualifiedName = aggregate.GetType().AssemblyQualifiedName;
+            var aggregateName = aggregate.GetType().Name;
 
-            var streamName = AggregateIdToStreamName(aggregate.GetType(), aggregate.Id);
+            var streamName = AggregateIdToStreamName<TAggregate>(aggregate.Id);
             var eventsToPublish = aggregate.GetUncommittedEvents();
             var newEvents = eventsToPublish.ToList();
             var originalVersion = aggregate.Version - newEvents.Count;
             var expectedVersion = originalVersion == -1 ? ExpectedVersion.NoStream : originalVersion;
-            var eventsToSave = newEvents.Select(e => ToEventData(Guid.NewGuid(), e, aggregate.Id, assemblyQualifiedName)).ToList();
+            var eventsToSave = newEvents.Select(e => ToEventData(Guid.NewGuid(), e, aggregate.Id, aggregateName)).ToList();
 
 
             using (var connection = EventStoreConnection.Create(_connectionString))
@@ -122,27 +122,28 @@ namespace Common.Infrastructure
             return agg;
         }
 
-        private string AggregateIdToStreamName(Type type, Guid id)
+        private string AggregateIdToStreamName<T>(Guid id) where T : Aggregate<T>
         {
+            var name = typeof(T).Name;
             //Ensure first character of type name is lower case to follow javascript naming conventions
-            return string.Format("{0}-{1}", char.ToLower(type.Name[0]) + type.Name.Substring(1), id.ToString("N"));
+            return string.Format("{0}-{1}", char.ToLower(name[0]) + name.Substring(1), id.ToString("N"));
         }
 
-        private static EventData ToEventData(Guid eventId, IEvent @event, Guid aggregateId, string aggregateClrTypeName)
+        private static EventData ToEventData(Guid eventId, IEvent @event, Guid aggregateId, string aggregateName)
         {
             var data = Serializer.Serialize(@event);
+            var eventName = @event.GetType().Name;
 
             var eventHeaders = new EventHeaders
             {
                 CommitId = aggregateId,
-                AggregateClrTypeName = aggregateClrTypeName,
-                EventClrTypeName = @event.GetType().AssemblyQualifiedName
+                AggregateName = aggregateName,
+                EventName = eventName
             };
 
             var metadata = Serializer.Serialize(eventHeaders);
-            var typeName = @event.GetType().Name;
 
-            return new EventData(eventId, typeName, true, data, metadata);
+            return new EventData(eventId, eventName, true, data, metadata);
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Common.Events
     {
         public InstrumentCreated(Guid aggregateId, string vendor, string description, bool hasPriceType = false)
         {
-            AggregateId = aggregateId.ToString();
+            AggregateId = aggregateId.ToString("N");
             Vendor = vendor ?? throw new ArgumentNullException(nameof(vendor));
             Description = description ?? throw new ArgumentNullException(nameof(description));
             HasPriceType = hasPriceType;

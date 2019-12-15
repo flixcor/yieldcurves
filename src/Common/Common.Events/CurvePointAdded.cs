@@ -16,7 +16,7 @@ namespace Common.Events
     {
         public CurvePointAdded(Guid aggregateId, string tenor, Guid instrumentId, short dateLag, bool isMandatory, string priceType)
         {
-            AggregateId = aggregateId.ToString();
+            AggregateId = aggregateId.ToString("N");
             Tenor = tenor;
             InstrumentId = instrumentId.ToString();
             DateLag = dateLag;

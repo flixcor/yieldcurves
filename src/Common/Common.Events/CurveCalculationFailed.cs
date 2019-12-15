@@ -17,7 +17,7 @@ namespace Common.Events
     {
         public CurveCalculationFailed(Guid aggregateId, Guid curveRecipeId, string asOfDate, DateTime asAtDate, string[] messages)
         {
-            AggregateId = aggregateId.ToString();
+            AggregateId = aggregateId.ToString("N");
             CurveRecipeId = curveRecipeId.ToString();
             AsOfDate = asOfDate;
             AsAtDate = Timestamp.FromDateTime(asAtDate.ToUniversalTime());

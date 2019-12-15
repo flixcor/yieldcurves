@@ -14,7 +14,7 @@ namespace Common.Events
     {
         public RegularInstrumentCreated(Guid aggregateId, string vendor, string description)
         {
-            AggregateId = aggregateId.ToString();
+            AggregateId = aggregateId.ToString("N");
             Vendor = vendor ?? throw new ArgumentNullException(nameof(vendor));
             Description = description ?? throw new ArgumentNullException(nameof(description));
         }

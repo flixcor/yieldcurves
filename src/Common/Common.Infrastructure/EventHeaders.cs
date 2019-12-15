@@ -4,8 +4,8 @@ namespace Common.Infrastructure
 {
     public class EventHeaders
     {
-        public string EventClrTypeName { get; internal set; }
-        public string AggregateClrTypeName { get; internal set; }
+        public string EventName { get; internal set; }
+        public string AggregateName { get; internal set; }
         public Guid CommitId { get; internal set; }
     }
 }

@@ -58,8 +58,8 @@ namespace Common.Infrastructure.Proto
         {
             var eventHeaders = RuntimeTypeModel.Default.Add(typeof(EventHeaders), false);
             eventHeaders.AddField(1, nameof(EventHeaders.CommitId));
-            eventHeaders.AddField(2, nameof(EventHeaders.AggregateClrTypeName));
-            eventHeaders.AddField(3, nameof(EventHeaders.EventClrTypeName));
+            eventHeaders.AddField(2, nameof(EventHeaders.AggregateName));
+            eventHeaders.AddField(3, nameof(EventHeaders.EventName));
         }
     }
 }

@@ -59,11 +59,11 @@ namespace Common.Infrastructure
         {
             if (!cancellationToken.IsCancellationRequested)
             {
-                var (type, data) = resolvedEvent.ResolveEventBytes(_eventTypes.ToArray());
+                var (position, type, data) = resolvedEvent.ResolveEventBytes(_eventTypes.ToArray());
 
                 if (data != default)
                 {
-                    return action(data, type, resolvedEvent.OriginalPosition.Value.PreparePosition, resolvedEvent.OriginalPosition.Value.CommitPosition);
+                    return action(data, type, position.PreparePosition, position.CommitPosition);
                 }
             }
 

@@ -16,7 +16,7 @@ namespace Common.Events
     {
         public KeyRateShockAdded(Guid aggregateId, int order, string shockTarget, double shift, double[] maturities)
         {
-            AggregateId = aggregateId.ToString();
+            AggregateId = aggregateId.ToString("N");
             Order = order;
             ShockTarget = shockTarget;
             Shift = shift;

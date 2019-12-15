@@ -18,7 +18,7 @@ namespace Common.Events
     {
         public InstrumentPricingPublished(Guid aggregateId, string asOfDate, DateTime asAtDate, Guid instrumentId, string priceCurrency, double priceAmount, string priceType = null)
         {
-            AggregateId = aggregateId.ToString();
+            AggregateId = aggregateId.ToString("N");
             AsOfDate = asOfDate;
             AsAtDate = Timestamp.FromDateTime(asAtDate.ToUniversalTime());
             InstrumentId = instrumentId.ToString();

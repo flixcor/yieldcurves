@@ -4,7 +4,13 @@ using System.Linq;
 
 namespace Common.Core
 {
-    public abstract class Aggregate<TAggregate> where TAggregate : Aggregate<TAggregate>
+    public interface IAggregate
+    {
+        public Guid Id { get; }
+        public int Version { get; }
+    }
+
+    public abstract class Aggregate<TAggregate> : IAggregate where TAggregate : Aggregate<TAggregate>
     {
         private static readonly IDictionary<Type, Action<Aggregate<TAggregate>, IEvent>> s_actions = new Dictionary<Type, Action<Aggregate<TAggregate>, IEvent>>();
         private readonly List<IEvent> _events = new List<IEvent>();
