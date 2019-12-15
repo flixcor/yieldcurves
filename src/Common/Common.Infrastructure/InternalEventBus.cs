@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
@@ -18,10 +19,14 @@ namespace Common.Infrastructure
 
         public async Task Publish<T>(T @event, CancellationToken cancellationToken = default) where T : IEvent
         {
-            var handlerType = typeof(IHandleEvent<>)
-                .MakeGenericType(@event.GetType());
+            var handlerTypes = @event.GetType()
+                .GetInterfaces()
+                .Where(i => i.GetInterface(nameof(IEvent)) != null)
+                .Select(i => typeof(IHandleEvent<>).MakeGenericType(i));
 
-            IEnumerable<dynamic> handlers = _serviceProvider.GetServices(handlerType) ?? new List<dynamic>();
+            var handlers = handlerTypes
+                .SelectMany(t => _serviceProvider.GetServices(t))
+                .Cast<dynamic>();
 
             foreach (var handler in handlers)
             {

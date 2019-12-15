@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Common.Core;
 using Common.Events;
+using static Common.Events.Create;
 
 namespace CurveRecipes.Domain
 {
@@ -10,9 +11,9 @@ namespace CurveRecipes.Domain
     {
         static CurveRecipe()
         {
-            RegisterApplyMethod<CurveRecipeCreated>(Apply);
-            RegisterApplyMethod<KeyRateShockAdded>(Apply);
-            RegisterApplyMethod<ParallelShockAdded>(Apply);
+            RegisterApplyMethod<ICurveRecipeCreated>(Apply);
+            RegisterApplyMethod<IKeyRateShockAdded>(Apply);
+            RegisterApplyMethod<IParallelShockAdded>(Apply);
         }
 
         private int _count = 0;
@@ -63,7 +64,7 @@ namespace CurveRecipes.Domain
         private CurveRecipe(Guid id, Guid marketCurveId, string shortName, string description, Tenor lastLiquidTenor, DayCountConvention dayCountConvention, Interpolation interpolation,
             ExtrapolationShort extrapolationShort, ExtrapolationLong extrapolationLong, OutputFrequency outputFrequency, OutputType outputType)
         {
-            var @event = new CurveRecipeCreated(id, marketCurveId, shortName, description, lastLiquidTenor.ToString(), dayCountConvention.ToString(), interpolation.ToString(),
+            var @event = CurveRecipeCreated(id, marketCurveId, shortName, description, lastLiquidTenor.ToString(), dayCountConvention.ToString(), interpolation.ToString(),
                 extrapolationShort.ToString(), extrapolationLong.ToString(), outputFrequency.OutputSeries.ToString(), outputFrequency.MaximumMaturity.Value, outputType.ToString());
 
             ApplyEvent(@event);
@@ -81,12 +82,12 @@ namespace CurveRecipes.Domain
             switch (transformation)
             {
                 case ParallelShock parallelShock:
-                    var psEvent = new ParallelShockAdded(Id, order.Value, parallelShock.ShockTarget.ToString(), parallelShock.Shift.Value);
+                    var psEvent = ParallelShockAdded(Id, order.Value, parallelShock.ShockTarget.ToString(), parallelShock.Shift.Value);
                     ApplyEvent(psEvent);
                     break;
 
                 case KeyRateShock keyRateShock:
-                    var krsEvent = new KeyRateShockAdded(Id, order.Value, keyRateShock.ShockTarget.ToString(), keyRateShock.Shift.Value, keyRateShock.Maturities.Select(m => m.Value).ToArray());
+                    var krsEvent = KeyRateShockAdded(Id, order.Value, keyRateShock.ShockTarget.ToString(), keyRateShock.Shift.Value, keyRateShock.Maturities.Select(m => m.Value).ToArray());
                     ApplyEvent(krsEvent);
                     break;
 
@@ -97,17 +98,17 @@ namespace CurveRecipes.Domain
             return Result.Ok();
         }
 
-        private static void Apply(CurveRecipe curve, CurveRecipeCreated e)
+        private static void Apply(CurveRecipe curve, ICurveRecipeCreated e)
         {
             curve.Id = e.AggregateId;
         }
 
-        private static void Apply(CurveRecipe curve, KeyRateShockAdded e)
+        private static void Apply(CurveRecipe curve, IKeyRateShockAdded e)
         {
             curve._count++;
         }
 
-        private static void Apply(CurveRecipe curve, ParallelShockAdded e)
+        private static void Apply(CurveRecipe curve, IParallelShockAdded e)
         {
             curve._count++;
         }

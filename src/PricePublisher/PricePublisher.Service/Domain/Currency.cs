@@ -1,6 +1,6 @@
 ﻿using Common.Core;
 
-namespace PricePublisher.Domain
+namespace PricePublisher.Service.Domain
 {
     public class Currency
     {

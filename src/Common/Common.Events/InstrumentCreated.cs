@@ -3,28 +3,30 @@ using Common.Core;
 
 namespace Common.Events
 {
-    public class InstrumentCreated : IEvent
+    public interface IInstrumentCreated : IEvent
+    {
+        string Description { get; }
+        bool HasPriceType { get; }
+        string Vendor { get; }
+    }
+
+    internal partial class InstrumentCreated : IInstrumentCreated
     {
         public InstrumentCreated(Guid aggregateId, string vendor, string description, bool hasPriceType = false)
         {
-            AggregateId = aggregateId;
+            AggregateId = aggregateId.ToString();
             Vendor = vendor ?? throw new ArgumentNullException(nameof(vendor));
             Description = description ?? throw new ArgumentNullException(nameof(description));
             HasPriceType = hasPriceType;
         }
 
-        public string Vendor { get; set; }
-        public string Description { get; set; }
-        public bool HasPriceType { get; }
+        Guid IEvent.AggregateId => Guid.Parse(AggregateId);
 
-        public Guid AggregateId { get; }
-        public int Version { get; private set; }
-		
-		public IEvent WithVersion(int version)
-		{
-			var clone = (InstrumentCreated)MemberwiseClone();
-			clone.Version = version;
-			return clone;
-		}
+        public IEvent WithVersion(int version)
+        {
+            var clone = (InstrumentCreated)MemberwiseClone();
+            clone.Version = version;
+            return clone;
+        }
     }
 }

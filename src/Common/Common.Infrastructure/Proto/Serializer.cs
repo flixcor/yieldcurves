@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Common.Core;
 using Common.Events;
+using Google.Protobuf;
 using ProtoBuf.Meta;
 
 namespace Common.Infrastructure.Proto
@@ -16,12 +17,18 @@ namespace Common.Infrastructure.Proto
 
         public static IEvent DeserializeEvent(byte[] byteArray, Type type)
         {
+            if (!typeof(IEvent).IsAssignableFrom(type) || !typeof(Google.Protobuf.IMessage).IsAssignableFrom(type))
+            {
+                return default;
+            }
+
             using var stream = new MemoryStream(byteArray);
-            stream.Seek(0, SeekOrigin.Begin);
-            var obj = ProtoBuf.Serializer.Deserialize(type, stream);
-            return obj is IEvent @event
-                ? @event
-                : default;
+
+            var message = (Google.Protobuf.IMessage)Activator.CreateInstance(type);
+            message.MergeFrom(stream);
+            var @event = (IEvent)message;
+
+            return @event ?? default;
         }
 
         public static T Deserialize<T>(byte[] byteArray)
@@ -36,24 +43,19 @@ namespace Common.Infrastructure.Proto
 
         public static byte[] Serialize(object obj)
         {
+            if (obj is Google.Protobuf.IMessage proto)
+            {
+                return proto.ToByteArray();
+            }
+
             using var stream = new MemoryStream();
             stream.Seek(0, SeekOrigin.Begin);
             ProtoBuf.Serializer.Serialize(stream, obj);
             return stream.ToArray();
         }
 
-        private static void Setup()
+        public static void Setup()
         {
-            var eventTypes = typeof(CurveCalculated).Assembly.GetTypes().Where(x => typeof(IEvent).IsAssignableFrom(x));
-
-            foreach (var eventType in eventTypes)
-            {
-                var @event = RuntimeTypeModel.Default.Add(eventType, false);
-                var properties = eventType.GetProperties().Select(p => p.Name).OrderBy(name => name);
-                @event.Add(properties.ToArray());
-                @event.UseConstructor = false;
-            }
-
             var eventHeaders = RuntimeTypeModel.Default.Add(typeof(EventHeaders), false);
             eventHeaders.AddField(1, nameof(EventHeaders.CommitId));
             eventHeaders.AddField(2, nameof(EventHeaders.AggregateClrTypeName));

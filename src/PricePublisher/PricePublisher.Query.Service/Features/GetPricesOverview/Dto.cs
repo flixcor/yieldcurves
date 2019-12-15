@@ -5,7 +5,7 @@ namespace PricePublisher.Query.Service.Features.GetPricesOverview
 {
     public class Dto : ReadObject
     {
-        public DateTime AsOfDate { get; set; }
+        public string AsOfDate { get; set; }
         public DateTime AsAtDate { get; set; }
         public string Vendor { get; set; }
         public string Instrument { get; set; }

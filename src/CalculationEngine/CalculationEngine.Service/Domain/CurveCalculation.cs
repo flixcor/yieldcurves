@@ -10,7 +10,7 @@ namespace CalculationEngine.Service.Domain
 {
     public static class CurveCalculation
     {
-        public static Result<IEnumerable<CurvePoint>> Calculate(DateTime asOfDate, CurveRecipeCreated recipe, ICollection<CurvePointAdded> marketCurve, ICollection<InstrumentPricingPublished> pricings)
+        public static Result<IEnumerable<CurvePoint>> Calculate(Date asOfDate, ICurveRecipeCreated recipe, ICollection<ICurvePointAdded> marketCurve, ICollection<IInstrumentPricingPublished> pricings)
         {
             var matchingPricesResult = TryGetAllMatchingPrices(asOfDate, marketCurve, pricings);
             var recipeResult = TryMap(recipe);
@@ -18,13 +18,12 @@ namespace CalculationEngine.Service.Domain
             return Result.Combine(matchingPricesResult, recipeResult, (p, r) => r.ApplyTo(p));
         }
 
-        public static Result<IEnumerable<CurvePoint>> TryGetAllMatchingPrices(DateTime asOfDate, ICollection<CurvePointAdded> marketCurve, ICollection<InstrumentPricingPublished> pricings)
+        public static Result<IEnumerable<CurvePoint>> TryGetAllMatchingPrices(Date asOfDate, ICollection<ICurvePointAdded> marketCurve, ICollection<IInstrumentPricingPublished> pricings)
         {
             var pricingResult = pricings.Select(TryMap).Convert();
             var pointResult = marketCurve.Select(TryMap).Convert();
-            var date = Date.FromDateTime(asOfDate);
 
-            return Result.Combine(pricingResult, pointResult, (pr, p) => GetPointsFromPricings(date, p, pr));
+            return Result.Combine(pricingResult, pointResult, (pr, p) => GetPointsFromPricings(asOfDate, p, pr));
         }
 
         private static Result<IEnumerable<CurvePoint>> GetPointsFromPricings(Date asOfDate, IEnumerable<PointRecipe> recipes, IEnumerable<PublishedPricing> pricings) => 
@@ -32,7 +31,7 @@ namespace CalculationEngine.Service.Domain
                 .Select(x => x.GetPoint(pricings, asOfDate))
                 .Convert();
 
-        private static Result<PointRecipe> TryMap(CurvePointAdded e)
+        private static Result<PointRecipe> TryMap(ICurvePointAdded e)
         {
             var priceTypeResult = e.PriceType.TryParseOptionalEnum<PriceType>();
             var tenorResult = e.Tenor.TryParseEnum<Tenor>();
@@ -45,17 +44,17 @@ namespace CalculationEngine.Service.Domain
                 });
         }
 
-        private static Result<PublishedPricing> TryMap(InstrumentPricingPublished e)
+        private static Result<PublishedPricing> TryMap(IInstrumentPricingPublished e)
         {
             var price = new Price(e.PriceCurrency, e.PriceAmount);
-            var asOfDate = Date.FromDateTime(e.AsOfDate);
+            var asOfDate = Date.FromString(e.AsOfDate);
             var priceTypeResult = e.PriceType.TryParseOptionalEnum<PriceType>();
 
             return priceTypeResult
                 .Promise(() => new PublishedPricing(asOfDate, e.AsAtDate, e.InstrumentId, price, priceTypeResult.Content));
         }
 
-        private static Result<CurveRecipe> TryMap(CurveRecipeCreated e)
+        private static Result<CurveRecipe> TryMap(ICurveRecipeCreated e)
         {
             var lastLiquidTenor = e.LastLiquidTenor.TryParseEnum<Tenor>();
             var dcc = e.DayCountConvention.TryParseEnum<DayCountConvention>();

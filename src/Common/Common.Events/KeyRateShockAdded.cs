@@ -1,33 +1,37 @@
 ﻿using System;
-using System.Collections.Immutable;
+using System.Collections.Generic;
 using Common.Core;
 
 namespace Common.Events
 {
-    public class KeyRateShockAdded : IEvent
+    public interface IKeyRateShockAdded : IEvent
+    {
+        IEnumerable<double> Maturities { get; }
+        int Order { get; }
+        double Shift { get; }
+        string ShockTarget { get; }
+    }
+
+    internal partial class KeyRateShockAdded : IKeyRateShockAdded
     {
         public KeyRateShockAdded(Guid aggregateId, int order, string shockTarget, double shift, double[] maturities)
         {
-            AggregateId = aggregateId;
+            AggregateId = aggregateId.ToString();
             Order = order;
             ShockTarget = shockTarget;
             Shift = shift;
-            Maturities = maturities.ToImmutableArray();
+            Maturities.Add(maturities);
         }
 
-        public int Order { get; }
-        public string ShockTarget { get; }
-        public double Shift { get; }
+        IEnumerable<double> IKeyRateShockAdded.Maturities => Maturities;
 
-        public ImmutableArray<double> Maturities { get; }
-        public Guid AggregateId { get; }
-        public int Version { get; private set; }
-		
-		public IEvent WithVersion(int version)
-		{
-			var clone = (KeyRateShockAdded)MemberwiseClone();
-			clone.Version = version;
-			return clone;
-		}
+        Guid IEvent.AggregateId => Guid.Parse(AggregateId);
+
+        public IEvent WithVersion(int version)
+        {
+            var clone = (KeyRateShockAdded)MemberwiseClone();
+            clone.Version = version;
+            return clone;
+        }
     }
 }

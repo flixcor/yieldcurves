@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Common.Core;
 using Common.Events;
+using static Common.Events.Create;
 
 namespace MarketCurves.Domain
 {
@@ -10,7 +11,7 @@ namespace MarketCurves.Domain
     {
         static MarketCurve()
         {
-            RegisterApplyMethod<MarketCurveCreated>(Apply);
+            RegisterApplyMethod<IMarketCurveCreated>(Apply);
         }
 
         private MarketCurve()
@@ -36,7 +37,7 @@ namespace MarketCurves.Domain
 
         private MarketCurve(Guid id, Country country, CurveType curveType, FloatingLeg? floatingLeg = null)
         {
-            var @event = new MarketCurveCreated(id, country.ToString(), curveType.ToString(), floatingLeg?.ToString());
+            var @event = MarketCurveCreated(id, country.ToString(), curveType.ToString(), floatingLeg?.ToString());
 
             ApplyEvent(@event);
         }
@@ -55,13 +56,13 @@ namespace MarketCurves.Domain
                 return Result.Fail(errors.ToArray());
             }
 
-            var @event = new CurvePointAdded(Id, tenor.ToString(), instrumentId, dateLag.Value, isMandatory, priceType.ToString());
+            var @event = CurvePointAdded(Id, tenor.ToString(), instrumentId, dateLag.Value, isMandatory, priceType.ToString());
             ApplyEvent(@event);
 
             return Result.Ok();
         }
 
-        private static void Apply(MarketCurve c, MarketCurveCreated e)
+        private static void Apply(MarketCurve c, IMarketCurveCreated e)
         {
             c.Id = e.AggregateId;
         }

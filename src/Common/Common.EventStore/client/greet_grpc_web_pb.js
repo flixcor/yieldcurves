@@ -1,5 +1,5 @@
 /**
- * @fileoverview gRPC-Web generated client stub for greet
+ * @fileoverview gRPC-Web generated client stub for events
  * @enhanceable
  * @public
  */
@@ -12,7 +12,7 @@ const grpc = {};
 grpc.web = require('grpc-web');
 
 const proto = {};
-proto.greet = require('./greet_pb.js');
+proto.events = require('./greet_pb.js');
 
 /**
  * @param {string} hostname
@@ -22,7 +22,7 @@ proto.greet = require('./greet_pb.js');
  * @struct
  * @final
  */
-proto.greet.GreeterClient =
+proto.events.EventStoreClient =
     function(hostname, credentials, options) {
   if (!options) options = {};
   options['format'] = 'text';
@@ -48,7 +48,7 @@ proto.greet.GreeterClient =
  * @struct
  * @final
  */
-proto.greet.GreeterPromiseClient =
+proto.events.EventStorePromiseClient =
     function(hostname, credentials, options) {
   if (!options) options = {};
   options['format'] = 'text';
@@ -69,77 +69,77 @@ proto.greet.GreeterPromiseClient =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.greet.HelloRequest,
- *   !proto.greet.HelloReply>}
+ *   !proto.events.EventRequest,
+ *   !proto.events.EventReply>}
  */
-const methodDescriptor_Greeter_SayHello = new grpc.web.MethodDescriptor(
-  '/greet.Greeter/SayHello',
+const methodDescriptor_EventStore_GetEvents = new grpc.web.MethodDescriptor(
+  '/events.EventStore/GetEvents',
   grpc.web.MethodType.SERVER_STREAMING,
-  proto.greet.HelloRequest,
-  proto.greet.HelloReply,
+  proto.events.EventRequest,
+  proto.events.EventReply,
   /**
-   * @param {!proto.greet.HelloRequest} request
+   * @param {!proto.events.EventRequest} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.greet.HelloReply.deserializeBinary
+  proto.events.EventReply.deserializeBinary
 );
 
 
 /**
  * @const
  * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.greet.HelloRequest,
- *   !proto.greet.HelloReply>}
+ *   !proto.events.EventRequest,
+ *   !proto.events.EventReply>}
  */
-const methodInfo_Greeter_SayHello = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.greet.HelloReply,
+const methodInfo_EventStore_GetEvents = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.events.EventReply,
   /**
-   * @param {!proto.greet.HelloRequest} request
+   * @param {!proto.events.EventRequest} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.greet.HelloReply.deserializeBinary
+  proto.events.EventReply.deserializeBinary
 );
 
 
 /**
- * @param {!proto.greet.HelloRequest} request The request proto
+ * @param {!proto.events.EventRequest} request The request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @return {!grpc.web.ClientReadableStream<!proto.greet.HelloReply>}
+ * @return {!grpc.web.ClientReadableStream<!proto.events.EventReply>}
  *     The XHR Node Readable Stream
  */
-proto.greet.GreeterClient.prototype.sayHello =
+proto.events.EventStoreClient.prototype.getEvents =
     function(request, metadata) {
   return this.client_.serverStreaming(this.hostname_ +
-      '/greet.Greeter/SayHello',
+      '/events.EventStore/GetEvents',
       request,
       metadata || {},
-      methodDescriptor_Greeter_SayHello);
+      methodDescriptor_EventStore_GetEvents);
 };
 
 
 /**
- * @param {!proto.greet.HelloRequest} request The request proto
+ * @param {!proto.events.EventRequest} request The request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @return {!grpc.web.ClientReadableStream<!proto.greet.HelloReply>}
+ * @return {!grpc.web.ClientReadableStream<!proto.events.EventReply>}
  *     The XHR Node Readable Stream
  */
-proto.greet.GreeterPromiseClient.prototype.sayHello =
+proto.events.EventStorePromiseClient.prototype.getEvents =
     function(request, metadata) {
   return this.client_.serverStreaming(this.hostname_ +
-      '/greet.Greeter/SayHello',
+      '/events.EventStore/GetEvents',
       request,
       metadata || {},
-      methodDescriptor_Greeter_SayHello);
+      methodDescriptor_EventStore_GetEvents);
 };
 
 
-module.exports = proto.greet;
+module.exports = proto.events;
 

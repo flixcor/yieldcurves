@@ -8,7 +8,7 @@ namespace CalculationEngine.Service.ActorModel.Actors
 {
     public class InstrumentActor : IdempotentActor
     {
-        private readonly IDictionary<DateTime, InstrumentPricingPublished> _pricings = new Dictionary<DateTime, InstrumentPricingPublished>();
+        private readonly IDictionary<string, IInstrumentPricingPublished> _pricings = new Dictionary<string, IInstrumentPricingPublished>();
 
         private readonly Guid _instrumentId;
         public override string PersistenceId => _instrumentId.ToString();
@@ -16,11 +16,11 @@ namespace CalculationEngine.Service.ActorModel.Actors
         public InstrumentActor(Guid instrumentId)
         {
             _instrumentId = instrumentId;
-            IdempotentEvent<InstrumentPricingPublished>(Ignore, Recover);
+            IdempotentEvent<IInstrumentPricingPublished>(Ignore, Recover);
             Command<SendMeInstrumentPricingPublished>(Handle);
         }
 
-        private void Recover(InstrumentPricingPublished e)
+        private void Recover(IInstrumentPricingPublished e)
         {
             if (!_pricings.TryGetValue(e.AsOfDate, out var pricing))
             {

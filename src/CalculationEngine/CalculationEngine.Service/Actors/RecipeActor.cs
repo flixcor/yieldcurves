@@ -14,13 +14,13 @@ namespace CalculationEngine.Service.ActorModel.Actors
     public class RecipeActor : IdempotentActor
     {
         private readonly Guid _id;
-        private CurveRecipeCreated _recipe;
+        private ICurveRecipeCreated _recipe;
 
         public RecipeActor(Guid id)
         {
             _id = id;
 
-            IdempotentEvent<CurveRecipeCreated>(Ignore, Recover);
+            IdempotentEvent<ICurveRecipeCreated>(Ignore, Recover);
 
             Command<Calculate>(Handle);
         }
@@ -38,7 +38,7 @@ namespace CalculationEngine.Service.ActorModel.Actors
             }
         }
 
-        private void Recover(CurveRecipeCreated e)
+        private void Recover(ICurveRecipeCreated e)
         {
             _recipe = e;
         }

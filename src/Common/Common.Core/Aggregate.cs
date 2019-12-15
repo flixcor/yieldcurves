@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Common.Core
 {
@@ -41,7 +42,16 @@ namespace Common.Core
 
         private void ApplyEvent(IEvent @event, bool isNew)
         {
-            if (s_actions.TryGetValue(@event.GetType(), out var action))
+            var interfaces = @event
+                .GetType()
+                .GetInterfaces()
+                .Where(i => i.GetInterface(nameof(IEvent)) != null);
+
+            var actions = s_actions
+                .Where(d => interfaces.Contains(d.Key))
+                .Select(x => x.Value);
+
+            foreach (var action in actions)
             {
                 action(this, @event);
             }

@@ -1,0 +1,122 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Common.Events";
+
+package events;
+
+message InstrumentCreated {
+  string aggregate_id = 1;
+  string description = 2;
+  bool has_price_type = 3;
+  string vendor = 4;
+  int32 version = 5;
+}
+
+message BloombergInstrumentCreated {
+  string AggregateId = 1;
+  string PricingSource = 2;
+  string Ticker = 3;
+  int32 Version = 4;
+  string YellowKey = 5;
+}
+
+
+message RegularInstrumentCreated {
+  string AggregateId = 1;
+  string Description = 2;
+  string Vendor = 3;
+  int32 Version = 4;
+}
+
+
+message MarketCurveCreated {
+  string aggregate_id = 1;
+  string country = 2;
+  string curve_type = 3;
+  string floating_leg = 4;
+  int32 version = 5;
+}
+
+
+message CurveCalculated {
+  string AggregateId = 1;
+  google.protobuf.Timestamp AsAtDate = 2;
+  string AsOfDate = 3;
+  string CurveRecipeId = 4;
+  repeated Point Points = 5;
+  int32 Version = 6;
+}
+
+message Point {
+  double Maturity = 1;
+  string Currency = 2;
+  double Value = 3;
+}
+
+message CurveCalculationFailed {
+  string AggregateId = 1;
+  google.protobuf.Timestamp AsAtDate = 2;
+  string AsOfDate = 3;
+  string CurveRecipeId = 4;
+  repeated string Messages = 5;
+  int32 Version = 6;
+}
+
+
+message CurvePointAdded {
+  string AggregateId = 1;
+  int32 DateLag = 2;
+  string InstrumentId = 3;
+  bool IsMandatory = 4;
+  string PriceType = 5;
+  string Tenor = 6;
+  int32 Version = 7;
+}
+
+
+message CurveRecipeCreated {
+  string AggregateId = 1;
+  string DayCountConvention = 2;
+  string Description = 3;
+  string ExtrapolationLong = 4;
+  string ExtrapolationShort = 5;
+  string Interpolation = 6;
+  string LastLiquidTenor = 7;
+  string MarketCurveId = 8;
+  double MaximumMaturity = 9;
+  string OutputSeries = 10;
+  string OutputType = 11;
+  string ShortName = 12;
+  int32 Version = 13;
+}
+
+message InstrumentPricingPublished {
+  string AggregateId = 1;
+  google.protobuf.Timestamp AsAtDate = 2;
+  string AsOfDate = 3;
+  string InstrumentId = 4;
+  double PriceAmount = 5;
+  string PriceCurrency = 6;
+  string PriceType = 7;
+  int32 Version = 8;
+}
+
+
+message KeyRateShockAdded {
+  string AggregateId = 1;
+  repeated double Maturities = 2 [packed = false];
+  int32 Order = 3;
+  double Shift = 4;
+  string ShockTarget = 5;
+  int32 Version = 6;
+}
+
+message ParallelShockAdded {
+  string AggregateId = 1;
+  int32 Order = 2;
+  double Shift = 3;
+  string ShockTarget = 4;
+  int32 Version = 5;
+}

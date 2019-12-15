@@ -3,32 +3,36 @@ using Common.Core;
 
 namespace Common.Events
 {
-    public class CurvePointAdded : IEvent
+    public interface ICurvePointAdded : IEvent
+    {
+        int DateLag { get; }
+        Guid InstrumentId { get; }
+        bool IsMandatory { get; }
+        string PriceType { get; }
+        string Tenor { get; }
+    }
+
+    internal partial class CurvePointAdded : ICurvePointAdded
     {
         public CurvePointAdded(Guid aggregateId, string tenor, Guid instrumentId, short dateLag, bool isMandatory, string priceType)
         {
-            AggregateId = aggregateId;
+            AggregateId = aggregateId.ToString();
             Tenor = tenor;
-            InstrumentId = instrumentId;
+            InstrumentId = instrumentId.ToString();
             DateLag = dateLag;
             IsMandatory = isMandatory;
             PriceType = priceType;
         }
 
-        public string Tenor { get; }
-        public Guid InstrumentId { get; }
-        public short DateLag { get; }
-        public bool IsMandatory { get; }
-        public string PriceType { get; }
+        Guid ICurvePointAdded.InstrumentId => Guid.Parse(InstrumentId);
 
-        public Guid AggregateId { get; }
-        public int Version { get; private set; }
-		
-		public IEvent WithVersion(int version)
-		{
-			var clone = (CurvePointAdded)MemberwiseClone();
-			clone.Version = version;
-			return clone;
-		}
+        Guid IEvent.AggregateId => Guid.Parse(AggregateId);
+
+        public IEvent WithVersion(int version)
+        {
+            var clone = (CurvePointAdded)MemberwiseClone();
+            clone.Version = version;
+            return clone;
+        }
     }
 }

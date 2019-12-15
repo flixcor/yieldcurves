@@ -9,7 +9,7 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipesOverview
 {
     public class Handler :
             IHandleListQuery<Query, Dto>,
-            IHandleEvent<CurveRecipeCreated>
+            IHandleEvent<ICurveRecipeCreated>
     {
         private readonly IReadModelRepository<Dto> _readModelRepository;
 
@@ -18,7 +18,7 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipesOverview
             _readModelRepository = readModelRepository ?? throw new ArgumentNullException(nameof(readModelRepository));
         }
 
-        public Task Handle(CurveRecipeCreated @event, CancellationToken cancellationToken)
+        public Task Handle(ICurveRecipeCreated @event, CancellationToken cancellationToken)
         {
             var dto = new Dto
             {

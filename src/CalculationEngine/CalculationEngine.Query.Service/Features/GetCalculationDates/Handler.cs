@@ -10,7 +10,7 @@ namespace CalculationEngine.Query.Service.Features.GetCalculationDates
 {
     public class Handler :
         IHandleListQuery<Query, Dto>,
-        IHandleEvent<CurveCalculated>
+        IHandleEvent<ICurveCalculated>
     {
         private readonly IReadModelRepository<Dto> _readModelRepository;
 
@@ -24,9 +24,9 @@ namespace CalculationEngine.Query.Service.Features.GetCalculationDates
             return _readModelRepository.GetAll();
         }
 
-        public async Task Handle(CurveCalculated @event, CancellationToken cancellationToken)
+        public async Task Handle(ICurveCalculated @event, CancellationToken cancellationToken)
         {
-            var asOfDate = @event.AsOfDate.ToString("yyyy-MM-dd");
+            var asOfDate = @event.AsOfDate;
 
             var existingDto = await _readModelRepository.Single(x => x.AsOfDate == asOfDate);
 

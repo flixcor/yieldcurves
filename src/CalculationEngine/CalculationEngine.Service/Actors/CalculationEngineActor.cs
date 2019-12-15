@@ -14,11 +14,11 @@ namespace CalculationEngine.Service.ActorModel.Actors
             {
                 switch (e)
                 {
-                    case CurvePointAdded _:
-                    case CurveRecipeCreated _:
+                    case ICurvePointAdded _:
+                    case ICurveRecipeCreated _:
                         _marketCurves.Forward(e);
                         break;
-                    case InstrumentPricingPublished _:
+                    case IInstrumentPricingPublished _:
                         _marketCurves.Forward(e);
                         _instruments.Forward(e);
                         break;

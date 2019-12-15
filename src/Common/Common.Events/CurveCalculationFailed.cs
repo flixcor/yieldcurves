@@ -1,33 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
 using Common.Core;
+using Google.Protobuf.WellKnownTypes;
 
 namespace Common.Events
 {
-    public class CurveCalculationFailed : IEvent
+    public interface ICurveCalculationFailed : IEvent
     {
-        public CurveCalculationFailed(Guid aggregateId, Guid curveRecipeId, DateTime asOfDate, DateTime asAtDate, string[] messages)
+        DateTime AsAtDate { get; }
+        string AsOfDate { get; }
+        string CurveRecipeId { get; }
+        IEnumerable<string> Messages { get; }
+    }
+
+    internal partial class CurveCalculationFailed : ICurveCalculationFailed
+    {
+        public CurveCalculationFailed(Guid aggregateId, Guid curveRecipeId, string asOfDate, DateTime asAtDate, string[] messages)
         {
-            AggregateId = aggregateId;
-            CurveRecipeId = curveRecipeId;
+            AggregateId = aggregateId.ToString();
+            CurveRecipeId = curveRecipeId.ToString();
             AsOfDate = asOfDate;
-            AsAtDate = asAtDate;
-            Messages = messages;
+            AsAtDate = Timestamp.FromDateTime(asAtDate.ToUniversalTime());
+            Messages.Add(messages);
         }
 
+        DateTime ICurveCalculationFailed.AsAtDate => AsAtDate.ToDateTime();
 
-        public Guid CurveRecipeId { get; }
-        public DateTime AsOfDate { get; }
-        public DateTime AsAtDate { get; }
-        public ICollection<string> Messages { get; }
-        public Guid AggregateId { get; }
-        public int Version { get; private set; }
-		
-		public IEvent WithVersion(int version)
-		{
-			var clone = (CurveCalculationFailed)MemberwiseClone();
-			clone.Version = version;
-			return clone;
-		}
+        IEnumerable<string> ICurveCalculationFailed.Messages => Messages;
+
+        Guid IEvent.AggregateId => Guid.Parse(AggregateId);
+
+        public IEvent WithVersion(int version)
+        {
+            var clone = (CurveCalculationFailed)MemberwiseClone();
+            clone.Version = version;
+            return clone;
+        }
     }
 }

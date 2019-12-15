@@ -12,8 +12,8 @@ namespace CalculationEngine.Query.Service.Features.GetCalculatedCurveDetail
 {
     public class Handler :
             IHandleQuery<Query, Maybe<Dto>>,
-            IHandleEvent<CurveCalculated>,
-            IHandleEvent<CurveRecipeCreated>
+            IHandleEvent<ICurveCalculated>,
+            IHandleEvent<ICurveRecipeCreated>
     {
         private readonly GenericDbContext _db;
 
@@ -36,7 +36,7 @@ namespace CalculationEngine.Query.Service.Features.GetCalculatedCurveDetail
             return res.Maybe();
         }
 
-        public async Task Handle(CurveCalculated @event, CancellationToken cancellationToken)
+        public async Task Handle(ICurveCalculated @event, CancellationToken cancellationToken)
         {
             var recipe = await _db.FindAsync<CurveRecipe>(@event.CurveRecipeId);
 
@@ -57,7 +57,7 @@ namespace CalculationEngine.Query.Service.Features.GetCalculatedCurveDetail
             });
         }
 
-        public Task Handle(CurveRecipeCreated @event, CancellationToken cancellationToken)
+        public Task Handle(ICurveRecipeCreated @event, CancellationToken cancellationToken)
         {
             _db.Add(new CurveRecipe
             {

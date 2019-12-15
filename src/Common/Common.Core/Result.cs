@@ -71,8 +71,7 @@ namespace Common.Core
         {
             if (resultA.IsSuccessful && resultB.IsSuccessful)
             {
-                var result = onSuccess(resultA.Content, resultB.Content);
-                await result;
+                await onSuccess(resultA.Content, resultB.Content);
                 return Ok();
             }
 
@@ -91,6 +90,19 @@ namespace Common.Core
             var messages = resultA.Messages.Concat(resultB.Messages).ToArray();
 
             return Fail<C>(messages);
+        }
+
+        public static async Task<Result> Combine<A, B, C>(Result<A> resultA, Result<B> resultB, Result<C> resultC, Func<A, B, C, Task> onSuccess)
+        {
+            if (resultA.IsSuccessful && resultB.IsSuccessful && resultC.IsSuccessful)
+            {
+                await onSuccess(resultA.Content, resultB.Content, resultC.Content);
+                return Ok();
+            }
+
+            var messages = resultA.Messages.Concat(resultB.Messages).Concat(resultC.Messages).ToArray();
+
+            return Fail(messages);
         }
 
         public bool IsSuccessful { get; }

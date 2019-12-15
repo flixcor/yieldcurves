@@ -1,36 +1,47 @@
 ﻿using System;
 using Common.Core;
+using Google.Protobuf.WellKnownTypes;
 
 namespace Common.Events
 {
-    public class InstrumentPricingPublished : IEvent
+    public interface IInstrumentPricingPublished : IEvent
     {
-        public InstrumentPricingPublished(Guid aggregateId, DateTime asOfDate, DateTime asAtDate, Guid instrumentId, string priceCurrency, double priceAmount, string priceType = null)
+        DateTime AsAtDate { get; }
+        string AsOfDate { get; }
+        Guid InstrumentId { get; }
+        double PriceAmount { get; }
+        string PriceCurrency { get; }
+        string PriceType { get; }
+    }
+
+    internal partial class InstrumentPricingPublished : IInstrumentPricingPublished
+    {
+        public InstrumentPricingPublished(Guid aggregateId, string asOfDate, DateTime asAtDate, Guid instrumentId, string priceCurrency, double priceAmount, string priceType = null)
         {
-            AggregateId = aggregateId;
+            AggregateId = aggregateId.ToString();
             AsOfDate = asOfDate;
-            AsAtDate = asAtDate;
-            InstrumentId = instrumentId;
+            AsAtDate = Timestamp.FromDateTime(asAtDate.ToUniversalTime());
+            InstrumentId = instrumentId.ToString();
             PriceCurrency = priceCurrency;
             PriceAmount = priceAmount;
-            PriceType = priceType;
+
+            if (!string.IsNullOrWhiteSpace(priceType))
+            {
+                PriceType = priceType;
+            }
         }
 
-        public DateTime AsOfDate { get; }
-        public DateTime AsAtDate { get; }
-        public Guid InstrumentId { get; }
-        public string PriceCurrency { get; }
-        public double PriceAmount { get; }
-        public string PriceType { get; }
+        DateTime IInstrumentPricingPublished.AsAtDate => AsAtDate.ToDateTime();
 
-        public Guid AggregateId { get; }
-        public int Version { get; private set; }
-		
-		public IEvent WithVersion(int version)
-		{
-			var clone = (InstrumentPricingPublished)MemberwiseClone();
-			clone.Version = version;
-			return clone;
-		}
+        Guid IInstrumentPricingPublished.InstrumentId => Guid.Parse(InstrumentId);
+
+        Guid IEvent.AggregateId => Guid.Parse(AggregateId);
+
+        public IEvent WithVersion(int version)
+        {
+            var clone = (InstrumentPricingPublished)MemberwiseClone();
+            clone.Version = version;
+            return clone;
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Common.Core;
 using Common.Events;
 using System;
+using static Common.Events.Create;
 
 namespace Instruments.Domain
 {
@@ -8,7 +9,7 @@ namespace Instruments.Domain
     {
         static BloombergInstrument()
         {
-            RegisterApplyMethod<BloombergInstrumentCreated>(Apply);
+            RegisterApplyMethod<IBloombergInstrumentCreated>(Apply);
         }
 
         private BloombergInstrument()
@@ -28,11 +29,11 @@ namespace Instruments.Domain
 
         private BloombergInstrument(Guid id, string ticker, PricingSource pricingSource, YellowKey yellowKey)
         {
-            ApplyEvent(new BloombergInstrumentCreated(id, ticker, pricingSource.ToString(), yellowKey.ToString()));
-            ApplyEvent(new InstrumentCreated(id, Vendor.Bloomberg.ToString(), $"{ticker} {pricingSource} {yellowKey}", true));
+            ApplyEvent(BloombergInstrumentCreated(id, ticker, pricingSource.ToString(), yellowKey.ToString()));
+            ApplyEvent(InstrumentCreated(id, Vendor.Bloomberg.ToString(), $"{ticker} {pricingSource} {yellowKey}", true));
         }
 
-        private static void Apply(BloombergInstrument i, BloombergInstrumentCreated e)
+        private static void Apply(BloombergInstrument i, IBloombergInstrumentCreated e)
         {
             i.Id = e.AggregateId;
         }

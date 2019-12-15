@@ -10,9 +10,9 @@ using Microsoft.EntityFrameworkCore;
 namespace CalculationEngine.Query.Service.Features.GetCalculationsOverviewForDate
 {
     public class Handler :
-        IHandleEvent<CurveCalculated>,
+        IHandleEvent<ICurveCalculated>,
         IHandleQuery<Query, Maybe<Dto>>,
-        IHandleEvent<CurveRecipeCreated>
+        IHandleEvent<ICurveRecipeCreated>
     {
         private readonly IReadModelRepository<Dto> _dtoRepository;
         private readonly IReadModelRepository<RecipeDto> _recipeRepository;
@@ -25,9 +25,9 @@ namespace CalculationEngine.Query.Service.Features.GetCalculationsOverviewForDat
             _genericDbContext = genericDbContext;
         }
 
-        public async Task Handle(CurveCalculated @event, CancellationToken cancellationToken)
+        public async Task Handle(ICurveCalculated @event, CancellationToken cancellationToken)
         {
-            var asOfDate = @event.AsOfDate.ToString("yyyy-MM-dd");
+            var asOfDate = @event.AsOfDate;
 
             var recipe = (await _recipeRepository.Single(x => x.Id == @event.CurveRecipeId)).Coalesce(new RecipeDto
             {
@@ -60,7 +60,7 @@ namespace CalculationEngine.Query.Service.Features.GetCalculationsOverviewForDat
             }
         }
 
-        public Task Handle(CurveRecipeCreated @event, CancellationToken cancellationToken)
+        public Task Handle(ICurveRecipeCreated @event, CancellationToken cancellationToken)
         {
             return _recipeRepository.Insert(new RecipeDto
             {

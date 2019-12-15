@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static Instruments.Domain.Vendor;
+using static Common.Events.Create;
 
 namespace Instruments.Domain
 {
@@ -11,7 +12,7 @@ namespace Instruments.Domain
     {
         static RegularInstrument()
         {
-            RegisterApplyMethod<RegularInstrumentCreated>(Apply);
+            RegisterApplyMethod<IRegularInstrumentCreated>(Apply);
         }
 
         private RegularInstrument()
@@ -44,11 +45,11 @@ namespace Instruments.Domain
 
         private RegularInstrument(Guid id, Vendor vendor, string description)
         {
-            ApplyEvent(new RegularInstrumentCreated(id, vendor.ToString(), description));
-            ApplyEvent(new InstrumentCreated(id, vendor.ToString(), description));
+            ApplyEvent(RegularInstrumentCreated(id, vendor.ToString(), description));
+            ApplyEvent(InstrumentCreated(id, vendor.ToString(), description));
         }
 
-        private static void Apply(RegularInstrument i, RegularInstrumentCreated e)
+        private static void Apply(RegularInstrument i, IRegularInstrumentCreated e)
         {
             i.Id = e.AggregateId;
         }

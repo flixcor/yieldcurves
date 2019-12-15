@@ -1,4 +1,4 @@
-﻿namespace PricePublisher.Domain
+﻿namespace PricePublisher.Service.Domain
 {
     public class Price
     {

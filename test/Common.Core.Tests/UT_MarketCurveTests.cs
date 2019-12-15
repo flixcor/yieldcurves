@@ -1,8 +1,8 @@
 ﻿using System;
-using Common.Events;
 using Common.Tests;
 using MarketCurves.Domain;
 using NUnit.Framework;
+using static Common.Events.Create;
 
 namespace UnitTests
 {
@@ -16,7 +16,7 @@ namespace UnitTests
             var type = CurveType.BONDSPREAD;
 
             WhenCreated(() => MarketCurve.TryCreate(id, country, type).Content);
-            Then(new MarketCurveCreated(id, country.ToString(), type.ToString()));
+            Then(MarketCurveCreated(id, country.ToString(), type.ToString()));
         }
 
         [Test]
@@ -29,9 +29,9 @@ namespace UnitTests
             var priceType = PriceType.BIDPRICE;
             var isMandatory = false;
 
-            Given(new MarketCurveCreated(id, Country.GB.ToString(), CurveType.ECB.ToString()));
+            Given(MarketCurveCreated(id, Country.GB.ToString(), CurveType.ECB.ToString()));
             When(c => c.AddCurvePoint(tenor, instrumentId, dateLag, priceType, isMandatory));
-            Then(new CurvePointAdded(id, tenor.ToString(), instrumentId, dateLag.Value, isMandatory, priceType.ToString()));
+            Then(CurvePointAdded(id, tenor.ToString(), instrumentId, dateLag.Value, isMandatory, priceType.ToString()));
         }
     }
 }

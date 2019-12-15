@@ -5,7 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Protobuf Include="**/*.proto" />
+    <Protobuf Include="../Common.Contracts/events.proto" Access="Internal" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.11.2" />
+    <PackageReference Include="Grpc.Tools" Version="2.24.0" />
   </ItemGroup>
 
   <ItemGroup>

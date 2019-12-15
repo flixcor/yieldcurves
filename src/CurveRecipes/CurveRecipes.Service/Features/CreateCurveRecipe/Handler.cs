@@ -14,8 +14,8 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
     public class CommandHandler :
             IHandleCommand<Command>,
             IHandleQuery<Query, Dto>,
-            IHandleEvent<MarketCurveCreated>,
-            IHandleEvent<CurvePointAdded>
+            IHandleEvent<IMarketCurveCreated>,
+            IHandleEvent<ICurvePointAdded>
     {
         private readonly IRepository _repository;
         private readonly IReadModelRepository<MarketCurveDto> _readModelRepository;
@@ -45,18 +45,18 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
                });
         }
 
-        public Task Handle(MarketCurveCreated @event, CancellationToken cancellationToken)
+        public Task Handle(IMarketCurveCreated @event, CancellationToken cancellationToken)
         {
             var curve = new MarketCurveDto
             {
-                Id = @event.AggregateId,
+                Id = ((IEvent)@event).AggregateId,
                 Name = GenerateName(@event)
             };
 
             return _readModelRepository.Insert(curve);
         }
 
-        public async Task Handle(CurvePointAdded @event, CancellationToken cancellationToken)
+        public async Task Handle(ICurvePointAdded @event, CancellationToken cancellationToken)
         {
             var curve = await _readModelRepository.Get(@event.AggregateId);
 
@@ -83,7 +83,7 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
             };
         }
 
-        private string GenerateName(MarketCurveCreated @event)
+        private string GenerateName(IMarketCurveCreated @event)
         {
             var stringBuilder = new StringBuilder("M");
 

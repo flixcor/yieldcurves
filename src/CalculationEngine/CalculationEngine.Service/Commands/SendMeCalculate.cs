@@ -7,11 +7,11 @@ namespace CalculationEngine.Service.ActorModel.Commands
 {
     public class SendMeCalculate
     {
-        public SendMeCalculate(ICollection<CurvePointAdded> curvePoints)
+        public SendMeCalculate(ICollection<ICurvePointAdded> curvePoints)
         {
         CurvePoints = curvePoints?.ToImmutableArray() ?? throw new ArgumentNullException(nameof(curvePoints));
         }
 
-        public ImmutableArray<CurvePointAdded> CurvePoints { get; }
+        public ImmutableArray<ICurvePointAdded> CurvePoints { get; }
     }
 }

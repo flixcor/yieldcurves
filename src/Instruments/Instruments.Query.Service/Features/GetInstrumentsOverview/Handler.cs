@@ -9,7 +9,7 @@ namespace Instruments.Query.Service.Features.GetInstrumentsOverview
 {
     public class Handler :
             IHandleListQuery<Query, Dto>,
-            IHandleEvent<InstrumentCreated>
+            IHandleEvent<IInstrumentCreated>
     {
         private readonly IReadModelRepository<Dto> _repository;
 
@@ -23,7 +23,7 @@ namespace Instruments.Query.Service.Features.GetInstrumentsOverview
             return _repository.GetAll();
         }
 
-        public Task Handle(InstrumentCreated @event, CancellationToken cancellationToken)
+        public Task Handle(IInstrumentCreated @event, CancellationToken cancellationToken)
         {
             var dto = new Dto
             {

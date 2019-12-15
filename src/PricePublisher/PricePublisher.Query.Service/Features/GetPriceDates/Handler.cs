@@ -8,7 +8,7 @@ namespace PricePublisher.Query.Service.Features.GetPriceDates
 {
     public class Handler :
         IHandleListQuery<Query, Dto>,
-        IHandleEvent<InstrumentPricingPublished>
+        IHandleEvent<IInstrumentPricingPublished>
     {
         private readonly IReadModelRepository<Dto> _repository;
 
@@ -22,9 +22,9 @@ namespace PricePublisher.Query.Service.Features.GetPriceDates
             return _repository.GetAll();
         }
 
-        public async Task Handle(InstrumentPricingPublished @event, CancellationToken cancellationToken)
+        public async Task Handle(IInstrumentPricingPublished @event, CancellationToken cancellationToken)
         {
-            var asOfDateString = @event.AsOfDate.ToString("yyyy-MM-dd");
+            var asOfDateString = @event.AsOfDate.ToString();
             var existing = await _repository.Single(x => x.AsOfDate == asOfDateString);
 
             if (!existing.Found)

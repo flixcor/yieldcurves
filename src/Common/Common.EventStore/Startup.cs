@@ -44,7 +44,7 @@ namespace EventStore
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<GreeterService>();
+                endpoints.MapGrpcService<EventStoreService>();
 
                 endpoints.MapGet("/", async context =>
                 {

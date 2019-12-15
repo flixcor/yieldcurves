@@ -90,6 +90,24 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "MicroFrontends", "src\Prese
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "64697"
+	EndProjectSection
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_64697"
+		Debug.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_64697"
+		Release.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "64697"
 		SlnRelativePath = "src\Presentation\MicroFrontends\"
 	EndProjectSection
 EndProject
@@ -103,6 +121,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventStore", "src\Common\Co
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common.Contracts", "Common.Contracts", "{DE3B3A3B-0C00-4532-9964-923CA51E304B}"
 	ProjectSection(SolutionItems) = preProject
+		src\Common\Common.Contracts\events.proto = src\Common\Common.Contracts\events.proto
 		src\Common\Common.Contracts\greet.proto = src\Common\Common.Contracts\greet.proto
 	EndProjectSection
 EndProject

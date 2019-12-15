@@ -12,10 +12,10 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
 {
     public class Handler :
             IHandleQuery<Query, Maybe<Dto>>,
-            IHandleEvent<CurveRecipeCreated>,
-            IHandleEvent<KeyRateShockAdded>,
-            IHandleEvent<ParallelShockAdded>,
-            IHandleEvent<MarketCurveCreated>
+            IHandleEvent<ICurveRecipeCreated>,
+            IHandleEvent<IKeyRateShockAdded>,
+            IHandleEvent<IParallelShockAdded>,
+            IHandleEvent<IMarketCurveCreated>
     {
         private const string ParallelShock = "ParallelShock";
         private const string KeyRateShock = "KeyRateShock";
@@ -29,7 +29,7 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
             _marketCurveRepository = marketCurveRepository ?? throw new ArgumentNullException(nameof(marketCurveRepository));
         }
 
-        public async Task Handle(CurveRecipeCreated @event, CancellationToken cancellationToken)
+        public async Task Handle(ICurveRecipeCreated @event, CancellationToken cancellationToken)
         {
             await _marketCurveRepository
                 .Get(@event.MarketCurveId)
@@ -51,7 +51,7 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
             return _readModelRepository.Get(query.Id);
         }
 
-        public async Task Handle(KeyRateShockAdded @event, CancellationToken cancellationToken)
+        public async Task Handle(IKeyRateShockAdded @event, CancellationToken cancellationToken)
         {
             var transformation = new TransformationDto
             {
@@ -86,7 +86,7 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
                 });
         }
 
-        public async Task Handle(ParallelShockAdded @event, CancellationToken cancellationToken)
+        public async Task Handle(IParallelShockAdded @event, CancellationToken cancellationToken)
         {
             var transformation = new TransformationDto
             {
@@ -116,7 +116,7 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
                 });
         }
 
-        public Task Handle(MarketCurveCreated @event, CancellationToken cancellationToken)
+        public Task Handle(IMarketCurveCreated @event, CancellationToken cancellationToken)
         {
             var dto = new MarketCurveNamePartDto
             {
@@ -127,7 +127,7 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
             return _marketCurveRepository.Insert(dto);
         }
 
-        private string GenerateName(MarketCurveCreated @event)
+        private string GenerateName(IMarketCurveCreated @event)
         {
             var stringBuilder = new StringBuilder(@event.Country);
 
@@ -136,7 +136,7 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
             return stringBuilder.ToString();
         }
 
-        private string GenerateName(CurveRecipeCreated @event, MarketCurveNamePartDto marketCurvePart)
+        private string GenerateName(ICurveRecipeCreated @event, MarketCurveNamePartDto marketCurvePart)
         {
             var stringBuilder = new StringBuilder("C");
 

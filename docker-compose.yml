@@ -33,15 +33,15 @@ services:
       - MSSQL_PID=Developer
       - SA_PASSWORD=8jkGh47hnDw89Haq8LN2
       
-  envoy:
-    build:
-      context: src/Common/Common.Gateway/
-      dockerfile: Dockerfile
-    expose:
-      - "9211"
-      - "9901"
-      - "8080"
-    ports:
-      - "9211:9211"
-      - "9901:9901"
-      - "9980:8080"
+  # envoy:
+  #   build:
+  #     context: src/Common/Common.Gateway/
+  #     dockerfile: Dockerfile
+  #   expose:
+  #     - "9211"
+  #     - "9901"
+  #     - "8080"
+  #   ports:
+  #     - "9211:9211"
+  #     - "9901:9901"
+  #     - "9980:8080"

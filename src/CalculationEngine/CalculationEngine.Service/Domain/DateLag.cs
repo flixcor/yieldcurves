@@ -4,11 +4,11 @@ namespace CalculationEngine.Domain
 {
     public class DateLag : Record<DateLag>
     {
-        public DateLag(short value)
+        public DateLag(int value)
         {
             Value = value;
         }
 
-        public short Value { get; }
+        public int Value { get; }
     }
 }

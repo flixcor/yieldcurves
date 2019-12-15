@@ -1,6 +1,6 @@
 docker-compose pull &
-dotnet build &
 start docker-compose up &
+dotnet build &
 start npm.install.dev .\src\Presentation\FrontEnd &
 start full.stack.microservice .\src\CurveRecipes\CurveRecipes.Service &
 start full.stack.microservice .\src\CurveRecipes\CurveRecipes.Query.Service &

@@ -29,7 +29,32 @@ namespace Common.Infrastructure.Extensions
             return default;
         }
 
-        internal static IEnumerable<IEvent> Deserialize(this IEnumerable<ResolvedEvent> resolvedEvents, params string[] eventTypes)
+        internal static (string, byte[]) ResolveEventBytes(this ResolvedEvent resolvedEvent, params string[] eventTypes)
+        {
+            var metadata = resolvedEvent.OriginalEvent.Metadata;
+            var data = resolvedEvent.OriginalEvent.Data;
+
+            var eventHeaders = Serializer.Deserialize<EventHeaders>(metadata);
+
+            if (eventHeaders != null)
+            {
+                var eventClrTypeName = eventHeaders.EventClrTypeName;
+
+                if (eventClrTypeName != null)
+                {
+                    var type = Type.GetType(eventClrTypeName);
+
+                    if (!eventTypes.Any() || eventTypes.Contains(type.Name))
+                    {
+                        return (type.Name, data);
+                    }
+                }
+            }
+
+            return default;
+        }
+
+        internal static IEnumerable<(Position, string, byte[])> ResolveEventBytes(this IEnumerable<ResolvedEvent> resolvedEvents, params string[] eventTypes)
         {
             foreach (var resolvedEvent in resolvedEvents)
             {
@@ -46,14 +71,9 @@ namespace Common.Infrastructure.Extensions
                     {
                         var type = Type.GetType(eventClrTypeName);
 
-                        if (eventTypes.Contains(type.Name))
+                        if (!eventTypes.Any() || eventTypes.Contains(type.Name))
                         {
-                            var @event = Serializer.DeserializeEvent(data, type);
-
-                            if (@event != null)
-                            {
-                                yield return @event;
-                            }
+                            yield return (resolvedEvent.OriginalPosition.Value, type.Name, data);
                         }
                     }
                 }

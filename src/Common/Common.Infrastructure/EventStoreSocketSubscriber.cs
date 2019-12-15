@@ -26,23 +26,44 @@ namespace Common.Infrastructure
 
         public void RegisterEventType(string eventType) => _eventTypes.Add(eventType);
 
-        public async Task Subscribe(long preparePosition, long commitPosition, Func<IEvent, Task> action, CancellationToken cancellationToken)
+        public async Task Subscribe(long preparePosition, long commitPosition, bool subscribe, Func<byte[], string, long, long, Task> action, CancellationToken cancellationToken)
         {
             var eventStorePosition = new Position(preparePosition, commitPosition);
 
             await _connection.ConnectAsync();
-            _connection.SubscribeToAllFrom(eventStorePosition, CatchUpSubscriptionSettings.Default, (_, e) => PublishEvent(e, action, cancellationToken));
+
+            var typesArray = _eventTypes.ToArray();
+            var isEndOfStream = false;
+
+            while (!isEndOfStream)
+            {
+                var slice = await _connection.ReadAllEventsForwardAsync(eventStorePosition, 200, false);
+                eventStorePosition = slice.NextPosition;
+                isEndOfStream = slice.IsEndOfStream;
+
+                var events = slice.Events.ResolveEventBytes(typesArray);
+
+                foreach ((var position, var type, var data) in events)
+                {
+                    await action(data, type, position.PreparePosition, position.CommitPosition);
+                }
+            }
+
+            if (subscribe)
+            {
+                _connection.SubscribeToAllFrom(eventStorePosition, CatchUpSubscriptionSettings.Default, (_, e) => PublishEvent(e, action, cancellationToken));
+            }
         }
 
-        private Task PublishEvent(ResolvedEvent resolvedEvent, Func<IEvent, Task> action, CancellationToken cancellationToken)
+        private Task PublishEvent(ResolvedEvent resolvedEvent, Func<byte[], string, long, long, Task> action, CancellationToken cancellationToken)
         {
             if (!cancellationToken.IsCancellationRequested)
             {
-                var @event = resolvedEvent.Deserialize();
+                var (type, data) = resolvedEvent.ResolveEventBytes(_eventTypes.ToArray());
 
-                if (@event != null && (!_eventTypes.Any() || _eventTypes.Contains(@event.GetType().Name)))
+                if (data != default)
                 {
-                    return action(@event);
+                    return action(data, type, resolvedEvent.OriginalPosition.Value.PreparePosition, resolvedEvent.OriginalPosition.Value.CommitPosition);
                 }
             }
 

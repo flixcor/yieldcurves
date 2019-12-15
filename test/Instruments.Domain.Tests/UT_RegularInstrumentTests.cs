@@ -1,8 +1,8 @@
 ﻿using System;
-using Common.Events;
 using Common.Tests;
 using Instruments.Domain;
 using NUnit.Framework;
+using static Common.Events.Create;
 
 namespace UnitTests
 {
@@ -17,8 +17,8 @@ namespace UnitTests
 
             WhenCreated(() => RegularInstrument.TryCreate(id, vendor, desc).Content);
             Then(
-                new RegularInstrumentCreated(id, vendor.ToString(), desc), 
-                new InstrumentCreated(id, vendor.ToString(), desc));
+                RegularInstrumentCreated(id, vendor.ToString(), desc),
+                InstrumentCreated(id, vendor.ToString(), desc));
         }
 
         [Test]

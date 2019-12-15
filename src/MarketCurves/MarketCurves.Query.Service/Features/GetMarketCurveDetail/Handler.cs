@@ -11,10 +11,10 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
 {
     public class Handler :
             IHandleQuery<Query, Maybe<Dto>>,
-            IHandleEvent<MarketCurveCreated>,
-            IHandleEvent<CurvePointAdded>,
-            IHandleEvent<BloombergInstrumentCreated>,
-            IHandleEvent<RegularInstrumentCreated>
+            IHandleEvent<IMarketCurveCreated>,
+            IHandleEvent<ICurvePointAdded>,
+            IHandleEvent<IBloombergInstrumentCreated>,
+            IHandleEvent<IRegularInstrumentCreated>
     {
         private readonly IReadModelRepository<Dto> _curveRepo;
         private readonly IReadModelRepository<InstrumentDto> _instrumentRepo;
@@ -30,7 +30,7 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
             return _curveRepo.Get(query.Id);
         }
 
-        public Task Handle(MarketCurveCreated @event, CancellationToken cancellationToken)
+        public Task Handle(IMarketCurveCreated @event, CancellationToken cancellationToken)
         {
             var dto = new Dto
             {
@@ -41,7 +41,7 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
             return _curveRepo.Insert(dto);
         }
 
-        public async Task Handle(CurvePointAdded @event, CancellationToken cancellationToken)
+        public async Task Handle(ICurvePointAdded @event, CancellationToken cancellationToken)
         {
             var curveResult = await _curveRepo.Get(@event.AggregateId).ToResult();
             var instrumentResult = await _instrumentRepo.Get(@event.InstrumentId).ToResult();
@@ -70,7 +70,7 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
                 });
         }
 
-        public Task Handle(BloombergInstrumentCreated @event, CancellationToken cancellationToken)
+        public Task Handle(IBloombergInstrumentCreated @event, CancellationToken cancellationToken)
         {
             var instrument = new InstrumentDto
             {
@@ -82,7 +82,7 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
             return _instrumentRepo.Insert(instrument);
         }
 
-        public Task Handle(RegularInstrumentCreated @event, CancellationToken cancellationToken)
+        public Task Handle(IRegularInstrumentCreated @event, CancellationToken cancellationToken)
         {
             var instrument = new InstrumentDto
             {
@@ -94,7 +94,7 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
             return _instrumentRepo.Insert(instrument);
         }
 
-        private string GenerateName(MarketCurveCreated @event)
+        private string GenerateName(IMarketCurveCreated @event)
         {
             var stringBuilder = new StringBuilder("M");
 

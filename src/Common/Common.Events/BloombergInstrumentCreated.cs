@@ -3,28 +3,30 @@ using Common.Core;
 
 namespace Common.Events
 {
-    public class BloombergInstrumentCreated : IEvent
+    public interface IBloombergInstrumentCreated : IEvent
+    {
+        string PricingSource { get; }
+        string Ticker { get; }
+        string YellowKey { get; }
+    }
+
+    internal partial class BloombergInstrumentCreated : IBloombergInstrumentCreated
     {
         public BloombergInstrumentCreated(Guid aggregateId, string ticker, string pricingSource, string yellowKey)
         {
-            AggregateId = aggregateId;
+            AggregateId = aggregateId.ToString();
             Ticker = ticker ?? throw new ArgumentNullException(nameof(ticker));
             PricingSource = pricingSource ?? throw new ArgumentNullException(nameof(pricingSource));
             YellowKey = yellowKey ?? throw new ArgumentNullException(nameof(yellowKey));
         }
 
-        public string Ticker { get; }
-        public string PricingSource { get; }
-        public string YellowKey { get; }
+        Guid IEvent.AggregateId => Guid.Parse(AggregateId);
 
-        public Guid AggregateId { get; }
-        public int Version { get; private set; }
-		
-		public IEvent WithVersion(int version)
-		{
-			var clone = (BloombergInstrumentCreated)MemberwiseClone();
-			clone.Version = version;
-			return clone;
-		}
+        public IEvent WithVersion(int version)
+        {
+            var clone = (BloombergInstrumentCreated)MemberwiseClone();
+            clone.Version = version;
+            return clone;
+        }
     }
 }

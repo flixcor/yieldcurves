@@ -11,7 +11,7 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurvesOverview
 {
     public class Handler :
             IHandleListQuery<Query, Dto>,
-            IHandleEvent<MarketCurveCreated>
+            IHandleEvent<IMarketCurveCreated>
     {
         private readonly IReadModelRepository<Dto> _readModelRepository;
 
@@ -25,7 +25,7 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurvesOverview
             return _readModelRepository.GetAll();
         }
 
-        public Task Handle(MarketCurveCreated @event, CancellationToken cancellationToken)
+        public Task Handle(IMarketCurveCreated @event, CancellationToken cancellationToken)
         {
             var curve = new Dto
             {
@@ -36,7 +36,7 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurvesOverview
             return _readModelRepository.Insert(curve);
         }
 
-        private string GenerateName(MarketCurveCreated @event)
+        private string GenerateName(IMarketCurveCreated @event)
         {
             var stringBuilder = new StringBuilder("M");
 

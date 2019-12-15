@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using Akka.Actor;
 using CalculationEngine.Service.ActorModel.Commands;
+using CalculationEngine.Service.Domain;
 using Common.Events;
 
 namespace CalculationEngine.Service.ActorModel.Actors
 {
     public class MarketCurveActor : IdempotentActor
     {
-        private readonly Dictionary<DateTime, IActorRef> _marketCurvesForDate = new Dictionary<DateTime, IActorRef>();
+        private readonly Dictionary<Date, IActorRef> _marketCurvesForDate = new Dictionary<Date, IActorRef>();
         private readonly Dictionary<Guid, IActorRef> _recipeActors = new Dictionary<Guid, IActorRef>();
 
-        private readonly Dictionary<Guid, CurvePointAdded> _dateLags = new Dictionary<Guid, CurvePointAdded>();
-        private readonly List<DateTime> _dateTimes = new List<DateTime>();
+        private readonly Dictionary<Guid, ICurvePointAdded> _dateLags = new Dictionary<Guid, ICurvePointAdded>();
+        private readonly List<Date> _dates = new List<Date>();
         private readonly List<Guid> _recipeIds = new List<Guid>();
 
         private readonly Guid _marketCurveId;
@@ -23,25 +24,25 @@ namespace CalculationEngine.Service.ActorModel.Actors
         {
             _marketCurveId = marketCurveId;
 
-            IdempotentEvent<CurvePointAdded>(Handle, Recover);
-            IdempotentEvent<InstrumentPricingPublished>(Handle, Recover);
-            IdempotentEvent<CurveRecipeCreated>(Handle, Recover);
+            IdempotentEvent<ICurvePointAdded>(Handle, Recover);
+            IdempotentEvent<IInstrumentPricingPublished>(Handle, Recover);
+            IdempotentEvent<ICurveRecipeCreated>(Handle, Recover);
 
             Command<Calculate>(e => Handle(e));
         }
 
         #region Events
         #region CurvePointAdded
-        private void Handle(CurvePointAdded e)
+        private void Handle(ICurvePointAdded e)
         {
             Context.ActorSelection("../../instruments").Tell(new SendMeInstrumentPricingPublished(e.InstrumentId));
         }
 
-        private void Recover(CurvePointAdded e) => _dateLags.Add(e.InstrumentId, e);
+        private void Recover(ICurvePointAdded e) => _dateLags.Add(e.InstrumentId, e);
         #endregion
 
         #region InstrumentPricingPublished
-        private void Handle(InstrumentPricingPublished e)
+        private void Handle(IInstrumentPricingPublished e)
         {
             if (_dateLags.TryGetValue(e.InstrumentId, out var point))
             {
@@ -49,7 +50,7 @@ namespace CalculationEngine.Service.ActorModel.Actors
 
                 for (var i = 0; i <= max; i++)
                 {
-                    var date = e.AsOfDate.Date.AddDays(i);
+                    var date = Date.FromString(e.AsOfDate).AddDays(i);
 
                     var actor = GetDateActor(date);
 
@@ -59,7 +60,7 @@ namespace CalculationEngine.Service.ActorModel.Actors
             }
         }
 
-        private void Recover(InstrumentPricingPublished e)
+        private void Recover(IInstrumentPricingPublished e)
         {
             if (_dateLags.TryGetValue(e.InstrumentId, out var point))
             {
@@ -67,11 +68,11 @@ namespace CalculationEngine.Service.ActorModel.Actors
 
                 for (var i = 0; i <= max; i++)
                 {
-                    var date = e.AsOfDate.Date.AddDays(i);
+                    var date = Date.FromString(e.AsOfDate).AddDays(i);
 
-                    if (!_dateTimes.Any(x => x == date))
+                    if (!_dates.Any(x => x == date))
                     {
-                        _dateTimes.Add(date);
+                        _dates.Add(date);
                     }
                 }
             }
@@ -79,19 +80,19 @@ namespace CalculationEngine.Service.ActorModel.Actors
         #endregion
 
         #region CurveRecipeCreated
-        private void Handle(CurveRecipeCreated e)
+        private void Handle(ICurveRecipeCreated e)
         {
             var recipeActor = GetRecipeActor(e.AggregateId);
             recipeActor.Tell(e);
 
-            foreach (var item in _dateTimes)
+            foreach (var item in _dates)
             {
                 var dateActor = GetDateActor(item);
                 dateActor.Tell(new SendMeCalculate(_dateLags.Values.ToList()), recipeActor);
             }
         }
 
-        private void Recover(CurveRecipeCreated e)
+        private void Recover(ICurveRecipeCreated e)
         {
             _recipeIds.Add(e.AggregateId);
         }
@@ -110,13 +111,13 @@ namespace CalculationEngine.Service.ActorModel.Actors
         #endregion
 
         #region UtilityMethods
-        private IActorRef GetDateActor(DateTime asOfDate)
+        private IActorRef GetDateActor(Date asOfDate)
         {
-            var date = asOfDate.Date;
+            var date = asOfDate;
 
             if (!_marketCurvesForDate.TryGetValue(date, out var marketCurveForDateActor))
             {
-                marketCurveForDateActor = Context.ActorOf(Props.Create<MarketCurveForDateActor>(_marketCurveId, date), $"date-{asOfDate.ToString("yyyyMMdd")}");
+                marketCurveForDateActor = Context.ActorOf(Props.Create<MarketCurveForDateActor>(_marketCurveId, date), $"date-{asOfDate}");
                 _marketCurvesForDate.Add(asOfDate, marketCurveForDateActor);
             }
 

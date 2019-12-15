@@ -14,7 +14,7 @@ namespace CalculationEngine.Service.ActorModel.Actors
         {
             Receive<SendMeInstrumentPricingPublished>(x => 
                 GetInstrument(x.InstrumentId).Forward(x));
-            Receive<InstrumentPricingPublished>(x => GetInstrument(x.InstrumentId).Tell(x));
+            Receive<IInstrumentPricingPublished>(x => GetInstrument(x.InstrumentId).Tell(x));
         }
 
         private IActorRef GetInstrument(Guid id)

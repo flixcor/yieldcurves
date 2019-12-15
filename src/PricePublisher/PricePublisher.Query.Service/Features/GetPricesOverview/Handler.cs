@@ -12,8 +12,8 @@ namespace PricePublisher.Query.Service.Features.GetPricesOverview
 {
     public class Handler :
             IHandleQuery<Query, IEnumerable<Dto>>,
-            IHandleEvent<InstrumentCreated>,
-            IHandleEvent<InstrumentPricingPublished>
+            IHandleEvent<IInstrumentCreated>,
+            IHandleEvent<IInstrumentPricingPublished>
     {
         private const string GetPricesOverView = nameof(GetPricesOverview);
         private const string AsAtDate = nameof(Query.AsAtDate);
@@ -86,7 +86,7 @@ namespace PricePublisher.Query.Service.Features.GetPricesOverview
              */
         }
 
-        public async Task Handle(InstrumentPricingPublished @event, CancellationToken cancellationToken)
+        public async Task Handle(IInstrumentPricingPublished @event, CancellationToken cancellationToken)
         {
             var instrument = await _db.FindAsync<Instrument>(@event.InstrumentId);
 
@@ -106,7 +106,7 @@ namespace PricePublisher.Query.Service.Features.GetPricesOverview
             await task;
         }
 
-        public Task Handle(InstrumentCreated @event, CancellationToken cancellationToken)
+        public Task Handle(IInstrumentCreated @event, CancellationToken cancellationToken)
         {
             _db.Add(new Instrument
             {

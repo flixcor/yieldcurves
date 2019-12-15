@@ -4,14 +4,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
 using Common.Events;
-using PricePublisher.Domain;
+using PricePublisher.Service.Domain;
 
 namespace PricePublisher.Service.Features.PublishPrice
 {
     public class Handler :
         IHandleCommand<Command>,
         IHandleQuery<Query, Dto>,
-        IHandleEvent<InstrumentCreated>
+        IHandleEvent<IInstrumentCreated>
     {
         private readonly IRepository _repository;
         private readonly IReadModelRepository<InstrumentDto> _readModelRepository;
@@ -28,14 +28,13 @@ namespace PricePublisher.Service.Features.PublishPrice
         {
             var instrumentResult = await _readModelRepository.Get(command.InstrumentId).ToResult();
             var currencyResult = Currency.FromString(command.PriceCurrency);
+            var asOfDateResult = Date.TryParse(command.AsOfDate);
 
             var result = await Result
-                .Combine(instrumentResult, currencyResult, (i, c) =>
+                .Combine(instrumentResult, currencyResult, asOfDateResult, (_, currency, asOfDate) =>
                 {
-                    var currency = currencyResult.Content;
-
                     var price = new Price(currency, command.PriceAmount);
-                    var pricing = new InstrumentPricing(command.Id, command.AsOfDate, _currentDateTimeFactory(), command.InstrumentId, price, command.PriceType);
+                    var pricing = new InstrumentPricing(command.Id, asOfDate, _currentDateTimeFactory(), command.InstrumentId, price, command.PriceType);
 
                     return _repository.SaveAsync(pricing);
                 });
@@ -43,7 +42,7 @@ namespace PricePublisher.Service.Features.PublishPrice
             return result;
         }
 
-        public Task Handle(InstrumentCreated @event, CancellationToken cancellationToken)
+        public Task Handle(IInstrumentCreated @event, CancellationToken cancellationToken)
         {
             var dto = new InstrumentDto { Id = @event.AggregateId, HasPriceType = @event.HasPriceType, Name = @event.Description, Vendor = @event.Vendor };
             return _readModelRepository.Insert(dto);

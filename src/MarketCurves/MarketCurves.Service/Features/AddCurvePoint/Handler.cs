@@ -11,8 +11,8 @@ namespace MarketCurves.Service.Features.AddCurvePoint
 {
     public class Handler : IHandleCommand<Command>,
         IHandleQuery<Query, Dto>,
-        IHandleEvent<InstrumentCreated>,
-        IHandleEvent<CurvePointAdded>
+        IHandleEvent<IInstrumentCreated>,
+        IHandleEvent<ICurvePointAdded>
     {
         private readonly IRepository _repository;
         private readonly IReadModelRepository<Instrument> _readModelRepository;
@@ -53,7 +53,7 @@ namespace MarketCurves.Service.Features.AddCurvePoint
                 });
         }
 
-        public Task Handle(InstrumentCreated @event, CancellationToken cancellationToken)
+        public Task Handle(IInstrumentCreated @event, CancellationToken cancellationToken)
         {
             var instrument = new Instrument
             {
@@ -92,7 +92,7 @@ namespace MarketCurves.Service.Features.AddCurvePoint
             return dto;
         }
 
-        public async Task Handle(CurvePointAdded @event, CancellationToken cancellationToken)
+        public async Task Handle(ICurvePointAdded @event, CancellationToken cancellationToken)
         {
             var dto = await (await _usedValues.Get(@event.AggregateId))
             .Coalesce(async () =>
