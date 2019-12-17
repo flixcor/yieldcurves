@@ -30,7 +30,7 @@ I created this project to learn new technologies, especially event sourcing and 
 	https://vimeo.com/131633177
 
 4.  Event Sourcing
-https://martinfowler.com/eaaDev/EventSourcing.html
+        https://martinfowler.com/eaaDev/EventSourcing.html
 	https://github.com/EdwinVW/pitstop
 	https://github.com/rbanks54/microcafe
 
@@ -41,8 +41,14 @@ https://martinfowler.com/eaaDev/EventSourcing.html
     https://martinfowler.com/articles/micro-frontends.html
     https://markus.oberlehner.net/blog/distributed-vue-applications-loading-components-via-http/
 
-8.  Actor model with Akka.NET
+7.  Actor model with Akka.NET
     https://getakka.net/
+    
+8.  GRPC / Protobuf / Streaming
+
+9.  Nuxt / Server Side Rendering
+
+10. Generic controllers
     
 Inspiration taken from:
 [An Opinionated Approach to ASP.NET Core - Scott Allen](https://www.youtube.com/watch?v=6Fi5dRVxOvc)
