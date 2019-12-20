@@ -22,8 +22,8 @@
         </thead>
         <tbody>
           <tr
-            v-for="instrument of entities"
-            :key="instrument.id"
+            v-for="instrument of state.instruments"
+            :key="instrument.aggregateId"
           >
             <td>{{ instrument.vendor }}</td>
             <td>{{ instrument.description }}</td>
@@ -36,14 +36,24 @@
 <script>
 export default {
   props: {
-    entities: {
-      type: Array,
-      required: true
+    initialState: {
+      type: Object,
+      default: () => ({
+        instruments: []
+      })
+    }
+  },
+  data() {
+    return {
+      state: this.initialState
     }
   },
   methods: {
     onCreateClick() {
       this.$emit("create");
+    },
+    instrumentCreated (e) {
+      this.state.instruments.push(e)
     }
   }
 };

@@ -18,6 +18,9 @@ namespace EventStore
         public override async Task GetEvents(EventRequest request, IServerStreamWriter<EventReply> responseStream, ServerCallContext context)
         {
             _logger.LogInformation("request received");
+
+            responseStream.WriteOptions = new WriteOptions(WriteFlags.BufferHint);
+
             using var subscriber = new EventStoreSocketSubscriber("ConnectTo=tcp://admin:changeit@localhost:1113; HeartBeatTimeout=500");
 
             foreach (var type in request.EventTypes)
@@ -46,12 +49,20 @@ namespace EventStore
 
             while (request.Subscribe && !cancel.IsCancellationRequested)
             {
+                
                 //Don't starve the request thread
                 _logger.LogInformation("Not cancelled yet, going to sleep...");
                 await Task.Delay(5000);
             }
 
-            _logger.LogInformation("Done");
+            if (cancel.IsCancellationRequested)
+            {
+                _logger.LogInformation("Cancelled");
+            }
+            else
+            {
+                _logger.LogInformation("Done");
+            }
         }
     }
 }

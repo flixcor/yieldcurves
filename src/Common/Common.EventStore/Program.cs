@@ -22,11 +22,7 @@ namespace EventStore
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>()
-                    .ConfigureKestrel(o =>
-                    {
-                        o.ListenAnyIP(5123, listenOpt => listenOpt.Protocols = HttpProtocols.Http1); //use a seperate http1 listener for the grpcwebproxy & blazor
-                    });
+                    webBuilder.UseStartup<Startup>();
                 });
     }
 }

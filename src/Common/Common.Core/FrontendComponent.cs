@@ -7,7 +7,7 @@ namespace Common.Core
     {
         protected FrontendComponent(string hubUrl)
         {
-            Url = hubUrl ?? throw new ArgumentNullException(nameof(hubUrl));
+            Url = hubUrl;
         }
 
         public string Url { get; }

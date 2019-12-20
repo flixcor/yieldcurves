@@ -9,8 +9,10 @@
 
     <v-row>
       <v-col>
-        <frame-live-feed
-          endpoint="https://localhost:5009/features/get-instruments-overview"
+        <projection
+          :event-types="['InstrumentCreated']"
+          script-url="https://localhost:5009/get-instruments-overview.7589c4f43f7012e78982.umd.js"
+          :subscribe="true"
           @create="$router.push({path: '/instruments/create'})"
         />
       </v-col>
@@ -20,6 +22,9 @@
 
 <script>
 export default {
-  name: 'Instruments'
+  name: 'Instruments',
+  components: {
+    projection: () => import('../components/distributed/Projection.vue')
+  }
 }
 </script>

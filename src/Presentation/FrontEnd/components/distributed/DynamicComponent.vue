@@ -1,6 +1,7 @@
 <template>
   <component
     :is="computedComponent"
+    ref="ref"
     v-bind="props"
     v-on="$listeners"
   />
@@ -31,6 +32,14 @@ export default {
       handler (newComponent, prevComponent = '') {
         if (newComponent === prevComponent) { return }
         this.computedComponent = () => externalComponent(this.component)
+      }
+    }
+  },
+  methods: {
+    passAlong (methodName, data) {
+      const method = this.$refs.ref[methodName]
+      if (typeof method === 'function') {
+        method(data)
       }
     }
   }

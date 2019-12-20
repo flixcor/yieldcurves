@@ -21,7 +21,6 @@ namespace EventStore
             services.AddCors();
 
             services.AddGrpc();
-            services.AddGrpcWeb();
             services.AddResponseCompression(opts =>
             {
                 opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
@@ -38,7 +37,6 @@ namespace EventStore
             }
 
             app.UseCors(c=> c.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-            app.UseGrpcWeb();
 
             app.UseRouting();
 
