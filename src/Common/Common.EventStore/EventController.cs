@@ -39,7 +39,7 @@ namespace Common.EventStore.Controllers
                 }
             }
 
-            async Task OnEvent(byte[] payload, string type, long preparePosition, long commitPosition)
+            async Task OnEvent(byte[] payload, string type, long commitPosition)
             {
                 var base64 = Convert.ToBase64String(payload);
 
@@ -51,7 +51,7 @@ namespace Common.EventStore.Controllers
 
             try
             {
-                await subscriber.Subscribe(request.Position, request.Position, true, OnEvent, cancel);
+                await subscriber.Subscribe(request.Position, OnEvent, cancel);
 
                 do
                 {

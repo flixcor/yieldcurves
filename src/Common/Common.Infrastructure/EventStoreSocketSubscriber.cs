@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Common.Core;
 using Common.Infrastructure.Extensions;
 using EventStore.ClientAPI;
 
@@ -13,6 +11,9 @@ namespace Common.Infrastructure
     {
         private readonly List<string> _eventTypes = new List<string>();
         private readonly IEventStoreConnection _connection;
+        private long _position = 0;
+        private Func<byte[], string, long, Task> _action;
+        private CancellationToken _cancellationToken;
 
         public EventStoreSocketSubscriber(string connectionString)
         {
@@ -26,36 +27,24 @@ namespace Common.Infrastructure
 
         public void RegisterEventType(string eventType) => _eventTypes.Add(eventType);
 
-        public async Task Subscribe(long preparePosition, long commitPosition, bool subscribe, Func<byte[], string, long, long, Task> action, CancellationToken cancellationToken)
+        public async Task Subscribe(long commitPosition, Func<byte[], string, long, Task> action, CancellationToken cancellationToken)
         {
-            var eventStorePosition = new Position(preparePosition, commitPosition);
+            _position = commitPosition;
+            _action = action;
+            _cancellationToken = cancellationToken;
 
-            await _connection.ConnectAsync();
-
+            var eventStorePosition = new Position(commitPosition, commitPosition);
             var typesArray = _eventTypes.ToArray();
-            var isEndOfStream = false;
 
-            while (!isEndOfStream)
-            {
-                var slice = await _connection.ReadAllEventsForwardAsync(eventStorePosition, 200, false);
-                eventStorePosition = slice.NextPosition;
-                isEndOfStream = slice.IsEndOfStream;
+            await _connection.ConnectAsync().ConfigureAwait(false);
 
-                var events = slice.Events.ResolveEventBytes(typesArray);
-
-                foreach ((var position, var type, var data) in events)
-                {
-                    await action(data, type, position.PreparePosition, position.CommitPosition);
-                }
-            }
-
-            if (subscribe)
-            {
-                _connection.SubscribeToAllFrom(eventStorePosition, CatchUpSubscriptionSettings.Default, (_, e) => PublishEvent(e, action, cancellationToken));
-            }
+            _connection.SubscribeToAllFrom(
+                eventStorePosition,
+                CatchUpSubscriptionSettings.Default, (sub, e) => PublishEvent(sub, e, action, cancellationToken),
+                subscriptionDropped: OnDropped);
         }
 
-        private Task PublishEvent(ResolvedEvent resolvedEvent, Func<byte[], string, long, long, Task> action, CancellationToken cancellationToken)
+        private Task PublishEvent(EventStoreCatchUpSubscription sub, ResolvedEvent resolvedEvent, Func<byte[], string, long, Task> action, CancellationToken cancellationToken)
         {
             if (!cancellationToken.IsCancellationRequested)
             {
@@ -63,11 +52,24 @@ namespace Common.Infrastructure
 
                 if (data != default)
                 {
-                    return action(data, type, position.PreparePosition, position.CommitPosition);
+                    return action(data, type, position.CommitPosition);
                 }
+            }
+            else
+            {
+                sub.Stop();
+                _connection.Dispose();
             }
 
             return Task.CompletedTask;
+        }
+
+        private void OnDropped(EventStoreCatchUpSubscription sub, SubscriptionDropReason reason, Exception exception)
+        {
+            if (reason != SubscriptionDropReason.UserInitiated)
+            {
+                Subscribe(_position, _action, _cancellationToken).ConfigureAwait(false).GetAwaiter().GetResult();
+            }
         }
     }
 }
