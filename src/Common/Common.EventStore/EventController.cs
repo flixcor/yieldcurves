@@ -1,6 +1,5 @@
-﻿using System.IO;
-using System.Text.Json;
-using System.Threading;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Common.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
@@ -42,31 +41,23 @@ namespace Common.EventStore.Controllers
 
             async Task OnEvent(byte[] payload, string type, long preparePosition, long commitPosition)
             {
-                var reply = new EventReply
-                {
-                    PreparePosition = preparePosition,
-                    CommitPosition = commitPosition,
-                    EventType = type,
-                    Payload = payload
-                };
-
-                var json = JsonSerializer.Serialize(reply);
+                var base64 = Convert.ToBase64String(payload);
 
                 _logger.LogInformation($"returning event: {type}");
 
-                await writer.WriteLineAsync($"event: {type}\ndata: {json}\n\n");
+                await writer.WriteLineAsync($"id: {commitPosition}\nevent: {type}\ndata: {base64}\n\n");
                 await writer.FlushAsync();
             }
 
             try
             {
-                await subscriber.Subscribe(request.PreparePosition, request.CommitPosition, true, OnEvent, cancel);
+                await subscriber.Subscribe(request.Position, request.Position, true, OnEvent, cancel);
 
                 do
                 {
                     await Task.Delay(30000, cancel);
                     await writer.WriteLineAsync("...");
-                    await writer.FlushAsync();                   
+                    await writer.FlushAsync();
                 } while (!cancel.IsCancellationRequested);
             }
             catch (TaskCanceledException)
