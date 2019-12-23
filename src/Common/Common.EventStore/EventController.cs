@@ -28,7 +28,7 @@ namespace Common.EventStore.Controllers
             Response.Headers["Cache-Control"] = "no-cache";
             Response.Headers["X-Accel-Buffering"] = "no";
 
-            using var member = new StreamWriter(Response.Body);
+            var writer = new StreamWriter(Response.Body);
 
             using var subscriber = new EventStoreSocketSubscriber("ConnectTo=tcp://admin:changeit@localhost:1113; HeartBeatTimeout=500");
 
@@ -54,21 +54,45 @@ namespace Common.EventStore.Controllers
 
                 _logger.LogInformation($"returning event: {type}");
 
-                await member.WriteLineAsync($"event: {type}\ndata: {json}\n\n");
-                await member.FlushAsync();
+                await writer.WriteLineAsync($"event: {type}\ndata: {json}\n\n");
+                await writer.FlushAsync();
             }
-
-            await subscriber.Subscribe(request.PreparePosition, request.CommitPosition, true, OnEvent, cancel);
 
             try
             {
-                await Task.Delay(Timeout.Infinite, cancel);
+                await subscriber.Subscribe(request.PreparePosition, request.CommitPosition, true, OnEvent, cancel);
+
+                do
+                {
+                    await Task.Delay(30000, cancel);
+                    await writer.WriteLineAsync("...");
+                    await writer.FlushAsync();                   
+                } while (!cancel.IsCancellationRequested);
             }
             catch (TaskCanceledException)
             {
+                _logger.LogInformation("cancelled");
             }
 
             _logger.LogInformation("done");
         }
+    }
+
+    internal static class TaskHelper
+    {
+        #region Methods
+        internal static Task WaitAsync(this CancellationToken cancellationToken)
+        {
+            TaskCompletionSource<bool> cancelationTaskCompletionSource = new TaskCompletionSource<bool>();
+            cancellationToken.Register(CancellationTokenCallback, cancelationTaskCompletionSource);
+
+            return cancellationToken.IsCancellationRequested ? Task.CompletedTask : cancelationTaskCompletionSource.Task;
+        }
+
+        private static void CancellationTokenCallback(object taskCompletionSource)
+        {
+            ((TaskCompletionSource<bool>)taskCompletionSource).SetResult(true);
+        }
+        #endregion
     }
 }
