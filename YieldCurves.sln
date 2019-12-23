@@ -108,6 +108,24 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "MicroFrontends", "src\Prese
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "64697"
+	EndProjectSection
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_64697"
+		Debug.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_64697"
+		Release.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "64697"
 		SlnRelativePath = "src\Presentation\MicroFrontends\"
 	EndProjectSection
 EndProject
@@ -117,15 +135,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculationEngine.Query.Ser
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Events", "src\Common\Common.Events\Common.Events.csproj", "{9B97DA50-7972-4128-BE99-E479CA448765}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventStore", "src\Common\Common.EventStore\EventStore.csproj", "{F6FD8F90-9C0A-466F-B099-3BFDC62B125A}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common.Contracts", "Common.Contracts", "{DE3B3A3B-0C00-4532-9964-923CA51E304B}"
 	ProjectSection(SolutionItems) = preProject
 		src\Common\Common.Contracts\events.proto = src\Common\Common.Contracts\events.proto
 		src\Common\Common.Contracts\greet.proto = src\Common\Common.Contracts\greet.proto
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common.Gateway", "Common.Gateway", "{9937F350-AFA5-4AD2-923F-FF82D1EC894F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.EventStore", "src\Common\Common.EventStore\Common.EventStore.csproj", "{B40B48BC-F236-4B7A-89A3-55E707A49D2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -200,10 +216,10 @@ Global
 		{9B97DA50-7972-4128-BE99-E479CA448765}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B97DA50-7972-4128-BE99-E479CA448765}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B97DA50-7972-4128-BE99-E479CA448765}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F6FD8F90-9C0A-466F-B099-3BFDC62B125A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F6FD8F90-9C0A-466F-B099-3BFDC62B125A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F6FD8F90-9C0A-466F-B099-3BFDC62B125A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F6FD8F90-9C0A-466F-B099-3BFDC62B125A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B40B48BC-F236-4B7A-89A3-55E707A49D2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B40B48BC-F236-4B7A-89A3-55E707A49D2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B40B48BC-F236-4B7A-89A3-55E707A49D2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B40B48BC-F236-4B7A-89A3-55E707A49D2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -233,9 +249,8 @@ Global
 		{209A34A1-C490-419C-AF86-A2B63245D192} = {B8B0A5DB-E4AD-4941-A447-5BE0FE3817E9}
 		{E22A004B-2881-4362-9BD6-9A6A4526CDEE} = {8EE6D1F7-5704-4FC9-ACA6-D9CF1C8E9446}
 		{9B97DA50-7972-4128-BE99-E479CA448765} = {8696303F-4F08-4CAB-9107-A7318E2A1387}
-		{F6FD8F90-9C0A-466F-B099-3BFDC62B125A} = {8696303F-4F08-4CAB-9107-A7318E2A1387}
 		{DE3B3A3B-0C00-4532-9964-923CA51E304B} = {8696303F-4F08-4CAB-9107-A7318E2A1387}
-		{9937F350-AFA5-4AD2-923F-FF82D1EC894F} = {8696303F-4F08-4CAB-9107-A7318E2A1387}
+		{B40B48BC-F236-4B7A-89A3-55E707A49D2C} = {8696303F-4F08-4CAB-9107-A7318E2A1387}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2681B182-AD3D-4651-A205-39DA65F48B1C}
