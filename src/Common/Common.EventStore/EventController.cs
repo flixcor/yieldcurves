@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
 using Common.Infrastructure;
@@ -59,13 +60,7 @@ namespace Common.EventStore.Controllers
             try
             {
                 await subscriber.Subscribe(request.Position, OnEvent, cancel);
-
-                do
-                {
-                    await Task.Delay(30000, cancel);
-                    await writer.WriteLineAsync("...");
-                    await writer.FlushAsync();
-                } while (!cancel.IsCancellationRequested);
+                await Task.Delay(Timeout.Infinite, cancel);
             }
             catch (TaskCanceledException)
             {
