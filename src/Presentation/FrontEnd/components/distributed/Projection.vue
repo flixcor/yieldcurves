@@ -33,12 +33,16 @@ export default {
   data () {
     return {
       position: 0,
-      comp: ''
+      comp: '',
+      connection: null
     }
   },
   mounted () {
     this.comp = this.scriptUrl
     this.connect()
+  },
+  beforeDestroy () {
+    this.disconnect()
   },
   methods: {
     onEvent (event, type) {
@@ -50,20 +54,27 @@ export default {
       }
     },
     connect (self = this) {
-      const evtSource = new EventSource(`${Url}?eventTypes=InstrumentCreated&position=${this.position}`)
-      evtSource.addEventListener('InstrumentCreated', (e) => {
+      self.disconnect()
+
+      self.connection = new EventSource(`${Url}?eventTypes=InstrumentCreated&position=${self.position}`)
+      self.connection.addEventListener('InstrumentCreated', (e) => {
         if (self.position < e.lastEventId) {
           self.position = e.lastEventId
           self.onEvent(JSON.parse(e.data), 'InstrumentCreated')
         }
       })
 
-      evtSource.addEventListener('error', (e) => {
+      self.connection.addEventListener('error', (e) => {
         if (e.readyState === EventSource.CLOSED) {
-          evtSource.close()
           self.connect()
         }
       }, false)
+    },
+    disconnect () {
+      if (this.connection != null) {
+        this.connection.close()
+        this.connection = null
+      }
     }
   }
 }
