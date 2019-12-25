@@ -55,7 +55,7 @@ namespace Common.Infrastructure
 
                     sliceStart = currentSlice.NextEventNumber;
 
-                    var history = currentSlice.Events.Select(x => x.Deserialize());
+                    var history = currentSlice.Events.Select(x => x.Deserialize().Item3);
                     aggregate.LoadStateFromHistory(history);
                 } while (version >= currentSlice.NextEventNumber && !currentSlice.IsEndOfStream);
             }

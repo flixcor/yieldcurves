@@ -12,7 +12,6 @@ namespace Common.Infrastructure.DependencyInjection
 {
     public abstract class YieldCurvesStartupBase
     {
-        private const string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         private readonly string _frontEndUrl;
         private readonly bool _withSignalR;
 
@@ -36,17 +35,7 @@ namespace Common.Infrastructure.DependencyInjection
 
             if (!string.IsNullOrWhiteSpace(_frontEndUrl))
             {
-                services.AddCors(options =>
-                {
-                    options.AddPolicy(MyAllowSpecificOrigins,
-                    builder =>
-                    {
-                        builder.WithOrigins(_frontEndUrl)
-                            .AllowAnyMethod()
-                            .AllowAnyHeader()
-                            .AllowCredentials();
-                    });
-                });
+                services.AddCors();
             }
 
             if (_withSignalR)
@@ -59,7 +48,13 @@ namespace Common.Infrastructure.DependencyInjection
         {
             if (!string.IsNullOrWhiteSpace(_frontEndUrl))
             {
-                app.UseCors(MyAllowSpecificOrigins);
+                app.UseCors(builder =>
+                {
+                    builder.WithOrigins(_frontEndUrl)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
+                });
             }
 
             if (env.IsDevelopment())

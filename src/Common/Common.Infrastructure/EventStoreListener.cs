@@ -41,7 +41,7 @@ namespace Common.Infrastructure
 
         private async Task PublishEvent(EventStoreCatchUpSubscription subscription, ResolvedEvent resolvedEvent)
         {
-            var @event = resolvedEvent.Deserialize();
+            var (_,_,@event) = resolvedEvent.Deserialize();
 
             var currentEventPosition = await GetCurrentPosition();
             var currentPosition = currentEventPosition.ToEventStorePosition();

@@ -1,6 +1,7 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Common.Core;
 using Common.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,6 +13,12 @@ namespace Common.EventStore.Controllers
     public class EventController : ControllerBase
     {
         private readonly ILogger<EventController> _logger;
+
+        private static readonly JsonSerializerOptions s_jsonSerializerOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        };
+
 
         public EventController(ILogger<EventController> logger)
         {
@@ -29,7 +36,7 @@ namespace Common.EventStore.Controllers
 
             var writer = new StreamWriter(Response.Body);
 
-            using var subscriber = new EventStoreSocketSubscriber("ConnectTo=tcp://admin:changeit@localhost:1113; HeartBeatTimeout=500");
+            var subscriber = new EventStoreSocketSubscriber("ConnectTo=tcp://admin:changeit@localhost:1113; HeartBeatTimeout=500");
 
             if (request.EventTypes != null)
             {
@@ -39,13 +46,13 @@ namespace Common.EventStore.Controllers
                 }
             }
 
-            async Task OnEvent(byte[] payload, string type, long commitPosition)
+            async Task OnEvent(IEvent payload, string type, long commitPosition)
             {
-                var base64 = Convert.ToBase64String(payload);
+                var json = JsonSerializer.Serialize(payload, payload?.GetType(), s_jsonSerializerOptions);
 
                 _logger.LogInformation($"returning event: {type}");
 
-                await writer.WriteLineAsync($"id: {commitPosition}\nevent: {type}\ndata: {base64}\n\n");
+                await writer.WriteLineAsync($"id: {commitPosition}\nevent: {type}\ndata: {json}\n\n");
                 await writer.FlushAsync();
             }
 

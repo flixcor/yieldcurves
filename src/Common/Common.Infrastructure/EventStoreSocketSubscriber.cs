@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.Core;
 using Common.Infrastructure.Extensions;
 using EventStore.ClientAPI;
 
@@ -12,7 +13,7 @@ namespace Common.Infrastructure
         private readonly List<string> _eventTypes = new List<string>();
         private readonly IEventStoreConnection _connection;
         private long _position = 0;
-        private Func<byte[], string, long, Task> _action;
+        private Func<IEvent, string, long, Task> _action;
         private CancellationToken _cancellationToken;
 
         public EventStoreSocketSubscriber(string connectionString)
@@ -27,7 +28,7 @@ namespace Common.Infrastructure
 
         public void RegisterEventType(string eventType) => _eventTypes.Add(eventType);
 
-        public async Task Subscribe(long commitPosition, Func<byte[], string, long, Task> action, CancellationToken cancellationToken)
+        public async Task Subscribe(long commitPosition, Func<IEvent, string, long, Task> action, CancellationToken cancellationToken)
         {
             _position = commitPosition;
             _action = action;
@@ -44,11 +45,11 @@ namespace Common.Infrastructure
                 subscriptionDropped: OnDropped);
         }
 
-        private Task PublishEvent(EventStoreCatchUpSubscription sub, ResolvedEvent resolvedEvent, Func<byte[], string, long, Task> action, CancellationToken cancellationToken)
+        private Task PublishEvent(EventStoreCatchUpSubscription sub, ResolvedEvent resolvedEvent, Func<IEvent, string, long, Task> action, CancellationToken cancellationToken)
         {
             if (!cancellationToken.IsCancellationRequested)
             {
-                var (position, type, data) = resolvedEvent.ResolveEventBytes(_eventTypes.ToArray());
+                var (position, type, data) = resolvedEvent.Deserialize(_eventTypes.ToArray());
 
                 if (data != default)
                 {
@@ -58,7 +59,6 @@ namespace Common.Infrastructure
             else
             {
                 sub.Stop();
-                _connection.Dispose();
             }
 
             return Task.CompletedTask;

@@ -9,7 +9,7 @@ namespace Common.Infrastructure.Extensions
 {
     internal static class ResolvedEventExtensions
     {
-        internal static IEvent Deserialize(this ResolvedEvent resolvedEvent)
+        internal static (Position, string, IEvent) Deserialize(this ResolvedEvent resolvedEvent, params string[] eventTypes)
         {
             var metadata = resolvedEvent.OriginalEvent.Metadata;
             var data = resolvedEvent.OriginalEvent.Data;
@@ -20,16 +20,22 @@ namespace Common.Infrastructure.Extensions
             {
                 var eventName = eventHeaders.EventName;
                 var eventTypeName = typeof(Events.Create).Namespace + '.' + eventName;
-                var type = typeof(Events.Create).Assembly.GetType(eventTypeName);
 
-                if (type != null)
+                if (!string.IsNullOrWhiteSpace(eventName) && (!eventTypes.Any() || eventTypes.Contains(eventName)))
                 {
-                    return Serializer.DeserializeEvent(data, type);
+                    var type = typeof(Events.Create).Assembly.GetType(eventTypeName);
+
+                    if (type != null)
+                    {
+                        var @event = Serializer.DeserializeEvent(data, type);
+                        return (resolvedEvent.OriginalPosition.Value, eventName, @event);
+                    } 
                 }
             }
 
             return default;
         }
+
 
         internal static (Position, string, byte[]) ResolveEventBytes(this ResolvedEvent resolvedEvent, params string[] eventTypes)
         {
