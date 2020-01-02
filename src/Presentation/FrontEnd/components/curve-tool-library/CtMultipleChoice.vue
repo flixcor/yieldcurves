@@ -1,8 +1,8 @@
 <template>
   <component
     :is="computedComponent"
-    v-bind="{options: simpleOptions, label, value: simpleValue}"
-    @input="onInput"
+    v-bind="{options: simpleOptions, label}"
+    v-model="simpleValue"
   />
 </template>
 
@@ -23,7 +23,7 @@ export default {
     }
   },
   data () {
-    const currentValue = this.getCurrentValue()
+    const currentValue = this.getInitialValue()
 
     return {
       currentValue
@@ -49,26 +49,42 @@ export default {
 
       return this.options
     },
-    simpleValue () {
-      return this.currentValue != null && typeof this.options[0] === 'object'
-        ? this.currentValue.value
-        : this.currentValue
+    simpleValue: {
+      get () {
+        return this.currentValue != null && typeof this.options[0] === 'object'
+          ? this.currentValue.value
+          : this.currentValue
+      },
+      set (val) {
+        const newVal = typeof this.options[0] === 'object'
+          ? this.options.find(x => x.value === val).key
+          : val
+
+        this.currentValue = newVal
+      }
+    }
+  },
+  watch: {
+    currentValue: {
+      immediate: true,
+      handler (newVal, oldVal) {
+        if (newVal !== oldVal) {
+          this.$emit('input', newVal)
+        }
+      }
     }
   },
   updated () {
-    this.currentValue = this.getCurrentValue()
+    this.currentValue = this.getInitialValue()
   },
   methods: {
-    onInput (e) {
-      const val = this.options && typeof this.options[0] === 'object'
-        ? this.options.find(x => x.value === e).key
-        : e
+    getInitialValue () {
+      const firstOption = typeof this.options[0] === 'object'
+        ? this.options[0].key
+        : this.options[0]
 
-      this.$emit('input', val)
-    },
-    getCurrentValue () {
       return this.options && this.options.length === 1
-        ? this.options[0]
+        ? firstOption
         : this.value
     }
   }

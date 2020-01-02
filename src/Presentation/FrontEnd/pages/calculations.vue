@@ -6,19 +6,19 @@
         <ct-card>
           <template #title>
             <frame-live-feed
-              endpoint="https://localhost:44393/features/get-calculation-dates"
-              @change="selectedDate = $event"
+              :endpoint="`${baseUrl}/get-calculation-dates`"
+              @input="selectedDate = $event"
             />
             <frame-live-feed
               v-if="selectedDate"
-              :endpoint="`https://localhost:44393/features/get-calculations-overview-for-date?asOfDate=${jsonAsOfDate}`"
+              :endpoint="`${baseUrl}/get-calculations-overview-for-date?asOfDate=${selectedDate}`"
               @change="selectedRecipe = $event"
             />
           </template>
           <template #content>
             <frame-live-feed
               :v-if="selectedDate && selectedRecipe"
-              :endpoint="`https://localhost:44393/features/get-calculated-curve-detail?curveRecipeId=${selectedRecipe}&asOfDate=${jsonAsOfDate}`"
+              :endpoint="`${baseUrl}/get-calculated-curve-detail?curveRecipeId=${selectedRecipe}&asOfDate=${selectedDate}`"
             />
           </template>
         </ct-card>
@@ -32,14 +32,10 @@ export default {
   name: 'CalculatedCurves',
   data () {
     return {
+      baseUrl: 'https://localhost:44393/features',
       selectedDate: this.tMinus1(),
       selectedRecipe: null,
       showCreate: false
-    }
-  },
-  computed: {
-    jsonAsOfDate () {
-      return this.selectedDate
     }
   },
   methods: {
