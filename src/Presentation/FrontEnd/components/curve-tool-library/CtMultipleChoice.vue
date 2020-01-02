@@ -1,7 +1,7 @@
 <template>
   <component
     :is="computedComponent"
-    v-bind="{options: simpleOptions, label, value: currentValue}"
+    v-bind="{options: simpleOptions, label, value: simpleValue}"
     @input="onInput"
   />
 </template>
@@ -19,13 +19,11 @@ export default {
     },
     value: {
       type: [String, Number, Object],
-      required: true
+      default: null
     }
   },
   data () {
-    const currentValue = this.options && this.options.length === 1
-      ? this.options[0]
-      : this.value
+    const currentValue = this.getCurrentValue()
 
     return {
       currentValue
@@ -50,12 +48,15 @@ export default {
       }
 
       return this.options
+    },
+    simpleValue () {
+      return this.currentValue != null && typeof this.options[0] === 'object'
+        ? this.currentValue.value
+        : this.currentValue
     }
   },
   updated () {
-    this.currentValue = this.options && this.options.length === 1
-      ? this.options[0]
-      : this.value
+    this.currentValue = this.getCurrentValue()
   },
   methods: {
     onInput (e) {
@@ -64,6 +65,11 @@ export default {
         : e
 
       this.$emit('input', val)
+    },
+    getCurrentValue () {
+      return this.options && this.options.length === 1
+        ? this.options[0]
+        : this.value
     }
   }
 }
