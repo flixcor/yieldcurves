@@ -58,8 +58,9 @@ export default {
 
       self.connection = new EventSource(`${Url}?eventTypes=InstrumentCreated&position=${self.position}`)
       self.connection.addEventListener('InstrumentCreated', (e) => {
-        if (self.position < e.lastEventId) {
-          self.position = e.lastEventId
+        const eventPosition = parseInt(e.lastEventId)
+        if (self.position < eventPosition) {
+          self.position = eventPosition
           self.onEvent(JSON.parse(e.data), 'InstrumentCreated')
         }
       })

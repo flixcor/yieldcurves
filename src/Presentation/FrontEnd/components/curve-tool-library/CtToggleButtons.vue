@@ -22,7 +22,7 @@ export default {
     },
     value: {
       type: [String, Number, Object],
-      required: true
+      default: null
     }
   },
   data () {

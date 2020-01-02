@@ -23,10 +23,8 @@ namespace Common.Infrastructure.Proto
             }
 
             using var stream = new MemoryStream(byteArray);
-
-            var message = (Google.Protobuf.IMessage)Activator.CreateInstance(type);
-            message.MergeFrom(stream);
-            var @event = (IEvent)message;
+            var parser = (MessageParser)type?.GetProperty("Parser")?.GetValue(null);
+            var @event = (IEvent)parser?.ParseFrom(byteArray);
 
             return @event ?? default;
         }

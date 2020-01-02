@@ -9,7 +9,7 @@ namespace Common.Infrastructure.Extensions
 {
     internal static class ResolvedEventExtensions
     {
-        internal static (Position, string, IEvent) Deserialize(this ResolvedEvent resolvedEvent, params string[] eventTypes)
+        internal static (Position?, string, IEvent) Deserialize(this ResolvedEvent resolvedEvent, params string[] eventTypes)
         {
             var metadata = resolvedEvent.OriginalEvent.Metadata;
             var data = resolvedEvent.OriginalEvent.Data;
@@ -28,7 +28,7 @@ namespace Common.Infrastructure.Extensions
                     if (type != null)
                     {
                         var @event = Serializer.DeserializeEvent(data, type);
-                        return (resolvedEvent.OriginalPosition.Value, eventName, @event);
+                        return (resolvedEvent.OriginalPosition, eventName, @event);
                     } 
                 }
             }
@@ -37,7 +37,7 @@ namespace Common.Infrastructure.Extensions
         }
 
 
-        internal static (Position, string, byte[]) ResolveEventBytes(this ResolvedEvent resolvedEvent, params string[] eventTypes)
+        internal static (Position?, string, byte[]) ResolveEventBytes(this ResolvedEvent resolvedEvent, params string[] eventTypes)
         {
             var metadata = resolvedEvent.OriginalEvent.Metadata;
             var data = resolvedEvent.OriginalEvent.Data;
@@ -50,14 +50,14 @@ namespace Common.Infrastructure.Extensions
 
                 if (!string.IsNullOrWhiteSpace(eventName) && (!eventTypes.Any() || eventTypes.Contains(eventName)))
                 {
-                    return (resolvedEvent.OriginalPosition.Value, eventName, data);
+                    return (resolvedEvent.OriginalPosition, eventName, data);
                 }
             }
 
             return default;
         }
 
-        internal static IEnumerable<(Position, string, byte[])> ResolveEventBytes(this IEnumerable<ResolvedEvent> resolvedEvents, params string[] eventTypes)
+        internal static IEnumerable<(Position?, string, byte[])> ResolveEventBytes(this IEnumerable<ResolvedEvent> resolvedEvents, params string[] eventTypes)
         {
             return resolvedEvents
                 .Select(e => e.ResolveEventBytes(eventTypes))

@@ -53,7 +53,7 @@ namespace Common.Infrastructure
 
                 if (data != default)
                 {
-                    return action(data, type, position.CommitPosition);
+                    return action(data, type, position?.CommitPosition ?? 0);
                 }
             }
             else

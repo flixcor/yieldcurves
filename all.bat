@@ -12,3 +12,4 @@ start full.stack.microservice .\src\PricePublisher\PricePublisher.Service &
 start full.stack.microservice .\src\PricePublisher\PricePublisher.Query.Service &
 start full.stack.microservice .\src\CalculationEngine\CalculationEngine.Query.Service &
 start cd.dotnet.run.bat .\src\CalculationEngine\CalculationEngine.Service
+start cd.dotnet.run.bat .\src\Common\Common.EventStore

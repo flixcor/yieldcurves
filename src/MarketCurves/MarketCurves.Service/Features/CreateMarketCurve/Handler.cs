@@ -19,6 +19,7 @@ namespace MarketCurves.Service.Features.CreateMarketCurve
 
         public Task<Result> Handle(Command command, CancellationToken cancellationToken)
         {
+
             var curveResult = MarketCurve.TryCreate(command.Id, command.Country, command.CurveType, command.FloatingLeg);
             return curveResult.Promise(c => _repository.SaveAsync(c));
         }
