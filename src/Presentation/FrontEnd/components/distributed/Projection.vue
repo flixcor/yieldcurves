@@ -37,8 +37,10 @@ export default {
       connection: null
     }
   },
-  mounted () {
+  created () {
     this.comp = this.scriptUrl
+  },
+  mounted () {
     this.connect()
   },
   beforeDestroy () {

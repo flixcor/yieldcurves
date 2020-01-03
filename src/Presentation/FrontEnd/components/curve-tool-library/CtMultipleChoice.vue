@@ -1,8 +1,9 @@
 <template>
   <component
     :is="computedComponent"
-    v-bind="{options: simpleOptions, label}"
     v-model="simpleValue"
+    :options="simpleOptions"
+    :label="label"
   />
 </template>
 

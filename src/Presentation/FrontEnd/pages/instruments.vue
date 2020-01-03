@@ -11,7 +11,7 @@
       <v-col>
         <projection
           :event-types="['InstrumentCreated']"
-          script-url="https://localhost:5009/get-instruments-overview.7589c4f43f7012e78982.umd.js"
+          script-url="http://localhost:5008/yc-get-instruments-overview"
           :subscribe="true"
           @create="$router.push({path: '/instruments/create'})"
         />

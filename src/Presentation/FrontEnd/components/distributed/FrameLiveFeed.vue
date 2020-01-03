@@ -32,8 +32,11 @@ export default {
       this.fetch()
     }
   },
+  created () {
+    this.fetch()
+  },
   mounted () {
-    this.init()
+    this.setupHub()
   },
   destroyed () {
     if (this.hubConnection) { this.hubConnection.stop() }

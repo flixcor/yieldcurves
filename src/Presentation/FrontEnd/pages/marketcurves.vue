@@ -10,7 +10,7 @@
     <v-row>
       <v-col>
         <frame-live-feed
-          endpoint="https://localhost:5003/features/get-market-curves-overview"
+          endpoint="http://localhost:5002/features/get-market-curves-overview"
           @detailClicked="$router.push({path: `/marketcurves/${$event}`})"
           @createClicked="$router.push({path: '/marketcurves/create'})"
         />

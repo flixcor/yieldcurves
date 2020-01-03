@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="id">
     <v-row>
       <v-col>
         <nuxt-child

@@ -31,7 +31,16 @@ export default {
       immediate: true,
       handler (newComponent, prevComponent = '') {
         if (newComponent === prevComponent) { return }
-        this.computedComponent = () => externalComponent(this.component)
+
+        this.computedComponent = () => {
+          if (process.server && !this.component.includes('.umd')) {
+            return this.$requireFromUrl(`${this.component}.ssr.js`)
+          }
+          if (!this.component.includes('.umd')) {
+            return import(/* webpackIgnore: true */ `${this.component}.esm.js`)
+          }
+          return externalComponent(this.component)
+        }
       }
     }
   },
