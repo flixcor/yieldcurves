@@ -1,21 +1,7 @@
-<template>
-  <dynamic-component
-    ref="componentRef"
-    :component="comp"
-    v-on="$listeners"
-  />
-</template>
-
 <script>
-
-import DynamicComponent from './DynamicComponent.vue'
-
 const Url = 'https://localhost:44395'
 
 export default {
-  components: {
-    DynamicComponent
-  },
   props: {
     subscribe: {
       type: Boolean,
@@ -23,10 +9,6 @@ export default {
     },
     eventTypes: {
       type: Array,
-      required: true
-    },
-    scriptUrl: {
-      type: String,
       required: true
     }
   },
@@ -37,9 +19,6 @@ export default {
       connection: null
     }
   },
-  created () {
-    this.comp = this.scriptUrl
-  },
   mounted () {
     this.connect()
   },
@@ -47,25 +26,23 @@ export default {
     this.disconnect()
   },
   methods: {
-    onEvent (event, type) {
-      const camel = type[0].toLowerCase() + type.substr(1)
-      const ref = this.$refs.componentRef
-
-      if (typeof ref.passAlong === 'function') {
-        ref.passAlong(camel, event)
+    onEvent ({ type, e }) {
+      const eventPosition = parseInt(e.lastEventId)
+      if (this.position < eventPosition) {
+        this.position = eventPosition
+        this.$emit(type, JSON.parse(e.data))
       }
     },
     connect (self = this) {
       self.disconnect()
 
-      self.connection = new EventSource(`${Url}?eventTypes=InstrumentCreated&position=${self.position}`)
-      self.connection.addEventListener('InstrumentCreated', (e) => {
-        const eventPosition = parseInt(e.lastEventId)
-        if (self.position < eventPosition) {
-          self.position = eventPosition
-          self.onEvent(JSON.parse(e.data), 'InstrumentCreated')
-        }
-      })
+      const typesString = self.eventTypes.join('&eventTypes=')
+
+      self.connection = new EventSource(`${Url}?eventTypes=${typesString}&position=${self.position}`)
+
+      for (const type of self.eventTypes) {
+        self.connection.addEventListener(type, e => self.onEvent({ type, e }))
+      }
 
       self.connection.addEventListener('error', (e) => {
         if (e.readyState === EventSource.CLOSED) {
@@ -79,6 +56,9 @@ export default {
         this.connection = null
       }
     }
+  },
+  render () {
+    return this.$scopedSlots.default({})
   }
 }
 </script>

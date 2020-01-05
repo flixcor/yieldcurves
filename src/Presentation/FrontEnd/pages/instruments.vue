@@ -11,20 +11,29 @@
       <v-col>
         <projection
           :event-types="['InstrumentCreated']"
-          script-url="http://localhost:5008/yc-get-instruments-overview"
-          :subscribe="true"
-          @create="$router.push({path: '/instruments/create'})"
-        />
+          @InstrumentCreated="overviewState.instruments.push($event)"
+        >
+          <instruments-overview :state="overviewState" />
+        </projection>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
+import InstrumentsOverview from '../components/InstrumentsOverview.vue'
+import Projection from '../components/distributed/Projection.vue'
+
 export default {
   name: 'Instruments',
   components: {
-    projection: () => import('../components/distributed/Projection.vue')
-  }
+    Projection,
+    InstrumentsOverview
+  },
+  data: () => ({
+    overviewState: {
+      instruments: []
+    }
+  })
 }
 </script>

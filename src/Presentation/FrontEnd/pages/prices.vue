@@ -11,7 +11,7 @@
         <ct-card>
           <template v-slot:title>
             <frame-live-feed
-              endpoint="https://localhost:44390/features/get-price-dates"
+              :endpoint="`${baseUrl}/get-price-dates`"
               @input="onDateChange($event)"
             />
             <ct-spacer />
@@ -27,7 +27,7 @@
           <template v-slot:content>
             <frame-live-feed
               v-if="selectedDate"
-              :endpoint="`https://localhost:44390/features/get-prices-overview?asOfDate=${selectedDate}`"
+              :endpoint="`${baseUrl}/get-prices-overview?asOfDate=${selectedDate}`"
             />
           </template>
         </ct-card>
@@ -41,6 +41,7 @@ export default {
   name: 'Prices',
   data () {
     return {
+      baseUrl: 'http://localhost:5090/features',
       selectedDate: null,
       showCreate: false
     }

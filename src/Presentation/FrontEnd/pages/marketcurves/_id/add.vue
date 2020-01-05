@@ -1,6 +1,6 @@
 <template>
   <frame-live-feed
-    :endpoint="`https://localhost:5001/features/add-curve-point?marketCurveId=${id}`"
+    :endpoint="`http://localhost:5000/features/add-curve-point?marketCurveId=${id}`"
     @success="$router.push({path: `/marketcurves/${id}`})"
   />
 </template>

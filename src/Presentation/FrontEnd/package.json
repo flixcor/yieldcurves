@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nuxt --port 8081",
     "build": "nuxt build",
-    "start": "nuxt start",
+    "start": "nuxt start --port 8081",
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "test": "jest"

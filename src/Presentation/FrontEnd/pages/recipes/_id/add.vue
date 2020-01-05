@@ -1,6 +1,6 @@
 <template>
   <frame-live-feed
-    :endpoint="`https://localhost:5007/features/add-transformation?recipeId=${id}`"
+    :endpoint="`http://localhost:5006/features/add-transformation?recipeId=${id}`"
     @success="$router.push({path: `/recipes/${id}`})"
   />
 </template>

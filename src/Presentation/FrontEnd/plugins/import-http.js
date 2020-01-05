@@ -1,6 +1,7 @@
-// src/utils/external-component.js
 // source: https://markus.oberlehner.net/blog/distributed-vue-applications-loading-components-via-http/
-export default async function externalComponent (url) {
+import Vue from 'vue'
+
+const externalComponent = async (url) => {
   const name = url.split('/').reverse()[0].match(/^(.*?)\.umd/)[1]
 
   if (window[name]) { return window[name] }
@@ -20,3 +21,5 @@ export default async function externalComponent (url) {
 
   return window[name]
 }
+
+Vue.prototype.$externalComponent = externalComponent

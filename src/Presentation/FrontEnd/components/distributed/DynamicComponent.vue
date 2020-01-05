@@ -8,7 +8,6 @@
 </template>
 
 <script>
-import externalComponent from '../../utils/external-component'
 export default {
   name: 'DynamicComponent',
   props: {
@@ -31,24 +30,7 @@ export default {
       immediate: true,
       handler (newComponent, prevComponent = '') {
         if (newComponent === prevComponent) { return }
-
-        this.computedComponent = () => {
-          if (process.server && !this.component.includes('.umd')) {
-            return this.$requireFromUrl(`${this.component}.ssr.js`)
-          }
-          if (!this.component.includes('.umd')) {
-            return import(/* webpackIgnore: true */ `${this.component}.esm.js`)
-          }
-          return externalComponent(this.component)
-        }
-      }
-    }
-  },
-  methods: {
-    passAlong (methodName, data) {
-      const method = this.$refs.ref[methodName]
-      if (typeof method === 'function') {
-        method(data)
+        this.computedComponent = () => this.$externalComponent(this.component)
       }
     }
   }

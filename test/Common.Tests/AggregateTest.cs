@@ -5,26 +5,39 @@ using NUnit.Framework;
 
 namespace Common.Tests
 {
-    public abstract class AggregateTest<T> where T : Aggregate<T>
+    public interface IWhen<T> where T : Aggregate<T>
+    {
+        IThen<T> When(Action<T> action);
+    }
+
+    public interface IThen<T> where T : Aggregate<T>
+    {
+        void Then(params IEvent[] events);
+    }
+
+    public abstract class AggregateTest<T> : IWhen<T>, IThen<T> where T : Aggregate<T>
     {
         protected T Aggregate { get; private set; } = (T)Activator.CreateInstance(typeof(T), true);
 
-        protected void Given(params IEvent[] events)
+        public IWhen<T> Given(params IEvent[] events)
         {
             Aggregate.LoadStateFromHistory(events);
+            return this;
         }
 
-        protected void WhenCreated(Func<T> func)
+        public IThen<T> WhenCreated(Func<T> func)
         {
             Aggregate = func();
+            return this;
         }
 
-        protected void When(Action<T> action)
+        IThen<T> IWhen<T>.When(Action<T> action)
         {
             action(Aggregate);
+            return this;
         }
 
-        protected virtual void Then(params IEvent[] events)
+        void IThen<T>.Then(params IEvent[] events)
         {
             var count = events.Count();
 

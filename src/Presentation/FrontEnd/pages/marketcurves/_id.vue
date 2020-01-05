@@ -11,7 +11,7 @@
     <v-row>
       <v-col>
         <frame-live-feed
-          :endpoint="`https://localhost:5003/features/get-market-curve-detail?id=${id}`"
+          :endpoint="`http://localhost:5002/features/get-market-curve-detail?id=${id}`"
           @createClicked="$router.push({path: `/marketcurves/${id}/add`})"
         />
       </v-col>

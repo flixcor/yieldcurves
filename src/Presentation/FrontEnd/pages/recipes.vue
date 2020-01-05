@@ -10,7 +10,7 @@
     <v-row>
       <v-col>
         <frame-live-feed
-          endpoint="https://localhost:5005/features/get-curve-recipes-overview"
+          endpoint="http://localhost:5004/features/get-curve-recipes-overview"
           @detailClicked="$router.push({path: `/recipes/${$event}`})"
           @createClicked="$router.push({path: '/recipes/create'})"
         />

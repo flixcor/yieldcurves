@@ -32,7 +32,7 @@ export default {
   name: 'CalculatedCurves',
   data () {
     return {
-      baseUrl: 'https://localhost:44393/features',
+      baseUrl: 'http://localhost:51828/features',
       selectedDate: this.tMinus1(),
       selectedRecipe: null,
       showCreate: false

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="id">
     <v-row>
       <v-col>
         <nuxt-child
@@ -11,7 +11,7 @@
     <v-row>
       <v-col>
         <frame-live-feed
-          :endpoint="`https://localhost:5005/features/get-curve-recipe-detail?id=${id}`"
+          :endpoint="`http://localhost:5004/features/get-curve-recipe-detail?id=${id}`"
           @createClicked="$router.push({path: `/recipes/${id}/add`})"
         />
       </v-col>

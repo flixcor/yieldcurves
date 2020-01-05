@@ -31,18 +31,8 @@ namespace Common.Infrastructure.Extensions
 
         public static IActionResult ComponentActionResult(this ControllerBase controller, object t, string componentName, string hubName = null)
         {
-            if (t == null)
+            if (t is IMaybe)
             {
-                return controller.NotFound();
-            }
-
-            if (t is IMaybe maybe)
-            {
-                if (!maybe.Found)
-                {
-                    return controller.NotFound();
-                }
-
                 t = ((dynamic)t).ToResult().Content;
             }
 
