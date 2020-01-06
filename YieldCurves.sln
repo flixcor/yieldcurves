@@ -22,8 +22,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Core", "src\Common\C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Instruments.Service", "src\Instruments\Instruments.Service\Instruments.Service.csproj", "{3EDC3847-6DCE-4AF3-BD58-CBAC98DB6CBB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Instruments.Query.Service", "src\Instruments\Instruments.Query.Service\Instruments.Query.Service.csproj", "{9A8D496A-2615-4EB3-AEA0-26B0F74C8EB0}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MarketCurves", "MarketCurves", "{4F7A7215-AB4B-47AB-8D8A-859414999EB1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarketCurves.Service", "src\MarketCurves\MarketCurves.Service\MarketCurves.Service.csproj", "{007B0B21-4CE6-4C9B-8B9A-7E276735F48E}"
@@ -126,6 +124,24 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "MicroFrontends", "src\Prese
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "64697"
+	EndProjectSection
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_64697"
+		Debug.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_64697"
+		Release.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "64697"
 		SlnRelativePath = "src\Presentation\MicroFrontends\"
 	EndProjectSection
 EndProject
@@ -141,7 +157,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common.Contracts", "Common.
 		src\Common\Common.Contracts\greet.proto = src\Common\Common.Contracts\greet.proto
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.EventStore", "src\Common\Common.EventStore\Common.EventStore.csproj", "{B40B48BC-F236-4B7A-89A3-55E707A49D2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.EventStore", "src\Common\Common.EventStore\Common.EventStore.csproj", "{B40B48BC-F236-4B7A-89A3-55E707A49D2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -161,10 +177,6 @@ Global
 		{3EDC3847-6DCE-4AF3-BD58-CBAC98DB6CBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EDC3847-6DCE-4AF3-BD58-CBAC98DB6CBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EDC3847-6DCE-4AF3-BD58-CBAC98DB6CBB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9A8D496A-2615-4EB3-AEA0-26B0F74C8EB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9A8D496A-2615-4EB3-AEA0-26B0F74C8EB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9A8D496A-2615-4EB3-AEA0-26B0F74C8EB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9A8D496A-2615-4EB3-AEA0-26B0F74C8EB0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{007B0B21-4CE6-4C9B-8B9A-7E276735F48E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{007B0B21-4CE6-4C9B-8B9A-7E276735F48E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{007B0B21-4CE6-4C9B-8B9A-7E276735F48E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -230,7 +242,6 @@ Global
 		{B3593422-5319-424A-8259-4FD135274377} = {8696303F-4F08-4CAB-9107-A7318E2A1387}
 		{FEAB34CA-4D11-429C-8987-570CCA53127E} = {8696303F-4F08-4CAB-9107-A7318E2A1387}
 		{3EDC3847-6DCE-4AF3-BD58-CBAC98DB6CBB} = {0A7E7477-1554-41E5-957F-CE105D0463F7}
-		{9A8D496A-2615-4EB3-AEA0-26B0F74C8EB0} = {0A7E7477-1554-41E5-957F-CE105D0463F7}
 		{4F7A7215-AB4B-47AB-8D8A-859414999EB1} = {5C08E959-8C27-4D91-8CE6-646F0380E5D5}
 		{007B0B21-4CE6-4C9B-8B9A-7E276735F48E} = {4F7A7215-AB4B-47AB-8D8A-859414999EB1}
 		{AC7B3F86-30D0-4AA8-98C9-25EBA7CC645A} = {4F7A7215-AB4B-47AB-8D8A-859414999EB1}

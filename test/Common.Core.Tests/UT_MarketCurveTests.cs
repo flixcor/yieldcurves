@@ -15,8 +15,8 @@ namespace UnitTests
             var country = Country.GB;
             var type = CurveType.BONDSPREAD;
 
-            WhenCreated(() => MarketCurve.TryCreate(id, country, type).Content);
-            Then(MarketCurveCreated(id, country.ToString(), type.ToString()));
+            WhenCreated(() => MarketCurve.TryCreate(id, country, type).Content)
+                .Then(MarketCurveCreated(id, country.ToString(), type.ToString()));
         }
 
         [Test]
@@ -29,9 +29,9 @@ namespace UnitTests
             var priceType = PriceType.BIDPRICE;
             var isMandatory = false;
 
-            Given(MarketCurveCreated(id, Country.GB.ToString(), CurveType.ECB.ToString()));
-            When(c => c.AddCurvePoint(tenor, instrumentId, dateLag, priceType, isMandatory));
-            Then(CurvePointAdded(id, tenor.ToString(), instrumentId, dateLag.Value, isMandatory, priceType.ToString()));
+            Given(MarketCurveCreated(id, Country.GB.ToString(), CurveType.ECB.ToString()))
+                .When(c => c.AddCurvePoint(tenor, instrumentId, dateLag, priceType, isMandatory))
+                .Then(CurvePointAdded(id, tenor.ToString(), instrumentId, dateLag.Value, isMandatory, priceType.ToString()));
         }
     }
 }

@@ -15,10 +15,10 @@ namespace UnitTests
             var vendor = Vendor.UBS;
             var desc = "description";
 
-            WhenCreated(() => RegularInstrument.TryCreate(id, vendor, desc).Content);
-            Then(
-                RegularInstrumentCreated(id, vendor.ToString(), desc),
-                InstrumentCreated(id, vendor.ToString(), desc));
+            WhenCreated(() => RegularInstrument.TryCreate(id, vendor, desc).Content)
+                .Then(
+                    RegularInstrumentCreated(id, vendor.ToString(), desc),
+                    InstrumentCreated(id, vendor.ToString(), desc));
         }
 
         [Test]
