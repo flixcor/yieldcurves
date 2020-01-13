@@ -10,6 +10,10 @@ export default {
     eventTypes: {
       type: Array,
       required: true
+    },
+    initialEvents: {
+      type: Array,
+      default: () => []
     }
   },
   data () {
@@ -19,6 +23,11 @@ export default {
       connection: null
     }
   },
+  created () {
+    this.initialEvents.forEach(({ type, position, payload }) => {
+      this.onEvent({ type, position, payload })
+    })
+  },
   mounted () {
     this.connect()
   },
@@ -26,11 +35,10 @@ export default {
     this.disconnect()
   },
   methods: {
-    onEvent ({ type, e }) {
-      const eventPosition = parseInt(e.lastEventId)
-      if (this.position < eventPosition) {
-        this.position = eventPosition
-        this.$emit(type, JSON.parse(e.data))
+    onEvent ({ type, position, payload }) {
+      if (this.position < position) {
+        this.position = position
+        this.$emit(type, payload)
       }
     },
     connect (self = this) {
@@ -38,10 +46,10 @@ export default {
 
       const typesString = self.eventTypes.join('&eventTypes=')
 
-      self.connection = new EventSource(`${Url}?eventTypes=${typesString}&position=${self.position}`)
+      self.connection = new EventSource(`${Url}/subscribe?eventTypes=${typesString}&position=${self.position}`)
 
       for (const type of self.eventTypes) {
-        self.connection.addEventListener(type, e => self.onEvent({ type, e }))
+        self.connection.addEventListener(type, e => self.onEvent({ type, position: parseInt(e.lastEventId), payload: JSON.parse(e.data) }))
       }
 
       self.connection.addEventListener('error', (e) => {

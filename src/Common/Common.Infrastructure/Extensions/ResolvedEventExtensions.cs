@@ -63,5 +63,12 @@ namespace Common.Infrastructure.Extensions
                 .Select(e => e.ResolveEventBytes(eventTypes))
                 .Where((e) => e.Item3 != default);
         }
+
+        internal static IEnumerable<(Position?, string, IEvent)> Deserialize(this IEnumerable<ResolvedEvent> resolvedEvents, params string[] eventTypes)
+        {
+            return resolvedEvents
+                .Select(e => e.Deserialize(eventTypes))
+                .Where((e) => e.Item3 != default);
+        }
     }
 }

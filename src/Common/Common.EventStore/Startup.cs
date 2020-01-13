@@ -45,7 +45,7 @@ namespace Common.EventStore
                     .AllowCredentials();
             });
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 

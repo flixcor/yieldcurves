@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,6 +29,28 @@ namespace Common.EventStore.Controllers
         }
 
         [HttpGet]
+        public IAsyncEnumerable<EventReply> GetAsync([FromQuery]EventRequest request)
+        {
+            var cancel = HttpContext.RequestAborted;
+            var query = new EventStoreQuery("ConnectTo=tcp://admin:changeit@localhost:1113; HeartBeatTimeout=500");
+
+            if (request.EventTypes != null)
+            {
+                foreach (var type in request?.EventTypes)
+                {
+                    query.RegisterEventType(type);
+                }
+            }
+
+            return query.Run(cancel).Select(e=> new EventReply 
+            { 
+                Position = e.Item1,
+                Type = e.Item2,
+                Payload = e.Item3
+            });
+        }
+
+        [HttpGet("subscribe")]
         public async Task GetEvents([FromQuery]EventRequest request)
         {
             var cancel = HttpContext.RequestAborted;
