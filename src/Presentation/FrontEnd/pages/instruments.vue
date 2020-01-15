@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import InstrumentsOverview from '../components/InstrumentsOverview.vue'
+import InstrumentsOverview from '../components/instruments/instruments-overview.vue'
 import Projection from '../components/distributed/Projection.vue'
 
 const EventTypes = ['InstrumentCreated']
@@ -33,15 +33,9 @@ export default {
     Projection,
     InstrumentsOverview
   },
-  async asyncData ({ $axios }) {
-    const typesString = EventTypes
-      ? '?eventTypes=' + EventTypes.join('&eventTypes=')
-      : ''
-
-    const url = 'http://localhost:65072' + typesString
-
-    const { data } = await $axios.get(url)
-    return { initialEvents: data, typesString }
+  async asyncData ({ app }) {
+    const initialEvents = await app.preloadEvents(EventTypes)
+    return { initialEvents }
   },
   data: () => ({
     overviewState: {

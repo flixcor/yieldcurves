@@ -8,13 +8,13 @@
       <ct-btn
         class="primary"
         fab
-        @click="emitCreateClicked()"
+        @click="$emit('createClicked')"
       >
         <v-icon>mdi-plus</v-icon>
       </ct-btn>
     </template>
 
-    <template v-slot:content>
+    <template v-if="state.marketCurves" v-slot:content>
       <ct-table>
         <thead>
           <tr>
@@ -23,11 +23,11 @@
         </thead>
         <tbody>
           <tr
-            v-for="curve of entities"
+            v-for="curve of state.marketCurves"
             :key="curve.id"
-            @click="emitDetailClicked(curve.id)"
+            @click="$emit('detailClicked', curve.aggregateId)"
           >
-            <td>{{ curve.name }}</td>
+            <td>{{ getName(curve) }}</td>
           </tr>
         </tbody>
       </ct-table>
@@ -36,21 +36,20 @@
 </template>
 
 <script>
+const appendNonEmpty = (seperator, items) => items.filter(x => x).join(seperator)
+
 export default {
   name: 'GetMarketCurves',
   props: {
-    entities: {
-      required: true,
-      type: Array,
-    },
+    state: {
+      type: Object,
+      default: () => ({
+        marketCurves: []
+      })
+    }
   },
   methods: {
-    emitDetailClicked(id) {
-      this.$emit('detailClicked', id);
-    },
-    emitCreateClicked() {
-      this.$emit('createClicked');
-    },
-  },
-};
+    getName: curve => appendNonEmpty('_', [curve.country, curve.curveType, curve.floatingLeg])
+  }
+}
 </script>

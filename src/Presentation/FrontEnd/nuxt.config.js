@@ -29,7 +29,9 @@ export default {
   */
   plugins: [
     '~/plugins/global.js',
-    { src: '~/plugins/require-http.js', mode: 'server' }
+    '~/plugins/preloadEvents.js',
+    { src: '~/plugins/require-http.js', mode: 'server' },
+    { src: '~/plugins/import-http.js', mode: 'client' }
   ],
   /*
   ** Nuxt.js dev-modules
