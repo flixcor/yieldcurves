@@ -48,8 +48,10 @@ export default {
 
       self.connection = new EventSource(`${Url}/subscribe?eventTypes=${typesString}&position=${self.position}`)
 
+      const onEvent = e => self.onEvent({ type, position: parseInt(e.lastEventId), payload: JSON.parse(e.data) })
+
       for (const type of self.eventTypes) {
-        self.connection.addEventListener(type, e => self.onEvent({ type, position: parseInt(e.lastEventId), payload: JSON.parse(e.data) }))
+        self.connection.addEventListener(type, onEvent)
       }
 
       self.connection.addEventListener('error', (e) => {

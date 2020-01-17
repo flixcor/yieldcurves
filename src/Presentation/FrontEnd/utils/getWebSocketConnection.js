@@ -1,5 +1,5 @@
 import { HubConnectionBuilder, LogLevel } from '@aspnet/signalr'
-export default function getConnection (url) {
+export default function getWebSocketConnection (url) {
   const connection = new HubConnectionBuilder()
     .withUrl(url)
     .withAutomaticReconnect()

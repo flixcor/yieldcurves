@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import getConnection from '../../utils/websockets.js'
+import getWebSocketConnection from '../../utils/getWebSocketConnection.js'
 import DynamicComponent from './DynamicComponent.vue'
 
 export default {
@@ -56,7 +56,7 @@ export default {
     },
     async setupHub () {
       if (this.hubUrl) {
-        this.hubConnection = await getConnection(this.hubUrl)
+        this.hubConnection = await getWebSocketConnection(this.hubUrl)
         this.hubConnection.on('insert', obj => this.insert(obj))
         this.hubConnection.on('update', obj => this.update(obj))
         await this.hubConnection.start()
