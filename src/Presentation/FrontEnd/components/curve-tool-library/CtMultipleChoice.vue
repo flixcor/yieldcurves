@@ -84,7 +84,7 @@ export default {
         ? this.options[0].key
         : this.options[0]
 
-      return this.options && this.options.length === 1
+      return this && this.options && this.options.length === 1
         ? firstOption
         : this.value
     }
