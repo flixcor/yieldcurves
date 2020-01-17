@@ -82,7 +82,7 @@ export default {
     getInitialValue () {
       const firstOption = this.options && this.options.length === 1 && this.options[0]
 
-      return typeof firstOption === 'object'
+      return firstOption && typeof firstOption === 'object'
         ? firstOption.key
         : firstOption || this.value
     }

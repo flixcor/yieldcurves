@@ -18,7 +18,9 @@
       <ct-table>
         <thead>
           <tr>
-            <th>Name</th>
+            <th scope="col">
+              Name
+            </th>
           </tr>
         </thead>
         <tbody>

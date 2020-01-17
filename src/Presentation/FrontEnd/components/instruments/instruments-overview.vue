@@ -15,8 +15,8 @@
       <ct-table>
         <thead>
           <tr>
-            <th>Vendor</th>
-            <th>Description</th>
+            <th scope="col">Vendor</th>
+            <th scope="col">Description</th>
           </tr>
         </thead>
         <tbody>

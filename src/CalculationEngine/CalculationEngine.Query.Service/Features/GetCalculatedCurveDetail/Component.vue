@@ -2,9 +2,15 @@
   <ct-table>
     <thead>
       <tr>
-        <th>Maturity</th>
-        <th>Currency</th>
-        <th>Value</th>
+        <th scope="col">
+          Maturity
+        </th>
+        <th scope="col">
+          Currency
+        </th>
+        <th scope="col">
+          Value
+        </th>
       </tr>
     </thead>
     <tbody>

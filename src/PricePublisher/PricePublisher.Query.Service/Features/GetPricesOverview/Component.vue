@@ -2,13 +2,27 @@
   <ct-table>
     <thead>
       <tr>
-        <th>As Of</th>
-        <th>As At</th>
-        <th>Vendor</th>
-        <th>Instrument</th>
-        <th>Currency</th>
-        <th>Amount</th>
-        <th>Price Type</th>
+        <th scope="col">
+          As Of
+        </th>
+        <th scope="col">
+          As At
+        </th>
+        <th scope="col">
+          Vendor
+        </th>
+        <th scope="col">
+          Instrument
+        </th>
+        <th scope="col">
+          Currency
+        </th>
+        <th scope="col">
+          Amount
+        </th>
+        <th scope="col">
+          Price Type
+        </th>
       </tr>
     </thead>
     <tbody>

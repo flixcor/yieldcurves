@@ -18,8 +18,12 @@
       <ct-table>
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Parameters</th>
+            <th scope="col">
+              Name
+            </th>
+            <th scope="col">
+              Parameters
+            </th>
           </tr>
         </thead>
         <tbody>
