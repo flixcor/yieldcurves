@@ -2,7 +2,7 @@
   <v-switch
     :value="value"
     :label="label"
-    :v-on="$listeners"
+    v-on="$listeners"
   />
 </template>
 

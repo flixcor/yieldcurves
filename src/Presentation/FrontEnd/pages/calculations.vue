@@ -17,7 +17,7 @@
           </template>
           <template #content>
             <frame-live-feed
-              :v-if="selectedDate && selectedRecipe"
+              v-if="selectedDate && selectedRecipe"
               :endpoint="`${baseUrl}/get-calculated-curve-detail?curveRecipeId=${selectedRecipe}&asOfDate=${selectedDate}`"
             />
           </template>
