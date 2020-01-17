@@ -80,13 +80,11 @@ export default {
   },
   methods: {
     getInitialValue () {
-      const firstOption = typeof this.options[0] === 'object'
-        ? this.options[0].key
-        : this.options[0]
+      const firstOption = this.options && this.options.length === 1 && this.options[0]
 
-      return this && this.options && this.options.length === 1
-        ? firstOption
-        : this.value
+      return typeof firstOption === 'object'
+        ? firstOption.key
+        : firstOption || this.value
     }
   }
 }
