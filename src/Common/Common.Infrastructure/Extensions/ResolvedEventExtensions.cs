@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Common.Core;
 using Common.Infrastructure.Proto;
-using EventStore.ClientAPI;
+using EventStore.Client;
 
 namespace Common.Infrastructure.Extensions
 {

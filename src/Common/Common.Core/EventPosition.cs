@@ -4,7 +4,7 @@
     {
         private EventPosition() { }
 
-        public EventPosition(long commitPosition, long preparePosition, string applicationName)
+        public EventPosition(ulong commitPosition, ulong preparePosition, string applicationName)
         {
             ApplicationName = applicationName;
             CommitPosition = commitPosition;
@@ -12,7 +12,7 @@
         }
 
         public string ApplicationName { get; private set; }
-        public long CommitPosition { get; private set; }
-        public long PreparePosition { get; private set; }
+        public ulong CommitPosition { get; private set; }
+        public ulong PreparePosition { get; private set; }
     }
 }
