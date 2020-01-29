@@ -35,7 +35,8 @@ namespace Common.Infrastructure
             _client.SubscribeToAll(
                 start: eventStorePosition,
                 eventAppeared: (sub, e, c) => PublishEvent(sub, e, action, c),
-                subscriptionDropped: OnDropped);
+                subscriptionDropped: OnDropped,
+                userCredentials: new UserCredentials("admin", "changeit"));
 
             return Task.CompletedTask;
         }

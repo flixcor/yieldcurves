@@ -24,20 +24,17 @@ namespace Common.Infrastructure
         {
             Position position = default;
 
-            while (!cancellationToken.IsCancellationRequested)
+            var events = _client.ReadAllAsync(Direction.Forwards, position, ulong.MaxValue, userCredentials: new UserCredentials("admin", "changeit"));
+
+            await foreach (var e in events)
             {
-                var events = _client.ReadAllAsync(Direction.Forwards, position, ulong.MaxValue);
-
-                await foreach (var e in events)
+                if (cancellationToken.IsCancellationRequested)
                 {
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        yield break;
-                    }
-
-                    (var eventPosition, var name, var @event) = e.Deserialize(_eventTypes.ToArray());
-                    yield return (eventPosition.Value.CommitPosition, name, @event);
+                    yield break;
                 }
+
+                (var eventPosition, var name, var @event) = e.Deserialize(_eventTypes.ToArray());
+                yield return (eventPosition.Value.CommitPosition, name, @event);
             }
         }
     }

@@ -1,18 +1,15 @@
-﻿using Common.Core;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using Common.Core;
 using Common.Core.Extensions;
 using Common.Infrastructure.DependencyInjection;
 using Common.Infrastructure.EfCore;
 using Common.Infrastructure.SignalR;
 using EventStore.Client;
-using EventStore.ClientAPI;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
 namespace Common.Infrastructure.Extensions
 {
@@ -60,9 +57,8 @@ namespace Common.Infrastructure.Extensions
             return services
                 .AddSingleton(new ApplicationName(Assembly.GetEntryAssembly().GetName().Name))
                 .AddSingleton(client)
-                .AddScoped<IMessageBusListener, EventStoreListener>(x=> 
+                .AddScoped<IMessageBusListener, EventStoreListener>(x =>
                 {
-                    var conn = x.GetRequiredService<IEventStoreConnection>();
                     var bus = x.GetRequiredService<IEventBus>();
                     var repo = x.GetRequiredService<IReadModelRepository<EventPosition>>();
                     var appName = x.GetRequiredService<ApplicationName>();
@@ -70,7 +66,7 @@ namespace Common.Infrastructure.Extensions
 
                     return new EventStoreListener(bus, repo, appName, uow, client);
                 })
-                .AddSingleton<IRepository>(x=> new EventStoreRepository(client));
+                .AddSingleton<IRepository>(x => new EventStoreRepository(client));
         }
 
         public static IReadModelImplementation AddEfCore(this IServiceCollection services, string connectionString, params Assembly[] assemblyToScan)
@@ -78,7 +74,7 @@ namespace Common.Infrastructure.Extensions
             return AddEfCore<GenericDbContext>(services, connectionString, assemblyToScan);
         }
 
-        public static IReadModelImplementation AddEfCore<T>(this IServiceCollection services, string connectionString, params Assembly[] assemblyToScan) where T :GenericDbContext
+        public static IReadModelImplementation AddEfCore<T>(this IServiceCollection services, string connectionString, params Assembly[] assemblyToScan) where T : GenericDbContext
         {
             var readModelTypes = typeof(ReadObject).GetDescendantTypes(assemblyToScan).ToList();
 
@@ -117,7 +113,7 @@ namespace Common.Infrastructure.Extensions
             var usedTypes = readModelImplementation.GetUsedTypes();
 
             services.AddTransient<ISocketContext, GenericHubContext>();
-            
+
             var decorators = usedTypes
                 .Select(r => new
                 {
