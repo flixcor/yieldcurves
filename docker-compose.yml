@@ -11,7 +11,7 @@ services:
       - "6379:6379"
       
   eventstore-node:
-    image: eventstore/eventstore
+    image: eventstore/eventstore:6.0.0-preview1-buster-slim
     container_name: eventstore
     expose:
       - 2113
@@ -19,6 +19,8 @@ services:
     ports:
       - "2113:2113"
       - "1113:1113"
+    args:
+      - -dev
     stdin_open: true
     tty: true
   
