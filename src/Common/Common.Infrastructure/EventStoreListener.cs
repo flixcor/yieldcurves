@@ -1,43 +1,45 @@
 ﻿using Common.Core;
 using Common.Infrastructure.Extensions;
-using EventStore.Client;
+using EventStore.ClientAPI;
 using System;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Common.Infrastructure
 {
     public class EventStoreListener : IMessageBusListener
     {
+        private readonly IEventStoreConnection _connection;
         private readonly IEventBus _eventBus;
         private readonly IReadModelRepository<EventPosition> _currentPositionRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly EventStoreClient _eventStoreClient;
         private readonly string _applicationName;
 
-        public EventStoreListener(
+        public EventStoreListener(IEventStoreConnection connectionString, 
             IEventBus eventBus, 
             IReadModelRepository<EventPosition> currentPositionRepository, 
             ApplicationName applicationName,
-            IUnitOfWork unitOfWork,
-            EventStoreClient eventStoreClient)
+            IUnitOfWork unitOfWork)
         {
+            _connection = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _currentPositionRepository = currentPositionRepository ?? throw new ArgumentNullException(nameof(currentPositionRepository));
             _unitOfWork = unitOfWork;
-            _eventStoreClient = eventStoreClient;
             _applicationName = applicationName?.Value ?? throw new ArgumentNullException(nameof(applicationName));
         }
 
         public async Task SubscribeToAll()
         {
-            var position = await GetCurrentPosition();
+            var positionTask = GetCurrentPosition();
+            var connectionTask = _connection.ConnectAsync();
 
-            _eventStoreClient.SubscribeToAll(start: position.ToEventStorePosition(), eventAppeared: PublishEvent);
+            var position = await positionTask;
+            await connectionTask;
+
+            _connection.SubscribeToAllFrom(position.ToEventStorePosition(), CatchUpSubscriptionSettings.Default, PublishEvent);
         }
 
-        private async Task PublishEvent(StreamSubscription subscription, ResolvedEvent resolvedEvent, CancellationToken cancellationToken)
+        private async Task PublishEvent(EventStoreCatchUpSubscription subscription, ResolvedEvent resolvedEvent)
         {
             var (_,_,@event) = resolvedEvent.Deserialize();
 

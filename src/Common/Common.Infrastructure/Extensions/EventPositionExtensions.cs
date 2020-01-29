@@ -1,15 +1,15 @@
 ﻿using Common.Core;
-using EventStore.Client;
+using EventStore.ClientAPI;
 
 namespace Common.Infrastructure.Extensions
 {
     public static class EventPositionExtensions
     {
-        public static Position ToEventStorePosition(this EventPosition eventPosition)
+        public static Position? ToEventStorePosition(this EventPosition eventPosition)
         {
             return eventPosition == null 
-                ? Position.Start
-                : new Position(eventPosition.CommitPosition, eventPosition.PreparePosition);
+                ? AllCheckpoint.AllStart 
+                : (Position?)new Position(eventPosition.CommitPosition, eventPosition.PreparePosition);
         }
 
         public static EventPosition ToEventPosition(this Position? position, string applicationName)

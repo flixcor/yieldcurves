@@ -3,7 +3,6 @@ using Common.Core.Extensions;
 using Common.Infrastructure.DependencyInjection;
 using Common.Infrastructure.EfCore;
 using Common.Infrastructure.SignalR;
-using EventStore.Client;
 using EventStore.ClientAPI;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -55,11 +54,9 @@ namespace Common.Infrastructure.Extensions
 
         public static IServiceCollection AddEventStore(this IServiceCollection services, string connectionString)
         {
-            var client = new EventStoreClient(new EventStoreClientSettings(new Uri(connectionString)));
-
             return services
                 .AddSingleton(new ApplicationName(Assembly.GetEntryAssembly().GetName().Name))
-                .AddSingleton(client)
+                .AddScoped(x=> EventStoreConnection.Create(connectionString))
                 .AddScoped<IMessageBusListener, EventStoreListener>(x=> 
                 {
                     var conn = x.GetRequiredService<IEventStoreConnection>();
@@ -68,9 +65,9 @@ namespace Common.Infrastructure.Extensions
                     var appName = x.GetRequiredService<ApplicationName>();
                     var uow = x.GetService<IUnitOfWork>();
 
-                    return new EventStoreListener(bus, repo, appName, uow, client);
+                    return new EventStoreListener(conn, bus, repo, appName, uow);
                 })
-                .AddSingleton<IRepository>(x=> new EventStoreRepository(client));
+                .AddScoped<IRepository>(x=> new EventStoreRepository(connectionString));
         }
 
         public static IReadModelImplementation AddEfCore(this IServiceCollection services, string connectionString, params Assembly[] assemblyToScan)

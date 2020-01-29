@@ -4,6 +4,6 @@
     {
         public string[] EventTypes { get; set; }
         public string StreamName { get; set; }
-        public ulong Position { get; set; }
+        public long Position { get; set; }
     }
 }
