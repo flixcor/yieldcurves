@@ -2,11 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Akka" Version="1.3.17" />
-    <PackageReference Include="EventStore.Client" Version="5.0.5" />
+    <PackageReference Include="EventStore.Client.Grpc" Version="6.0.0-preview2" />
     <PackageReference Include="LanguageExt.Core" Version="3.3.50" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.2.0" />
@@ -16,6 +17,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Npgsql" Version="4.1.3" />
+    <PackageReference Include="Npgsql.NodaTime" Version="4.1.3" />
     <PackageReference Include="protobuf-net" Version="2.4.4" />
     <PackageReference Include="Scrutor" Version="3.1.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
@@ -28,6 +31,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common.Core\Common.Core.csproj" />
+    <ProjectReference Include="..\Common.EventStore.Lib\Common.EventStore.Lib.csproj" />
     <ProjectReference Include="..\Common.Events\Common.Events.csproj" />
   </ItemGroup>
 

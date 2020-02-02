@@ -1,5 +1,4 @@
-﻿using System;
-using Common.Core;
+﻿using Common.Core;
 
 namespace Common.Events
 {
@@ -12,21 +11,11 @@ namespace Common.Events
 
     internal partial class ParallelShockAdded : IParallelShockAdded
     {
-        public ParallelShockAdded(Guid aggregateId, int order, string shockTarget, double shift)
+        public ParallelShockAdded(int order, string shockTarget, double shift)
         {
-            AggregateId = aggregateId.ToString("N");
             Order = order;
             ShockTarget = shockTarget;
             Shift = shift;
-        }
-
-        Guid IEvent.AggregateId => Guid.Parse(AggregateId);
-
-        public IEvent WithVersion(int version)
-        {
-            var clone = (ParallelShockAdded)MemberwiseClone();
-            clone.Version = version;
-            return clone;
         }
     }
 }

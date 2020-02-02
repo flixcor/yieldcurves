@@ -8,6 +8,7 @@ using Common.Core.Extensions;
 using CurveRecipes.Domain;
 using Common.Infrastructure.Extensions;
 using System.Linq;
+using Common.EventStore.Lib.EfCore;
 
 namespace CurveRecipes.Service.Features.CreateCurveRecipe
 {
@@ -17,10 +18,10 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
             IHandleEvent<IMarketCurveCreated>,
             IHandleEvent<ICurvePointAdded>
     {
-        private readonly IRepository _repository;
+        private readonly IAggregateRepository _repository;
         private readonly IReadModelRepository<MarketCurveDto> _readModelRepository;
 
-        public CommandHandler(IRepository repository, IReadModelRepository<MarketCurveDto> readModelRepository)
+        public CommandHandler(IAggregateRepository repository, IReadModelRepository<MarketCurveDto> readModelRepository)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _readModelRepository = readModelRepository ?? throw new ArgumentNullException(nameof(readModelRepository));
@@ -37,26 +38,26 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
                    return maturityResult.Promise(m =>
                    {
                        var outputFrequency = new Domain.OutputFrequency(command.OutputFrequency.OutputSeries, m);
-                       var recipeResult = CurveRecipe.TryCreate(command.Id, command.MarketCurveId, command.ShortName, command.Description, command.LastLiquidTenor, command.DayCountConvention, command.Interpolation,
-                       command.ExtrapolationShort, command.ExtrapolationLong, outputFrequency, command.OutputType);
+                       var recipeResult = CurveRecipe.TryCreate(command.MarketCurveId, command.ShortName, command.Description, command.LastLiquidTenor, command.DayCountConvention, command.Interpolation, command.ExtrapolationShort,
+                           command.ExtrapolationLong, outputFrequency, command.OutputType);
 
                        return recipeResult.Promise(r => _repository.SaveAsync(r));
                    });
                });
         }
 
-        public Task Handle(IMarketCurveCreated @event, CancellationToken cancellationToken)
+        public Task Handle(IEventWrapper<IMarketCurveCreated> @event, CancellationToken cancellationToken)
         {
             var curve = new MarketCurveDto
             {
-                Id = ((IEvent)@event).AggregateId,
-                Name = GenerateName(@event)
+                Id = @event.AggregateId,
+                Name = GenerateName(@event.Content)
             };
 
             return _readModelRepository.Insert(curve);
         }
 
-        public async Task Handle(ICurvePointAdded @event, CancellationToken cancellationToken)
+        public async Task Handle(IEventWrapper<ICurvePointAdded> @event, CancellationToken cancellationToken)
         {
             var curve = await _readModelRepository.Get(@event.AggregateId);
 
@@ -64,7 +65,7 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
                 .ToResult()
                 .Promise(x =>
                 {
-                    x.Tenors.Add(@event.Tenor);
+                    x.Tenors.Add(@event.Content.Tenor);
                     return _readModelRepository.Update(x);
                 });
         }

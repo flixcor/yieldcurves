@@ -15,20 +15,19 @@ namespace UnitTests
             var vendor = Vendor.UBS;
             var desc = "description";
 
-            WhenCreated(() => RegularInstrument.TryCreate(id, vendor, desc).Content)
+            WhenCreated(() => RegularInstrument.TryCreate(vendor, desc).Content)
                 .Then(
-                    RegularInstrumentCreated(id, vendor.ToString(), desc),
-                    InstrumentCreated(id, vendor.ToString(), desc));
+                    RegularInstrumentCreated(vendor.ToString(), desc),
+                    InstrumentCreated(vendor.ToString(), desc));
         }
 
         [Test]
         public void UT_new_regularInstrument_with_BB_generates_error()
         {
-            var id = Guid.NewGuid();
             var vendor = Vendor.Bloomberg;
             var desc = "description";
 
-            Assert.False(RegularInstrument.TryCreate(id, vendor, desc).IsSuccessful);
+            Assert.False(RegularInstrument.TryCreate(vendor, desc).IsSuccessful);
         }
     }
 }

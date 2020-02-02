@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Common.Core;
-using Google.Protobuf.WellKnownTypes;
 
 namespace Common.Events
 {
     public interface ICurveCalculated : IEvent
     {
-        DateTime AsAtDate { get; }
         string AsOfDate { get; }
         Guid CurveRecipeId { get; }
         IEnumerable<IPoint> Points { get; }
@@ -16,30 +14,17 @@ namespace Common.Events
 
     internal partial class CurveCalculated : ICurveCalculated
     {
-        public CurveCalculated(Guid aggregateId, Guid curveRecipeId, string asOfDate, DateTime asAtDate, IEnumerable<IPoint> points)
+        public CurveCalculated(Guid curveRecipeId, string asOfDate, IEnumerable<IPoint> points)
         {
-            AggregateId = aggregateId.ToString("N");
             CurveRecipeId = curveRecipeId.ToString();
             AsOfDate = asOfDate;
-            AsAtDate = Timestamp.FromDateTime(asAtDate.ToUniversalTime());
 
             Points.Add(points?.Cast<Point>() ?? throw new ArgumentNullException(nameof(points)));
         }
 
-        Guid IEvent.AggregateId => Guid.Parse(AggregateId);
-
-        DateTime ICurveCalculated.AsAtDate => AsAtDate.ToDateTime();
-
         Guid ICurveCalculated.CurveRecipeId => Guid.Parse(CurveRecipeId);
 
         IEnumerable<IPoint> ICurveCalculated.Points => Points.Cast<IPoint>();
-
-        public IEvent WithVersion(int version)
-        {
-            var clone = (CurveCalculated)MemberwiseClone();
-            clone.Version = version;
-            return clone;
-        }
     }
 
     internal partial class Point : IPoint

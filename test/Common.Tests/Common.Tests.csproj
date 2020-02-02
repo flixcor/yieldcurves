@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Common\Common.Core\Common.Core.csproj" />
+    <ProjectReference Include="..\..\src\Common\Common.EventStore.Lib\Common.EventStore.Lib.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
+using Common.EventStore.Lib.EfCore;
 using MarketCurves.Domain;
 
 namespace MarketCurves.Service.Features.CreateMarketCurve
@@ -10,9 +11,9 @@ namespace MarketCurves.Service.Features.CreateMarketCurve
         IHandleCommand<Command>,
         IHandleQuery<Query, Dto>
     {
-        private readonly IRepository _repository;
+        private readonly IAggregateRepository _repository;
 
-        public Handler(IRepository repository)
+        public Handler(IAggregateRepository repository)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
@@ -20,7 +21,7 @@ namespace MarketCurves.Service.Features.CreateMarketCurve
         public Task<Result> Handle(Command command, CancellationToken cancellationToken)
         {
 
-            var curveResult = MarketCurve.TryCreate(command.Id, command.Country, command.CurveType, command.FloatingLeg);
+            var curveResult = MarketCurve.TryCreate(command.Country, command.CurveType, command.FloatingLeg);
             return curveResult.Promise(c => _repository.SaveAsync(c));
         }
 

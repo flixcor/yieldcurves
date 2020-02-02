@@ -1,149 +1,56 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
+using Common.EventStore.Lib;
 using Common.Infrastructure.Extensions;
-using Common.Infrastructure.Proto;
-using EventStore.ClientAPI;
+using EventStore.Client;
 
 namespace Common.Infrastructure
 {
-    internal class EventStoreRepository : IRepository
+    internal class EventStoreRepository : IEventRepository
     {
-        private readonly string _connectionString;
-        private const int WritePageSize = 500;
-        private const int ReadPageSize = 500;
+        private readonly EventStoreClient _eventStoreClient;
 
-        public EventStoreRepository(string connectionString)
+        public EventStoreRepository(EventStoreClient eventStoreClient)
         {
-            _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
+            _eventStoreClient = eventStoreClient;
         }
 
-        public async Task<TAggregate> GetByIdAsync<TAggregate>(Guid id) where TAggregate : Aggregate<TAggregate>
+        public async IAsyncEnumerable<IEventWrapper> GetEvents(Guid aggregateId, [EnumeratorCancellation]CancellationToken cancellationToken = default)
         {
-            var version = int.MaxValue;
+            var enumerable = _eventStoreClient.ReadStreamAsync(Direction.Forwards, aggregateId.ToString(),
+                                                               StreamRevision.Start, ulong.MaxValue,
+                                                               cancellationToken: cancellationToken);
 
-            var streamName = AggregateIdToStreamName<TAggregate>(id);
-            var aggregate = ConstructAggregate<TAggregate>();
-
-            var sliceStart = (long)0;
-            StreamEventsSlice currentSlice;
-
-            using (var connection = EventStoreConnection.Create(_connectionString))
+            await foreach (var item in enumerable.WithCancellation(cancellationToken))
             {
-                await connection.ConnectAsync();
-
-                do
+                var wrapper = item.Deserialize();
+                if (wrapper != null)
                 {
-                    var sliceCount = sliceStart + ReadPageSize <= version
-                                        ? ReadPageSize
-                                        : version - (int)sliceStart + 1;
-
-
-
-                    currentSlice = await connection.ReadStreamEventsForwardAsync(streamName, sliceStart, sliceCount, false);
-
-                    //if (currentSlice.Status == StreamNotFound)
-                    //{
-                    //    return Result.Fail<TAggregate>($"{nameof(StreamNotFound)}, {id}, {typeof(TAggregate)}");
-                    //}
-
-                    //if (currentSlice.Status == StreamDeleted)
-                    //{
-                    //    return Result.Fail<TAggregate>($"{nameof(StreamDeleted)}, {id}, {typeof(TAggregate)}");
-                    //}
-
-                    sliceStart = currentSlice.NextEventNumber;
-
-                    var history = currentSlice.Events.Select(x => x.Deserialize().Item3);
-                    aggregate.LoadStateFromHistory(history);
-                } while (version >= currentSlice.NextEventNumber && !currentSlice.IsEndOfStream);
-            }
-
-
-
-            //if (aggregate.Version != version && version < int.MaxValue)
-            //{
-            //    return Result.Fail<TAggregate>($"{id}, {typeof(TAggregate)}, {aggregate.Version}, {version}");
-            //}
-
-            //if (sliceStart == 0 && !currentSlice.Events.Any())
-            //{
-            //    Result.Fail<TAggregate>("Not found");
-            //}
-
-            //return Result.Ok(aggregate);
-
-            return aggregate;
-        }
-
-        public async Task SaveAsync<TAggregate>(TAggregate aggregate) where TAggregate : Aggregate<TAggregate>
-        {
-            var aggregateName = aggregate.GetType().Name;
-
-            var streamName = AggregateIdToStreamName<TAggregate>(aggregate.Id);
-            var eventsToPublish = aggregate.GetUncommittedEvents();
-            var newEvents = eventsToPublish.ToList();
-            var originalVersion = aggregate.Version - newEvents.Count;
-            var expectedVersion = originalVersion == -1 ? ExpectedVersion.NoStream : originalVersion;
-            var eventsToSave = newEvents.Select(e => ToEventData(Guid.NewGuid(), e, aggregate.Id, aggregateName)).ToList();
-
-
-            using (var connection = EventStoreConnection.Create(_connectionString))
-            {
-                await connection.ConnectAsync();
-
-                if (eventsToSave.Count < WritePageSize)
-                {
-                    await connection.AppendToStreamAsync(streamName, expectedVersion, eventsToSave);
-                }
-                else
-                {
-                    using var transaction = await connection.StartTransactionAsync(streamName, expectedVersion);
-                    var position = 0;
-                    while (position < eventsToSave.Count)
-                    {
-                        var pageEvents = eventsToSave.Skip(position).Take(WritePageSize);
-                        await transaction.WriteAsync(pageEvents);
-                        position += WritePageSize;
-                    }
-
-                    await transaction.CommitAsync();
+                    yield return wrapper;
                 }
             }
-
-            aggregate.MarkEventsAsCommitted();
-
         }
 
-        private TAggregate ConstructAggregate<TAggregate>() where TAggregate : Aggregate<TAggregate>
+        public async Task SaveEvents(CancellationToken cancellationToken, params IEventWrapper[] events)
         {
-            var agg = (TAggregate)Activator.CreateInstance(typeof(TAggregate), true);
-            return agg;
-        }
+            var streamName = events.First().AggregateId.ToString();
 
-        private string AggregateIdToStreamName<T>(Guid id) where T : Aggregate<T>
-        {
-            var name = typeof(T).Name;
-            //Ensure first character of type name is lower case to follow javascript naming conventions
-            return string.Format("{0}-{1}", char.ToLower(name[0]) + name.Substring(1), id.ToString("N"));
-        }
+            var expectedVersion = events.Min(x => x.Version) - 1;
+            var revision = new StreamRevision((ulong)expectedVersion);
 
-        private static EventData ToEventData(Guid eventId, IEvent @event, Guid aggregateId, string aggregateName)
-        {
-            var data = Serializer.Serialize(@event);
-            var eventName = @event.GetType().Name;
+            var eventData = events.Select(x => x.ToEventData());
 
-            var eventHeaders = new EventHeaders
+            var result = await _eventStoreClient.ConditionalAppendToStreamAsync(streamName, revision, eventData, cancellationToken: cancellationToken);
+
+            if (result.Status == ConditionalWriteStatus.VersionMismatch)
             {
-                CommitId = aggregateId,
-                AggregateName = aggregateName,
-                EventName = eventName
-            };
-
-            var metadata = Serializer.Serialize(eventHeaders);
-
-            return new EventData(eventId, eventName, true, data, metadata);
+                throw new Exception();
+            }
         }
     }
 }

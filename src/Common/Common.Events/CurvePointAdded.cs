@@ -14,9 +14,8 @@ namespace Common.Events
 
     internal partial class CurvePointAdded : ICurvePointAdded
     {
-        public CurvePointAdded(Guid aggregateId, string tenor, Guid instrumentId, short dateLag, bool isMandatory, string priceType)
+        public CurvePointAdded(string tenor, Guid instrumentId, short dateLag, bool isMandatory, string priceType)
         {
-            AggregateId = aggregateId.ToString("N");
             Tenor = tenor;
             InstrumentId = instrumentId.ToString();
             DateLag = dateLag;
@@ -25,14 +24,5 @@ namespace Common.Events
         }
 
         Guid ICurvePointAdded.InstrumentId => Guid.Parse(InstrumentId);
-
-        Guid IEvent.AggregateId => Guid.Parse(AggregateId);
-
-        public IEvent WithVersion(int version)
-        {
-            var clone = (CurvePointAdded)MemberwiseClone();
-            clone.Version = version;
-            return clone;
-        }
     }
 }

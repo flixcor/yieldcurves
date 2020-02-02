@@ -1,6 +1,5 @@
 ﻿using System;
 using Common.Core;
-using Google.Protobuf;
 
 namespace Common.Events
 {
@@ -12,20 +11,10 @@ namespace Common.Events
 
     internal partial class RegularInstrumentCreated : IRegularInstrumentCreated
     {
-        public RegularInstrumentCreated(Guid aggregateId, string vendor, string description)
+        public RegularInstrumentCreated(string vendor, string description)
         {
-            AggregateId = aggregateId.ToString("N");
             Vendor = vendor ?? throw new ArgumentNullException(nameof(vendor));
             Description = description ?? throw new ArgumentNullException(nameof(description));
-        }
-
-        Guid IEvent.AggregateId => Guid.Parse(AggregateId);
-
-        public IEvent WithVersion(int version)
-        {
-            var clone = (RegularInstrumentCreated)MemberwiseClone();
-            clone.Version = version;
-            return clone;
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Common.Core.Extensions
                 && (myType.IsSubclassOf(baseType) || myType.IsSubclassOfRawGeneric(baseType)));
         }
 
-        public static bool IsSubclassOfRawGeneric(this Type toCheck, Type generic)
+        public static bool IsSubclassOfRawGeneric(this Type? toCheck, Type generic)
         {
             while (toCheck != null && toCheck != typeof(object))
             {
@@ -35,29 +35,29 @@ namespace Common.Core.Extensions
                 {
                     return true;
                 }
-                toCheck = toCheck.BaseType;
+                toCheck = toCheck?.BaseType;
             }
             return false;
         }
 
-        public static T CreateInstance<T>(this Type type, params Type[] genericTypeArguments)
+        public static T? CreateInstance<T>(this Type type, params Type[] genericTypeArguments) where T : class
         {
             return type.CreateInstance<T>(Array.Empty<object>(), genericTypeArguments);
         }
 
-        public static T CreateInstance<T>(this Type type, object[] args, params Type[] genericTypeArguments)
+        public static T? CreateInstance<T>(this Type type, object[] args, params Type[] genericTypeArguments) where T : class
         {
             if (type.IsGenericType && genericTypeArguments != null && genericTypeArguments.Any())
             {
                 var specificType = type.MakeGenericType(genericTypeArguments);
 
-                return (T)Activator.CreateInstance(specificType, args);
+                return (T?)Activator.CreateInstance(specificType, args);
             }
 
-            return (T)Activator.CreateInstance(type, args);
+            return (T?)Activator.CreateInstance(type, args);
         }
 
-        public static bool TryMakeGenericType(this Type type, out Type genericType, params Type[] typeArguments)
+        public static bool TryMakeGenericType(this Type type, out Type? genericType, params Type[] typeArguments)
         {
             try
             {

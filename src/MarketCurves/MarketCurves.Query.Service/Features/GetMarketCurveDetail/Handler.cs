@@ -10,7 +10,7 @@ using Common.Core.Extensions;
 namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
 {
     public class Handler :
-            IHandleQuery<Query, Maybe<Dto>>,
+            IHandleQuery<Query, Dto?>,
             IHandleEvent<IMarketCurveCreated>,
             IHandleEvent<ICurvePointAdded>,
             IHandleEvent<IBloombergInstrumentCreated>,
@@ -25,25 +25,27 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
             _instrumentRepo = instrumentRepo ?? throw new ArgumentNullException(nameof(instrumentRepo));
         }
 
-        public Task<Maybe<Dto>> Handle(Query query, CancellationToken cancellationToken)
+        public Task<Dto?> Handle(Query query, CancellationToken cancellationToken)
         {
             return _curveRepo.Get(query.Id);
         }
 
-        public Task Handle(IMarketCurveCreated @event, CancellationToken cancellationToken)
+        public Task Handle(IEventWrapper<IMarketCurveCreated> @event, CancellationToken cancellationToken)
         {
             var dto = new Dto
             {
                 Id = @event.AggregateId,
-                Name = GenerateName(@event)
+                Name = GenerateName(@event.Content)
             };
 
             return _curveRepo.Insert(dto);
         }
 
-        public async Task Handle(ICurvePointAdded @event, CancellationToken cancellationToken)
+        public async Task Handle(IEventWrapper<ICurvePointAdded> wrapper, CancellationToken cancellationToken)
         {
-            var curveResult = await _curveRepo.Get(@event.AggregateId).ToResult();
+            var @event = wrapper.Content;
+
+            var curveResult = await _curveRepo.Get(wrapper.AggregateId).ToResult();
             var instrumentResult = await _instrumentRepo.Get(@event.InstrumentId).ToResult();
 
             await Result
@@ -70,11 +72,13 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
                 });
         }
 
-        public Task Handle(IBloombergInstrumentCreated @event, CancellationToken cancellationToken)
+        public Task Handle(IEventWrapper<IBloombergInstrumentCreated> wrapper, CancellationToken cancellationToken)
         {
+            var @event = wrapper.Content;
+
             var instrument = new InstrumentDto
             {
-                Id = @event.AggregateId,
+                Id = wrapper.AggregateId,
                 Name = $"{@event.Ticker} {@event.PricingSource} {@event.YellowKey}",
                 Vendor = "Bloomberg"
             };
@@ -82,11 +86,13 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
             return _instrumentRepo.Insert(instrument);
         }
 
-        public Task Handle(IRegularInstrumentCreated @event, CancellationToken cancellationToken)
+        public Task Handle(IEventWrapper<IRegularInstrumentCreated> wrapper, CancellationToken cancellationToken)
         {
+            var @event = wrapper.Content;
+
             var instrument = new InstrumentDto
             {
-                Id = @event.AggregateId,
+                Id = wrapper.AggregateId,
                 Name = @event.Description,
                 Vendor = @event.Vendor
             };

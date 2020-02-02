@@ -11,7 +11,7 @@ services:
       - "6379:6379"
       
   eventstore-node:
-    image: eventstore/eventstore:6.0.0-preview1-buster-slim
+    image: eventstore/eventstore
     container_name: eventstore
     expose:
       - 2113
@@ -19,8 +19,6 @@ services:
     ports:
       - "2113:2113"
       - "1113:1113"
-    args:
-      - -dev
     stdin_open: true
     tty: true
   
@@ -34,6 +32,11 @@ services:
       - ACCEPT_EULA=Y 
       - MSSQL_PID=Developer
       - SA_PASSWORD=8jkGh47hnDw89Haq8LN2
+      
+  mydb:
+    image: postgres
+    ports:
+      - 5432:5432
       
   # envoy:
   #   build:

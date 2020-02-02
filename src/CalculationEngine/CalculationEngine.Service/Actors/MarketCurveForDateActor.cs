@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using CalculationEngine.Service.ActorModel.Commands;
 using CalculationEngine.Service.Domain;
+using Common.Core;
 using Common.Events;
 
 namespace CalculationEngine.Service.ActorModel.Actors
 {
     public class MarketCurveForDateActor : IdempotentActor
     {
-        private readonly Dictionary<Guid, IInstrumentPricingPublished> _pricings = new Dictionary<Guid, IInstrumentPricingPublished>();
+        private readonly Dictionary<Guid, IEventWrapper<IInstrumentPricingPublished>> _pricings = new Dictionary<Guid, IEventWrapper<IInstrumentPricingPublished>>();
 
         private readonly Guid _marketCurveId;
         private readonly Date _asOfDate;
@@ -23,21 +24,23 @@ namespace CalculationEngine.Service.ActorModel.Actors
             Command<SendMeCalculate>(Handle);
         }
 
-        public void Recover(IInstrumentPricingPublished e)
+        public void Recover(IEventWrapper<IInstrumentPricingPublished> wrapper)
         {
+            var e = wrapper.Content;
+
             if (!_pricings.TryGetValue(e.InstrumentId, out var pricing))
             {
-                _pricings.Add(e.InstrumentId, e);
+                _pricings.Add(e.InstrumentId, wrapper);
             }
-            else if (Date.FromString(pricing.AsOfDate) < Date.FromString(e.AsOfDate) || (pricing.AsOfDate == e.AsOfDate && pricing.AsAtDate < e.AsAtDate))
+            else if (Date.FromString(pricing.Content.AsOfDate) < Date.FromString(e.AsOfDate) || (pricing.Content.AsOfDate == e.AsOfDate && pricing.Content.AsAtDate < e.AsAtDate))
             {
-                _pricings[e.InstrumentId] = e;
+                _pricings[e.InstrumentId] = wrapper;
             }
         }
 
         public void Handle(SendMeCalculate q)
         {
-            if (q.CurvePoints.All(x => _pricings.ContainsKey(x.InstrumentId)))
+            if (q.CurvePoints.All(x => _pricings.ContainsKey(x.Content.InstrumentId)))
             {
                 Sender.Tell(new Calculate(_asOfDate, q.CurvePoints, _pricings.Values), Self);
             }

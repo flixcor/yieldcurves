@@ -12,7 +12,7 @@ namespace Common.Infrastructure.Extensions
         public static string GetBaseUrl(this ControllerBase controller) =>
             $"{controller.Request.Scheme}://{controller.Request.Host}{controller.Request.PathBase}";
 
-        public static string GetComponentUrl(this ControllerBase controller, string componentName)
+        public static string? GetComponentUrl(this ControllerBase controller, string componentName)
         {
             var baseUrl = controller.GetBaseUrl();
 
@@ -24,18 +24,13 @@ namespace Common.Infrastructure.Extensions
                 .Select(x => x.Name)
                 .FirstOrDefault();
 
-            return fileName == null
+            return string.IsNullOrWhiteSpace(fileName)
                 ? null
                 : $"{baseUrl}/{fileName}";
         }
 
-        public static IActionResult ComponentActionResult(this ControllerBase controller, object t, string componentName, string hubName = null)
+        public static IActionResult ComponentActionResult(this ControllerBase controller, object t, string componentName, string? hubName = null)
         {
-            if (t is IMaybe)
-            {
-                t = ((dynamic)t).ToResult().Content;
-            }
-
             var componentUrl = controller.GetComponentUrl(componentName);
 
             var hubUrl = !string.IsNullOrWhiteSpace(hubName)
@@ -45,7 +40,7 @@ namespace Common.Infrastructure.Extensions
             return controller.Ok(FrontendComponent.Create(t, componentUrl, hubUrl));
         }
 
-        public static IAsyncEnumerable<RealtimeFrontendComponent<T>> FrontEndComponentAsyncEnumerable<T>(this ControllerBase controller, IAsyncEnumerable<T> t, string componentName, string hubName = null) where T : class
+        public static IAsyncEnumerable<RealtimeFrontendComponent<T>> FrontEndComponentAsyncEnumerable<T>(this ControllerBase controller, IAsyncEnumerable<T> t, string componentName, string? hubName = null) where T : class
         {
             var componentUrl = controller.GetComponentUrl(componentName);
 

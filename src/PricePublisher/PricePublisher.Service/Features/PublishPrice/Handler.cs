@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
 using Common.Events;
+using Common.EventStore.Lib.EfCore;
 using PricePublisher.Service.Domain;
 
 namespace PricePublisher.Service.Features.PublishPrice
@@ -13,11 +14,11 @@ namespace PricePublisher.Service.Features.PublishPrice
         IHandleQuery<Query, Dto>,
         IHandleEvent<IInstrumentCreated>
     {
-        private readonly IRepository _repository;
+        private readonly IAggregateRepository _repository;
         private readonly IReadModelRepository<InstrumentDto> _readModelRepository;
         private readonly Func<DateTime> _currentDateTimeFactory;
 
-        public Handler(IRepository repository, IReadModelRepository<InstrumentDto> readModelRepository, Func<DateTime> currentDateTimeFactory)
+        public Handler(IAggregateRepository repository, IReadModelRepository<InstrumentDto> readModelRepository, Func<DateTime> currentDateTimeFactory)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _readModelRepository = readModelRepository ?? throw new ArgumentNullException(nameof(readModelRepository));
@@ -34,17 +35,24 @@ namespace PricePublisher.Service.Features.PublishPrice
                 .Combine(instrumentResult, currencyResult, asOfDateResult, (_, currency, asOfDate) =>
                 {
                     var price = new Price(currency, command.PriceAmount);
-                    var pricing = new InstrumentPricing(command.Id, asOfDate, _currentDateTimeFactory(), command.InstrumentId, price, command.PriceType);
+                    var pricing = new InstrumentPricing(asOfDate, _currentDateTimeFactory(), command.InstrumentId, price, command.PriceType);
 
-                    return _repository.SaveAsync(pricing);
+                    return _repository.SaveAsync(pricing, cancellationToken);
                 });
 
             return result;
         }
 
-        public Task Handle(IInstrumentCreated @event, CancellationToken cancellationToken)
+        public Task Handle(IEventWrapper<IInstrumentCreated> @event, CancellationToken cancellationToken)
         {
-            var dto = new InstrumentDto { Id = @event.AggregateId, HasPriceType = @event.HasPriceType, Name = @event.Description, Vendor = @event.Vendor };
+            var dto = new InstrumentDto 
+            { 
+                Id = @event.AggregateId, 
+                HasPriceType = @event.Content.HasPriceType, 
+                Name = @event.Content.Description, 
+                Vendor = @event.Content.Vendor 
+            };
+
             return _readModelRepository.Insert(dto);
         }
 

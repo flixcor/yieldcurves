@@ -142,6 +142,42 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "MicroFrontends", "src\Prese
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "64697"
+	EndProjectSection
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_64697"
+		Debug.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_64697"
+		Release.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "64697"
+	EndProjectSection
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_64697"
+		Debug.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_64697"
+		Release.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "64697"
 		SlnRelativePath = "src\Presentation\MicroFrontends\"
 	EndProjectSection
 EndProject
@@ -154,10 +190,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common.Contracts", "Common.Contracts", "{DE3B3A3B-0C00-4532-9964-923CA51E304B}"
 	ProjectSection(SolutionItems) = preProject
 		src\Common\Common.Contracts\events.proto = src\Common\Common.Contracts\events.proto
-		src\Common\Common.Contracts\greet.proto = src\Common\Common.Contracts\greet.proto
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.EventStore", "src\Common\Common.EventStore\Common.EventStore.csproj", "{B40B48BC-F236-4B7A-89A3-55E707A49D2C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.EventStore.Lib", "src\Common\Common.EventStore.Lib\Common.EventStore.Lib.csproj", "{2AC3E81A-14FA-4AD5-9690-B79E6BC41116}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -232,6 +269,10 @@ Global
 		{B40B48BC-F236-4B7A-89A3-55E707A49D2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B40B48BC-F236-4B7A-89A3-55E707A49D2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B40B48BC-F236-4B7A-89A3-55E707A49D2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AC3E81A-14FA-4AD5-9690-B79E6BC41116}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AC3E81A-14FA-4AD5-9690-B79E6BC41116}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AC3E81A-14FA-4AD5-9690-B79E6BC41116}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AC3E81A-14FA-4AD5-9690-B79E6BC41116}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -262,6 +303,7 @@ Global
 		{9B97DA50-7972-4128-BE99-E479CA448765} = {8696303F-4F08-4CAB-9107-A7318E2A1387}
 		{DE3B3A3B-0C00-4532-9964-923CA51E304B} = {8696303F-4F08-4CAB-9107-A7318E2A1387}
 		{B40B48BC-F236-4B7A-89A3-55E707A49D2C} = {8696303F-4F08-4CAB-9107-A7318E2A1387}
+		{2AC3E81A-14FA-4AD5-9690-B79E6BC41116} = {8696303F-4F08-4CAB-9107-A7318E2A1387}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2681B182-AD3D-4651-A205-39DA65F48B1C}

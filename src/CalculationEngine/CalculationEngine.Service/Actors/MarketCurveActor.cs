@@ -4,6 +4,7 @@ using System.Linq;
 using Akka.Actor;
 using CalculationEngine.Service.ActorModel.Commands;
 using CalculationEngine.Service.Domain;
+using Common.Core;
 using Common.Events;
 
 namespace CalculationEngine.Service.ActorModel.Actors
@@ -13,7 +14,7 @@ namespace CalculationEngine.Service.ActorModel.Actors
         private readonly Dictionary<Date, IActorRef> _marketCurvesForDate = new Dictionary<Date, IActorRef>();
         private readonly Dictionary<Guid, IActorRef> _recipeActors = new Dictionary<Guid, IActorRef>();
 
-        private readonly Dictionary<Guid, ICurvePointAdded> _dateLags = new Dictionary<Guid, ICurvePointAdded>();
+        private readonly Dictionary<Guid, IEventWrapper<ICurvePointAdded>> _dateLags = new Dictionary<Guid, IEventWrapper<ICurvePointAdded>>();
         private readonly List<Date> _dates = new List<Date>();
         private readonly List<Guid> _recipeIds = new List<Guid>();
 
@@ -33,24 +34,24 @@ namespace CalculationEngine.Service.ActorModel.Actors
 
         #region Events
         #region CurvePointAdded
-        private void Handle(ICurvePointAdded e)
+        private void Handle(IEventWrapper<ICurvePointAdded> e)
         {
-            Context.ActorSelection("../../instruments").Tell(new SendMeInstrumentPricingPublished(e.InstrumentId));
+            Context.ActorSelection("../../instruments").Tell(new SendMeInstrumentPricingPublished(e.Content.InstrumentId));
         }
 
-        private void Recover(ICurvePointAdded e) => _dateLags.Add(e.InstrumentId, e);
+        private void Recover(IEventWrapper<ICurvePointAdded> e) => _dateLags.Add(e.Content.InstrumentId, e);
         #endregion
 
         #region InstrumentPricingPublished
-        private void Handle(IInstrumentPricingPublished e)
+        private void Handle(IEventWrapper<IInstrumentPricingPublished> e)
         {
-            if (_dateLags.TryGetValue(e.InstrumentId, out var point))
+            if (_dateLags.TryGetValue(e.Content.InstrumentId, out var point))
             {
-                var max = -point.DateLag;
+                var max = -point.Content.DateLag;
 
                 for (var i = 0; i <= max; i++)
                 {
-                    var date = Date.FromString(e.AsOfDate).AddDays(i);
+                    var date = Date.FromString(e.Content.AsOfDate).AddDays(i);
 
                     var actor = GetDateActor(date);
 
@@ -60,15 +61,15 @@ namespace CalculationEngine.Service.ActorModel.Actors
             }
         }
 
-        private void Recover(IInstrumentPricingPublished e)
+        private void Recover(IEventWrapper<IInstrumentPricingPublished> e)
         {
-            if (_dateLags.TryGetValue(e.InstrumentId, out var point))
+            if (_dateLags.TryGetValue(e.Content.InstrumentId, out var point))
             {
-                var max = -point.DateLag;
+                var max = -point.Content.DateLag;
 
                 for (var i = 0; i <= max; i++)
                 {
-                    var date = Date.FromString(e.AsOfDate).AddDays(i);
+                    var date = Date.FromString(e.Content.AsOfDate).AddDays(i);
 
                     if (!_dates.Any(x => x == date))
                     {
@@ -80,7 +81,7 @@ namespace CalculationEngine.Service.ActorModel.Actors
         #endregion
 
         #region CurveRecipeCreated
-        private void Handle(ICurveRecipeCreated e)
+        private void Handle(IEventWrapper<ICurveRecipeCreated> e)
         {
             var recipeActor = GetRecipeActor(e.AggregateId);
             recipeActor.Tell(e);
@@ -92,7 +93,7 @@ namespace CalculationEngine.Service.ActorModel.Actors
             }
         }
 
-        private void Recover(ICurveRecipeCreated e)
+        private void Recover(IEventWrapper<ICurveRecipeCreated> e)
         {
             _recipeIds.Add(e.AggregateId);
         }

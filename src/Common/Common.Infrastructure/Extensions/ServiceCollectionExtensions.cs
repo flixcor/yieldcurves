@@ -1,17 +1,16 @@
-﻿using Common.Core;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using Common.Core;
 using Common.Core.Extensions;
+using Common.EventStore.Lib;
 using Common.Infrastructure.DependencyInjection;
 using Common.Infrastructure.EfCore;
 using Common.Infrastructure.SignalR;
-using EventStore.ClientAPI;
-using Microsoft.AspNetCore.SignalR;
+using EventStore.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
 namespace Common.Infrastructure.Extensions
 {
@@ -52,30 +51,18 @@ namespace Common.Infrastructure.Extensions
                             .WithScopedLifetime());
         }
 
-        public static IServiceCollection AddEventStore(this IServiceCollection services, string connectionString)
-        {
-            return services
-                .AddSingleton(new ApplicationName(Assembly.GetEntryAssembly().GetName().Name))
-                .AddScoped(x=> EventStoreConnection.Create(connectionString))
-                .AddScoped<IMessageBusListener, EventStoreListener>(x=> 
-                {
-                    var conn = x.GetRequiredService<IEventStoreConnection>();
-                    var bus = x.GetRequiredService<IEventBus>();
-                    var repo = x.GetRequiredService<IReadModelRepository<EventPosition>>();
-                    var appName = x.GetRequiredService<ApplicationName>();
-                    var uow = x.GetService<IUnitOfWork>();
-
-                    return new EventStoreListener(conn, bus, repo, appName, uow);
-                })
-                .AddScoped<IRepository>(x=> new EventStoreRepository(connectionString));
-        }
+        public static IServiceCollection AddEventStore(this IServiceCollection services, string connectionString) => services
+                .AddSingleton(new ApplicationName(Assembly.GetEntryAssembly()?.GetName()?.Name ?? throw new Exception()))
+                .AddSingleton(x => new EventStoreClient(new EventStoreClientSettings(new Uri(connectionString))))
+                .AddScoped<IMessageBusListener, EventStoreListener>()
+                .AddScoped<IEventRepository, EventStoreRepository>();
 
         public static IReadModelImplementation AddEfCore(this IServiceCollection services, string connectionString, params Assembly[] assemblyToScan)
         {
             return AddEfCore<GenericDbContext>(services, connectionString, assemblyToScan);
         }
 
-        public static IReadModelImplementation AddEfCore<T>(this IServiceCollection services, string connectionString, params Assembly[] assemblyToScan) where T :GenericDbContext
+        public static IReadModelImplementation AddEfCore<T>(this IServiceCollection services, string connectionString, params Assembly[] assemblyToScan) where T : GenericDbContext
         {
             var readModelTypes = typeof(ReadObject).GetDescendantTypes(assemblyToScan).ToList();
 
@@ -85,7 +72,7 @@ namespace Common.Infrastructure.Extensions
                     var optionsBuilder = new DbContextOptionsBuilder<T>();
                     optionsBuilder.UseSqlServer(connectionString);
 
-                    var context = (T)Activator.CreateInstance(typeof(T), optionsBuilder.Options, readModelTypes);
+                    var context = (T?)Activator.CreateInstance(typeof(T), optionsBuilder.Options, readModelTypes) ?? throw new Exception();
                     context.Database.EnsureCreated();
 
                     return context;
@@ -114,7 +101,7 @@ namespace Common.Infrastructure.Extensions
             var usedTypes = readModelImplementation.GetUsedTypes();
 
             services.AddTransient<ISocketContext, GenericHubContext>();
-            
+
             var decorators = usedTypes
                 .Select(r => new
                 {

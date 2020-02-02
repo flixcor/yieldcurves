@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
 using Common.Events;
+using Common.EventStore.Lib.EfCore;
 using Common.Infrastructure.Extensions;
 using MarketCurves.Domain;
 
@@ -14,12 +15,12 @@ namespace MarketCurves.Service.Features.AddCurvePoint
         IHandleEvent<IInstrumentCreated>,
         IHandleEvent<ICurvePointAdded>
     {
-        private readonly IRepository _repository;
+        private readonly IAggregateRepository _repository;
         private readonly IReadModelRepository<Instrument> _readModelRepository;
         private readonly IReadModelRepository<UsedValues> _usedValues;
         private readonly IReadModelRepository<Instrument> _instruments;
 
-        public Handler(IRepository repository, IReadModelRepository<Instrument> readModelRepository, IReadModelRepository<UsedValues> usedValues, IReadModelRepository<Instrument> instruments)
+        public Handler(IAggregateRepository repository, IReadModelRepository<Instrument> readModelRepository, IReadModelRepository<UsedValues> usedValues, IReadModelRepository<Instrument> instruments)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _readModelRepository = readModelRepository ?? throw new ArgumentNullException(nameof(readModelRepository));
@@ -53,14 +54,14 @@ namespace MarketCurves.Service.Features.AddCurvePoint
                 });
         }
 
-        public Task Handle(IInstrumentCreated @event, CancellationToken cancellationToken)
+        public Task Handle(IEventWrapper<IInstrumentCreated> @event, CancellationToken cancellationToken)
         {
             var instrument = new Instrument
             {
                 Id = @event.AggregateId,
-                Vendor = @event.Vendor,
-                Name = @event.Description,
-                HasPriceType = @event.HasPriceType
+                Vendor = @event.Content.Vendor,
+                Name = @event.Content.Description,
+                HasPriceType = @event.Content.HasPriceType
             };
 
             return _readModelRepository.Insert(instrument);
@@ -68,8 +69,7 @@ namespace MarketCurves.Service.Features.AddCurvePoint
 
         public async Task<Dto> Handle(Query query, CancellationToken cancellationToken)
         {
-            var existing = (await _usedValues.Get(query.MarketCurveId))
-                .Coalesce(new UsedValues());
+            var existing = (await _usedValues.Get(query.MarketCurveId)) ?? new UsedValues();
 
             var instruments = await _instruments
                 .GetAll()
@@ -92,23 +92,22 @@ namespace MarketCurves.Service.Features.AddCurvePoint
             return dto;
         }
 
-        public async Task Handle(ICurvePointAdded @event, CancellationToken cancellationToken)
+        public async Task Handle(IEventWrapper<ICurvePointAdded> @event, CancellationToken cancellationToken)
         {
-            var dto = await (await _usedValues.Get(@event.AggregateId))
-            .Coalesce(async () =>
+            var dto = await _usedValues.Get(@event.AggregateId);
+
+            if (dto == null)
             {
-                var newDto = new UsedValues
+                dto = new UsedValues
                 {
                     Id = @event.AggregateId
                 };
 
-                await _usedValues.Insert(newDto);
+                await _usedValues.Insert(dto);
+            }
 
-                return newDto;
-            });
-
-            dto.Instruments.Add(@event.InstrumentId);
-            dto.Tenors.Add(@event.Tenor);
+            dto.Instruments.Add(@event.Content.InstrumentId);
+            dto.Tenors.Add(@event.Content.Tenor);
 
             await _usedValues.Update(dto);
         }

@@ -1,74 +1,60 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Common.Core;
+using Common.EventStore.Lib;
+using Common.Infrastructure.EventStore;
 using Common.Infrastructure.Proto;
-using EventStore.ClientAPI;
+using EventStore.Client;
 
 namespace Common.Infrastructure.Extensions
 {
     internal static class ResolvedEventExtensions
     {
-        internal static (Position?, string, IEvent) Deserialize(this ResolvedEvent resolvedEvent, params string[] eventTypes)
+        internal static EventData ToEventData(this IEventWrapper wrapper)
+        {
+            var typeName = wrapper.Content.GetType().Name;
+            var data = Serializer.Serialize(wrapper.Content);
+            var eventHeaders = new EventHeaders
+            {
+                AggregateId = wrapper.AggregateId,
+                Timestamp = wrapper.Timestamp,
+                Version = wrapper.Version
+            };
+            var metadata = Serializer.Serialize(eventHeaders);
+
+            return new EventData(Uuid.NewUuid(), typeName, data, metadata, false);
+        }
+
+        internal static IEventWrapper? Deserialize(this ResolvedEvent resolvedEvent, params string[] eventTypes)
         {
             var metadata = resolvedEvent.OriginalEvent.Metadata;
             var data = resolvedEvent.OriginalEvent.Data;
 
             var eventHeaders = Serializer.Deserialize<EventHeaders>(metadata);
 
-            if (eventHeaders != null)
+            if (eventHeaders == null || !eventTypes.Contains(eventHeaders.EventType))
             {
-                var eventName = eventHeaders.EventName;
-                var eventTypeName = typeof(Events.Create).Namespace + '.' + eventName;
-
-                if (!string.IsNullOrWhiteSpace(eventName) && (!eventTypes.Any() || eventTypes.Contains(eventName)))
-                {
-                    var type = typeof(Events.Create).Assembly.GetType(eventTypeName);
-
-                    if (type != null)
-                    {
-                        var @event = Serializer.DeserializeEvent(data, type);
-                        return (resolvedEvent.OriginalPosition, eventName, @event);
-                    } 
-                }
+                return default;
             }
 
-            return default;
-        }
+            var eventName = eventHeaders.EventType;
+            var typeString = typeof(Events.Create).Namespace + '.' + eventName;
+            var type = typeof(Events.Create).Assembly.GetType(typeString);
 
+            var content = Serializer.DeserializeEvent(data, type);
 
-        internal static (Position?, string, byte[]) ResolveEventBytes(this ResolvedEvent resolvedEvent, params string[] eventTypes)
-        {
-            var metadata = resolvedEvent.OriginalEvent.Metadata;
-            var data = resolvedEvent.OriginalEvent.Data;
-
-            var eventHeaders = Serializer.Deserialize<EventHeaders>(metadata);
-
-            if (eventHeaders != null)
+            if (content == null)
             {
-                var eventName = eventHeaders.EventName;
-
-                if (!string.IsNullOrWhiteSpace(eventName) && (!eventTypes.Any() || eventTypes.Contains(eventName)))
-                {
-                    return (resolvedEvent.OriginalPosition, eventName, data);
-                }
+                return default;
             }
 
-            return default;
-        }
-
-        internal static IEnumerable<(Position?, string, byte[])> ResolveEventBytes(this IEnumerable<ResolvedEvent> resolvedEvents, params string[] eventTypes)
-        {
-            return resolvedEvents
-                .Select(e => e.ResolveEventBytes(eventTypes))
-                .Where((e) => e.Item3 != default);
-        }
-
-        internal static IEnumerable<(Position?, string, IEvent)> Deserialize(this IEnumerable<ResolvedEvent> resolvedEvents, params string[] eventTypes)
-        {
-            return resolvedEvents
-                .Select(e => e.Deserialize(eventTypes))
-                .Where((e) => e.Item3 != default);
+            return new EventWrapper(content)
+            {
+                AggregateId = eventHeaders.AggregateId,
+                Id = resolvedEvent.OriginalEvent.Position.ToInt64().commitPosition,
+                Timestamp = eventHeaders.Timestamp,
+                Version = eventHeaders.Version
+            };
         }
     }
 }

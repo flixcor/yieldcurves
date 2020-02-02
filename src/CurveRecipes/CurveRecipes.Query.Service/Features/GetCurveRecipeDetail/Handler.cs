@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
-using Common.Events;
 using Common.Core.Extensions;
+using Common.Events;
 
 namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
 {
     public class Handler :
-            IHandleQuery<Query, Maybe<Dto>>,
+            IHandleQuery<Query, Dto?>,
             IHandleEvent<ICurveRecipeCreated>,
             IHandleEvent<IKeyRateShockAdded>,
             IHandleEvent<IParallelShockAdded>,
@@ -29,29 +28,29 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
             _marketCurveRepository = marketCurveRepository ?? throw new ArgumentNullException(nameof(marketCurveRepository));
         }
 
-        public async Task Handle(ICurveRecipeCreated @event, CancellationToken cancellationToken)
+        public async Task Handle(IEventWrapper<ICurveRecipeCreated> @event, CancellationToken cancellationToken)
         {
             await _marketCurveRepository
-                .Get(@event.MarketCurveId)
+                .Get(@event.Content.MarketCurveId)
                 .ToResult()
                 .Promise(curve =>
                 {
                     var dto = new Dto
                     {
                         Id = @event.AggregateId,
-                        Name = GenerateName(@event, curve)
+                        Name = GenerateName(@event.Content, curve)
                     };
 
                     return _readModelRepository.Insert(dto);
                 });
         }
 
-        public Task<Maybe<Dto>> Handle(Query query, CancellationToken cancellationToken)
+        public Task<Dto?> Handle(Query query, CancellationToken cancellationToken)
         {
             return _readModelRepository.Get(query.Id);
         }
 
-        public async Task Handle(IKeyRateShockAdded @event, CancellationToken cancellationToken)
+        public async Task Handle(IEventWrapper<IKeyRateShockAdded> @event, CancellationToken cancellationToken)
         {
             var transformation = new TransformationDto
             {
@@ -60,18 +59,18 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
                     {
                         new ParameterDto
                         {
-                            Name = nameof(@event.Shift),
-                            Value = @event.Shift.ToString()
+                            Name = nameof(@event.Content.Shift),
+                            Value = @event.Content.Shift.ToString()
                         },
                         new ParameterDto
                         {
-                            Name = nameof(@event.ShockTarget),
-                            Value = @event.ShockTarget
+                            Name = nameof(@event.Content.ShockTarget),
+                            Value = @event.Content.ShockTarget
                         },
                         new ParameterDto
                         {
-                            Name = nameof(@event.Maturities),
-                            Value = string.Join(';', @event.Maturities)
+                            Name = nameof(@event.Content.Maturities),
+                            Value = string.Join(';', @event.Content.Maturities)
                         }
                     }
             };
@@ -86,7 +85,7 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
                 });
         }
 
-        public async Task Handle(IParallelShockAdded @event, CancellationToken cancellationToken)
+        public async Task Handle(IEventWrapper<IParallelShockAdded> @event, CancellationToken cancellationToken)
         {
             var transformation = new TransformationDto
             {
@@ -95,13 +94,13 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
                     {
                         new ParameterDto
                         {
-                            Name = nameof(@event.Shift),
-                            Value = @event.Shift.ToString()
+                            Name = nameof(@event.Content.Shift),
+                            Value = @event.Content.Shift.ToString()
                         },
                         new ParameterDto
                         {
-                            Name = nameof(@event.ShockTarget),
-                            Value = @event.ShockTarget
+                            Name = nameof(@event.Content.ShockTarget),
+                            Value = @event.Content.ShockTarget
                         }
                     }
             };
@@ -116,12 +115,12 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
                 });
         }
 
-        public Task Handle(IMarketCurveCreated @event, CancellationToken cancellationToken)
+        public Task Handle(IEventWrapper<IMarketCurveCreated> @event, CancellationToken cancellationToken)
         {
             var dto = new MarketCurveNamePartDto
             {
                 Id = @event.AggregateId,
-                Value = GenerateName(@event)
+                Value = GenerateName(@event.Content)
             };
 
             return _marketCurveRepository.Insert(dto);

@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
+using Common.EventStore.Lib.EfCore;
 using CurveRecipes.Domain;
 using Newtonsoft.Json.Linq;
 
@@ -11,9 +12,9 @@ namespace CurveRecipes.Service.Features.AddTransformation
         IHandleQuery<Query, Dto>,
         IHandleCommand<Command>
     {
-        private readonly IRepository _repository;
+        private readonly IAggregateRepository _repository;
 
-        public Handler(IRepository repository)
+        public Handler(IAggregateRepository repository)
         {
             _repository = repository;
         }

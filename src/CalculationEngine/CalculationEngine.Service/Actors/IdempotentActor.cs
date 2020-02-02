@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Akka.Persistence;
+using Common.Core;
 
 namespace CalculationEngine.Service.ActorModel
 {
@@ -11,14 +12,14 @@ namespace CalculationEngine.Service.ActorModel
 
         private readonly IDictionary<Guid, int> _eventVersions = new Dictionary<Guid, int>();
 
-        public void IdempotentEvent<T>(Action<T> commandHandler, Action<T> recoveryHandler = null, Func<T, bool> validation = null) where T : class, Common.Core.IEvent
+        public void IdempotentEvent<T>(Action<IEventWrapper<T>> commandHandler, Action<IEventWrapper<T>> recoveryHandler = null, Func<IEventWrapper<T>, bool> validation = null) where T : class, IEvent
         {
             recoveryHandler ??= Ignore;
             validation ??= DefaultValidation;
 
             var wrapped = WrapRecoveryHandler(recoveryHandler);
 
-            Command<T>(e =>
+            Command<IEventWrapper<T>>(e =>
             {
                 if (GetVersion(e) < e.Version && validation(e))
                 {
@@ -33,7 +34,7 @@ namespace CalculationEngine.Service.ActorModel
             Recover(wrapped);
         }
 
-        private Action<T> WrapRecoveryHandler<T>(Action<T> action) where T : Common.Core.IEvent
+        private Action<IEventWrapper<T>> WrapRecoveryHandler<T>(Action<IEventWrapper<T>> action) where T : IEvent
         {
             return x =>
             {
@@ -42,12 +43,12 @@ namespace CalculationEngine.Service.ActorModel
             };
         }
 
-        private int GetVersion<T>(T e) where T : Common.Core.IEvent
+        private int GetVersion<T>(IEventWrapper<T> e) where T : IEvent
         {
             return _eventVersions.TryGetValue(e.AggregateId, out var version) ? version : -1;
         }
 
-        private void AddVersion<T>(T e) where T : Common.Core.IEvent
+        private void AddVersion<T>(IEventWrapper<T> e) where T : IEvent
         {
             if (!_eventVersions.ContainsKey(e.AggregateId))
             {

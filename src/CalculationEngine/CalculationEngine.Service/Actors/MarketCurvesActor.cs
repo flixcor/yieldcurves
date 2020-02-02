@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Akka.Actor;
 using Akka.Util.Internal;
+using Common.Core;
 using Common.Events;
 
 namespace CalculationEngine.Service.ActorModel.Actors
@@ -12,9 +13,9 @@ namespace CalculationEngine.Service.ActorModel.Actors
 
         public MarketCurvesActor()
         {
-            Receive<ICurvePointAdded>(e => GetMarketCurve(e.AggregateId).Tell(e));
-            Receive<ICurveRecipeCreated>(e => GetMarketCurve(e.MarketCurveId).Tell(e));
-            Receive<IInstrumentPricingPublished>(e =>
+            Receive<IEventWrapper<ICurvePointAdded>>(e => GetMarketCurve(e.AggregateId).Tell(e));
+            Receive<IEventWrapper<ICurveRecipeCreated>>(e => GetMarketCurve(e.Content.MarketCurveId).Tell(e));
+            Receive<IEventWrapper<IInstrumentPricingPublished>>(e =>
             _marketCurves.Values.ForEach(c=> c.Tell(e))
             );
         }

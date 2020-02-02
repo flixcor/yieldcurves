@@ -1,69 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Common.Core;
+using Common.EventStore.Lib;
 using Common.Infrastructure.Extensions;
-using EventStore.ClientAPI;
+using EventStore.Client;
 
 namespace Common.Infrastructure
 {
-    public class EventStoreQuery : IDisposable
+    public class EventStoreQuery
     {
-        private readonly IEventStoreConnection _connection;
         private readonly HashSet<string> _eventTypes = new HashSet<string>();
-        private const int PageSize = 250;
+        private readonly EventStoreClient _eventStoreClient;
+        private const ulong PageSize = 250;
 
-        public EventStoreQuery(string connectionString)
+        public EventStoreQuery(EventStoreClient eventStoreClient)
         {
-            _connection = EventStoreConnection.Create(connectionString);
+            _eventStoreClient = eventStoreClient;
         }
 
         public void RegisterEventType(string eventType) => _eventTypes.Add(eventType);
 
-        public async IAsyncEnumerable<(long, string, IEvent)> Run([EnumeratorCancellation]CancellationToken cancellationToken)
+        public async IAsyncEnumerable<IEventWrapper> Run([EnumeratorCancellation]CancellationToken cancellationToken)
         {
-            await _connection.ConnectAsync().ConfigureAwait(false);
-            Position position = default;
-            var isEndOfStream = false;
+            var filter = _eventTypes.Any()
+                ? new EventTypeFilter(_eventTypes.Select(x => new PrefixFilterExpression(x)).ToArray())
+                : EventTypeFilter.None;
 
-            while (!cancellationToken.IsCancellationRequested && !isEndOfStream)
+            var events = _eventStoreClient.ReadAllAsync(Direction.Forwards, Position.Start, PageSize, false, filter, cancellationToken: cancellationToken);
+
+            await foreach (var item in events.WithCancellation(cancellationToken))
             {
-                var events = await _connection.ReadAllEventsForwardAsync(position, PageSize, false);
-
-                isEndOfStream = events.IsEndOfStream;
-                position = events.NextPosition;
-
-                foreach ((var eventPosition, var name, var @event) in events.Events.Deserialize(_eventTypes.ToArray()))
+                var wrapper = item.Deserialize();
+                if (wrapper != null)
                 {
-                    yield return (eventPosition.Value.CommitPosition, name, @event);
+                    yield return wrapper;
                 }
             }
         }
-
-        #region IDisposable Support
-        private bool _disposedValue = false; // To detect redundant calls
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    _connection.Dispose();
-                }
-
-                _disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        #endregion
     }
 }

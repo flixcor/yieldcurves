@@ -18,12 +18,5 @@ namespace Common.Infrastructure.Extensions
                 ? (ActionResult)new OkObjectResult(result.Content)
                 : new BadRequestObjectResult(result.Messages);
         }
-
-        public static ActionResult<T> ToActionResult<T>(this Maybe<T> maybe) where T : class
-        {
-            return maybe.Found
-                ? maybe.ToResult().ToActionResult()
-                : new NotFoundResult();
-        }
     }
 }

@@ -5,6 +5,6 @@ namespace Common.Core
 {
     public interface IEventBus
     {
-        Task Publish<T>(T @event, CancellationToken cancellationToken = default) where T : IEvent;
+        Task Publish(IEventWrapper @event, CancellationToken cancellationToken = default);
     }
 }

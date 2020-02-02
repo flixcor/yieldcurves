@@ -17,8 +17,10 @@ namespace Common.Infrastructure
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
-        public async Task Publish<T>(T @event, CancellationToken cancellationToken = default) where T : IEvent
+        public async Task Publish(IEventWrapper wrapper, CancellationToken cancellationToken = default)
         {
+            var @event = wrapper.Content;
+
             var handlerTypes = @event.GetType()
                 .GetInterfaces()
                 .Where(i => i.GetInterface(nameof(IEvent)) != null)

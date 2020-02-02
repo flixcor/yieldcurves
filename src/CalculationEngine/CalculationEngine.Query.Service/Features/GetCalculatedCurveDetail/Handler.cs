@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CalculationEngine.Query.Service.Features.GetCalculatedCurveDetail
 {
     public class Handler :
-            IHandleQuery<Query, Maybe<Dto>>,
+            IHandleQuery<Query, Dto?>,
             IHandleEvent<ICurveCalculated>,
             IHandleEvent<ICurveRecipeCreated>
     {
@@ -22,7 +22,7 @@ namespace CalculationEngine.Query.Service.Features.GetCalculatedCurveDetail
             _db = db;
         }
 
-        public async Task<Maybe<Dto>> Handle(Query query, CancellationToken cancellationToken)
+        public async Task<Dto?> Handle(Query query, CancellationToken cancellationToken)
         {
             var res = await _db.Set<Dto>()
                 .Include(x => x.Points)
@@ -33,17 +33,19 @@ namespace CalculationEngine.Query.Service.Features.GetCalculatedCurveDetail
                 res.Points = res.Points.OrderBy(x => x.Maturity).ToImmutableArray();
             }
 
-            return res.Maybe();
+            return res;
         }
 
-        public async Task Handle(ICurveCalculated @event, CancellationToken cancellationToken)
+        public async Task Handle(IEventWrapper<ICurveCalculated> wrapper, CancellationToken cancellationToken)
         {
-            var recipe = await _db.FindAsync<CurveRecipe>(@event.CurveRecipeId);
+            var @event = wrapper.Content;
+
+            var recipe = (CurveRecipe?)await _db.FindAsync<CurveRecipe>(@event.CurveRecipeId);
 
             _db.Add(new Dto
             {
-                Id = @event.AggregateId,
-                AsAtDate = @event.AsAtDate,
+                Id = wrapper.AggregateId,
+                AsAtDate = wrapper.Timestamp.ToDateTimeUtc(),
                 AsOfDate = @event.AsOfDate,
                 CurveRecipeId = @event.CurveRecipeId,
                 CurveRecipeName = recipe?.Name,
@@ -57,12 +59,12 @@ namespace CalculationEngine.Query.Service.Features.GetCalculatedCurveDetail
             });
         }
 
-        public Task Handle(ICurveRecipeCreated @event, CancellationToken cancellationToken)
+        public Task Handle(IEventWrapper<ICurveRecipeCreated> @event, CancellationToken cancellationToken)
         {
             _db.Add(new CurveRecipe
             {
                 Id = @event.AggregateId,
-                Name = @event.ShortName
+                Name = @event.Content.ShortName
             });
 
             return Task.CompletedTask;

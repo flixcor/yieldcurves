@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using CalculationEngine.Service.ActorModel.Commands;
+using Common.Core;
 using Common.Events;
 
 namespace CalculationEngine.Service.ActorModel.Actors
 {
     public class InstrumentActor : IdempotentActor
     {
-        private readonly IDictionary<string, IInstrumentPricingPublished> _pricings = new Dictionary<string, IInstrumentPricingPublished>();
+        private readonly IDictionary<string, IEventWrapper<IInstrumentPricingPublished>> _pricings = new Dictionary<string, IEventWrapper<IInstrumentPricingPublished>>();
 
         private readonly Guid _instrumentId;
         public override string PersistenceId => _instrumentId.ToString();
@@ -20,15 +21,17 @@ namespace CalculationEngine.Service.ActorModel.Actors
             Command<SendMeInstrumentPricingPublished>(Handle);
         }
 
-        private void Recover(IInstrumentPricingPublished e)
+        private void Recover(IEventWrapper<IInstrumentPricingPublished> wrapper)
         {
+            var e = wrapper.Content;
+
             if (!_pricings.TryGetValue(e.AsOfDate, out var pricing))
             {
-                _pricings.Add(e.AsOfDate, e);
+                _pricings.Add(e.AsOfDate, wrapper);
             }
-            else if(pricing.AsAtDate < e.AsAtDate)
+            else if(pricing.Content.AsAtDate < e.AsAtDate)
             {
-                _pricings[e.AsOfDate] = e;
+                _pricings[e.AsOfDate] = wrapper;
             }
         }
 

@@ -10,18 +10,18 @@ namespace Common.Infrastructure
 {
     public class InMemoryReadModelRepository<T> : IReadModelRepository<T> where T : ReadObject
     {
-        public InMemoryReadModelRepository(IEnumerable<T> checkpoint = null)
+        public InMemoryReadModelRepository(IEnumerable<T>? checkpoint = null)
         {
             _checkpoint = checkpoint ?? Enumerable.Empty<T>();
         }
 
         private IEnumerable<T> _checkpoint;
 
-        public Task<Maybe<T>> Get(Guid id)
+        public Task<T?> Get(Guid id)
         {
-            var readObject = _checkpoint.FirstOrDefault(x => x.Id == id);
+            var readObject = (T?)_checkpoint.FirstOrDefault(x => x.Id == id);
 
-            return Task.FromResult(readObject.Maybe());
+            return Task.FromResult(readObject);
         }
 
         public IAsyncEnumerable<T> GetAll()
@@ -41,10 +41,10 @@ namespace Common.Infrastructure
             return Task.CompletedTask;
         }
 
-        public Task<Maybe<T>> Single(Expression<Func<T, bool>> where)
+        public Task<T?> Single(Expression<Func<T, bool>> where)
         {
-            var readObject = _checkpoint.AsQueryable().FirstOrDefault(where);
-            return Task.FromResult(readObject.Maybe());
+            var readObject = (T?)_checkpoint.AsQueryable().FirstOrDefault(where);
+            return Task.FromResult(readObject);
         }
 
         public Task Update(T t)

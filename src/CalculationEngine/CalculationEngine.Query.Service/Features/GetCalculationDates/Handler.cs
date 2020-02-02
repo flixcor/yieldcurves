@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
 using Common.Events;
-using Common.Infrastructure.Extensions;
 
 namespace CalculationEngine.Query.Service.Features.GetCalculationDates
 {
@@ -24,13 +23,13 @@ namespace CalculationEngine.Query.Service.Features.GetCalculationDates
             return _readModelRepository.GetAll();
         }
 
-        public async Task Handle(ICurveCalculated @event, CancellationToken cancellationToken)
+        public async Task Handle(IEventWrapper<ICurveCalculated> @event, CancellationToken cancellationToken)
         {
-            var asOfDate = @event.AsOfDate;
+            var asOfDate = @event.Content.AsOfDate;
 
             var existingDto = await _readModelRepository.Single(x => x.AsOfDate == asOfDate);
 
-            if (!existingDto.Found)
+            if (existingDto != null)
             {
                 var dto = new Dto
                 {

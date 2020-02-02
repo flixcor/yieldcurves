@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
 using Common.Infrastructure;
+using EventStore.Client;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -16,23 +17,24 @@ namespace Common.EventStore.Controllers
     public class EventController : ControllerBase
     {
         private readonly ILogger<EventController> _logger;
-
+        private readonly EventStoreClient _client;
         private static readonly JsonSerializerOptions s_jsonSerializerOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         };
 
 
-        public EventController(ILogger<EventController> logger)
+        public EventController(ILogger<EventController> logger, EventStoreClient client)
         {
             _logger = logger;
+            _client = client;
         }
 
         [HttpGet]
         public IAsyncEnumerable<EventReply> GetAsync([FromQuery]EventRequest request)
         {
             var cancel = HttpContext.RequestAborted;
-            var query = new EventStoreQuery("ConnectTo=tcp://admin:changeit@localhost:1113; HeartBeatTimeout=500");
+            var query = new EventStoreQuery(_client);
 
             if (request.EventTypes != null)
             {
@@ -42,11 +44,11 @@ namespace Common.EventStore.Controllers
                 }
             }
 
-            return query.Run(cancel).Select(e=> new EventReply 
-            { 
-                Position = e.Item1,
-                Type = e.Item2,
-                Payload = e.Item3
+            return query.Run(cancel).Select(e => new EventReply
+            {
+                Position = e.Id,
+                Type = e.Content.GetType().Name,
+                Payload = e.Content
             });
         }
 
@@ -61,7 +63,7 @@ namespace Common.EventStore.Controllers
 
             var writer = new StreamWriter(Response.Body);
 
-            var subscriber = new EventStoreSocketSubscriber("ConnectTo=tcp://admin:changeit@localhost:1113; HeartBeatTimeout=500");
+            var subscriber = new EventStoreSocketSubscriber(_client);
 
             if (request.EventTypes != null)
             {
@@ -71,13 +73,17 @@ namespace Common.EventStore.Controllers
                 }
             }
 
-            async Task OnEvent(IEvent payload, string type, long commitPosition)
+            async Task OnEvent(IEventWrapper wrapper)
             {
+                var payload = wrapper.Content;
+                var type = payload.GetType().Name;
+                var position = wrapper.Id;
+
                 var json = JsonSerializer.Serialize(payload, payload?.GetType(), s_jsonSerializerOptions);
 
                 _logger.LogInformation($"returning event: {type}");
 
-                await writer.WriteLineAsync($"id: {commitPosition}\nevent: {type}\ndata: {json}\n\n");
+                await writer.WriteLineAsync($"id: {position}\nevent: {type}\ndata: {json}\n\n");
                 await writer.FlushAsync();
             }
 

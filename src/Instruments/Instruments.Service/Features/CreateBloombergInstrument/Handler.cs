@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
+using Common.EventStore.Lib.EfCore;
 using Instruments.Domain;
 
 namespace Instruments.Service.Features.CreateBloombergInstrument
@@ -9,9 +10,9 @@ namespace Instruments.Service.Features.CreateBloombergInstrument
     public class Handler :
             IHandleCommand<Command>
     {
-        private readonly IRepository _repository;
+        private readonly IAggregateRepository _repository;
 
-        public Handler(IRepository repository)
+        public Handler(IAggregateRepository repository)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
@@ -24,7 +25,7 @@ namespace Instruments.Service.Features.CreateBloombergInstrument
             var instrumentResult = Result.Combine(
                 pricingSourceResult, 
                 yellowKeyResult, 
-                (pricingSource, yellowKey) => BloombergInstrument.TryCreate(command.Id, command.Ticker, pricingSource, yellowKey));
+                (pricingSource, yellowKey) => new BloombergInstrument(command.Ticker, pricingSource, yellowKey));
 
             return instrumentResult.Promise(i => _repository.SaveAsync(i));
         }

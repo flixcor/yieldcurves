@@ -19,13 +19,13 @@ namespace Common.Infrastructure.SignalR
             _context = context;
         }
 
-        public Task<Maybe<T>> Get(Guid id) => _decorated.Get(id);
+        public Task<T?> Get(Guid id) => _decorated.Get(id);
 
         public IAsyncEnumerable<T> GetAll() => _decorated.GetAll();
 
         public IAsyncEnumerable<T> GetMany(Expression<Func<T, bool>> where) => _decorated.GetMany(where);
 
-        public Task<Maybe<T>> Single(Expression<Func<T, bool>> where) => _decorated.Single(where);
+        public Task<T?> Single(Expression<Func<T, bool>> where) => _decorated.Single(where);
 
         public Task Insert(T t)
         {

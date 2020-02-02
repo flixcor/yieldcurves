@@ -164,6 +164,17 @@ namespace Common.Core
 
     public static class ResultExtensions
     {
+        public static Result<T> ToResult<T>(this T? maybe) where T : class
+        {
+            return maybe == null ? Result.Fail<T>("None") : Result.Ok(maybe);
+        }
+
+        public static async Task<Result<T>> ToResult<T>(this Task<T?> maybeTask) where T : class
+        {
+            var maybe = await maybeTask;
+            return maybe.ToResult();
+        }
+
         public static Result<IEnumerable<T>> Convert<T>(this IEnumerable<Result<T>> results)
         {
             if (results.Any(x => !x.IsSuccessful))
@@ -226,6 +237,7 @@ namespace Common.Core
 
             return Result.Fail<TOut>(result.Messages.ToArray());
         }
+
 
         public static async Task<Result> Promise<T>(this Task<Result<T>> task, Func<T, Task> onSuccess)
         {

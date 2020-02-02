@@ -18,7 +18,7 @@ namespace Common.Infrastructure
             _db = db ?? throw new ArgumentNullException(nameof(db));
         }
 
-        public async Task<Maybe<T>> Single(Expression<Func<T, bool>> where)
+        public async Task<T?> Single(Expression<Func<T, bool>> where)
         {
             var get = new RedisValue[] { InstanceName() + "*" };
             var result = await _db.SortAsync(SetName(), sortType: SortType.Alphabetic, by: "nosort", get: get);
@@ -28,12 +28,12 @@ namespace Common.Infrastructure
                 .AsQueryable()
                 .FirstOrDefault(where);
 
-            return readObject.Maybe();
+            return readObject;
         }
 
-        public async Task<Maybe<T>> Get(Guid id)
+        public async Task<T?> Get(Guid id)
         {
-            T dto = null;
+            T? dto = null;
 
             var key = Key(id);
             var result = await _db.StringGetAsync(key);
@@ -43,7 +43,7 @@ namespace Common.Infrastructure
                 dto = JsonConvert.DeserializeObject<T>(result);
             }
 
-            return dto.Maybe();
+            return dto;
         }
 
         public async IAsyncEnumerable<T> GetAll()

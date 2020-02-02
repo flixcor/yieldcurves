@@ -11,7 +11,7 @@ namespace CalculationEngine.Query.Service.Features.GetCalculationsOverviewForDat
 {
     public class Handler :
         IHandleEvent<ICurveCalculated>,
-        IHandleQuery<Query, Maybe<Dto>>,
+        IHandleQuery<Query, Dto?>,
         IHandleEvent<ICurveRecipeCreated>
     {
         private readonly IReadModelRepository<Dto> _dtoRepository;
@@ -25,21 +25,23 @@ namespace CalculationEngine.Query.Service.Features.GetCalculationsOverviewForDat
             _genericDbContext = genericDbContext;
         }
 
-        public async Task Handle(ICurveCalculated @event, CancellationToken cancellationToken)
+        public async Task Handle(IEventWrapper<ICurveCalculated> wrapper, CancellationToken cancellationToken)
         {
+            var @event = wrapper.Content;
+
             var asOfDate = @event.AsOfDate;
 
-            var recipe = (await _recipeRepository.Single(x => x.Id == @event.CurveRecipeId)).Coalesce(new RecipeDto
+            var recipe = (await _recipeRepository.Single(x => x.Id == @event.CurveRecipeId)) ?? new RecipeDto
             {
                 Id = @event.CurveRecipeId,
                 Name = "unknown"
-            });
+            };
 
-            var existingDto = await _dtoRepository.Single(x => x.AsOfDate == asOfDate);
+            var dto = await _dtoRepository.Single(x => x.AsOfDate == asOfDate);
 
-            if (!existingDto.Found)
+            if (dto == null)
             {
-                var dto = new Dto
+                dto = new Dto
                 {
                     Id = Guid.NewGuid(),
                     AsOfDate = asOfDate,
@@ -51,7 +53,6 @@ namespace CalculationEngine.Query.Service.Features.GetCalculationsOverviewForDat
 
             else
             {
-                var dto = existingDto.ToResult().Content;
                 var recipes = dto.Recipes.ToList();
                 recipes.Add(recipe);
                 dto.Recipes = recipes;
@@ -60,23 +61,22 @@ namespace CalculationEngine.Query.Service.Features.GetCalculationsOverviewForDat
             }
         }
 
-        public Task Handle(ICurveRecipeCreated @event, CancellationToken cancellationToken)
+        public Task Handle(IEventWrapper<ICurveRecipeCreated> @event, CancellationToken cancellationToken)
         {
             return _recipeRepository.Insert(new RecipeDto
             {
                 Id = @event.AggregateId,
-                Name = @event.ShortName
+                Name = @event.Content.ShortName
             });
         }
 
-        public async Task<Maybe<Dto>> Handle(Query query, CancellationToken cancellationToken)
+        public Task<Dto?> Handle(Query query, CancellationToken cancellationToken)
         {
-            var result = await _genericDbContext
+            return _genericDbContext
                 .Set<Dto>()
                 .Include(x => x.Recipes)
-                .FirstOrDefaultAsync(x => x.AsOfDate == query.AsOfDate);
-
-            return result.Maybe();
+                .Where(x=> x.AsOfDate == query.AsOfDate)
+                .FirstOrDefaultAsync<Dto?>();
         }
     }
 }

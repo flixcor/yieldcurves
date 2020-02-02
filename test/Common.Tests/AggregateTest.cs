@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using Common.Core;
+using Common.EventStore.Lib;
+using NodaTime;
 using NUnit.Framework;
 
 namespace Common.Tests
@@ -21,13 +23,26 @@ namespace Common.Tests
 
         public IWhen<T> Given(params IEvent[] events)
         {
-            Aggregate.LoadStateFromHistory(events);
+            var version = Aggregate.Version;
+
+            foreach (var item in events)
+            {
+                version++;
+
+                Aggregate.LoadFromHistory(new EventWrapper(item) 
+                { 
+                    AggregateId = Aggregate.Id,
+                    Version = version
+                });
+            }
+            
             return this;
         }
 
         public IThen<T> WhenCreated(Func<T> func)
         {
             Aggregate = func();
+
             return this;
         }
 
@@ -39,14 +54,14 @@ namespace Common.Tests
 
         void IThen<T>.Then(params IEvent[] events)
         {
-            var count = events.Count();
+            var wrapped = events.ToList();
 
             var uncommitted = Aggregate.GetUncommittedEvents().OrderBy(x => x.Version).ToArray();
-            Assert.AreEqual(count, uncommitted.Count());
+            Assert.AreEqual(wrapped.Count, uncommitted.Length);
 
-            for (var i = 0; i < count - 1; i++)
+            for (var i = 0; i < wrapped.Count - 1; i++)
             {
-                Assert.IsTrue(EventsMatch(events[i], uncommitted[i]));
+                Assert.IsTrue(EventsMatch(events[i], wrapped[i]));
             }
         }
 

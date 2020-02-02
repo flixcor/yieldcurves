@@ -1,27 +1,28 @@
 ﻿using Common.Core;
 using Common.Infrastructure.Extensions;
-using EventStore.ClientAPI;
+using EventStore.Client;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Common.Infrastructure
 {
     public class EventStoreListener : IMessageBusListener
     {
-        private readonly IEventStoreConnection _connection;
+        private readonly EventStoreClient _eventStoreClient;
         private readonly IEventBus _eventBus;
         private readonly IReadModelRepository<EventPosition> _currentPositionRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly string _applicationName;
 
-        public EventStoreListener(IEventStoreConnection connectionString, 
+        public EventStoreListener(EventStoreClient eventStoreClient, 
             IEventBus eventBus, 
             IReadModelRepository<EventPosition> currentPositionRepository, 
             ApplicationName applicationName,
             IUnitOfWork unitOfWork)
         {
-            _connection = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
+            _eventStoreClient = eventStoreClient;
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _currentPositionRepository = currentPositionRepository ?? throw new ArgumentNullException(nameof(currentPositionRepository));
             _unitOfWork = unitOfWork;
@@ -31,30 +32,28 @@ namespace Common.Infrastructure
         public async Task SubscribeToAll()
         {
             var positionTask = GetCurrentPosition();
-            var connectionTask = _connection.ConnectAsync();
 
             var position = await positionTask;
-            await connectionTask;
 
-            _connection.SubscribeToAllFrom(position.ToEventStorePosition(), CatchUpSubscriptionSettings.Default, PublishEvent);
+            _eventStoreClient.SubscribeToAll(start: position.ToEventStorePosition(), PublishEvent);
         }
 
-        private async Task PublishEvent(EventStoreCatchUpSubscription subscription, ResolvedEvent resolvedEvent)
+        private async Task PublishEvent(StreamSubscription subscription, ResolvedEvent resolvedEvent, CancellationToken cancellationToken)
         {
-            var (_,_,@event) = resolvedEvent.Deserialize();
+            var wrapper = resolvedEvent.Deserialize();
 
             var currentEventPosition = await GetCurrentPosition();
             var currentPosition = currentEventPosition.ToEventStorePosition();
-            var newPosition = resolvedEvent.OriginalPosition;
+            var newPosition = resolvedEvent.OriginalPosition ?? Position.Start;
 
             if (currentPosition != null && newPosition != null && currentPosition > newPosition)
             {
                 throw new Exception();
             }
 
-            if (@event != null)
+            if (wrapper != null)
             {
-                await _eventBus.Publish(@event);
+                await _eventBus.Publish(wrapper);
             }
 
             var positionToInsert = newPosition.ToEventPosition(_applicationName);
@@ -76,11 +75,11 @@ namespace Common.Infrastructure
             }
         }
 
-        private ValueTask<EventPosition> GetCurrentPosition()
+        private async Task<EventPosition> GetCurrentPosition()
         {
-            return _currentPositionRepository
+            return (await _currentPositionRepository
                 .GetMany(x => x.ApplicationName == _applicationName)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync()) ?? new EventPosition(0,0,_applicationName);
         }
     }
 }

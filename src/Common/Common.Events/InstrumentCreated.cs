@@ -12,21 +12,11 @@ namespace Common.Events
 
     internal partial class InstrumentCreated : IInstrumentCreated
     {
-        public InstrumentCreated(Guid aggregateId, string vendor, string description, bool hasPriceType = false)
+        public InstrumentCreated(string vendor, string description, bool hasPriceType = false)
         {
-            AggregateId = aggregateId.ToString("N");
             Vendor = vendor ?? throw new ArgumentNullException(nameof(vendor));
             Description = description ?? throw new ArgumentNullException(nameof(description));
             HasPriceType = hasPriceType;
-        }
-
-        Guid IEvent.AggregateId => Guid.Parse(AggregateId);
-
-        public IEvent WithVersion(int version)
-        {
-            var clone = (InstrumentCreated)MemberwiseClone();
-            clone.Version = version;
-            return clone;
         }
     }
 }

@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
-using Microsoft.Extensions.Logging;
 
 namespace Common.Infrastructure
 {
@@ -15,9 +14,9 @@ namespace Common.Infrastructure
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
         }
 
-        public async Task Publish<T>(T @event, CancellationToken cancellationToken = default) where T : IEvent
+        public async Task Publish(IEventWrapper @event, CancellationToken cancellationToken = default)
         {
-            var eventName = @event.GetType().Name;
+            var eventName = @event.Content.GetType().Name;
 
             Console.WriteLine($"processing event of type {eventName} with id {@event.AggregateId} and version {@event.Version}");
             try

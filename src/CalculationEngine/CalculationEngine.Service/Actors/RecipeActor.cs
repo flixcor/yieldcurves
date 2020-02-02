@@ -6,6 +6,7 @@ using CalculationEngine.Service.ActorModel.Commands;
 using CalculationEngine.Service.Domain;
 using Common.Core;
 using Common.Events;
+using Common.EventStore.Lib.EfCore;
 using Common.Infrastructure.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,7 +15,7 @@ namespace CalculationEngine.Service.ActorModel.Actors
     public class RecipeActor : IdempotentActor
     {
         private readonly Guid _id;
-        private ICurveRecipeCreated _recipe;
+        private IEventWrapper<ICurveRecipeCreated> _recipe;
 
         public RecipeActor(Guid id)
         {
@@ -27,18 +28,18 @@ namespace CalculationEngine.Service.ActorModel.Actors
 
         private void Handle(Calculate obj)
         {
-            if (obj.CurvePoints.All(x=> obj.Pricings.Any(y=> y.InstrumentId == x.InstrumentId)))
+            if (obj.CurvePoints.All(x => obj.Pricings.Any(y => y.Content.InstrumentId == x.Content.InstrumentId)))
             {
-                var result = CurveCalculation.Calculate(obj.AsOfDate, _recipe, obj.CurvePoints, obj.Pricings);
-                var calc = new CurveCalculationResult(Guid.NewGuid(), _id, obj.AsOfDate, result);
+                var result = CurveCalculation.Calculate(obj.AsOfDate, _recipe, obj.CurvePoints.Select(x=> x.Content), obj.Pricings.Select(x => x.Content));
+                var calc = new CurveCalculationResult(_id, obj.AsOfDate, result);
 
                 using var serviceScope = Context.CreateScope();
-                var repo = serviceScope.ServiceProvider.GetService<IRepository>();
-                repo.SaveAsync(calc).PipeTo(Self); 
+                var repo = serviceScope.ServiceProvider.GetService<IAggregateRepository>();
+                repo.SaveAsync(calc).PipeTo(Self);
             }
         }
 
-        private void Recover(ICurveRecipeCreated e)
+        private void Recover(IEventWrapper<ICurveRecipeCreated> e)
         {
             _recipe = e;
         }

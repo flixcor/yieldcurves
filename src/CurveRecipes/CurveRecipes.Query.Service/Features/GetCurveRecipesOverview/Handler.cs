@@ -18,12 +18,12 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipesOverview
             _readModelRepository = readModelRepository ?? throw new ArgumentNullException(nameof(readModelRepository));
         }
 
-        public Task Handle(ICurveRecipeCreated @event, CancellationToken cancellationToken)
+        public Task Handle(IEventWrapper<ICurveRecipeCreated> @event, CancellationToken cancellationToken)
         {
             var dto = new Dto
             {
                 Id = @event.AggregateId,
-                Name = @event.ShortName
+                Name = @event.Content.ShortName
             };
 
             return _readModelRepository.Insert(dto);

@@ -7,46 +7,35 @@ option csharp_namespace = "Common.Events";
 package events;
 
 message InstrumentCreated {
-  string aggregate_id = 1;
-  string description = 2;
-  bool has_price_type = 3;
-  string vendor = 4;
-  int32 version = 5;
+  string description = 1;
+  bool has_price_type = 2;
+  string vendor = 3;
 }
 
 message BloombergInstrumentCreated {
-  string AggregateId = 1;
-  string PricingSource = 2;
-  string Ticker = 3;
-  int32 Version = 4;
-  string YellowKey = 5;
+  string PricingSource = 1;
+  string Ticker = 2;
+  string YellowKey = 3;
 }
 
 
 message RegularInstrumentCreated {
-  string AggregateId = 1;
-  string Description = 2;
-  string Vendor = 3;
-  int32 Version = 4;
+  string Description = 1;
+  string Vendor = 2;
 }
 
 
 message MarketCurveCreated {
-  string aggregate_id = 1;
-  string country = 2;
-  string curve_type = 3;
-  string floating_leg = 4;
-  int32 version = 5;
+  string country = 1;
+  string curve_type = 2;
+  string floating_leg = 3;
 }
 
 
 message CurveCalculated {
-  string AggregateId = 1;
-  google.protobuf.Timestamp AsAtDate = 2;
-  string AsOfDate = 3;
-  string CurveRecipeId = 4;
-  repeated Point Points = 5;
-  int32 Version = 6;
+  string AsOfDate = 1;
+  string CurveRecipeId = 2;
+  repeated Point Points = 3;
 }
 
 message Point {
@@ -56,67 +45,54 @@ message Point {
 }
 
 message CurveCalculationFailed {
-  string AggregateId = 1;
-  google.protobuf.Timestamp AsAtDate = 2;
-  string AsOfDate = 3;
-  string CurveRecipeId = 4;
-  repeated string Messages = 5;
-  int32 Version = 6;
+  string AsOfDate = 1;
+  string CurveRecipeId = 2;
+  repeated string Messages = 3;
 }
 
 
 message CurvePointAdded {
-  string AggregateId = 1;
+  string InstrumentId = 1;
   int32 DateLag = 2;
-  string InstrumentId = 3;
-  bool IsMandatory = 4;
-  string PriceType = 5;
-  string Tenor = 6;
-  int32 Version = 7;
+  bool IsMandatory = 3;
+  string PriceType = 4;
+  string Tenor = 5;
 }
 
 
 message CurveRecipeCreated {
-  string AggregateId = 1;
-  string DayCountConvention = 2;
-  string Description = 3;
-  string ExtrapolationLong = 4;
-  string ExtrapolationShort = 5;
-  string Interpolation = 6;
-  string LastLiquidTenor = 7;
-  string MarketCurveId = 8;
-  double MaximumMaturity = 9;
-  string OutputSeries = 10;
-  string OutputType = 11;
-  string ShortName = 12;
-  int32 Version = 13;
+  string DayCountConvention = 1;
+  string Description = 2;
+  string ExtrapolationLong = 3;
+  string ExtrapolationShort = 4;
+  string Interpolation = 5;
+  string LastLiquidTenor = 6;
+  string MarketCurveId = 7;
+  double MaximumMaturity = 8;
+  string OutputSeries = 9;
+  string OutputType = 10;
+  string ShortName = 11;
 }
 
 message InstrumentPricingPublished {
-  string AggregateId = 1;
-  google.protobuf.Timestamp AsAtDate = 2;
-  string AsOfDate = 3;
-  string InstrumentId = 4;
-  double PriceAmount = 5;
-  string PriceCurrency = 6;
-  string PriceType = 7;
-  int32 Version = 8;
+  google.protobuf.Timestamp AsAtDate = 1;
+  string AsOfDate = 2;
+  string InstrumentId = 3;
+  double PriceAmount = 4;
+  string PriceCurrency = 5;
+  string PriceType = 6;
 }
 
 
 message KeyRateShockAdded {
-  string AggregateId = 1;
-  repeated double Maturities = 2 [packed = false];
-  int32 Order = 3;
-  double Shift = 4;
-  string ShockTarget = 5;
-  int32 Version = 6;
-}
-
-message ParallelShockAdded {
-  string AggregateId = 1;
+  repeated double Maturities = 1 [packed = false];
   int32 Order = 2;
   double Shift = 3;
   string ShockTarget = 4;
-  int32 Version = 5;
+}
+
+message ParallelShockAdded {
+  int32 Order = 1;
+  double Shift = 2;
+  string ShockTarget = 3;
 }

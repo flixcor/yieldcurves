@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using CalculationEngine.Service.Domain;
+using Common.Core;
 using Common.Events;
 
 namespace CalculationEngine.Service.ActorModel.Commands
 {
     public class Calculate
     {
-        public Calculate(Date asOfDate, ICollection<ICurvePointAdded> curvePoints, ICollection<IInstrumentPricingPublished> pricings)
+        public Calculate(Date asOfDate, ICollection<IEventWrapper<ICurvePointAdded>> curvePoints, ICollection<IEventWrapper<IInstrumentPricingPublished>> pricings)
         {
             AsOfDate = asOfDate;
             CurvePoints = curvePoints?.ToImmutableArray() ?? throw new ArgumentNullException(nameof(curvePoints));
@@ -16,7 +17,7 @@ namespace CalculationEngine.Service.ActorModel.Commands
         }
 
         public Date AsOfDate { get; }
-        public ImmutableArray<ICurvePointAdded> CurvePoints { get; }
-        public ImmutableArray<IInstrumentPricingPublished> Pricings { get; }
+        public ImmutableArray<IEventWrapper<ICurvePointAdded>> CurvePoints { get; }
+        public ImmutableArray<IEventWrapper<IInstrumentPricingPublished>> Pricings { get; }
     }
 }

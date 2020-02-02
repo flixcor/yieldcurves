@@ -1,11 +1,13 @@
 ﻿using System;
+using NodaTime;
 
 namespace Common.Infrastructure
 {
     public class EventHeaders
     {
-        public string EventName { get; internal set; }
-        public string AggregateName { get; internal set; }
-        public Guid CommitId { get; internal set; }
+        public int Version { get; set; }
+        public Guid AggregateId { get; set; }
+        public string EventType { get; set; }
+        public Instant Timestamp { get; set; }
     }
 }

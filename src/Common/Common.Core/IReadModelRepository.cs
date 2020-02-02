@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Common.Core
@@ -11,8 +10,8 @@ namespace Common.Core
     {
         IAsyncEnumerable<T> GetAll();
         IAsyncEnumerable<T> GetMany(Expression<Func<T, bool>> where);
-        Task<Maybe<T>> Single(Expression<Func<T, bool>> where);
-        Task<Maybe<T>> Get(Guid id);
+        Task<T?> Single(Expression<Func<T, bool>> where);
+        Task<T?> Get(Guid id);
         Task Update(T t);
         Task Insert(T t);
     }

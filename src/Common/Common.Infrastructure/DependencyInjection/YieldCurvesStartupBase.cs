@@ -12,13 +12,13 @@ namespace Common.Infrastructure.DependencyInjection
 {
     public abstract class YieldCurvesStartupBase
     {
-        private readonly string _frontEndUrl;
+        private readonly string? _frontEndUrl;
         private readonly bool _withSignalR;
 
         public IConfiguration Configuration { get; }
         protected Assembly[] AssembliesToScan { get; }
 
-        protected YieldCurvesStartupBase(IConfiguration configuration, string frontEndUrl = null, bool withSignalR = false, params Assembly[] assembliesToScan)
+        protected YieldCurvesStartupBase(IConfiguration configuration, string? frontEndUrl = null, bool withSignalR = false, params Assembly[] assembliesToScan)
         {
             Configuration = configuration;
             _frontEndUrl = frontEndUrl;

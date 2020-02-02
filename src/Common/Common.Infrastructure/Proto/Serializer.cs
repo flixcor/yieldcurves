@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using Common.Core;
-using Common.Events;
 using Google.Protobuf;
 using ProtoBuf.Meta;
 
@@ -15,21 +13,15 @@ namespace Common.Infrastructure.Proto
             Setup();
         }
 
-        public static IEvent DeserializeEvent(byte[] byteArray, Type type)
+        public static IEvent? DeserializeEvent(byte[] byteArray, Type? type)
         {
-            if (!typeof(IEvent).IsAssignableFrom(type) || !typeof(Google.Protobuf.IMessage).IsAssignableFrom(type))
-            {
-                return default;
-            }
+            var parser = (MessageParser?)type?.GetProperty("Parser")?.GetValue(null);
+            var @event = (IEvent?)parser?.ParseFrom(byteArray);
 
-            using var stream = new MemoryStream(byteArray);
-            var parser = (MessageParser)type?.GetProperty("Parser")?.GetValue(null);
-            var @event = (IEvent)parser?.ParseFrom(byteArray);
-
-            return @event ?? default;
+            return @event;
         }
 
-        public static T Deserialize<T>(byte[] byteArray)
+        public static T? Deserialize<T>(byte[] byteArray) where T : class
         {
             using var stream = new MemoryStream(byteArray);
             stream.Seek(0, SeekOrigin.Begin);
@@ -55,9 +47,10 @@ namespace Common.Infrastructure.Proto
         public static void Setup()
         {
             var eventHeaders = RuntimeTypeModel.Default.Add(typeof(EventHeaders), false);
-            eventHeaders.AddField(1, nameof(EventHeaders.CommitId));
-            eventHeaders.AddField(2, nameof(EventHeaders.AggregateName));
-            eventHeaders.AddField(3, nameof(EventHeaders.EventName));
+            eventHeaders.AddField(1, nameof(EventHeaders.AggregateId));
+            eventHeaders.AddField(2, nameof(EventHeaders.EventType));
+            eventHeaders.AddField(3, nameof(EventHeaders.Timestamp));
+            eventHeaders.AddField(4, nameof(EventHeaders.Version));
         }
     }
 }

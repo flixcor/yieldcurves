@@ -20,10 +20,9 @@ namespace Common.Events
 
     internal partial class CurveRecipeCreated : ICurveRecipeCreated
     {
-        public CurveRecipeCreated(Guid aggregateId, Guid marketCurveId, string shortName, string description, string lastLiquidTenor, string dayCountConvention, string interpolation,
+        public CurveRecipeCreated(Guid marketCurveId, string shortName, string description, string lastLiquidTenor, string dayCountConvention, string interpolation,
             string extrapolationShort, string extrapolationLong, string outputSeries, double maximumMaturity, string outputType)
         {
-            AggregateId = aggregateId.ToString("N");
             MarketCurveId = marketCurveId.ToString();
             ShortName = shortName;
             Description = description;
@@ -37,15 +36,6 @@ namespace Common.Events
             OutputType = outputType;
         }
 
-        Guid IEvent.AggregateId => Guid.Parse(AggregateId);
-
         Guid ICurveRecipeCreated.MarketCurveId => Guid.Parse(MarketCurveId);
-
-        public IEvent WithVersion(int version)
-        {
-            var clone = (CurveRecipeCreated)MemberwiseClone();
-            clone.Version = version;
-            return clone;
-        }
     }
 }

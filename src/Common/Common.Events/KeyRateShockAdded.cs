@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Common.Core;
 
 namespace Common.Events
@@ -14,9 +13,8 @@ namespace Common.Events
 
     internal partial class KeyRateShockAdded : IKeyRateShockAdded
     {
-        public KeyRateShockAdded(Guid aggregateId, int order, string shockTarget, double shift, double[] maturities)
+        public KeyRateShockAdded(int order, string shockTarget, double shift, double[] maturities)
         {
-            AggregateId = aggregateId.ToString("N");
             Order = order;
             ShockTarget = shockTarget;
             Shift = shift;
@@ -24,14 +22,5 @@ namespace Common.Events
         }
 
         IEnumerable<double> IKeyRateShockAdded.Maturities => Maturities;
-
-        Guid IEvent.AggregateId => Guid.Parse(AggregateId);
-
-        public IEvent WithVersion(int version)
-        {
-            var clone = (KeyRateShockAdded)MemberwiseClone();
-            clone.Version = version;
-            return clone;
-        }
     }
 }

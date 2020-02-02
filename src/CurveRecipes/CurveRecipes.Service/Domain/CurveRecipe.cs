@@ -3,40 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using Common.Core;
 using Common.Events;
+using Common.EventStore.Lib;
 using static Common.Events.Create;
 
 namespace CurveRecipes.Domain
 {
     public class CurveRecipe : Aggregate<CurveRecipe>
     {
-        static CurveRecipe()
-        {
-            RegisterApplyMethod<ICurveRecipeCreated>(Apply);
-            RegisterApplyMethod<IKeyRateShockAdded>(Apply);
-            RegisterApplyMethod<IParallelShockAdded>(Apply);
-        }
-
         private int _count = 0;
 
         private CurveRecipe()
         {
         }
 
-        public static Result<CurveRecipe> TryCreate(Guid id, Guid marketCurveId, string shortName, string description, Tenor lastLiquidTenor, DayCountConvention dayCountConvention, Interpolation interpolation,
-            ExtrapolationShort extrapolationShort, ExtrapolationLong extrapolationLong, OutputFrequency outputFrequency, OutputType outputType)
+        public static Result<CurveRecipe> TryCreate(Guid marketCurveId, string shortName, string description, Tenor lastLiquidTenor, DayCountConvention dayCountConvention, Interpolation interpolation, ExtrapolationShort extrapolationShort,
+            ExtrapolationLong extrapolationLong, OutputFrequency outputFrequency, OutputType outputType)
         {
             var errors = new List<string>();
-
-            if (id.Equals(Guid.Empty))
-            {
-                errors.Add($"{nameof(id)} cannot be empty");
-            }
 
             if (marketCurveId.Equals(Guid.Empty))
             {
                 errors.Add($"{nameof(marketCurveId)} cannot be empty");
             }
-            
+
             if (string.IsNullOrWhiteSpace(shortName))
             {
                 errors.Add($"{nameof(shortName)} cannot be empty");
@@ -57,15 +46,15 @@ namespace CurveRecipes.Domain
                 return Result.Fail<CurveRecipe>(errors.ToArray());
             }
 
-            return Result.Ok(new CurveRecipe(id, marketCurveId, shortName, description, lastLiquidTenor, dayCountConvention, interpolation,
-            extrapolationShort, extrapolationLong, outputFrequency, outputType));
+            return Result.Ok(new CurveRecipe(marketCurveId, shortName, description, lastLiquidTenor, dayCountConvention, interpolation, extrapolationShort,
+                extrapolationLong, outputFrequency, outputType));
         }
 
-        private CurveRecipe(Guid id, Guid marketCurveId, string shortName, string description, Tenor lastLiquidTenor, DayCountConvention dayCountConvention, Interpolation interpolation,
-            ExtrapolationShort extrapolationShort, ExtrapolationLong extrapolationLong, OutputFrequency outputFrequency, OutputType outputType)
+        private CurveRecipe(Guid marketCurveId, string shortName, string description, Tenor lastLiquidTenor, DayCountConvention dayCountConvention, Interpolation interpolation, ExtrapolationShort extrapolationShort,
+            ExtrapolationLong extrapolationLong, OutputFrequency outputFrequency, OutputType outputType)
         {
-            var @event = CurveRecipeCreated(id, marketCurveId, shortName, description, lastLiquidTenor.ToString(), dayCountConvention.ToString(), interpolation.ToString(),
-                extrapolationShort.ToString(), extrapolationLong.ToString(), outputFrequency.OutputSeries.ToString(), outputFrequency.MaximumMaturity.Value, outputType.ToString());
+            var @event = CurveRecipeCreated(marketCurveId, shortName, description, lastLiquidTenor.ToString(), dayCountConvention.ToString(), interpolation.ToString(), extrapolationShort.ToString(),
+                extrapolationLong.ToString(), outputFrequency.OutputSeries.ToString(), outputFrequency.MaximumMaturity.Value, outputType.ToString());
 
             ApplyEvent(@event);
         }
@@ -82,12 +71,12 @@ namespace CurveRecipes.Domain
             switch (transformation)
             {
                 case ParallelShock parallelShock:
-                    var psEvent = ParallelShockAdded(Id, order.Value, parallelShock.ShockTarget.ToString(), parallelShock.Shift.Value);
+                    var psEvent = ParallelShockAdded(order.Value, parallelShock.ShockTarget.ToString(), parallelShock.Shift.Value);
                     ApplyEvent(psEvent);
                     break;
 
                 case KeyRateShock keyRateShock:
-                    var krsEvent = KeyRateShockAdded(Id, order.Value, keyRateShock.ShockTarget.ToString(), keyRateShock.Shift.Value, keyRateShock.Maturities.Select(m => m.Value).ToArray());
+                    var krsEvent = KeyRateShockAdded(order.Value, keyRateShock.ShockTarget.ToString(), keyRateShock.Shift.Value, keyRateShock.Maturities.Select(m => m.Value).ToArray());
                     ApplyEvent(krsEvent);
                     break;
 
@@ -98,19 +87,15 @@ namespace CurveRecipes.Domain
             return Result.Ok();
         }
 
-        private static void Apply(CurveRecipe curve, ICurveRecipeCreated e)
+        protected override void Apply(IEvent @event)
         {
-            curve.Id = e.AggregateId;
-        }
-
-        private static void Apply(CurveRecipe curve, IKeyRateShockAdded e)
-        {
-            curve._count++;
-        }
-
-        private static void Apply(CurveRecipe curve, IParallelShockAdded e)
-        {
-            curve._count++;
+            switch (@event)
+            {
+                case IKeyRateShockAdded _:
+                case IParallelShockAdded _:
+                    _count++;
+                    break;
+            }
         }
     }
 }

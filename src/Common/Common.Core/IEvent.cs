@@ -2,11 +2,7 @@
 
 namespace Common.Core
 {
-    public interface IEvent : IMessage
+    public interface IEvent : Google.Protobuf.IMessage
     {
-        Guid AggregateId { get; }
-        int Version { get; }
-
-        public IEvent WithVersion(int version);
     }
 }
