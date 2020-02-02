@@ -10,7 +10,8 @@ namespace Common.Infrastructure.Controller
     {
         public static string GetFeatureName(Type type)
         {
-            var nameSpaceParts = type.FullName.Split('.');
+            var fullName = type.FullName ?? string.Empty;
+            var nameSpaceParts = fullName.Split('.');
             var length = nameSpaceParts.Length();
             var featureName = nameSpaceParts[Math.Max(0, length - 2)];
             return featureName.PascalToKebabCase();

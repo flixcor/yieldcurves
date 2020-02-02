@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Common.Core;
-using Common.Core.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Common.Infrastructure.EfCore
@@ -25,7 +23,8 @@ namespace Common.Infrastructure.EfCore
 
             foreach (var readModelType in _readModelTypes)
             {
-                var splitName = readModelType.FullName.Split('.');
+                var fullName = readModelType.FullName ?? string.Empty;
+                var splitName = fullName.Split('.');
                 var lastTwo = splitName.Skip(Math.Max(0, splitName.Count() - 2));
                 var qualifiedName = string.Join("_", lastTwo);
 
