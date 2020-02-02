@@ -9,8 +9,8 @@ namespace Common.EventStore.Lib
 {
     public abstract class Aggregate<T>
     {
-        private readonly List<EventWrapper> _events = new List<EventWrapper>();
-        internal IEnumerable<EventWrapper> GetUncommittedEvents() => _events;
+        private readonly List<IEventWrapper> _events = new List<IEventWrapper>();
+        internal IEnumerable<IEventWrapper> GetUncommittedEvents() => _events;
         internal void ClearEvents() => _events.Clear();
 
         public Guid Id { get; internal set; } = Guid.NewGuid();

@@ -1,15 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
 namespace Common.EventStore.Lib.EfCore
 {
     internal class EventStoreContext : DbContext
     {
-        static EventStoreContext()
-        {
-            NpgsqlConnection.GlobalTypeMapper.UseNodaTime();
-        }
-
         public EventStoreContext(DbContextOptions options) : base(options)
         {
             Database.EnsureCreated();

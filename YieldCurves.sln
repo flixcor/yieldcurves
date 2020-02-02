@@ -196,6 +196,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.EventStore", "src\Co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.EventStore.Lib", "src\Common\Common.EventStore.Lib\Common.EventStore.Lib.csproj", "{2AC3E81A-14FA-4AD5-9690-B79E6BC41116}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.EventStore.Lib.EfCore", "src\Common\Common.EventStore.Lib.EfCore\Common.EventStore.Lib.EfCore.csproj", "{6C51F626-F521-41AC-B08B-7C31EF81C897}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -273,6 +275,10 @@ Global
 		{2AC3E81A-14FA-4AD5-9690-B79E6BC41116}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2AC3E81A-14FA-4AD5-9690-B79E6BC41116}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2AC3E81A-14FA-4AD5-9690-B79E6BC41116}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C51F626-F521-41AC-B08B-7C31EF81C897}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C51F626-F521-41AC-B08B-7C31EF81C897}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C51F626-F521-41AC-B08B-7C31EF81C897}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C51F626-F521-41AC-B08B-7C31EF81C897}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -304,6 +310,7 @@ Global
 		{DE3B3A3B-0C00-4532-9964-923CA51E304B} = {8696303F-4F08-4CAB-9107-A7318E2A1387}
 		{B40B48BC-F236-4B7A-89A3-55E707A49D2C} = {8696303F-4F08-4CAB-9107-A7318E2A1387}
 		{2AC3E81A-14FA-4AD5-9690-B79E6BC41116} = {8696303F-4F08-4CAB-9107-A7318E2A1387}
+		{6C51F626-F521-41AC-B08B-7C31EF81C897} = {8696303F-4F08-4CAB-9107-A7318E2A1387}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2681B182-AD3D-4651-A205-39DA65F48B1C}

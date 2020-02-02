@@ -3,7 +3,7 @@ using Common.Core;
 using Google.Protobuf;
 using NodaTime;
 
-namespace Common.EventStore.Lib
+namespace Common.EventStore.Lib.EfCore
 {
     public class PersistedEvent
     {
@@ -28,13 +28,7 @@ namespace Common.EventStore.Lib
                 throw new Exception();
             }
 
-            return new EventWrapper(content)
-            {
-                Id = Id,
-                AggregateId = AggregateId,
-                Timestamp = Timestamp,
-                Version = Version
-            };
+            return new EventWrapper(Id, Timestamp, AggregateId, Version, content);
         }
 
         private IEvent? GetContent()

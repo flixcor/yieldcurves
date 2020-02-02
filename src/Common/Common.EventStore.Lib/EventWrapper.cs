@@ -4,7 +4,7 @@ using NodaTime;
 
 namespace Common.EventStore.Lib
 {
-    internal class EventWrapper : IEventWrapper
+    public class EventWrapper : IEventWrapper
     {
         internal static EventWrapper Clone(IEventWrapper other)
         {
@@ -20,6 +20,15 @@ namespace Common.EventStore.Lib
         internal EventWrapper(IEvent payload)
         {
             Content = payload;
+        }
+
+        public EventWrapper(long id, Instant timestamp, Guid aggregateId, int version, IEvent content)
+        {
+            Id = id;
+            Timestamp = timestamp;
+            AggregateId = aggregateId;
+            Version = version;
+            Content = content;
         }
 
         public long Id { get; internal set; }

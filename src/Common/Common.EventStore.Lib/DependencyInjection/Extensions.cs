@@ -1,23 +1,19 @@
-﻿using Common.EventStore.Lib;
+﻿using System;
+using Common.EventStore.Lib.DependencyInjection;
 using Common.EventStore.Lib.EfCore;
-using Microsoft.EntityFrameworkCore;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class Extensions
     {
-        public static IServiceCollection AddEventStoreContext(this IServiceCollection services, string connectionString, string? adminDb = null) =>
-            services
-                .AddDbContext<EventStoreContext>(o => o.UseNpgsql(connectionString, u => 
-                {
-                    u.UseNodaTime();
+        public static IServiceCollection AddEventStoreContext(this IServiceCollection services, Action<IPersistenceOption> persistence)
+        {
+            services.AddScoped<IAggregateRepository, AggregateRepository>();
 
-                    if (adminDb != null)
-                    {
-                        u.UseAdminDatabase(adminDb);
-                    }
-                }))
-                .AddScoped<IAggregateRepository, AggregateRepository>()
-                .AddScoped<IEventRepository, EventRepository>();
+            var options = new PersistenseOption(services);
+            persistence(options);
+
+            return services;
+        }
     }
 }
