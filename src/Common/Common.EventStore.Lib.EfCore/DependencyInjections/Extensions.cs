@@ -9,7 +9,7 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static void WithPostgres(this IPersistenceOption option, string connectionString, string? adminDb = null) => option.Services.AddPostgres(connectionString, adminDb);
 
-        private static void AddPostgres(this IServiceCollection services, string connectionString, string? adminDb = null)
+        private static void AddPostgres(this IServiceCollection services, string connectionString, string? adminDb)
         {
             services
                 .AddDbContext<EventStoreContext>(o => o.UseNpgsql(connectionString, u =>

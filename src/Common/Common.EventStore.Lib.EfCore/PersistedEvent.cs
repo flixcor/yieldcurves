@@ -1,13 +1,12 @@
 ﻿using System;
 using Common.Core;
-using Google.Protobuf;
+using Common.EventStore.Lib.Proto;
 using NodaTime;
 
 namespace Common.EventStore.Lib.EfCore
 {
     public class PersistedEvent
     {
-        private static readonly JsonFormatter s_jsonFormatter = new JsonFormatter(new JsonFormatter.Settings(true));
 
         internal static PersistedEvent FromEventWrapper(IEventWrapper eventWrapper)
         {
@@ -15,7 +14,7 @@ namespace Common.EventStore.Lib.EfCore
             {
                 AggregateId = eventWrapper.Metadata.AggregateId,
                 EventType = eventWrapper.Content.GetType().Name,
-                Payload = s_jsonFormatter.Format(eventWrapper.Content) ?? throw new Exception()
+                Payload = Serializer.Serialize(eventWrapper.Content)
             };
         }
 
@@ -33,11 +32,7 @@ namespace Common.EventStore.Lib.EfCore
 
         private IEvent? GetContent()
         {
-            var typeString = typeof(Events.Create).Namespace + '.' + EventType;
-            var type = typeof(Events.Create).Assembly.GetType(typeString);
-            var parser = (MessageParser?)type?.GetProperty("Parser")?.GetValue(null);
-
-            return (IEvent?)parser?.ParseJson(Payload);
+            return Serializer.DeserializeEvent(Payload, EventType);
         }
 
         public long Id { get; set; }
@@ -45,6 +40,6 @@ namespace Common.EventStore.Lib.EfCore
         public Guid AggregateId { get; set; }
         public int Version { get; set; }
         public string EventType { get; set; } = string.Empty;
-        public string Payload { get; set; } = string.Empty;
+        public byte[] Payload { get; set; } = Array.Empty<byte>();
     }
 }

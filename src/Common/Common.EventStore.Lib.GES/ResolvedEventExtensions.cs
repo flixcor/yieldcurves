@@ -2,7 +2,6 @@
 using Common.Core;
 using Common.EventStore.Lib.Proto;
 using EventStore.Client;
-using Google.Protobuf;
 
 namespace Common.EventStore.Lib.GES
 {
@@ -11,8 +10,8 @@ namespace Common.EventStore.Lib.GES
         internal static EventData ToEventData(this IEventWrapper wrapper)
         {
             var typeName = wrapper.Content.GetType().Name;
-            var data = wrapper.Content.ToByteArray();
-            var metadata = wrapper.Metadata.ToByteArray();
+            var data = Serializer.Serialize(wrapper.Content);
+            var metadata = Serializer.Serialize(wrapper.Metadata);
 
             return new EventData(Uuid.NewUuid(), typeName, data, metadata, false);
         }

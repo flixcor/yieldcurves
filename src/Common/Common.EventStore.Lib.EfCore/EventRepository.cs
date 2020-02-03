@@ -30,6 +30,7 @@ namespace Common.EventStore.Lib.EfCore
                 .Events()
                 .AsNoTracking()
                 .Where(x => x.AggregateId == aggregateId)
+                .OrderBy(x => x.Id)
                 .AsAsyncEnumerable()
                 .WithCancellation(cancellationToken))
             {
