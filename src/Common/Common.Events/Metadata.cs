@@ -6,7 +6,7 @@ using NodaTime.Serialization.Protobuf;
 
 namespace Common.Events
 {
-    internal partial class Metadata : IEventWrapperMetadata, IMessage
+    internal partial class Metadata : IEventMetadata, IMessage
     {
         public Metadata(long id, Instant timestamp, Guid aggregateId, int version)
         {
@@ -16,8 +16,8 @@ namespace Common.Events
             Version = version;
         }
 
-        Guid IEventWrapperMetadata.AggregateId => AggregateId;
+        Guid IEventMetadata.AggregateId => AggregateId;
 
-        Instant IEventWrapperMetadata.Timestamp => Timestamp.ToInstant();
+        Instant IEventMetadata.Timestamp => Timestamp.ToInstant();
     }
 }

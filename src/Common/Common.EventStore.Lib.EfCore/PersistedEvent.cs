@@ -28,7 +28,7 @@ namespace Common.EventStore.Lib.EfCore
                 throw new Exception();
             }
 
-            return new EventWrapper(Id, Timestamp, AggregateId, Version, content);
+            return new EventWrapper(Events.Create.Metadata(Id, AggregateId, Version, Timestamp), content);
         }
 
         private IEvent? GetContent()

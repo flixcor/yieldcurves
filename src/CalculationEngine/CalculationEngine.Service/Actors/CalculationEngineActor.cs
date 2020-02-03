@@ -10,9 +10,9 @@ namespace CalculationEngine.Service.ActorModel.Actors
 
         public CalculationEngineActor()
         {
-            Receive<Common.Core.IEvent>(e => 
+            Receive<Common.Core.IEventWrapper>(e => 
             {
-                switch (e)
+                switch (e.Content)
                 {
                     case ICurvePointAdded _:
                     case ICurveRecipeCreated _:

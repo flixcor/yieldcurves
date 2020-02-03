@@ -1,10 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Common.Core;
-using Common.EventStore.Lib.GES.Proto;
+using Common.EventStore.Lib.Proto;
 using EventStore.Client;
 using Google.Protobuf;
-using static Common.Events.Create;
 
 namespace Common.EventStore.Lib.GES
 {
@@ -13,29 +11,26 @@ namespace Common.EventStore.Lib.GES
         internal static EventData ToEventData(this IEventWrapper wrapper)
         {
             var typeName = wrapper.Content.GetType().Name;
-            var data = Serializer.Serialize(wrapper.Content);
+            var data = wrapper.Content.ToByteArray();
             var metadata = wrapper.Metadata.ToByteArray();
 
             return new EventData(Uuid.NewUuid(), typeName, data, metadata, false);
         }
 
-        internal static IEventWrapper Deserialize(this ResolvedEvent resolvedEvent, params string[] eventTypes)
+        internal static IEventWrapper? Deserialize(this ResolvedEvent resolvedEvent, params string[] eventTypes)
         {
             var metadata = resolvedEvent.OriginalEvent.Metadata;
             var data = resolvedEvent.OriginalEvent.Data;
             var eventName = resolvedEvent.OriginalEvent.EventType;
 
-            var eventHeaders = Serializer.Deserialize<IEventWrapperMetadata>(metadata);
-
-            if (eventHeaders == null)
+            if (eventTypes.Length != 0 && !eventTypes.Contains(eventName))
             {
                 return default;
             }
 
-            var typeString = typeof(Events.Create).Namespace + '.' + eventName;
-            var type = typeof(Events.Create).Assembly.GetType(typeString);
+            var eventHeaders = Serializer.Deserialize<IEventMetadata>(metadata);
 
-            var content = Serializer.DeserializeEvent(data, type);
+            var content = Serializer.DeserializeEvent(data, eventName);
 
             if (content == null)
             {
@@ -44,7 +39,7 @@ namespace Common.EventStore.Lib.GES
 
             var id = resolvedEvent.OriginalEvent.Position.ToInt64().commitPosition;
 
-            return new EventWrapper(id, eventHeaders.Timestamp, eventHeaders.AggregateId, eventHeaders.Version, content);
+            return new EventWrapper(Events.Create.Metadata(id, eventHeaders.AggregateId, eventHeaders.Version, eventHeaders.Timestamp), content);
         }
     }
 }
