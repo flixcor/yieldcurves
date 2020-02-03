@@ -47,7 +47,7 @@ namespace PricePublisher.Service.Features.PublishPrice
         {
             var dto = new InstrumentDto 
             { 
-                Id = @event.AggregateId, 
+                Id = @event.Metadata.AggregateId, 
                 HasPriceType = @event.Content.HasPriceType, 
                 Name = @event.Content.Description, 
                 Vendor = @event.Content.Vendor 

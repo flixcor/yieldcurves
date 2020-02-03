@@ -58,7 +58,7 @@ namespace MarketCurves.Service.Features.AddCurvePoint
         {
             var instrument = new Instrument
             {
-                Id = @event.AggregateId,
+                Id = @event.Metadata.AggregateId,
                 Vendor = @event.Content.Vendor,
                 Name = @event.Content.Description,
                 HasPriceType = @event.Content.HasPriceType
@@ -92,22 +92,22 @@ namespace MarketCurves.Service.Features.AddCurvePoint
             return dto;
         }
 
-        public async Task Handle(IEventWrapper<ICurvePointAdded> @event, CancellationToken cancellationToken)
+        public async Task Handle(IEventWrapper<ICurvePointAdded> wrapper, CancellationToken cancellationToken)
         {
-            var dto = await _usedValues.Get(@event.AggregateId);
+            var dto = await _usedValues.Get(wrapper.Metadata.AggregateId);
 
             if (dto == null)
             {
                 dto = new UsedValues
                 {
-                    Id = @event.AggregateId
+                    Id = wrapper.Metadata.AggregateId
                 };
 
                 await _usedValues.Insert(dto);
             }
 
-            dto.Instruments.Add(@event.Content.InstrumentId);
-            dto.Tenors.Add(@event.Content.Tenor);
+            dto.Instruments.Add(wrapper.Content.InstrumentId);
+            dto.Tenors.Add(wrapper.Content.Tenor);
 
             await _usedValues.Update(dto);
         }

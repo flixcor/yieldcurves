@@ -3,7 +3,7 @@ using NodaTime;
 
 namespace Common.Core
 {
-    public interface IEventWrapperMetadata
+    public interface IEventWrapperMetadata: Google.Protobuf.IMessage
     {
         Guid AggregateId { get; }
         long Id { get; }
@@ -11,13 +11,15 @@ namespace Common.Core
         int Version { get; }
     }
 
-    public interface IEventWrapper: IEventWrapperMetadata
+    public interface IEventWrapper
     {
+        IEventWrapperMetadata Metadata { get; }
         IEvent Content { get; }
     }
 
-    public interface IEventWrapper<T> : IEventWrapperMetadata where T : IEvent
+    public interface IEventWrapper<T> where T : IEvent
     {
+        IEventWrapperMetadata Metadata { get; }
         T Content { get; }
     }
 }

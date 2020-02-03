@@ -20,7 +20,7 @@ namespace Common.EventStore.Lib
         {
             Version++;
 
-            if (eventWrapper.Version != Version)
+            if (eventWrapper.Metadata.Version != Version)
             {
                 throw new Exception();
             }

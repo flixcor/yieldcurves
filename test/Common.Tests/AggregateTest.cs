@@ -56,7 +56,7 @@ namespace Common.Tests
         {
             var wrapped = events.ToList();
 
-            var uncommitted = Aggregate.GetUncommittedEvents().OrderBy(x => x.Version).ToArray();
+            var uncommitted = Aggregate.GetUncommittedEvents().OrderBy(x => x.Metadata.Version).ToArray();
             Assert.AreEqual(wrapped.Count, uncommitted.Length);
 
             for (var i = 0; i < wrapped.Count - 1; i++)

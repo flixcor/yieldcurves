@@ -44,8 +44,8 @@ namespace CalculationEngine.Query.Service.Features.GetCalculatedCurveDetail
 
             _db.Add(new Dto
             {
-                Id = wrapper.AggregateId,
-                AsAtDate = wrapper.Timestamp.ToDateTimeUtc(),
+                Id = wrapper.Metadata.AggregateId,
+                AsAtDate = wrapper.Metadata.Timestamp.ToDateTimeUtc(),
                 AsOfDate = @event.AsOfDate,
                 CurveRecipeId = @event.CurveRecipeId,
                 CurveRecipeName = recipe?.Name,
@@ -63,7 +63,7 @@ namespace CalculationEngine.Query.Service.Features.GetCalculatedCurveDetail
         {
             _db.Add(new CurveRecipe
             {
-                Id = @event.AggregateId,
+                Id = @event.Metadata.AggregateId,
                 Name = @event.Content.ShortName
             });
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using Common.Core;
 using NodaTime;
+using static Common.Events.Create;
 
 namespace Common.EventStore.Lib
 {
@@ -10,10 +11,10 @@ namespace Common.EventStore.Lib
         {
             return new EventWrapper(other.Content)
             {
-                AggregateId = other.AggregateId,
-                Id = other.Id,
-                Timestamp = other.Timestamp,
-                Version = other.Version
+                AggregateId = other.Metadata.AggregateId,
+                Id = other.Metadata.Id,
+                Timestamp = other.Metadata.Timestamp,
+                Version = other.Metadata.Version
             };
         }
 
@@ -28,13 +29,14 @@ namespace Common.EventStore.Lib
             Timestamp = timestamp;
             AggregateId = aggregateId;
             Version = version;
-            Content = content;
+            Content = content ?? throw new ArgumentNullException(nameof(content));
         }
 
-        public long Id { get; internal set; }
-        public Instant Timestamp { get; internal set; } = SystemClock.Instance.GetCurrentInstant();
-        public Guid AggregateId { get; internal set; }
-        public int Version { get; internal set; }
+        public IEventWrapperMetadata Metadata { get => Metadata(Id, AggregateId, Version, Timestamp); }
+        internal long Id { get; set; }
+        internal Instant Timestamp { get; set; } = SystemClock.Instance.GetCurrentInstant();
+        internal Guid AggregateId { get; set; }
+        internal int Version { get; set; }
         public IEvent Content { get; }
     }
 }

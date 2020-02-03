@@ -36,9 +36,9 @@ namespace Common.EventStore.Lib.GES
 
         public async Task SaveEvents(CancellationToken cancellationToken, params IEventWrapper[] events)
         {
-            var streamName = events.First().AggregateId.ToString();
+            var streamName = events.First().Metadata.AggregateId.ToString();
 
-            var expectedVersion = events.Min(x => x.Version) - 1;
+            var expectedVersion = events.Min(x => x.Metadata.Version) - 1;
             var revision = new StreamRevision((ulong)expectedVersion);
 
             var eventData = events.Select(x => x.ToEventData());

@@ -13,7 +13,7 @@ namespace Common.EventStore.Lib.EfCore
         {
             return new PersistedEvent
             {
-                AggregateId = eventWrapper.AggregateId,
+                AggregateId = eventWrapper.Metadata.AggregateId,
                 EventType = eventWrapper.Content.GetType().Name,
                 Payload = s_jsonFormatter.Format(eventWrapper.Content) ?? throw new Exception()
             };

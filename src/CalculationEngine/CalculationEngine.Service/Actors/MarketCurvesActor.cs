@@ -13,7 +13,7 @@ namespace CalculationEngine.Service.ActorModel.Actors
 
         public MarketCurvesActor()
         {
-            Receive<IEventWrapper<ICurvePointAdded>>(e => GetMarketCurve(e.AggregateId).Tell(e));
+            Receive<IEventWrapper<ICurvePointAdded>>(e => GetMarketCurve(e.Metadata.AggregateId).Tell(e));
             Receive<IEventWrapper<ICurveRecipeCreated>>(e => GetMarketCurve(e.Content.MarketCurveId).Tell(e));
             Receive<IEventWrapper<IInstrumentPricingPublished>>(e =>
             _marketCurves.Values.ForEach(c=> c.Tell(e))

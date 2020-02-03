@@ -10,6 +10,13 @@ message Uuid {
     string value = 1;
 }
 
+message Metadata {
+    int64 id = 1;
+    google.protobuf.Timestamp timestamp = 2;
+    Uuid aggregate_id = 3;
+    int32 version = 4;
+}
+
 message InstrumentCreated {
   string description = 1;
   bool has_price_type = 2;

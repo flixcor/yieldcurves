@@ -22,7 +22,7 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipesOverview
         {
             var dto = new Dto
             {
-                Id = @event.AggregateId,
+                Id = @event.Metadata.AggregateId,
                 Name = @event.Content.ShortName
             };
 

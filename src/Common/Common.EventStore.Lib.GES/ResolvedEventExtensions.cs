@@ -3,6 +3,8 @@ using System.Linq;
 using Common.Core;
 using Common.EventStore.Lib.GES.Proto;
 using EventStore.Client;
+using Google.Protobuf;
+using static Common.Events.Create;
 
 namespace Common.EventStore.Lib.GES
 {
@@ -12,13 +14,7 @@ namespace Common.EventStore.Lib.GES
         {
             var typeName = wrapper.Content.GetType().Name;
             var data = Serializer.Serialize(wrapper.Content);
-            var eventHeaders = new EventHeaders
-            {
-                AggregateId = wrapper.AggregateId,
-                Timestamp = wrapper.Timestamp,
-                Version = wrapper.Version
-            };
-            var metadata = Serializer.Serialize(eventHeaders);
+            var metadata = wrapper.Metadata.ToByteArray();
 
             return new EventData(Uuid.NewUuid(), typeName, data, metadata, false);
         }
@@ -27,15 +23,15 @@ namespace Common.EventStore.Lib.GES
         {
             var metadata = resolvedEvent.OriginalEvent.Metadata;
             var data = resolvedEvent.OriginalEvent.Data;
+            var eventName = resolvedEvent.OriginalEvent.EventType;
 
-            var eventHeaders = Serializer.Deserialize<EventHeaders>(metadata);
+            var eventHeaders = Serializer.Deserialize<IEventWrapperMetadata>(metadata);
 
-            if (eventHeaders == null || !eventTypes.Contains(eventHeaders.EventType))
+            if (eventHeaders == null)
             {
                 return default;
             }
 
-            var eventName = eventHeaders.EventType;
             var typeString = typeof(Events.Create).Namespace + '.' + eventName;
             var type = typeof(Events.Create).Assembly.GetType(typeString);
 

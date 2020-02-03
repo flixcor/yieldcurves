@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Common.Core;
+using NodaTime;
 
 namespace Common.Events
 {
@@ -48,5 +50,8 @@ namespace Common.Events
 
         public static IPoint Point(double maturity, string currency, double value)
             => new Point(maturity, currency, value);
+
+        public static IEventWrapperMetadata Metadata(long id, Guid aggregateId, int version, Instant timestamp) 
+            => new Metadata(id, timestamp, aggregateId, version);
     }
 }

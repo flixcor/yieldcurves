@@ -50,7 +50,7 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
         {
             var curve = new MarketCurveDto
             {
-                Id = @event.AggregateId,
+                Id = @event.Metadata.AggregateId,
                 Name = GenerateName(@event.Content)
             };
 
@@ -59,7 +59,7 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
 
         public async Task Handle(IEventWrapper<ICurvePointAdded> @event, CancellationToken cancellationToken)
         {
-            var curve = await _readModelRepository.Get(@event.AggregateId);
+            var curve = await _readModelRepository.Get(@event.Metadata.AggregateId);
 
             await curve
                 .ToResult()

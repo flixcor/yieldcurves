@@ -45,7 +45,7 @@ namespace Common.EventStore.Controllers
 
             return _query.Run(cancel).Select(e => new EventReply
             {
-                Position = e.Id,
+                Position = e.Metadata.Id,
                 Type = e.Content.GetType().Name,
                 Payload = e.Content
             });
@@ -74,7 +74,7 @@ namespace Common.EventStore.Controllers
             {
                 var payload = wrapper.Content;
                 var type = payload.GetType().Name;
-                var position = wrapper.Id;
+                var position = wrapper.Metadata.Id;
 
                 var json = JsonSerializer.Serialize(payload, payload?.GetType(), s_jsonSerializerOptions);
 

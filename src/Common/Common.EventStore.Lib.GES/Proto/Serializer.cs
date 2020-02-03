@@ -8,11 +8,6 @@ namespace Common.EventStore.Lib.GES.Proto
 {
     public static class Serializer
     {
-        static Serializer()
-        {
-            Setup();
-        }
-
         public static IEvent DeserializeEvent(byte[] byteArray, Type type)
         {
             var parser = (MessageParser)type?.GetProperty("Parser")?.GetValue(null);
@@ -21,14 +16,10 @@ namespace Common.EventStore.Lib.GES.Proto
             return @event;
         }
 
-        public static T Deserialize<T>(byte[] byteArray) where T : class
+        public static T Deserialize<T>(byte[] byteArray) where T : Google.Protobuf.IMessage
         {
-            using var stream = new MemoryStream(byteArray);
-            stream.Seek(0, SeekOrigin.Begin);
-            var obj = ProtoBuf.Serializer.Deserialize(typeof(T), stream);
-            return obj is T t
-                ? t
-                : default;
+            var parser = (MessageParser)typeof(T).GetProperty("Parser")?.GetValue(null);
+            return (T)parser.ParseFrom(byteArray);
         }
 
         public static byte[] Serialize(object obj)
@@ -42,15 +33,6 @@ namespace Common.EventStore.Lib.GES.Proto
             stream.Seek(0, SeekOrigin.Begin);
             ProtoBuf.Serializer.Serialize(stream, obj);
             return stream.ToArray();
-        }
-
-        public static void Setup()
-        {
-            var eventHeaders = RuntimeTypeModel.Default.Add(typeof(EventHeaders), false);
-            eventHeaders.AddField(1, nameof(EventHeaders.AggregateId));
-            eventHeaders.AddField(2, nameof(EventHeaders.EventType));
-            eventHeaders.AddField(3, nameof(EventHeaders.Timestamp));
-            eventHeaders.AddField(4, nameof(EventHeaders.Version));
         }
     }
 }

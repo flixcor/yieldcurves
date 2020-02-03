@@ -65,7 +65,7 @@ namespace CalculationEngine.Query.Service.Features.GetCalculationsOverviewForDat
         {
             return _recipeRepository.Insert(new RecipeDto
             {
-                Id = @event.AggregateId,
+                Id = @event.Metadata.AggregateId,
                 Name = @event.Content.ShortName
             });
         }

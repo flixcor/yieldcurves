@@ -91,7 +91,7 @@ namespace PricePublisher.Query.Service.Features.GetPricesOverview
             {
                 AsAtDate = @event.AsAtDate,
                 AsOfDate = @event.AsOfDate,
-                Id = wrapper.AggregateId,
+                Id = wrapper.Metadata.AggregateId,
                 Instrument = instrument.Description,
                 PriceType = @event.PriceType,
                 PriceCurrency = @event.PriceCurrency,
@@ -109,7 +109,7 @@ namespace PricePublisher.Query.Service.Features.GetPricesOverview
 
             _db.Add(new Instrument
             {
-                Id = wrapper.AggregateId,
+                Id = wrapper.Metadata.AggregateId,
                 Description = @event.Description,
                 Vendor = @event.Vendor
             });
