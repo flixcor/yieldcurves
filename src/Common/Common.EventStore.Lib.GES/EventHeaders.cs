@@ -1,7 +1,7 @@
 ﻿using System;
 using NodaTime;
 
-namespace Common.Infrastructure
+namespace Common.EventStore.Lib.GES
 {
     public class EventHeaders
     {

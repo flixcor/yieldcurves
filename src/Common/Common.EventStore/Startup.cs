@@ -20,7 +20,7 @@ namespace Common.EventStore
         {
             services.AddControllers();
             services.AddCors();
-            services.AddEventStoreContext(o => o.WithPostgres("Host=localhost;Database=EventStore;Username=postgres"));
+            services.AddEventStoreContext(o => o.WithGES(Configuration.GetConnectionString("EventStore")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

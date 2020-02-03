@@ -1,12 +1,11 @@
 ﻿using Common.Core;
-using Common.Infrastructure.Extensions;
 using EventStore.Client;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Common.Infrastructure
+namespace Common.EventStore.Lib.GES
 {
     public class EventStoreListener : IMessageBusListener
     {
@@ -16,9 +15,9 @@ namespace Common.Infrastructure
         private readonly IUnitOfWork _unitOfWork;
         private readonly string _applicationName;
 
-        public EventStoreListener(EventStoreClient eventStoreClient, 
-            IEventBus eventBus, 
-            IReadModelRepository<EventPosition> currentPositionRepository, 
+        public EventStoreListener(EventStoreClient eventStoreClient,
+            IEventBus eventBus,
+            IReadModelRepository<EventPosition> currentPositionRepository,
             ApplicationName applicationName,
             IUnitOfWork unitOfWork)
         {
@@ -77,9 +76,9 @@ namespace Common.Infrastructure
 
         private async Task<EventPosition> GetCurrentPosition()
         {
-            return (await _currentPositionRepository
+            return await _currentPositionRepository
                 .GetMany(x => x.ApplicationName == _applicationName)
-                .FirstOrDefaultAsync()) ?? new EventPosition(0,0,_applicationName);
+                .FirstOrDefaultAsync() ?? new EventPosition(0, 0, _applicationName);
         }
     }
 }

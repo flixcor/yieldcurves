@@ -5,11 +5,9 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
-using Common.EventStore.Lib;
-using Common.Infrastructure.Extensions;
 using EventStore.Client;
 
-namespace Common.Infrastructure
+namespace Common.EventStore.Lib.GES
 {
     internal class EventStoreRepository : IEventRepository
     {

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Linq;
 using Common.Core;
-using Common.EventStore.Lib;
-using Common.Infrastructure.EventStore;
 using Common.Infrastructure.Proto;
 using EventStore.Client;
 
-namespace Common.Infrastructure.Extensions
+namespace Common.EventStore.Lib.GES
 {
     internal static class ResolvedEventExtensions
     {
@@ -25,7 +23,7 @@ namespace Common.Infrastructure.Extensions
             return new EventData(Uuid.NewUuid(), typeName, data, metadata, false);
         }
 
-        internal static IEventWrapper? Deserialize(this ResolvedEvent resolvedEvent, params string[] eventTypes)
+        internal static IEventWrapper Deserialize(this ResolvedEvent resolvedEvent, params string[] eventTypes)
         {
             var metadata = resolvedEvent.OriginalEvent.Metadata;
             var data = resolvedEvent.OriginalEvent.Data;
@@ -48,13 +46,9 @@ namespace Common.Infrastructure.Extensions
                 return default;
             }
 
-            return new EventWrapper(content)
-            {
-                AggregateId = eventHeaders.AggregateId,
-                Id = resolvedEvent.OriginalEvent.Position.ToInt64().commitPosition,
-                Timestamp = eventHeaders.Timestamp,
-                Version = eventHeaders.Version
-            };
+            var id = resolvedEvent.OriginalEvent.Position.ToInt64().commitPosition;
+
+            return new EventWrapper(id, eventHeaders.Timestamp, eventHeaders.AggregateId, eventHeaders.Version, content);
         }
     }
 }

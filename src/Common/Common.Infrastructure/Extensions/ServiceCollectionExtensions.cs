@@ -3,11 +3,9 @@ using System.Linq;
 using System.Reflection;
 using Common.Core;
 using Common.Core.Extensions;
-using Common.EventStore.Lib;
 using Common.Infrastructure.DependencyInjection;
 using Common.Infrastructure.EfCore;
 using Common.Infrastructure.SignalR;
-using EventStore.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
@@ -50,12 +48,6 @@ namespace Common.Infrastructure.Extensions
                         .AsImplementedInterfaces()
                             .WithScopedLifetime());
         }
-
-        public static IServiceCollection AddEventStore(this IServiceCollection services, string connectionString) => services
-                .AddSingleton(new ApplicationName(Assembly.GetEntryAssembly()?.GetName()?.Name ?? throw new Exception()))
-                .AddSingleton(x => new EventStoreClient(new EventStoreClientSettings(new Uri(connectionString))))
-                .AddScoped<IMessageBusListener, EventStoreListener>()
-                .AddScoped<IEventRepository, EventStoreRepository>();
 
         public static IReadModelImplementation AddEfCore(this IServiceCollection services, string connectionString, params Assembly[] assemblyToScan)
         {

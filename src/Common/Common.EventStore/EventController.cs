@@ -5,8 +5,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
-using Common.Infrastructure;
-using EventStore.Client;
+using Common.EventStore.Lib.GES;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -17,34 +16,34 @@ namespace Common.EventStore.Controllers
     public class EventController : ControllerBase
     {
         private readonly ILogger<EventController> _logger;
-        private readonly EventStoreClient _client;
+        private readonly EventStoreQuery _query;
+        private readonly EventStoreSocketSubscriber _subscriber;
         private static readonly JsonSerializerOptions s_jsonSerializerOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         };
 
-
-        public EventController(ILogger<EventController> logger, EventStoreClient client)
+        public EventController(ILogger<EventController> logger, EventStoreQuery query, EventStoreSocketSubscriber subscriber)
         {
             _logger = logger;
-            _client = client;
+            _query = query;
+            _subscriber = subscriber;
         }
 
         [HttpGet]
         public IAsyncEnumerable<EventReply> GetAsync([FromQuery]EventRequest request)
         {
             var cancel = HttpContext.RequestAborted;
-            var query = new EventStoreQuery(_client);
 
             if (request.EventTypes != null)
             {
                 foreach (var type in request?.EventTypes)
                 {
-                    query.RegisterEventType(type);
+                    _query.RegisterEventType(type);
                 }
             }
 
-            return query.Run(cancel).Select(e => new EventReply
+            return _query.Run(cancel).Select(e => new EventReply
             {
                 Position = e.Id,
                 Type = e.Content.GetType().Name,
@@ -63,13 +62,11 @@ namespace Common.EventStore.Controllers
 
             var writer = new StreamWriter(Response.Body);
 
-            var subscriber = new EventStoreSocketSubscriber(_client);
-
             if (request.EventTypes != null)
             {
                 foreach (var type in request?.EventTypes)
                 {
-                    subscriber.RegisterEventType(type);
+                    _subscriber.RegisterEventType(type);
                 }
             }
 
@@ -89,7 +86,7 @@ namespace Common.EventStore.Controllers
 
             try
             {
-                await subscriber.Subscribe(request.Position, OnEvent, cancel);
+                await _subscriber.Subscribe(request.Position, OnEvent, cancel);
                 await Task.Delay(Timeout.Infinite, cancel);
             }
             catch (TaskCanceledException)

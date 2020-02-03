@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Common.Core;
+using Common.Infrastructure.EventStore;
 using Google.Protobuf;
 using ProtoBuf.Meta;
 

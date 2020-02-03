@@ -1,14 +1,14 @@
 ﻿using Common.Core;
 using EventStore.Client;
 
-namespace Common.Infrastructure.Extensions
+namespace Common.EventStore.Lib.GES
 {
     public static class EventPositionExtensions
     {
         public static Position ToEventStorePosition(this EventPosition eventPosition)
         {
-            return eventPosition == null 
-                ? Position.Start 
+            return eventPosition == null
+                ? Position.Start
                 : new Position((ulong)eventPosition.CommitPosition, (ulong)eventPosition.PreparePosition);
         }
 
