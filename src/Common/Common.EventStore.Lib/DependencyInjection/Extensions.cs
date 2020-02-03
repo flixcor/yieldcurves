@@ -6,7 +6,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class Extensions
     {
-        public static IServiceCollection AddEventStoreContext(this IServiceCollection services, Action<IPersistenceOption> persistence)
+        public static IServiceCollection AddEventStore(this IServiceCollection services, Action<IPersistenceOption> persistence)
         {
             services.AddScoped<IAggregateRepository, AggregateRepository>();
 
