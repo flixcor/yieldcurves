@@ -7,7 +7,7 @@ namespace Common.Events
     public interface ICurveCalculationFailed : IEvent
     {
         string AsOfDate { get; }
-        string CurveRecipeId { get; }
+        Guid CurveRecipeId { get; }
         IEnumerable<string> Messages { get; }
     }
 
@@ -15,11 +15,12 @@ namespace Common.Events
     {
         public CurveCalculationFailed(Guid curveRecipeId, string asOfDate, string[] messages)
         {
-            CurveRecipeId = curveRecipeId.ToString();
+            CurveRecipeId = curveRecipeId;
             AsOfDate = asOfDate;
             Messages.Add(messages);
         }
 
+        Guid ICurveCalculationFailed.CurveRecipeId => CurveRecipeId;
         IEnumerable<string> ICurveCalculationFailed.Messages => Messages;
     }
 }

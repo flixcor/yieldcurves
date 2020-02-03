@@ -6,6 +6,10 @@ option csharp_namespace = "Common.Events";
 
 package events;
 
+message Uuid {
+    string value = 1;
+}
+
 message InstrumentCreated {
   string description = 1;
   bool has_price_type = 2;
@@ -34,7 +38,7 @@ message MarketCurveCreated {
 
 message CurveCalculated {
   string AsOfDate = 1;
-  string CurveRecipeId = 2;
+  Uuid CurveRecipeId = 2;
   repeated Point Points = 3;
 }
 
@@ -46,13 +50,13 @@ message Point {
 
 message CurveCalculationFailed {
   string AsOfDate = 1;
-  string CurveRecipeId = 2;
+  Uuid CurveRecipeId = 2;
   repeated string Messages = 3;
 }
 
 
 message CurvePointAdded {
-  string InstrumentId = 1;
+  Uuid InstrumentId = 1;
   int32 DateLag = 2;
   bool IsMandatory = 3;
   string PriceType = 4;
@@ -77,7 +81,7 @@ message CurveRecipeCreated {
 message InstrumentPricingPublished {
   google.protobuf.Timestamp AsAtDate = 1;
   string AsOfDate = 2;
-  string InstrumentId = 3;
+  Uuid InstrumentId = 3;
   double PriceAmount = 4;
   string PriceCurrency = 5;
   string PriceType = 6;

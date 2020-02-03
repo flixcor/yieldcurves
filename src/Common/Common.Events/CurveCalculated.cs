@@ -16,13 +16,13 @@ namespace Common.Events
     {
         public CurveCalculated(Guid curveRecipeId, string asOfDate, IEnumerable<IPoint> points)
         {
-            CurveRecipeId = curveRecipeId.ToString();
+            CurveRecipeId = curveRecipeId;
             AsOfDate = asOfDate;
 
             Points.Add(points?.Cast<Point>() ?? throw new ArgumentNullException(nameof(points)));
         }
 
-        Guid ICurveCalculated.CurveRecipeId => Guid.Parse(CurveRecipeId);
+        Guid ICurveCalculated.CurveRecipeId => CurveRecipeId;
 
         IEnumerable<IPoint> ICurveCalculated.Points => Points.Cast<IPoint>();
     }

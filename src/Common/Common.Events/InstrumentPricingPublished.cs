@@ -20,7 +20,7 @@ namespace Common.Events
         {
             AsOfDate = asOfDate;
             AsAtDate = Timestamp.FromDateTime(asAtDate.ToUniversalTime());
-            InstrumentId = instrumentId.ToString();
+            InstrumentId = instrumentId;
             PriceCurrency = priceCurrency;
             PriceAmount = priceAmount;
 
@@ -32,6 +32,6 @@ namespace Common.Events
 
         DateTime IInstrumentPricingPublished.AsAtDate => AsAtDate.ToDateTime();
 
-        Guid IInstrumentPricingPublished.InstrumentId => Guid.Parse(InstrumentId);
+        Guid IInstrumentPricingPublished.InstrumentId => InstrumentId;
     }
 }

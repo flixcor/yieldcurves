@@ -1,11 +1,10 @@
 ﻿using System;
 using System.IO;
 using Common.Core;
-using Common.Infrastructure.EventStore;
 using Google.Protobuf;
 using ProtoBuf.Meta;
 
-namespace Common.Infrastructure.Proto
+namespace Common.EventStore.Lib.GES.Proto
 {
     public static class Serializer
     {
@@ -14,15 +13,15 @@ namespace Common.Infrastructure.Proto
             Setup();
         }
 
-        public static IEvent? DeserializeEvent(byte[] byteArray, Type? type)
+        public static IEvent DeserializeEvent(byte[] byteArray, Type type)
         {
-            var parser = (MessageParser?)type?.GetProperty("Parser")?.GetValue(null);
-            var @event = (IEvent?)parser?.ParseFrom(byteArray);
+            var parser = (MessageParser)type?.GetProperty("Parser")?.GetValue(null);
+            var @event = (IEvent)parser?.ParseFrom(byteArray);
 
             return @event;
         }
 
-        public static T? Deserialize<T>(byte[] byteArray) where T : class
+        public static T Deserialize<T>(byte[] byteArray) where T : class
         {
             using var stream = new MemoryStream(byteArray);
             stream.Seek(0, SeekOrigin.Begin);

@@ -17,12 +17,12 @@ namespace Common.Events
         public CurvePointAdded(string tenor, Guid instrumentId, short dateLag, bool isMandatory, string priceType)
         {
             Tenor = tenor;
-            InstrumentId = instrumentId.ToString();
+            InstrumentId = instrumentId;
             DateLag = dateLag;
             IsMandatory = isMandatory;
             PriceType = priceType;
         }
 
-        Guid ICurvePointAdded.InstrumentId => Guid.Parse(InstrumentId);
+        Guid ICurvePointAdded.InstrumentId => InstrumentId;
     }
 }

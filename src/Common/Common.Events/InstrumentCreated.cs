@@ -12,7 +12,7 @@ namespace Common.Events
 
     internal partial class InstrumentCreated : IInstrumentCreated
     {
-        public InstrumentCreated(string vendor, string description, bool hasPriceType = false)
+        public InstrumentCreated(string vendor, string description, bool hasPriceType)
         {
             Vendor = vendor ?? throw new ArgumentNullException(nameof(vendor));
             Description = description ?? throw new ArgumentNullException(nameof(description));

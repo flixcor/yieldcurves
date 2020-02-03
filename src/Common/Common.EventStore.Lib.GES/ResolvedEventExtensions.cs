@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Common.Core;
-using Common.Infrastructure.Proto;
+using Common.EventStore.Lib.GES.Proto;
 using EventStore.Client;
 
 namespace Common.EventStore.Lib.GES

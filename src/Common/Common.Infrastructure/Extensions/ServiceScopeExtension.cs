@@ -5,7 +5,7 @@ namespace Common.Infrastructure.Extensions
 {
     public class ServiceScopeExtension : IExtension
     {
-        private IServiceScopeFactory _serviceScopeFactory;
+        private IServiceScopeFactory? _serviceScopeFactory;
 
         public void Initialize(IServiceScopeFactory serviceScopeFactory)
         {
@@ -14,7 +14,7 @@ namespace Common.Infrastructure.Extensions
 
         public IServiceScope CreateScope()
         {
-            return _serviceScopeFactory.CreateScope();
+            return _serviceScopeFactory?.CreateScope() ?? throw new System.Exception();
         }
     }
 

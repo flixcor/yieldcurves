@@ -21,7 +21,7 @@ namespace CurveRecipes.Service
             services.AddRedis("localhost:6379", typeof(Command).Assembly);
 
             services.AddMediator(typeof(Command).Assembly)
-                .AddEventStore(Configuration.GetConnectionString("EventStore"))
+                .AddEventStore(o => o.WithGES(Configuration.GetConnectionString("EventStore")))
                 .AddAutoMapper(typeof(Command).Assembly, typeof(Shift).Assembly);
         }
     }

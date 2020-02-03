@@ -12,6 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.EventStore.Lib.GES\Common.EventStore.Lib.GES.csproj" />
+    <ProjectReference Include="..\..\Common\Common.EventStore.Lib\Common.EventStore.Lib.csproj" />
     <ProjectReference Include="..\..\Common\Common.Events\Common.Events.csproj" />
     <ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
   </ItemGroup>

@@ -19,7 +19,7 @@ namespace CalculationEngine.Query.Service
             services
                 .AddEfCore(Configuration.GetConnectionString("SqlServer"), typeof(Features.GetCalculatedCurveDetail.Query).Assembly);
 
-            services.AddEventStore(Configuration.GetConnectionString("EventStore"))
+            services.AddEventStore(o => o.WithGES(Configuration.GetConnectionString("EventStore")))
                 .AddMediator(typeof(Features.GetCalculatedCurveDetail.Query).Assembly);
         }
     }
