@@ -7,17 +7,6 @@ namespace Common.EventStore.Lib
 {
     public class EventWrapper : IEventWrapper
     {
-        internal static EventWrapper Clone(IEventWrapper other)
-        {
-            return new EventWrapper(other.Content)
-            {
-                AggregateId = other.Metadata.AggregateId,
-                Id = other.Metadata.Id,
-                Timestamp = other.Metadata.Timestamp,
-                Version = other.Metadata.Version
-            };
-        }
-
         internal EventWrapper(IEvent payload)
         {
             Content = payload;

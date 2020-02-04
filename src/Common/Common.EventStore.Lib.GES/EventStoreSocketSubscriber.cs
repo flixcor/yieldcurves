@@ -31,6 +31,7 @@ namespace Common.EventStore.Lib.GES
 
             var eventstorePosition = Position.FromInt64(_position, _position);
 
+
             _eventStoreClient.SubscribeToAll(eventstorePosition, Pub, cancellationToken: cancellationToken);
 
             return Task.CompletedTask;

@@ -18,22 +18,6 @@ namespace Common.EventStore.Lib.GES
             _eventStoreClient = eventStoreClient;
         }
 
-        public async IAsyncEnumerable<IEventWrapper> GetEvents(Guid aggregateId, [EnumeratorCancellation]CancellationToken cancellationToken = default)
-        {
-            var enumerable = _eventStoreClient.ReadStreamAsync(Direction.Forwards, aggregateId.ToString(),
-                                                               StreamRevision.Start, ulong.MaxValue,
-                                                               cancellationToken: cancellationToken);
-
-            await foreach (var item in enumerable.WithCancellation(cancellationToken))
-            {
-                var wrapper = item.Deserialize();
-                if (wrapper != null)
-                {
-                    yield return wrapper;
-                }
-            }
-        }
-
         public async Task SaveEvents(CancellationToken cancellationToken, params IEventWrapper[] events)
         {
             var streamName = events.First().Metadata.AggregateId.ToString();
@@ -48,6 +32,63 @@ namespace Common.EventStore.Lib.GES
             if (result.Status == ConditionalWriteStatus.VersionMismatch)
             {
                 throw new Exception();
+            }
+        }
+
+        public IAsyncEnumerable<IEventWrapper> GetEvents(CancellationToken cancellation) => GetEvents(EventFilter.None, cancellation);
+
+        public IAsyncEnumerable<IEventWrapper> GetEvents(IEventFilter eventFilter, CancellationToken cancellation)
+        {
+            var checkpoint = eventFilter.Checkpoint;
+
+            var resolvedEvents = eventFilter.AggregateId.HasValue
+                ? GetStream(eventFilter.AggregateId.Value, eventFilter.Checkpoint, eventFilter.EventTypes, cancellation)
+                : GetAll(eventFilter, checkpoint, cancellation);
+
+            return ToEventWrapper(resolvedEvents, cancellation);
+        }
+
+        private IAsyncEnumerable<ResolvedEvent> GetAll(IEventFilter eventFilter, long? checkpoint, CancellationToken cancellation)
+        {
+            IAsyncEnumerable<ResolvedEvent> resolvedEvents;
+            var filter = eventFilter.ToGESFilter();
+
+            var allPosition = checkpoint.HasValue
+                ? new Position((ulong)checkpoint, (ulong)checkpoint)
+                : Position.Start;
+
+            resolvedEvents = _eventStoreClient.ReadAllAsync(Direction.Forwards, allPosition, ulong.MaxValue,
+                filter: filter, cancellationToken: cancellation);
+            return resolvedEvents;
+        }
+
+        private IAsyncEnumerable<ResolvedEvent> GetStream(Guid id, long? revision, IEnumerable<string> eventTypes, CancellationToken cancellation)
+        {
+            var streamPosition = revision.HasValue
+                    ? StreamRevision.FromInt64(revision.Value)
+                    : StreamRevision.Start;
+
+            var resolvedEvents = _eventStoreClient.ReadStreamAsync(Direction.Forwards,
+                    id.ToString(), streamPosition, ulong.MaxValue, cancellationToken: cancellation);
+
+            if (eventTypes.Any())
+            {
+                resolvedEvents = resolvedEvents.Where(x => eventTypes.Contains(x.OriginalEvent.EventType));
+            }
+
+            return resolvedEvents;
+        }
+
+        private async IAsyncEnumerable<IEventWrapper> ToEventWrapper(IAsyncEnumerable<ResolvedEvent> input,
+                                                                     [EnumeratorCancellation]CancellationToken cancellationToken)
+        {
+            await foreach (var item in input.WithCancellation(cancellationToken))
+            {
+                var wrapper = item.Deserialize();
+                if (wrapper != null)
+                {
+                    yield return wrapper;
+                }
             }
         }
     }

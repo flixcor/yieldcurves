@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -24,15 +23,22 @@ namespace Common.EventStore.Lib.EfCore
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async IAsyncEnumerable<IEventWrapper> GetEvents(Guid aggregateId, [EnumeratorCancellation]CancellationToken cancellationToken = default)
+        public IAsyncEnumerable<IEventWrapper> GetEvents(CancellationToken cancellation)
         {
+            return GetEvents(EventFilter.None, cancellation);
+        }
+
+        public async IAsyncEnumerable<IEventWrapper> GetEvents(IEventFilter eventFilter, [EnumeratorCancellation]CancellationToken cancellation)
+        {
+            var whereClause = eventFilter.ToWhereClause();
+
             await foreach (var item in _context
                 .Events()
                 .AsNoTracking()
-                .Where(x => x.AggregateId == aggregateId)
+                .Where(whereClause)
                 .OrderBy(x => x.Id)
                 .AsAsyncEnumerable()
-                .WithCancellation(cancellationToken))
+                .WithCancellation(cancellation))
             {
                 yield return item.ToWrapper();
             }

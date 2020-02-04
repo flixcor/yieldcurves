@@ -8,7 +8,8 @@ namespace Common.EventStore.Lib
 {
     public interface IEventRepository
     {
-        IAsyncEnumerable<IEventWrapper> GetEvents(Guid aggregateId, CancellationToken cancellation);
+        IAsyncEnumerable<IEventWrapper> GetEvents(CancellationToken cancellation);
+        IAsyncEnumerable<IEventWrapper> GetEvents(IEventFilter eventFilter, CancellationToken cancellation);
         Task SaveEvents(CancellationToken cancellationToken, params IEventWrapper[] events);
     }
 }

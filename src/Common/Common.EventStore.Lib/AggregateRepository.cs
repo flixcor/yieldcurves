@@ -14,13 +14,16 @@ namespace Common.EventStore.Lib.EfCore
             _eventRepository = eventRepository;
         }
 
-        public async Task<T?> GetByIdAsync<T>(Guid id, CancellationToken cancellationToken = default) where T : Aggregate<T>
+        public async Task<T?> GetByIdAsync<T>(Guid id, CancellationToken cancellationToken) where T : Aggregate<T>
         {
             var aggregate = (T?)Activator.CreateInstance(typeof(T), true) ?? throw new Exception();
+            aggregate.Id = id;
 
             var loaded = false;
 
-            await foreach (var item in _eventRepository.GetEvents(id, cancellationToken))
+            var filter = EventFilter.ForAggregate(id);
+
+            await foreach (var item in _eventRepository.GetEvents(filter, cancellationToken))
             {
                 loaded = true;
                 aggregate.LoadFromHistory(item);
