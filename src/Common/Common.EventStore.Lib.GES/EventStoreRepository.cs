@@ -18,7 +18,7 @@ namespace Common.EventStore.Lib.GES
             _eventStoreClient = eventStoreClient;
         }
 
-        public async Task SaveEvents(CancellationToken cancellationToken, params IEventWrapper[] events)
+        public async Task Save(CancellationToken cancellationToken, params IEventWrapper[] events)
         {
             var streamName = events.First().Metadata.AggregateId.ToString();
 
@@ -35,9 +35,9 @@ namespace Common.EventStore.Lib.GES
             }
         }
 
-        public IAsyncEnumerable<IEventWrapper> GetEvents(CancellationToken cancellation) => GetEvents(EventFilter.None, cancellation);
+        public IAsyncEnumerable<IEventWrapper> Get(CancellationToken cancellation) => Get(EventFilter.None, cancellation);
 
-        public IAsyncEnumerable<IEventWrapper> GetEvents(IEventFilter eventFilter, CancellationToken cancellation)
+        public IAsyncEnumerable<IEventWrapper> Get(IEventFilter eventFilter, CancellationToken cancellation)
         {
             var checkpoint = eventFilter.Checkpoint;
 

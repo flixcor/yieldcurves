@@ -23,7 +23,7 @@ namespace Common.EventStore.Lib.EfCore
 
             var filter = EventFilter.ForAggregate(id);
 
-            await foreach (var item in _eventRepository.GetEvents(filter, cancellationToken))
+            await foreach (var item in _eventRepository.Get(filter, cancellationToken))
             {
                 loaded = true;
                 aggregate.LoadFromHistory(item);
@@ -37,7 +37,7 @@ namespace Common.EventStore.Lib.EfCore
         public Task SaveAsync<T>(T aggregate, CancellationToken cancellationToken = default) where T : Aggregate<T>
         {
             var uncommitted = aggregate.GetUncommittedEvents().ToArray();
-            return _eventRepository.SaveEvents(cancellationToken, uncommitted);
+            return _eventRepository.Save(cancellationToken, uncommitted);
         }
     }
 }

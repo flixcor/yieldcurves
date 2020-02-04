@@ -17,18 +17,18 @@ namespace Common.EventStore.Lib.EfCore
             _context = context;
         }
 
-        public async Task SaveEvents(CancellationToken cancellationToken, params IEventWrapper[] events)
+        public async Task Save(CancellationToken cancellationToken, params IEventWrapper[] events)
         {
             await _context.Events().AddRangeAsync(events.Select(PersistedEvent.FromEventWrapper));
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public IAsyncEnumerable<IEventWrapper> GetEvents(CancellationToken cancellation)
+        public IAsyncEnumerable<IEventWrapper> Get(CancellationToken cancellation)
         {
-            return GetEvents(EventFilter.None, cancellation);
+            return Get(EventFilter.None, cancellation);
         }
 
-        public async IAsyncEnumerable<IEventWrapper> GetEvents(IEventFilter eventFilter, [EnumeratorCancellation]CancellationToken cancellation)
+        public async IAsyncEnumerable<IEventWrapper> Get(IEventFilter eventFilter, [EnumeratorCancellation]CancellationToken cancellation)
         {
             var whereClause = eventFilter.ToWhereClause();
 
