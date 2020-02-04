@@ -9,16 +9,16 @@ using EventStore.Client;
 
 namespace Common.EventStore.Lib.GES
 {
-    internal class EventStoreRepository : IEventRepository
+    internal class EventRepository : IEventRepository
     {
         private readonly EventStoreClient _eventStoreClient;
 
-        public EventStoreRepository(EventStoreClient eventStoreClient)
+        public EventRepository(EventStoreClient eventStoreClient)
         {
             _eventStoreClient = eventStoreClient;
         }
 
-        public async Task Save(CancellationToken cancellationToken, params IEventWrapper[] events)
+        public async Task Save(CancellationToken cancellationToken = default, params IEventWrapper[] events)
         {
             var streamName = events.First().Metadata.AggregateId.ToString();
 
@@ -35,10 +35,10 @@ namespace Common.EventStore.Lib.GES
             }
         }
 
-        public IAsyncEnumerable<IEventWrapper> Get(CancellationToken cancellation) => Get(EventFilter.None, cancellation);
-
-        public IAsyncEnumerable<IEventWrapper> Get(IEventFilter eventFilter, CancellationToken cancellation)
+        public IAsyncEnumerable<IEventWrapper> Get(IEventFilter? eventFilter = null, CancellationToken cancellation = default)
         {
+            eventFilter ??= EventFilter.None;
+
             var checkpoint = eventFilter.Checkpoint;
 
             var resolvedEvents = eventFilter.AggregateId.HasValue

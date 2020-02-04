@@ -8,8 +8,7 @@ namespace Common.EventStore.Lib
 {
     public interface IEventRepository
     {
-        IAsyncEnumerable<IEventWrapper> Get(CancellationToken cancellation);
-        IAsyncEnumerable<IEventWrapper> Get(IEventFilter eventFilter, CancellationToken cancellation);
-        Task Save(CancellationToken cancellationToken, params IEventWrapper[] events);
+        IAsyncEnumerable<IEventWrapper> Get(IEventFilter? eventFilter = null, CancellationToken cancellation = default);
+        Task Save(CancellationToken cancellationToken = default, params IEventWrapper[] events);
     }
 }

@@ -3,13 +3,11 @@ using System.Collections.Generic;
 
 namespace Common.EventStore.Lib
 {
-    internal class EventFilterInstance : ICanAddAggregate, ICanAddEventTypes, ICanAddCheckpoint
+    internal struct EventFilterInstance : ICanAddAggregate, ICanAddEventTypes, ICanAddCheckpoint
     {
-        private readonly HashSet<string> _eventTypes = new HashSet<string>();
-
         public long? Checkpoint { get; private set; }
         public Guid? AggregateId { get; private set; }
-        public IEnumerable<string> EventTypes { get => _eventTypes; }
+        public IEnumerable<string> EventTypes { get; private set; }
 
         public ICanAddEventTypes ForAggregate(Guid id)
         {
@@ -19,10 +17,7 @@ namespace Common.EventStore.Lib
 
         public IEventFilter ForEventTypes(params string[] eventTypes)
         {
-            foreach (var item in eventTypes)
-            {
-                _eventTypes.Add(item);
-            }
+            EventTypes = eventTypes;
 
             return this;
         }

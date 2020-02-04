@@ -16,7 +16,7 @@ namespace Microsoft.Extensions.DependencyInjection
             .AddSingleton(new ApplicationName(Assembly.GetEntryAssembly()?.GetName()?.Name ?? throw new Exception()))
             .AddSingleton(x => new EventStoreClient(new EventStoreClientSettings(new Uri(connectionString))))
             .AddScoped<IMessageBusListener, EventStoreListener>()
-            .AddScoped<IEventRepository, EventStoreRepository>()
+            .AddScoped<IEventRepository, EventRepository>()
             .AddTransient<EventStoreQuery>()
             .AddTransient<EventStoreSocketSubscriber>();
     }
