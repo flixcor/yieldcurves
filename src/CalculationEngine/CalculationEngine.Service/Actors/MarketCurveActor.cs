@@ -36,22 +36,22 @@ namespace CalculationEngine.Service.ActorModel.Actors
         #region CurvePointAdded
         private void Handle(IEventWrapper<ICurvePointAdded> e)
         {
-            Context.ActorSelection("../../instruments").Tell(new SendMeInstrumentPricingPublished(e.Content.InstrumentId));
+            Context.ActorSelection("../../instruments").Tell(new SendMeInstrumentPricingPublished(e.GetContent().InstrumentId));
         }
 
-        private void Recover(IEventWrapper<ICurvePointAdded> e) => _dateLags.Add(e.Content.InstrumentId, e);
+        private void Recover(IEventWrapper<ICurvePointAdded> e) => _dateLags.Add(e.GetContent().InstrumentId, e);
         #endregion
 
         #region InstrumentPricingPublished
         private void Handle(IEventWrapper<IInstrumentPricingPublished> e)
         {
-            if (_dateLags.TryGetValue(e.Content.InstrumentId, out var point))
+            if (_dateLags.TryGetValue(e.GetContent().InstrumentId, out var point))
             {
-                var max = -point.Content.DateLag;
+                var max = -point.GetContent().DateLag;
 
                 for (var i = 0; i <= max; i++)
                 {
-                    var date = Date.FromString(e.Content.AsOfDate).AddDays(i);
+                    var date = Date.FromString(e.GetContent().AsOfDate).AddDays(i);
 
                     var actor = GetDateActor(date);
 
@@ -63,13 +63,13 @@ namespace CalculationEngine.Service.ActorModel.Actors
 
         private void Recover(IEventWrapper<IInstrumentPricingPublished> e)
         {
-            if (_dateLags.TryGetValue(e.Content.InstrumentId, out var point))
+            if (_dateLags.TryGetValue(e.GetContent().InstrumentId, out var point))
             {
-                var max = -point.Content.DateLag;
+                var max = -point.GetContent().DateLag;
 
                 for (var i = 0; i <= max; i++)
                 {
-                    var date = Date.FromString(e.Content.AsOfDate).AddDays(i);
+                    var date = Date.FromString(e.GetContent().AsOfDate).AddDays(i);
 
                     if (!_dates.Any(x => x == date))
                     {

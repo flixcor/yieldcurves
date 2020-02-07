@@ -5,7 +5,7 @@ using NodaTime;
 
 namespace Common.Events
 {
-    public static class Create
+    public static class Helpers
     {
         public static IInstrumentCreated InstrumentCreated(string vendor, string description, bool hasPriceType = false)
             => new InstrumentCreated(vendor, description, hasPriceType);
@@ -51,7 +51,14 @@ namespace Common.Events
         public static IPoint Point(double maturity, string currency, double value)
             => new Point(maturity, currency, value);
 
-        public static IEventMetadata Metadata(long id, Guid aggregateId, int version, Instant timestamp) 
-            => new Metadata(id, timestamp, aggregateId, version);
+        public static IMetadata CreateMetadata(IDictionary<string,string> values) 
+            => new Metadata(values);
+
+        public static IEventWrapper Wrap(Guid aggregateId, Instant timestamp, int version, IEvent content, long id = 0) 
+            => new EventWrapper(aggregateId, timestamp, version, content, id);
+
+        public static IEventWrapper DeserializeEventWrapper(byte[] byteArray) => EventWrapper.Parser.ParseFrom(byteArray);
+
+        public static IMetadata DeserializeMetadata(byte[] byteArray) => Metadata.Parser.ParseFrom(byteArray);
     }
 }

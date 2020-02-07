@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Common.Core;
+using NodaTime;
+using static Common.Events.Helpers;
 
 [assembly: InternalsVisibleTo("Common.Tests")]
 namespace Common.EventStore.Lib
@@ -20,25 +22,21 @@ namespace Common.EventStore.Lib
         {
             Version++;
 
-            if (eventWrapper.Metadata.Version != Version)
+            if (eventWrapper.Version != Version)
             {
                 throw new Exception();
             }
 
-            Apply(eventWrapper.Content);
+            When(eventWrapper.GetContent());
         }
 
-        protected void ApplyEvent(IEvent @event)
+        protected void GenerateEvent(IEvent @event)
         {
             Version++;
-            _events.Add(new EventWrapper(@event)
-            {
-                AggregateId = Id,
-                Version = Version
-            });
-            Apply(@event);
+            _events.Add(Wrap(Id, new Instant(), Version, @event));
+            When(@event);
         }
 
-        protected abstract void Apply(IEvent @event);
+        protected abstract void When(IEvent @event);
     }
 }

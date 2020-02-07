@@ -35,7 +35,7 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
             var dto = new Dto
             {
                 Id = @event.Metadata.AggregateId,
-                Name = GenerateName(@event.Content)
+                Name = GenerateName(@event.GetContent())
             };
 
             return _curveRepo.Insert(dto);
@@ -43,7 +43,7 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
 
         public async Task Handle(IEventWrapper<ICurvePointAdded> wrapper, CancellationToken cancellationToken)
         {
-            var @event = wrapper.Content;
+            var @event = wrapper.GetContent();
 
             var curveResult = await _curveRepo.Get(wrapper.Metadata.AggregateId).ToResult();
             var instrumentResult = await _instrumentRepo.Get(@event.InstrumentId).ToResult();
@@ -74,7 +74,7 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
 
         public Task Handle(IEventWrapper<IBloombergInstrumentCreated> wrapper, CancellationToken cancellationToken)
         {
-            var @event = wrapper.Content;
+            var @event = wrapper.GetContent();
 
             var instrument = new InstrumentDto
             {
@@ -88,7 +88,7 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
 
         public Task Handle(IEventWrapper<IRegularInstrumentCreated> wrapper, CancellationToken cancellationToken)
         {
-            var @event = wrapper.Content;
+            var @event = wrapper.GetContent();
 
             var instrument = new InstrumentDto
             {

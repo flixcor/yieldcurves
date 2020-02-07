@@ -2,7 +2,7 @@
 using Common.Core;
 using Common.EventStore.Lib;
 using PricePublisher.Domain;
-using static Common.Events.Create;
+using static Common.Events.Helpers;
 
 namespace PricePublisher.Service.Domain
 {
@@ -10,10 +10,10 @@ namespace PricePublisher.Service.Domain
     {
         public InstrumentPricing(Date asOfDate, DateTime asAtDate, Guid instrumentId, Price price, PriceType? priceType = null)
         {
-            ApplyEvent(InstrumentPricingPublished(asOfDate.ToString(), asAtDate, instrumentId, price.Currency.ToString(), price.Value, priceType?.ToString()));
+            GenerateEvent(InstrumentPricingPublished(asOfDate.ToString(), asAtDate, instrumentId, price.Currency.ToString(), price.Value, priceType?.ToString()));
         }
 
-        protected override void Apply(IEvent @event)
+        protected override void When(IEvent @event)
         {
         }
     }

@@ -21,7 +21,7 @@ namespace Microsoft.Extensions.DependencyInjection
                         u.UseAdminDatabase(adminDb);
                     }
                 }))
-                .AddScoped<IEventRepository, EventRepository>();
+                .AddScoped<IEventWriteRepository, EventRepository>();
         }
     }
 }

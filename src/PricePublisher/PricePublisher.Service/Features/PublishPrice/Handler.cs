@@ -48,9 +48,9 @@ namespace PricePublisher.Service.Features.PublishPrice
             var dto = new InstrumentDto 
             { 
                 Id = @event.Metadata.AggregateId, 
-                HasPriceType = @event.Content.HasPriceType, 
-                Name = @event.Content.Description, 
-                Vendor = @event.Content.Vendor 
+                HasPriceType = @event.GetContent().HasPriceType, 
+                Name = @event.GetContent().Description, 
+                Vendor = @event.GetContent().Vendor 
             };
 
             return _readModelRepository.Insert(dto);

@@ -7,7 +7,7 @@ namespace Common.EventStore.Lib
     {
         long? Checkpoint { get; }
         Guid? AggregateId { get; }
-        IEnumerable<string> EventTypes { get; }
+        ICollection<string> EventTypes { get; }
     }
 
     public interface ICanAddCheckpoint : IEventFilter
@@ -15,7 +15,7 @@ namespace Common.EventStore.Lib
         public ICanAddAggregate FromCheckpoint(long checkpoint);
     }
 
-    public interface ICanAddAggregate : ICanAddEventTypes
+    public interface ICanAddAggregate : IEventFilter
     {
         public ICanAddEventTypes ForAggregate(Guid id);
     }

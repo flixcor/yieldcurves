@@ -24,7 +24,7 @@ namespace PricePublisher.Query.Service.Features.GetPriceDates
 
         public async Task Handle(IEventWrapper<IInstrumentPricingPublished> @event, CancellationToken cancellationToken)
         {
-            var asOfDateString = @event.Content.AsOfDate.ToString();
+            var asOfDateString = @event.GetContent().AsOfDate.ToString();
             var existing = await _repository.Single(x => x.AsOfDate == asOfDateString);
 
             if (existing == null)

@@ -34,7 +34,7 @@ namespace Common.EventStore.Lib.GES
                 var wrapper = item.Deserialize();
                 if (wrapper != null)
                 {
-                    yield return wrapper;
+                    yield return wrapper.Value.Item1;
                 }
             }
         }

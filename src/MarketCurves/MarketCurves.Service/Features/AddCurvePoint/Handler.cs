@@ -58,10 +58,10 @@ namespace MarketCurves.Service.Features.AddCurvePoint
         {
             var instrument = new Instrument
             {
-                Id = @event.Metadata.AggregateId,
-                Vendor = @event.Content.Vendor,
-                Name = @event.Content.Description,
-                HasPriceType = @event.Content.HasPriceType
+                Id = @event.AggregateId,
+                Vendor = @event.GetContent().Vendor,
+                Name = @event.GetContent().Description,
+                HasPriceType = @event.GetContent().HasPriceType
             };
 
             return _readModelRepository.Insert(instrument);
@@ -106,8 +106,8 @@ namespace MarketCurves.Service.Features.AddCurvePoint
                 await _usedValues.Insert(dto);
             }
 
-            dto.Instruments.Add(wrapper.Content.InstrumentId);
-            dto.Tenors.Add(wrapper.Content.Tenor);
+            dto.Instruments.Add(wrapper.GetContent().InstrumentId);
+            dto.Tenors.Add(wrapper.GetContent().Tenor);
 
             await _usedValues.Update(dto);
         }

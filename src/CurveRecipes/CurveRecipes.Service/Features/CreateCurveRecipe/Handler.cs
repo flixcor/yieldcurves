@@ -51,7 +51,7 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
             var curve = new MarketCurveDto
             {
                 Id = @event.Metadata.AggregateId,
-                Name = GenerateName(@event.Content)
+                Name = GenerateName(@event.GetContent())
             };
 
             return _readModelRepository.Insert(curve);
@@ -65,7 +65,7 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
                 .ToResult()
                 .Promise(x =>
                 {
-                    x.Tenors.Add(@event.Content.Tenor);
+                    x.Tenors.Add(@event.GetContent().Tenor);
                     return _readModelRepository.Update(x);
                 });
         }

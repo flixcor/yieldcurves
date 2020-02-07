@@ -16,9 +16,9 @@ namespace Common.Infrastructure
 
         public async Task Publish(IEventWrapper @event, CancellationToken cancellationToken = default)
         {
-            var eventName = @event.Content.GetType().Name;
-            var aggregateId = @event.Metadata.AggregateId;
-            var version = @event.Metadata.Version;
+            var eventName = @event.GetContent().GetType().Name;
+            var aggregateId = @event.AggregateId;
+            var version = @event.Version;
 
             Console.WriteLine($"processing event of type {eventName} with id {aggregateId} and version {version}");
             try

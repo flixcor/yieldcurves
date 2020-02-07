@@ -9,7 +9,7 @@ using EventStore.Client;
 
 namespace Common.EventStore.Lib.GES
 {
-    internal class EventRepository : IEventRepository
+    internal class EventRepository : IEventWriteRepository
     {
         private readonly EventStoreClient _eventStoreClient;
 

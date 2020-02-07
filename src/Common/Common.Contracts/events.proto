@@ -10,11 +10,29 @@ message Uuid {
     string value = 1;
 }
 
-message Metadata {
+
+message EventWrapper {
     int64 id = 1;
     google.protobuf.Timestamp timestamp = 2;
     Uuid aggregate_id = 3;
     int32 version = 4;
+    oneof payload {
+        InstrumentCreated InstrumentCreated = 10;
+        BloombergInstrumentCreated BloombergInstrumentCreated = 11;
+        RegularInstrumentCreated RegularInstrumentCreated = 12;
+        MarketCurveCreated MarketCurveCreated = 13;
+        CurveCalculated CurveCalculated = 14;
+        CurveCalculationFailed CurveCalculationFailed = 15;
+        CurvePointAdded CurvePointAdded = 16;
+        CurveRecipeCreated CurveRecipeCreated = 17;
+        InstrumentPricingPublished InstrumentPricingPublished = 18;
+        KeyRateShockAdded KeyRateShockAdded = 19;
+        ParallelShockAdded ParallelShockAdded = 20;
+    }
+}
+
+message Metadata {
+    map<string, string> values = 1;
 }
 
 message InstrumentCreated {

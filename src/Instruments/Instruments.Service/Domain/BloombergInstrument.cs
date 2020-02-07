@@ -1,6 +1,6 @@
 ﻿using Common.Core;
 using Common.EventStore.Lib;
-using static Common.Events.Create;
+using static Common.Events.Helpers;
 
 namespace Instruments.Domain
 {
@@ -10,11 +10,11 @@ namespace Instruments.Domain
 
         public BloombergInstrument(string ticker, PricingSource pricingSource, YellowKey yellowKey)
         {
-            ApplyEvent(BloombergInstrumentCreated(ticker, pricingSource.ToString(), yellowKey.ToString()));
-            ApplyEvent(InstrumentCreated(Vendor.Bloomberg.ToString(), $"{ticker} {pricingSource} {yellowKey}", true));
+            GenerateEvent(BloombergInstrumentCreated(ticker, pricingSource.ToString(), yellowKey.ToString()));
+            GenerateEvent(InstrumentCreated(Vendor.Bloomberg.ToString(), $"{ticker} {pricingSource} {yellowKey}", true));
         }
 
-        protected override void Apply(IEvent @event)
+        protected override void When(IEvent @event)
         {
         }
     }

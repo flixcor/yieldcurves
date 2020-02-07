@@ -4,7 +4,7 @@ using System.Linq;
 using Common.Core;
 using Common.Events;
 using Common.EventStore.Lib;
-using static Common.Events.Create;
+using static Common.Events.Helpers;
 
 namespace CurveRecipes.Domain
 {
@@ -56,7 +56,7 @@ namespace CurveRecipes.Domain
             var @event = CurveRecipeCreated(marketCurveId, shortName, description, lastLiquidTenor.ToString(), dayCountConvention.ToString(), interpolation.ToString(), extrapolationShort.ToString(),
                 extrapolationLong.ToString(), outputFrequency.OutputSeries.ToString(), outputFrequency.MaximumMaturity.Value, outputType.ToString());
 
-            ApplyEvent(@event);
+            GenerateEvent(@event);
         }
 
         public Result AddTransformation(ITransformation transformation, Order order = null)
@@ -72,12 +72,12 @@ namespace CurveRecipes.Domain
             {
                 case ParallelShock parallelShock:
                     var psEvent = ParallelShockAdded(order.Value, parallelShock.ShockTarget.ToString(), parallelShock.Shift.Value);
-                    ApplyEvent(psEvent);
+                    GenerateEvent(psEvent);
                     break;
 
                 case KeyRateShock keyRateShock:
                     var krsEvent = KeyRateShockAdded(order.Value, keyRateShock.ShockTarget.ToString(), keyRateShock.Shift.Value, keyRateShock.Maturities.Select(m => m.Value).ToArray());
-                    ApplyEvent(krsEvent);
+                    GenerateEvent(krsEvent);
                     break;
 
                 default:
@@ -87,7 +87,7 @@ namespace CurveRecipes.Domain
             return Result.Ok();
         }
 
-        protected override void Apply(IEvent @event)
+        protected override void When(IEvent @event)
         {
             switch (@event)
             {

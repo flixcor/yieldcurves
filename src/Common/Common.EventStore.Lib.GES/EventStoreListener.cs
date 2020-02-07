@@ -39,7 +39,14 @@ namespace Common.EventStore.Lib.GES
 
         private async Task PublishEvent(StreamSubscription subscription, ResolvedEvent resolvedEvent, CancellationToken cancellationToken)
         {
-            var wrapper = resolvedEvent.Deserialize();
+            var tup = resolvedEvent.Deserialize();
+
+            if (tup == null)
+            {
+                return;
+            }
+
+            var (wrapper, _) = tup.Value;
 
             var currentEventPosition = await GetCurrentPosition();
             var currentPosition = currentEventPosition.ToEventStorePosition();

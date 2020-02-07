@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Common.EventStore.Lib.EfCore
 {
-    internal class EventRepository : IEventRepository
+    internal class EventRepository : IEventWriteRepository, IEventReadRepository
     {
         private readonly EventStoreContext _context;
 
@@ -17,13 +17,13 @@ namespace Common.EventStore.Lib.EfCore
             _context = context;
         }
 
-        public async Task Save(CancellationToken cancellationToken = default, params IEventWrapper[] events)
+        public async Task Save(CancellationToken cancellationToken = default, params (IEventWrapper, IMetadata)[] events)
         {
             await _context.Events().AddRangeAsync(events.Select(PersistedEvent.FromEventWrapper));
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async IAsyncEnumerable<IEventWrapper> Get(IEventFilter? eventFilter = null, [EnumeratorCancellation]CancellationToken cancellation = default)
+        public async IAsyncEnumerable<(IEventWrapper, IMetadata)> Get(IEventFilter? eventFilter = null, [EnumeratorCancellation]CancellationToken cancellation = default)
         {
             eventFilter ??= EventFilter.None;
 

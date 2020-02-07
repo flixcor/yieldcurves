@@ -12,7 +12,7 @@ namespace CalculationEngine.Service.ActorModel.Actors
         {
             Receive<Common.Core.IEventWrapper>(e => 
             {
-                switch (e.Content)
+                switch (e.GetContent())
                 {
                     case ICurvePointAdded _:
                     case ICurveRecipeCreated _:

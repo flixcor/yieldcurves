@@ -28,9 +28,9 @@ namespace CalculationEngine.Service.ActorModel.Actors
 
         private void Handle(Calculate obj)
         {
-            if (obj.CurvePoints.All(x => obj.Pricings.Any(y => y.Content.InstrumentId == x.Content.InstrumentId)))
+            if (obj.CurvePoints.All(x => obj.Pricings.Any(y => y.GetContent().InstrumentId == x.GetContent().InstrumentId)))
             {
-                var result = CurveCalculation.Calculate(obj.AsOfDate, _recipe, obj.CurvePoints.Select(x=> x.Content), obj.Pricings.Select(x => x.Content));
+                var result = CurveCalculation.Calculate(obj.AsOfDate, _recipe, obj.CurvePoints.Select(x=> x.GetContent()), obj.Pricings.Select(x => x.GetContent()));
                 var calc = new CurveCalculationResult(_id, obj.AsOfDate, result);
 
                 using var serviceScope = Context.CreateScope();

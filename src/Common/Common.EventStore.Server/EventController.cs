@@ -46,8 +46,8 @@ namespace Common.EventStore.Controllers
             return _query.Run(cancel).Select(e => new EventReply
             {
                 Position = e.Metadata.Id,
-                Type = e.Content.GetType().Name,
-                Payload = e.Content
+                Type = e.GetContent().GetType().Name,
+                Payload = e.GetContent()
             });
         }
 
@@ -72,7 +72,7 @@ namespace Common.EventStore.Controllers
 
             async Task OnEvent(IEventWrapper wrapper)
             {
-                var payload = wrapper.Content;
+                var payload = wrapper.GetContent();
                 var type = payload.GetType().Name;
                 var position = wrapper.Metadata.Id;
 

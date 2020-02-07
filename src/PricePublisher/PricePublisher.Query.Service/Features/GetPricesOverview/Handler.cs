@@ -83,7 +83,7 @@ namespace PricePublisher.Query.Service.Features.GetPricesOverview
 
         public async Task Handle(IEventWrapper<IInstrumentPricingPublished> wrapper, CancellationToken cancellationToken)
         {
-            var @event = wrapper.Content;
+            var @event = wrapper.GetContent();
 
             var instrument = await _db.FindAsync<Instrument>(@event.InstrumentId);
 
@@ -105,7 +105,7 @@ namespace PricePublisher.Query.Service.Features.GetPricesOverview
 
         public Task Handle(IEventWrapper<IInstrumentCreated> wrapper, CancellationToken cancellationToken)
         {
-            var @event = wrapper.Content;
+            var @event = wrapper.GetContent();
 
             _db.Add(new Instrument
             {

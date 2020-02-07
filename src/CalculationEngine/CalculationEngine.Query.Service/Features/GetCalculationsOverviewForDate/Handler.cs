@@ -27,7 +27,7 @@ namespace CalculationEngine.Query.Service.Features.GetCalculationsOverviewForDat
 
         public async Task Handle(IEventWrapper<ICurveCalculated> wrapper, CancellationToken cancellationToken)
         {
-            var @event = wrapper.Content;
+            var @event = wrapper.GetContent();
 
             var asOfDate = @event.AsOfDate;
 
@@ -66,7 +66,7 @@ namespace CalculationEngine.Query.Service.Features.GetCalculationsOverviewForDat
             return _recipeRepository.Insert(new RecipeDto
             {
                 Id = @event.Metadata.AggregateId,
-                Name = @event.Content.ShortName
+                Name = @event.GetContent().ShortName
             });
         }
 

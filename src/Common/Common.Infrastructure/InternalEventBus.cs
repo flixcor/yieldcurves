@@ -18,7 +18,7 @@ namespace Common.Infrastructure
 
         public async Task Publish(IEventWrapper wrapper, CancellationToken cancellationToken = default)
         {
-            var @event = wrapper.Content;
+            var @event = wrapper.GetContent();
 
             var handlerTypes = @event.GetType()
                 .GetInterfaces()

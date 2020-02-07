@@ -2,7 +2,7 @@
 using System.Linq;
 using Common.Core;
 using Common.EventStore.Lib;
-using static Common.Events.Create;
+using static Common.Events.Helpers;
 using static Instruments.Domain.Vendor;
 
 namespace Instruments.Domain
@@ -32,14 +32,14 @@ namespace Instruments.Domain
                 : Result.Ok(new RegularInstrument(vendor, description));
         }
 
-        protected override void Apply(IEvent @event)
+        protected override void When(IEvent @event)
         {
         }
 
         private RegularInstrument(Vendor vendor, string description)
         {
-            ApplyEvent(RegularInstrumentCreated(vendor.ToString(), description));
-            ApplyEvent(InstrumentCreated(vendor.ToString(), description));
+            GenerateEvent(RegularInstrumentCreated(vendor.ToString(), description));
+            GenerateEvent(InstrumentCreated(vendor.ToString(), description));
         }
     }
 }

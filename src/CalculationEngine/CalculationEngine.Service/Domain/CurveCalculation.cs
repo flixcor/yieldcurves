@@ -54,7 +54,7 @@ namespace CalculationEngine.Service.Domain
 
         private static Result<CurveRecipe> TryMap(IEventWrapper<ICurveRecipeCreated> wrapper)
         {
-            var e = wrapper.Content;
+            var e = wrapper.GetContent();
 
             var lastLiquidTenor = e.LastLiquidTenor.TryParseEnum<Tenor>();
             var dcc = e.DayCountConvention.TryParseEnum<DayCountConvention>();

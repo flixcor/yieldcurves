@@ -2,7 +2,7 @@
 using Common.Tests;
 using Instruments.Domain;
 using NUnit.Framework;
-using static Common.Events.Create;
+using static Common.Events.Helpers;
 
 namespace UnitTests
 {

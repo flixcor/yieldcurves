@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Common.Core;
 using Common.EventStore.Lib;
-using static Common.Events.Create;
+using static Common.Events.Helpers;
 
 namespace MarketCurves.Domain
 {
@@ -29,7 +29,7 @@ namespace MarketCurves.Domain
         {
             var @event = MarketCurveCreated(country.ToString(), curveType.ToString(), floatingLeg?.ToString());
 
-            ApplyEvent(@event);
+            GenerateEvent(@event);
         }
 
         public Result AddCurvePoint(Tenor tenor, Guid instrumentId, DateLag dateLag, PriceType? priceType, bool isMandatory)
@@ -47,12 +47,12 @@ namespace MarketCurves.Domain
             }
 
             var @event = CurvePointAdded(tenor.ToString(), instrumentId, dateLag.Value, isMandatory, priceType.ToString());
-            ApplyEvent(@event);
+            GenerateEvent(@event);
 
             return Result.Ok();
         }
 
-        protected override void Apply(IEvent @event)
+        protected override void When(IEvent @event)
         {
         }
     }

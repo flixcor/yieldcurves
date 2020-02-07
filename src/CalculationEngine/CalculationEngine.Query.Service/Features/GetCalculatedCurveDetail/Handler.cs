@@ -38,7 +38,7 @@ namespace CalculationEngine.Query.Service.Features.GetCalculatedCurveDetail
 
         public async Task Handle(IEventWrapper<ICurveCalculated> wrapper, CancellationToken cancellationToken)
         {
-            var @event = wrapper.Content;
+            var @event = wrapper.GetContent();
 
             var recipe = (CurveRecipe?)await _db.FindAsync<CurveRecipe>(@event.CurveRecipeId);
 
@@ -64,7 +64,7 @@ namespace CalculationEngine.Query.Service.Features.GetCalculatedCurveDetail
             _db.Add(new CurveRecipe
             {
                 Id = @event.Metadata.AggregateId,
-                Name = @event.Content.ShortName
+                Name = @event.GetContent().ShortName
             });
 
             return Task.CompletedTask;
