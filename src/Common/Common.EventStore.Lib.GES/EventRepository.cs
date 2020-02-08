@@ -9,7 +9,7 @@ using EventStore.Client;
 
 namespace Common.EventStore.Lib.GES
 {
-    internal class EventRepository : IEventWriteRepository
+    internal class EventRepository : IEventWriteRepository, IEventReadRepository
     {
         private readonly EventStoreClient _eventStoreClient;
 
@@ -18,11 +18,11 @@ namespace Common.EventStore.Lib.GES
             _eventStoreClient = eventStoreClient;
         }
 
-        public async Task Save(CancellationToken cancellationToken = default, params IEventWrapper[] events)
+        public async Task Save(CancellationToken cancellationToken = default, params (IEventWrapper, IMetadata)[] events)
         {
-            var streamName = events.First().Metadata.AggregateId.ToString();
+            var streamName = events.First().Item1.AggregateId.ToString();
 
-            var expectedVersion = events.Min(x => x.Metadata.Version) - 1;
+            var expectedVersion = events.Min(x => x.Item1.Version) - 1;
             var revision = new StreamRevision((ulong)expectedVersion);
 
             var eventData = events.Select(x => x.ToEventData());
@@ -35,7 +35,7 @@ namespace Common.EventStore.Lib.GES
             }
         }
 
-        public IAsyncEnumerable<IEventWrapper> Get(IEventFilter? eventFilter = null, CancellationToken cancellation = default)
+        public IAsyncEnumerable<(IEventWrapper, IMetadata)> Get(IEventFilter? eventFilter = null, CancellationToken cancellation = default)
         {
             eventFilter ??= EventFilter.None;
 
@@ -62,7 +62,7 @@ namespace Common.EventStore.Lib.GES
             return resolvedEvents;
         }
 
-        private IAsyncEnumerable<ResolvedEvent> GetStream(Guid id, long? revision, IEnumerable<string> eventTypes, CancellationToken cancellation)
+        private IAsyncEnumerable<ResolvedEvent> GetStream(NonEmptyGuid id, long? revision, IEnumerable<string> eventTypes, CancellationToken cancellation)
         {
             var streamPosition = revision.HasValue
                     ? StreamRevision.FromInt64(revision.Value)
@@ -79,15 +79,15 @@ namespace Common.EventStore.Lib.GES
             return resolvedEvents;
         }
 
-        private async IAsyncEnumerable<IEventWrapper> ToEventWrapper(IAsyncEnumerable<ResolvedEvent> input,
+        private async IAsyncEnumerable<(IEventWrapper, IMetadata)> ToEventWrapper(IAsyncEnumerable<ResolvedEvent> input,
                                                                      [EnumeratorCancellation]CancellationToken cancellationToken)
         {
             await foreach (var item in input.WithCancellation(cancellationToken))
             {
                 var wrapper = item.Deserialize();
-                if (wrapper != null)
+                if (wrapper.HasValue)
                 {
-                    yield return wrapper;
+                    yield return wrapper.Value;
                 }
             }
         }

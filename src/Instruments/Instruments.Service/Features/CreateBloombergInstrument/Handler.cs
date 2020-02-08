@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
-using Common.EventStore.Lib.EfCore;
+using Common.EventStore.Lib;
 using Instruments.Domain;
 
 namespace Instruments.Service.Features.CreateBloombergInstrument
@@ -25,9 +25,9 @@ namespace Instruments.Service.Features.CreateBloombergInstrument
             var instrumentResult = Result.Combine(
                 pricingSourceResult, 
                 yellowKeyResult, 
-                (pricingSource, yellowKey) => new BloombergInstrument(command.Ticker, pricingSource, yellowKey));
+                (pricingSource, yellowKey) => new BloombergInstrument().Define(command.Ticker, pricingSource, yellowKey));
 
-            return instrumentResult.Promise(i => _repository.SaveAsync(i));
+            return instrumentResult.Promise(i => _repository.Save(i));
         }
     }
 }

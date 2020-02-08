@@ -8,13 +8,13 @@ namespace Common.Events
         int DateLag { get; }
         Guid InstrumentId { get; }
         bool IsMandatory { get; }
-        string PriceType { get; }
+        string? PriceType { get; }
         string Tenor { get; }
     }
 
     internal partial class CurvePointAdded : ICurvePointAdded
     {
-        public CurvePointAdded(string tenor, Guid instrumentId, short dateLag, bool isMandatory, string priceType)
+        public CurvePointAdded(string tenor, Guid instrumentId, short dateLag, bool isMandatory, string? priceType)
         {
             Tenor = tenor;
             InstrumentId = instrumentId;

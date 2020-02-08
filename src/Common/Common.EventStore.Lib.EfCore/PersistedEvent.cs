@@ -1,6 +1,5 @@
 ﻿using System;
 using Common.Core;
-using Common.EventStore.Lib.Proto;
 using NodaTime;
 using static Common.Events.Helpers;
 
@@ -19,7 +18,8 @@ namespace Common.EventStore.Lib.EfCore
                 Version = wrapper.Version,
                 Timestamp = wrapper.Timestamp,
                 Payload = Serializer.Serialize(wrapper),
-                Metadata = Serializer.Serialize(metadata)
+                Metadata = Serializer.Serialize(metadata),
+                EventType = wrapper.GetContent().GetType().Name
             };
         }
 
@@ -37,6 +37,7 @@ namespace Common.EventStore.Lib.EfCore
         public Instant Timestamp { get; set; }
         public Guid AggregateId { get; set; }
         public int Version { get; set; }
+        public string EventType { get; set; } = string.Empty;
         public byte[] Metadata { get; set; } = Array.Empty<byte>();
         public byte[] Payload { get; set; } = Array.Empty<byte>();
     }

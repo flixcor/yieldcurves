@@ -5,6 +5,7 @@ using Common.Core;
 using Common.Events;
 using Common.EventStore.Lib;
 using static Common.Events.Helpers;
+using static Common.Core.Result;
 
 namespace CurveRecipes.Domain
 {
@@ -12,61 +13,24 @@ namespace CurveRecipes.Domain
     {
         private int _count = 0;
 
-        private CurveRecipe()
+        public CurveRecipe()
         {
         }
 
-        public static Result<CurveRecipe> TryCreate(Guid marketCurveId, string shortName, string description, Tenor lastLiquidTenor, DayCountConvention dayCountConvention, Interpolation interpolation, ExtrapolationShort extrapolationShort,
-            ExtrapolationLong extrapolationLong, OutputFrequency outputFrequency, OutputType outputType)
-        {
-            var errors = new List<string>();
-
-            if (marketCurveId.Equals(Guid.Empty))
-            {
-                errors.Add($"{nameof(marketCurveId)} cannot be empty");
-            }
-
-            if (string.IsNullOrWhiteSpace(shortName))
-            {
-                errors.Add($"{nameof(shortName)} cannot be empty");
-            }
-
-            if (string.IsNullOrWhiteSpace(description))
-            {
-                errors.Add($"{nameof(description)} cannot be empty");
-            }
-
-            if (outputFrequency == null)
-            {
-                errors.Add($"{nameof(outputFrequency)} cannot be empty");
-            }
-
-            if (errors.Any())
-            {
-                return Result.Fail<CurveRecipe>(errors.ToArray());
-            }
-
-            return Result.Ok(new CurveRecipe(marketCurveId, shortName, description, lastLiquidTenor, dayCountConvention, interpolation, extrapolationShort,
-                extrapolationLong, outputFrequency, outputType));
-        }
-
-        private CurveRecipe(Guid marketCurveId, string shortName, string description, Tenor lastLiquidTenor, DayCountConvention dayCountConvention, Interpolation interpolation, ExtrapolationShort extrapolationShort,
+        public CurveRecipe Define(NonEmptyGuid marketCurveId, NonEmptyString shortName, NonEmptyString description, Tenor lastLiquidTenor, DayCountConvention dayCountConvention, Interpolation interpolation, ExtrapolationShort extrapolationShort,
             ExtrapolationLong extrapolationLong, OutputFrequency outputFrequency, OutputType outputType)
         {
             var @event = CurveRecipeCreated(marketCurveId, shortName, description, lastLiquidTenor.ToString(), dayCountConvention.ToString(), interpolation.ToString(), extrapolationShort.ToString(),
                 extrapolationLong.ToString(), outputFrequency.OutputSeries.ToString(), outputFrequency.MaximumMaturity.Value, outputType.ToString());
 
             GenerateEvent(@event);
+
+            return this;
         }
 
-        public Result AddTransformation(ITransformation transformation, Order order = null)
+        public Result<CurveRecipe> AddTransformation(ITransformation transformation, Order? order = null)
         {
             order ??= new Order(_count + 1);
-
-            if (transformation == null)
-            {
-                return Result.Fail($"{nameof(transformation)} cannot be empty");
-            }
 
             switch (transformation)
             {
@@ -81,10 +45,10 @@ namespace CurveRecipes.Domain
                     break;
 
                 default:
-                    return Result.Fail($"Did not recognize {nameof(transformation)} of type {transformation?.GetType()}");
+                    return Fail<CurveRecipe>($"Did not recognize {nameof(transformation)} of type {transformation?.GetType()}");
             }
 
-            return Result.Ok();
+            return Ok(this);
         }
 
         protected override void When(IEvent @event)

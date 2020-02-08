@@ -4,22 +4,23 @@ using Common.Core;
 using Common.EventStore.Lib;
 using NodaTime;
 using NUnit.Framework;
+using static Common.Events.Helpers;
 
 namespace Common.Tests
 {
-    public interface IWhen<T> where T : Aggregate<T>
+    public interface IWhen<T> where T : Aggregate<T>, new()
     {
         IThen<T> When(Action<T> action);
     }
 
-    public interface IThen<T> where T : Aggregate<T>
+    public interface IThen<T> where T : Aggregate<T>, new()
     {
         void Then(params IEvent[] events);
     }
 
-    public abstract class AggregateTest<T> : IWhen<T>, IThen<T> where T : Aggregate<T>
+    public abstract class AggregateTest<T> : IWhen<T>, IThen<T> where T : Aggregate<T>, new()
     {
-        protected T Aggregate { get; private set; } = (T)Activator.CreateInstance(typeof(T), true);
+        protected T Aggregate { get; private set; } = new T();
 
         public IWhen<T> Given(params IEvent[] events)
         {
@@ -29,24 +30,13 @@ namespace Common.Tests
             {
                 version++;
 
-                Aggregate.LoadFromHistory(new EventWrapper(item) 
-                { 
-                    AggregateId = Aggregate.Id,
-                    Version = version
-                });
+                Aggregate.LoadFromHistory(Wrap(Aggregate.Id, new Instant(), version, item));
             }
             
             return this;
         }
 
-        public IThen<T> WhenCreated(Func<T> func)
-        {
-            Aggregate = func();
-
-            return this;
-        }
-
-        IThen<T> IWhen<T>.When(Action<T> action)
+        public IThen<T> When(Action<T> action)
         {
             action(Aggregate);
             return this;
@@ -56,7 +46,7 @@ namespace Common.Tests
         {
             var wrapped = events.ToList();
 
-            var uncommitted = Aggregate.GetUncommittedEvents().OrderBy(x => x.Metadata.Version).ToArray();
+            var uncommitted = Aggregate.GetUncommittedEvents().OrderBy(x => x.Version).ToArray();
             Assert.AreEqual(wrapped.Count, uncommitted.Length);
 
             for (var i = 0; i < wrapped.Count - 1; i++)

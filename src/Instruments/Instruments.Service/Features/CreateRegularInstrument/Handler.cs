@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
-using Common.EventStore.Lib.EfCore;
+using Common.EventStore.Lib;
 using Instruments.Domain;
 
 namespace Instruments.Service.Features.CreateRegularInstrument
@@ -20,8 +20,8 @@ namespace Instruments.Service.Features.CreateRegularInstrument
         public Task<Result> Handle(Command command, CancellationToken cancellationToken)
         {
             return command.Vendor.TryParseEnum<Vendor>().Promise(v =>
-                RegularInstrument.TryCreate(v, command.Name).Promise(i =>
-                    _repository.SaveAsync(i)
+                new RegularInstrument().TryDefine(v, command.Name).Promise(i =>
+                    _repository.Save(i)
                 )
             );
         }

@@ -54,7 +54,7 @@ namespace CalculationEngine.Service.Domain
 
         private static Result<CurveRecipe> TryMap(IEventWrapper<ICurveRecipeCreated> wrapper)
         {
-            var e = wrapper.GetContent();
+            var e = wrapper.Content;
 
             var lastLiquidTenor = e.LastLiquidTenor.TryParseEnum<Tenor>();
             var dcc = e.DayCountConvention.TryParseEnum<DayCountConvention>();
@@ -66,7 +66,7 @@ namespace CalculationEngine.Service.Domain
 
             return Result
                 .Combine(lastLiquidTenor, dcc, inter, exShort, exLong, outSeries, outType)
-                .Promise(() => new CurveRecipe(wrapper.Metadata.AggregateId, lastLiquidTenor.Content, dcc.Content, inter.Content, exShort.Content, exLong.Content, new OutputFrequency(outSeries.Content, new Maturity(e.MaximumMaturity)), outType.Content));
+                .Promise(() => new CurveRecipe(wrapper.AggregateId, lastLiquidTenor.Content, dcc.Content, inter.Content, exShort.Content, exLong.Content, new OutputFrequency(outSeries.Content, new Maturity(e.MaximumMaturity)), outType.Content));
         }
     }
 }

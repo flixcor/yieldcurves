@@ -18,9 +18,9 @@ namespace Common.Infrastructure
 
         public async Task Publish(IEventWrapper wrapper, CancellationToken cancellationToken = default)
         {
-            var @event = wrapper.GetContent();
+            var eventType = wrapper.GetContent().GetType();
 
-            var handlerTypes = @event.GetType()
+            var handlerTypes = eventType
                 .GetInterfaces()
                 .Where(i => i.GetInterface(nameof(IEvent)) != null)
                 .Select(i => typeof(IHandleEvent<>).MakeGenericType(i));
@@ -29,9 +29,11 @@ namespace Common.Infrastructure
                 .SelectMany(t => _serviceProvider.GetServices(t))
                 .Cast<dynamic>();
 
+            var concrete = wrapper.ConcreteGeneric(eventType);
+
             foreach (var handler in handlers)
             {
-                await handler.Handle((dynamic)@event, cancellationToken);
+                await handler.Handle(concrete, cancellationToken);
             }
         }
     }

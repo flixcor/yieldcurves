@@ -25,7 +25,7 @@ namespace CalculationEngine.Query.Service.Features.GetCalculationDates
 
         public async Task Handle(IEventWrapper<ICurveCalculated> @event, CancellationToken cancellationToken)
         {
-            var asOfDate = @event.GetContent().AsOfDate;
+            var asOfDate = @event.Content.AsOfDate;
 
             var existingDto = await _readModelRepository.Single(x => x.AsOfDate == asOfDate);
 

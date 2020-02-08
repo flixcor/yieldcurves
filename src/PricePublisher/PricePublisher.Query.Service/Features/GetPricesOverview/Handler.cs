@@ -83,15 +83,15 @@ namespace PricePublisher.Query.Service.Features.GetPricesOverview
 
         public async Task Handle(IEventWrapper<IInstrumentPricingPublished> wrapper, CancellationToken cancellationToken)
         {
-            var @event = wrapper.GetContent();
+            var @event = wrapper.Content;
 
             var instrument = await _db.FindAsync<Instrument>(@event.InstrumentId);
 
             var dto = new Dto
             {
-                AsAtDate = @event.AsAtDate,
+                AsAtDate = wrapper.Timestamp.ToDateTimeUtc(),
                 AsOfDate = @event.AsOfDate,
-                Id = wrapper.Metadata.AggregateId,
+                Id = wrapper.AggregateId,
                 Instrument = instrument.Description,
                 PriceType = @event.PriceType,
                 PriceCurrency = @event.PriceCurrency,
@@ -105,11 +105,11 @@ namespace PricePublisher.Query.Service.Features.GetPricesOverview
 
         public Task Handle(IEventWrapper<IInstrumentCreated> wrapper, CancellationToken cancellationToken)
         {
-            var @event = wrapper.GetContent();
+            var @event = wrapper.Content;
 
             _db.Add(new Instrument
             {
-                Id = wrapper.Metadata.AggregateId,
+                Id = wrapper.AggregateId,
                 Description = @event.Description,
                 Vendor = @event.Vendor
             });

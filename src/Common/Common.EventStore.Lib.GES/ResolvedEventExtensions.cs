@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using Common.Core;
-using Common.EventStore.Lib.Proto;
 using EventStore.Client;
 using static Common.Events.Helpers;
 
@@ -19,7 +18,7 @@ namespace Common.EventStore.Lib.GES
             return new EventData(Uuid.NewUuid(), typeName, data, metadata, false);
         }
 
-        internal static (IEventWrapper, IMetadata)? Deserialize(this ResolvedEvent resolvedEvent, params string[] eventTypes)
+        internal static (IEventWrapper wrapper, IMetadata metadata)? Deserialize(this ResolvedEvent resolvedEvent, params string[] eventTypes)
         {
             var metadata = resolvedEvent.OriginalEvent.Metadata;
             var data = resolvedEvent.OriginalEvent.Data;

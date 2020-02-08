@@ -1,6 +1,7 @@
 ﻿using System;
+using Common.EventStore.Lib;
 using Common.EventStore.Lib.DependencyInjection;
-using Common.EventStore.Lib.EfCore;
+using Common.EventStore.Lib.Internal;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

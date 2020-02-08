@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
-using Common.EventStore.Lib.EfCore;
+using Common.EventStore.Lib;
 using CurveRecipes.Domain;
 using Newtonsoft.Json.Linq;
 
@@ -77,12 +77,12 @@ namespace CurveRecipes.Service.Features.AddTransformation
 
             return transformationResult.Promise(async t =>
             {
-                var c = await _repository.GetByIdAsync<CurveRecipe>(command.Id);
+                var c = await _repository.Load<CurveRecipe>(command.Id);
 
                 if (c != null)
                 {
                     var result = await c.AddTransformation(t)
-                        .Promise(() => _repository.SaveAsync(c));
+                        .Promise(() => _repository.Save(c));
 
                     return result;
                 }

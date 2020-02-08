@@ -6,7 +6,7 @@ namespace CalculationEngine.Query.Service.Features.GetCalculatedCurveDetail
 {
     public class Dto : ReadObject
     {
-        public Guid CurveRecipeId { get; set; }
+        public NonEmptyGuid CurveRecipeId { get; set; }
         public string? CurveRecipeName { get; set; }
         public string AsOfDate { get; set; }
         public DateTime AsAtDate { get; set; }

@@ -15,7 +15,7 @@ namespace UnitTests
             var vendor = Vendor.UBS;
             var desc = "description";
 
-            WhenCreated(() => RegularInstrument.TryCreate(vendor, desc).Content)
+            When((r) => r.TryDefine(vendor, desc))
                 .Then(
                     RegularInstrumentCreated(vendor.ToString(), desc),
                     InstrumentCreated(vendor.ToString(), desc));
@@ -27,7 +27,7 @@ namespace UnitTests
             var vendor = Vendor.Bloomberg;
             var desc = "description";
 
-            Assert.False(RegularInstrument.TryCreate(vendor, desc).IsSuccessful);
+            Assert.False(Aggregate.TryDefine(vendor, desc).IsSuccessful);
         }
     }
 }

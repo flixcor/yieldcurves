@@ -31,14 +31,14 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
         public async Task Handle(IEventWrapper<ICurveRecipeCreated> @event, CancellationToken cancellationToken)
         {
             await _marketCurveRepository
-                .Get(@event.GetContent().MarketCurveId)
+                .Get(@event.Content.MarketCurveId)
                 .ToResult()
                 .Promise(curve =>
                 {
                     var dto = new Dto
                     {
-                        Id = @event.Metadata.AggregateId,
-                        Name = GenerateName(@event.GetContent(), curve)
+                        Id = @event.AggregateId,
+                        Name = GenerateName(@event.Content, curve)
                     };
 
                     return _readModelRepository.Insert(dto);
@@ -59,23 +59,23 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
                     {
                         new ParameterDto
                         {
-                            Name = nameof(@event.GetContent().Shift),
-                            Value = @event.GetContent().Shift.ToString()
+                            Name = nameof(@event.Content.Shift),
+                            Value = @event.Content.Shift.ToString()
                         },
                         new ParameterDto
                         {
-                            Name = nameof(@event.GetContent().ShockTarget),
-                            Value = @event.GetContent().ShockTarget
+                            Name = nameof(@event.Content.ShockTarget),
+                            Value = @event.Content.ShockTarget
                         },
                         new ParameterDto
                         {
-                            Name = nameof(@event.GetContent().Maturities),
-                            Value = string.Join(';', @event.GetContent().Maturities)
+                            Name = nameof(@event.Content.Maturities),
+                            Value = string.Join(';', @event.Content.Maturities)
                         }
                     }
             };
 
-            await _readModelRepository.Get(@event.Metadata.AggregateId)
+            await _readModelRepository.Get(@event.AggregateId)
                 .ToResult()
                 .Promise(recipe =>
                 {
@@ -94,18 +94,18 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
                     {
                         new ParameterDto
                         {
-                            Name = nameof(@event.GetContent().Shift),
-                            Value = @event.GetContent().Shift.ToString()
+                            Name = nameof(@event.Content.Shift),
+                            Value = @event.Content.Shift.ToString()
                         },
                         new ParameterDto
                         {
-                            Name = nameof(@event.GetContent().ShockTarget),
-                            Value = @event.GetContent().ShockTarget
+                            Name = nameof(@event.Content.ShockTarget),
+                            Value = @event.Content.ShockTarget
                         }
                     }
             };
 
-            await _readModelRepository.Get(@event.Metadata.AggregateId)
+            await _readModelRepository.Get(@event.AggregateId)
                 .ToResult()
                 .Promise(recipe =>
                 {
@@ -119,8 +119,8 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
         {
             var dto = new MarketCurveNamePartDto
             {
-                Id = @event.Metadata.AggregateId,
-                Value = GenerateName(@event.GetContent())
+                Id = @event.AggregateId,
+                Value = GenerateName(@event.Content)
             };
 
             return _marketCurveRepository.Insert(dto);

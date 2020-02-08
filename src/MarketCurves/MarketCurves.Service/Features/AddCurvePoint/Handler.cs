@@ -4,54 +4,39 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
 using Common.Events;
-using Common.EventStore.Lib.EfCore;
-using Common.Infrastructure.Extensions;
+using Common.EventStore.Lib;
 using MarketCurves.Domain;
+using static MarketCurves.Service.Domain.Instrument;
 
 namespace MarketCurves.Service.Features.AddCurvePoint
 {
-    public class Handler : IHandleCommand<Command>,
+    public class Handler :
+        ApplicationService<MarketCurve>,
+        IHandleCommand<Command>,
         IHandleQuery<Query, Dto>,
         IHandleEvent<IInstrumentCreated>,
         IHandleEvent<ICurvePointAdded>
     {
-        private readonly IAggregateRepository _repository;
         private readonly IReadModelRepository<Instrument> _readModelRepository;
         private readonly IReadModelRepository<UsedValues> _usedValues;
         private readonly IReadModelRepository<Instrument> _instruments;
+        private readonly GetVendor _getHasPriceType;
 
-        public Handler(IAggregateRepository repository, IReadModelRepository<Instrument> readModelRepository, IReadModelRepository<UsedValues> usedValues, IReadModelRepository<Instrument> instruments)
+        public Handler(IAggregateRepository repository, IReadModelRepository<Instrument> readModelRepository, IReadModelRepository<UsedValues> usedValues, IReadModelRepository<Instrument> instruments, GetVendor getHasPriceType) : base(repository)
         {
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _readModelRepository = readModelRepository ?? throw new ArgumentNullException(nameof(readModelRepository));
             _usedValues = usedValues ?? throw new ArgumentNullException(nameof(usedValues));
             _instruments = instruments ?? throw new ArgumentNullException(nameof(instruments));
+            _getHasPriceType = getHasPriceType;
         }
 
-        public Task<Result> Handle(Command command, CancellationToken cancellationToken)
+        public async Task<Result> Handle(Command command, CancellationToken cancellationToken)
         {
-            return _readModelRepository
-                .Get(command.InstrumentId)
-                .ToResult()
-                .Promise(async i =>
-                {
-                    if (i.HasPriceType && command.PriceType == null)
-                    {
-                        return Result.Fail();
-                    }
+            var instrument = await FromId(command.InstrumentId, _getHasPriceType);
+            var dateLag = new DateLag(command.DateLag);
 
-                    var dateLag = new DateLag(command.DateLag);
-
-                    var c = await _repository.GetByIdAsync<MarketCurve>(command.MarketCurveId);
-
-                    if (c != null)
-                    {
-                        var result = c.AddCurvePoint(command.Tenor, command.InstrumentId, dateLag, command.PriceType, command.IsMandatory);
-                        return await result.Promise(() => _repository.SaveAsync(c));
-                    }
-
-                    return Result.Fail();
-                });
+            return await Handle(cancellationToken, command.MarketCurveId, whatToDo:
+                c => c.AddCurvePoint(command.Tenor, instrument, dateLag, command.PriceType, command.IsMandatory));
         }
 
         public Task Handle(IEventWrapper<IInstrumentCreated> @event, CancellationToken cancellationToken)
@@ -59,9 +44,9 @@ namespace MarketCurves.Service.Features.AddCurvePoint
             var instrument = new Instrument
             {
                 Id = @event.AggregateId,
-                Vendor = @event.GetContent().Vendor,
-                Name = @event.GetContent().Description,
-                HasPriceType = @event.GetContent().HasPriceType
+                Vendor = @event.Content.Vendor,
+                Name = @event.Content.Description,
+                HasPriceType = @event.Content.HasPriceType
             };
 
             return _readModelRepository.Insert(instrument);
@@ -94,20 +79,20 @@ namespace MarketCurves.Service.Features.AddCurvePoint
 
         public async Task Handle(IEventWrapper<ICurvePointAdded> wrapper, CancellationToken cancellationToken)
         {
-            var dto = await _usedValues.Get(wrapper.Metadata.AggregateId);
+            var dto = await _usedValues.Get(wrapper.AggregateId);
 
             if (dto == null)
             {
                 dto = new UsedValues
                 {
-                    Id = wrapper.Metadata.AggregateId
+                    Id = wrapper.AggregateId
                 };
 
                 await _usedValues.Insert(dto);
             }
 
-            dto.Instruments.Add(wrapper.GetContent().InstrumentId);
-            dto.Tenors.Add(wrapper.GetContent().Tenor);
+            dto.Instruments.Add(wrapper.Content.InstrumentId);
+            dto.Tenors.Add(wrapper.Content.Tenor);
 
             await _usedValues.Update(dto);
         }

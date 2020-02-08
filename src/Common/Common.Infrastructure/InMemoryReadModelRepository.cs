@@ -17,7 +17,7 @@ namespace Common.Infrastructure
 
         private IEnumerable<T> _checkpoint;
 
-        public Task<T?> Get(Guid id)
+        public Task<T?> Get(NonEmptyGuid id)
         {
             var readObject = (T?)_checkpoint.FirstOrDefault(x => x.Id == id);
 

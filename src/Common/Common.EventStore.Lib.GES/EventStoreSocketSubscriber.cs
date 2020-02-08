@@ -41,11 +41,11 @@ namespace Common.EventStore.Lib.GES
         {
             _position = (long?)resolvedEvent.OriginalPosition?.CommitPosition ?? _position;
 
-            var wrapper = resolvedEvent.Deserialize(_eventTypes.ToArray());
+            var tup = resolvedEvent.Deserialize(_eventTypes.ToArray());
 
-            if (wrapper != null && !cancellationToken.IsCancellationRequested)
+            if (tup.HasValue && !cancellationToken.IsCancellationRequested)
             {
-                await _action(wrapper);
+                await _action(tup.Value.wrapper);
             }
         }
     }

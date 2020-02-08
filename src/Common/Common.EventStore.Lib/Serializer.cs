@@ -4,7 +4,7 @@ using Common.Core;
 using Google.Protobuf;
 using static Common.Events.Helpers;
 
-namespace Common.EventStore.Lib.Proto
+namespace Common.EventStore.Lib
 {
     public static class Serializer
     {

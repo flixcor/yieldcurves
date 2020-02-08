@@ -104,12 +104,11 @@ message CurveRecipeCreated {
 }
 
 message InstrumentPricingPublished {
-  google.protobuf.Timestamp AsAtDate = 1;
-  string AsOfDate = 2;
-  Uuid InstrumentId = 3;
-  double PriceAmount = 4;
-  string PriceCurrency = 5;
-  string PriceType = 6;
+  string AsOfDate = 1;
+  Uuid InstrumentId = 2;
+  double PriceAmount = 3;
+  string PriceCurrency = 4;
+  string PriceType = 5;
 }
 
 

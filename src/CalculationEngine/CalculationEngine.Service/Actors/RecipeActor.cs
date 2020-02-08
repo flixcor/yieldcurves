@@ -6,7 +6,7 @@ using CalculationEngine.Service.ActorModel.Commands;
 using CalculationEngine.Service.Domain;
 using Common.Core;
 using Common.Events;
-using Common.EventStore.Lib.EfCore;
+using Common.EventStore.Lib;
 using Common.Infrastructure.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -28,14 +28,14 @@ namespace CalculationEngine.Service.ActorModel.Actors
 
         private void Handle(Calculate obj)
         {
-            if (obj.CurvePoints.All(x => obj.Pricings.Any(y => y.GetContent().InstrumentId == x.GetContent().InstrumentId)))
+            if (obj.CurvePoints.All(x => obj.Pricings.Any(y => y.Content.InstrumentId == x.Content.InstrumentId)))
             {
-                var result = CurveCalculation.Calculate(obj.AsOfDate, _recipe, obj.CurvePoints.Select(x=> x.GetContent()), obj.Pricings.Select(x => x.GetContent()));
-                var calc = new CurveCalculationResult(_id, obj.AsOfDate, result);
+                var result = CurveCalculation.Calculate(obj.AsOfDate, _recipe, obj.CurvePoints.Select(x=> x.Content), obj.Pricings.Select(x => x.Content));
+                var calc = new CurveCalculationResult().WithResult(_id, obj.AsOfDate, result);
 
                 using var serviceScope = Context.CreateScope();
                 var repo = serviceScope.ServiceProvider.GetService<IAggregateRepository>();
-                repo.SaveAsync(calc).PipeTo(Self);
+                repo.Save(calc).PipeTo(Self);
             }
         }
 

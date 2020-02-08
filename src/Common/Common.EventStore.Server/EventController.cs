@@ -45,7 +45,7 @@ namespace Common.EventStore.Controllers
 
             return _query.Run(cancel).Select(e => new EventReply
             {
-                Position = e.Metadata.Id,
+                Position = e.Id,
                 Type = e.GetContent().GetType().Name,
                 Payload = e.GetContent()
             });
@@ -67,20 +67,41 @@ namespace Common.EventStore.Controllers
                 foreach (var type in request?.EventTypes)
                 {
                     _subscriber.RegisterEventType(type);
+                    _query.RegisterEventType(type);
+                }
+            }
+
+            var counter = 0;
+
+            async Task WriteEvent(IEventWrapper wrapper)
+            {
+                var payload = wrapper.GetContent();
+                var type = payload.GetType();
+                var name = type.Name;
+                var position = wrapper.Id;
+
+                var json = JsonSerializer.Serialize(payload, type, s_jsonSerializerOptions);
+
+                _logger.LogInformation($"returning event: {name}");
+
+                await writer.WriteLineAsync($"id: {position}\nevent: {type}\ndata: {json}\n\n");
+            }
+
+            await foreach (var wrapper in _query.Run(cancel))
+            {
+                counter++;
+
+                await WriteEvent(wrapper);
+
+                if (counter % 500 == 0)
+                {
+                    await writer.FlushAsync();
                 }
             }
 
             async Task OnEvent(IEventWrapper wrapper)
             {
-                var payload = wrapper.GetContent();
-                var type = payload.GetType().Name;
-                var position = wrapper.Metadata.Id;
-
-                var json = JsonSerializer.Serialize(payload, payload?.GetType(), s_jsonSerializerOptions);
-
-                _logger.LogInformation($"returning event: {type}");
-
-                await writer.WriteLineAsync($"id: {position}\nevent: {type}\ndata: {json}\n\n");
+                await WriteEvent(wrapper);
                 await writer.FlushAsync();
             }
 
@@ -98,3 +119,4 @@ namespace Common.EventStore.Controllers
         }
     }
 }
+

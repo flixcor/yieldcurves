@@ -8,7 +8,7 @@ using Common.Core.Extensions;
 using CurveRecipes.Domain;
 using Common.Infrastructure.Extensions;
 using System.Linq;
-using Common.EventStore.Lib.EfCore;
+using Common.EventStore.Lib;
 
 namespace CurveRecipes.Service.Features.CreateCurveRecipe
 {
@@ -38,10 +38,10 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
                    return maturityResult.Promise(m =>
                    {
                        var outputFrequency = new Domain.OutputFrequency(command.OutputFrequency.OutputSeries, m);
-                       var recipeResult = CurveRecipe.TryCreate(command.MarketCurveId, command.ShortName, command.Description, command.LastLiquidTenor, command.DayCountConvention, command.Interpolation, command.ExtrapolationShort,
+                       var recipeResult = new CurveRecipe().TryDefine(command.MarketCurveId, command.ShortName, command.Description, command.LastLiquidTenor, command.DayCountConvention, command.Interpolation, command.ExtrapolationShort,
                            command.ExtrapolationLong, outputFrequency, command.OutputType);
 
-                       return recipeResult.Promise(r => _repository.SaveAsync(r));
+                       return recipeResult.Promise(r => _repository.Save(r));
                    });
                });
         }
@@ -50,8 +50,8 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
         {
             var curve = new MarketCurveDto
             {
-                Id = @event.Metadata.AggregateId,
-                Name = GenerateName(@event.GetContent())
+                Id = @event.AggregateId,
+                Name = GenerateName(@event.Content)
             };
 
             return _readModelRepository.Insert(curve);
@@ -59,13 +59,13 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
 
         public async Task Handle(IEventWrapper<ICurvePointAdded> @event, CancellationToken cancellationToken)
         {
-            var curve = await _readModelRepository.Get(@event.Metadata.AggregateId);
+            var curve = await _readModelRepository.Get(@event.AggregateId);
 
             await curve
                 .ToResult()
                 .Promise(x =>
                 {
-                    x.Tenors.Add(@event.GetContent().Tenor);
+                    x.Tenors.Add(@event.Content.Tenor);
                     return _readModelRepository.Update(x);
                 });
         }

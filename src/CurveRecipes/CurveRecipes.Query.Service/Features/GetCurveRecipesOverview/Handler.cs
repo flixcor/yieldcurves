@@ -22,8 +22,8 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipesOverview
         {
             var dto = new Dto
             {
-                Id = @event.Metadata.AggregateId,
-                Name = @event.GetContent().ShortName
+                Id = @event.AggregateId,
+                Name = @event.Content.ShortName
             };
 
             return _readModelRepository.Insert(dto);

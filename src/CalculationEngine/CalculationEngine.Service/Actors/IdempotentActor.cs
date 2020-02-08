@@ -21,7 +21,7 @@ namespace CalculationEngine.Service.ActorModel
 
             Command<IEventWrapper<T>>(e =>
             {
-                if (GetVersion(e) < e.Metadata.Version && validation(e))
+                if (GetVersion(e) < e.Version && validation(e))
                 {
                     Persist(e, ev =>
                     {
@@ -45,18 +45,18 @@ namespace CalculationEngine.Service.ActorModel
 
         private int GetVersion<T>(IEventWrapper<T> e) where T : IEvent
         {
-            return _eventVersions.TryGetValue(e.Metadata.AggregateId, out var version) ? version : -1;
+            return _eventVersions.TryGetValue(e.AggregateId, out var version) ? version : -1;
         }
 
         private void AddVersion<T>(IEventWrapper<T> e) where T : IEvent
         {
-            if (!_eventVersions.ContainsKey(e.Metadata.AggregateId))
+            if (!_eventVersions.ContainsKey(e.AggregateId))
             {
-                _eventVersions.Add(e.Metadata.AggregateId, e.Metadata.Version);
+                _eventVersions.Add(e.AggregateId, e.Version);
             }
             else
             {
-                _eventVersions[e.Metadata.AggregateId] = e.Metadata.Version;
+                _eventVersions[e.AggregateId] = e.Version;
             }
         }
     }

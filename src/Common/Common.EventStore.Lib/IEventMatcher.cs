@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Common.Core;
 
 namespace Common.EventStore.Lib
 {
     public interface IEventFilter
     {
         long? Checkpoint { get; }
-        Guid? AggregateId { get; }
+        NonEmptyGuid? AggregateId { get; }
         ICollection<string> EventTypes { get; }
     }
 
@@ -17,7 +18,7 @@ namespace Common.EventStore.Lib
 
     public interface ICanAddAggregate : IEventFilter
     {
-        public ICanAddEventTypes ForAggregate(Guid id);
+        public ICanAddEventTypes ForAggregate(NonEmptyGuid id);
     }
 
     public interface ICanAddEventTypes : IEventFilter

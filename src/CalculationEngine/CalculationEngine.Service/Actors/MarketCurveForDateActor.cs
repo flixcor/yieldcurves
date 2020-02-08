@@ -26,13 +26,13 @@ namespace CalculationEngine.Service.ActorModel.Actors
 
         public void Recover(IEventWrapper<IInstrumentPricingPublished> wrapper)
         {
-            var e = wrapper.GetContent();
+            var e = wrapper.Content;
 
             if (!_pricings.TryGetValue(e.InstrumentId, out var pricing))
             {
                 _pricings.Add(e.InstrumentId, wrapper);
             }
-            else if (Date.FromString(pricing.GetContent().AsOfDate) < Date.FromString(e.AsOfDate) || (pricing.GetContent().AsOfDate == e.AsOfDate && pricing.GetContent().AsAtDate < e.AsAtDate))
+            else if (Date.FromString(pricing.Content.AsOfDate) < Date.FromString(e.AsOfDate) || (pricing.Content.AsOfDate == e.AsOfDate && pricing.Timestamp < wrapper.Timestamp))
             {
                 _pricings[e.InstrumentId] = wrapper;
             }
@@ -40,7 +40,7 @@ namespace CalculationEngine.Service.ActorModel.Actors
 
         public void Handle(SendMeCalculate q)
         {
-            if (q.CurvePoints.All(x => _pricings.ContainsKey(x.GetContent().InstrumentId)))
+            if (q.CurvePoints.All(x => _pricings.ContainsKey(x.Content.InstrumentId)))
             {
                 Sender.Tell(new Calculate(_asOfDate, q.CurvePoints, _pricings.Values), Self);
             }

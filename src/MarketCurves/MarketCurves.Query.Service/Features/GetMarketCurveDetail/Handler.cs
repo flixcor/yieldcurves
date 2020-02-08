@@ -34,8 +34,8 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
         {
             var dto = new Dto
             {
-                Id = @event.Metadata.AggregateId,
-                Name = GenerateName(@event.GetContent())
+                Id = @event.AggregateId,
+                Name = GenerateName(@event.Content)
             };
 
             return _curveRepo.Insert(dto);
@@ -43,9 +43,9 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
 
         public async Task Handle(IEventWrapper<ICurvePointAdded> wrapper, CancellationToken cancellationToken)
         {
-            var @event = wrapper.GetContent();
+            var @event = wrapper.Content;
 
-            var curveResult = await _curveRepo.Get(wrapper.Metadata.AggregateId).ToResult();
+            var curveResult = await _curveRepo.Get(wrapper.AggregateId).ToResult();
             var instrumentResult = await _instrumentRepo.Get(@event.InstrumentId).ToResult();
 
             await Result
@@ -74,11 +74,11 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
 
         public Task Handle(IEventWrapper<IBloombergInstrumentCreated> wrapper, CancellationToken cancellationToken)
         {
-            var @event = wrapper.GetContent();
+            var @event = wrapper.Content;
 
             var instrument = new InstrumentDto
             {
-                Id = wrapper.Metadata.AggregateId,
+                Id = wrapper.AggregateId,
                 Name = $"{@event.Ticker} {@event.PricingSource} {@event.YellowKey}",
                 Vendor = "Bloomberg"
             };
@@ -88,11 +88,11 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
 
         public Task Handle(IEventWrapper<IRegularInstrumentCreated> wrapper, CancellationToken cancellationToken)
         {
-            var @event = wrapper.GetContent();
+            var @event = wrapper.Content;
 
             var instrument = new InstrumentDto
             {
-                Id = wrapper.Metadata.AggregateId,
+                Id = wrapper.AggregateId,
                 Name = @event.Description,
                 Vendor = @event.Vendor
             };

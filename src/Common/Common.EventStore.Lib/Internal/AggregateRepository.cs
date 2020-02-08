@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.Core;
 using static Common.Events.Helpers;
 
-namespace Common.EventStore.Lib.EfCore
+namespace Common.EventStore.Lib.Internal
 {
     internal class AggregateRepository : IAggregateRepository
     {
@@ -18,40 +19,37 @@ namespace Common.EventStore.Lib.EfCore
             _readRepository = readRepository;
         }
 
-        public async Task<T?> GetByIdAsync<T>(Guid id, CancellationToken cancellationToken) where T : Aggregate<T>
+        public async Task<T> Load<T>(NonEmptyGuid id, CancellationToken cancellationToken) where T : Aggregate<T>, new()
         {
-            var aggregate = (T?)Activator.CreateInstance(typeof(T), true) ?? throw new Exception();
-            aggregate.Id = id;
-
-            var loaded = false;
+            var aggregate = new T
+            {
+                Id = id
+            };
 
             var filter = EventFilter.ForAggregate(id);
 
-            await foreach (var (item, metadata) in _readRepository.Get(filter, cancellationToken))
+            await foreach (var (item, _) in _readRepository.Get(filter, cancellationToken))
             {
-                loaded = true;
                 aggregate.LoadFromHistory(item);
             }
 
-            return loaded
-                ? aggregate
-                : null;
+            return aggregate;
         }
 
-        public Task SaveAsync<T>(T aggregate, CancellationToken cancellationToken = default, Guid? causationId = null, Guid? correlationId = null) where T : Aggregate<T>
+        public Task Save<T>(T aggregate, CancellationToken cancellationToken = default, NonEmptyGuid? causationId = null, NonEmptyGuid? correlationId = null) where T : Aggregate<T>, new()
         {
             causationId ??= Guid.NewGuid();
             correlationId ??= causationId;
 
-            var uncommitted = aggregate.GetUncommittedEvents().Select(x => 
+            var uncommitted = aggregate.GetUncommittedEvents().Select(x =>
             {
                 var id = Guid.NewGuid();
 
-                var metaData = CreateMetadata(new Dictionary<string, string>
+                var metaData = CreateMetadata(new Dictionary<string, string?>
                 {
                     { "id", Guid.NewGuid().ToString()},
-                    { "causationId", causationId.ToString()},
-                    { "correlationId", correlationId.ToString()}
+                    { "causationId", causationId?.ToString()},
+                    { "correlationId", correlationId?.ToString()}
                 });
 
                 causationId = id;

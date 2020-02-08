@@ -23,13 +23,13 @@ namespace CalculationEngine.Service.ActorModel.Actors
 
         private void Recover(IEventWrapper<IInstrumentPricingPublished> wrapper)
         {
-            var e = wrapper.GetContent();
+            var e = wrapper.Content;
 
             if (!_pricings.TryGetValue(e.AsOfDate, out var pricing))
             {
                 _pricings.Add(e.AsOfDate, wrapper);
             }
-            else if(pricing.GetContent().AsAtDate < e.AsAtDate)
+            else if(pricing.Timestamp < wrapper.Timestamp)
             {
                 _pricings[e.AsOfDate] = wrapper;
             }

@@ -1,55 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Common.Core;
+﻿using Common.Core;
 using Common.EventStore.Lib;
+using MarketCurves.Service.Domain;
+using static Common.Core.Result;
 using static Common.Events.Helpers;
 
 namespace MarketCurves.Domain
 {
     public class MarketCurve : Aggregate<MarketCurve>
     {
-        private MarketCurve()
+        public MarketCurve()
         {
+
         }
 
-        public static Result<MarketCurve> TryCreate(Country country, CurveType curveType, FloatingLeg? floatingLeg = null)
-        {
-            var errors = new List<string>();
-
-            if (errors.Any())
-            {
-                return Result.Fail<MarketCurve>(errors.ToArray());
-            }
-
-            return Result.Ok(new MarketCurve(country, curveType, floatingLeg));
-        }
-
-        private MarketCurve(Country country, CurveType curveType, FloatingLeg? floatingLeg = null)
+        public MarketCurve Define(Country country, CurveType curveType, FloatingLeg? floatingLeg = null)
         {
             var @event = MarketCurveCreated(country.ToString(), curveType.ToString(), floatingLeg?.ToString());
-
             GenerateEvent(@event);
+            return this;
         }
 
-        public Result AddCurvePoint(Tenor tenor, Guid instrumentId, DateLag dateLag, PriceType? priceType, bool isMandatory)
+        public Result<MarketCurve> AddCurvePoint(Tenor tenor, Instrument instrument, DateLag dateLag, PriceType? priceType, bool isMandatory)
         {
-            var errors = new List<string>();
-
-            if (instrumentId.Equals(Guid.Empty))
+            if (instrument.Vendor.HasPriceType() && !priceType.HasValue)
             {
-                errors.Add($"{nameof(instrumentId)} cannot be empty");
+                return Fail<MarketCurve>($"instrument {instrument.Id} needs a price type");
             }
 
-            if (errors.Any())
-            {
-                return Result.Fail(errors.ToArray());
-            }
-
-            var @event = CurvePointAdded(tenor.ToString(), instrumentId, dateLag.Value, isMandatory, priceType.ToString());
+            var @event = CurvePointAdded(tenor.ToString(), instrument.Id, dateLag.Value, isMandatory, priceType?.ToString());
             GenerateEvent(@event);
 
-            return Result.Ok();
+            return Ok(this);
         }
 
         protected override void When(IEvent @event)

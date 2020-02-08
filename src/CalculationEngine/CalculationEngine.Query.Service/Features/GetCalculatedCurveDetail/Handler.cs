@@ -38,14 +38,14 @@ namespace CalculationEngine.Query.Service.Features.GetCalculatedCurveDetail
 
         public async Task Handle(IEventWrapper<ICurveCalculated> wrapper, CancellationToken cancellationToken)
         {
-            var @event = wrapper.GetContent();
+            var @event = wrapper.Content;
 
             var recipe = (CurveRecipe?)await _db.FindAsync<CurveRecipe>(@event.CurveRecipeId);
 
             _db.Add(new Dto
             {
-                Id = wrapper.Metadata.AggregateId,
-                AsAtDate = wrapper.Metadata.Timestamp.ToDateTimeUtc(),
+                Id = wrapper.AggregateId,
+                AsAtDate = wrapper.Timestamp.ToDateTimeUtc(),
                 AsOfDate = @event.AsOfDate,
                 CurveRecipeId = @event.CurveRecipeId,
                 CurveRecipeName = recipe?.Name,
@@ -63,8 +63,8 @@ namespace CalculationEngine.Query.Service.Features.GetCalculatedCurveDetail
         {
             _db.Add(new CurveRecipe
             {
-                Id = @event.Metadata.AggregateId,
-                Name = @event.GetContent().ShortName
+                Id = @event.AggregateId,
+                Name = @event.Content.ShortName
             });
 
             return Task.CompletedTask;

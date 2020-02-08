@@ -25,7 +25,7 @@ namespace Common.Events
         public static ICurveCalculationFailed CurveCalculationFailed(Guid curveRecipeId, string asOfDate, string[] messages)
             => new CurveCalculationFailed(curveRecipeId, asOfDate, messages);
 
-        public static ICurvePointAdded CurvePointAdded(string tenor, Guid instrumentId, short dateLag, bool isMandatory, string priceType)
+        public static ICurvePointAdded CurvePointAdded(string tenor, Guid instrumentId, short dateLag, bool isMandatory, string? priceType)
             => new CurvePointAdded(tenor, instrumentId, dateLag, isMandatory, priceType);
 
         public static ICurveRecipeCreated CurveRecipeCreated(Guid marketCurveId, string shortName, string description,
@@ -37,10 +37,10 @@ namespace Common.Events
                                           interpolation, extrapolationShort, extrapolationLong, outputSeries,
                                           maximumMaturity, outputType);
 
-        public static IInstrumentPricingPublished InstrumentPricingPublished(string asOfDate, DateTime asAtDate,
+        public static IInstrumentPricingPublished InstrumentPricingPublished(string asOfDate,
                                                                              Guid instrumentId, string priceCurrency,
                                                                              double priceAmount, string? priceType = null)
-            => new InstrumentPricingPublished(asOfDate, asAtDate, instrumentId, priceCurrency, priceAmount, priceType);
+            => new InstrumentPricingPublished(asOfDate, instrumentId, priceCurrency, priceAmount, priceType);
 
         public static IKeyRateShockAdded KeyRateShockAdded(int order, string shockTarget, double shift, double[] maturities)
             => new KeyRateShockAdded(order, shockTarget, shift, maturities);
@@ -51,7 +51,7 @@ namespace Common.Events
         public static IPoint Point(double maturity, string currency, double value)
             => new Point(maturity, currency, value);
 
-        public static IMetadata CreateMetadata(IDictionary<string,string> values) 
+        public static IMetadata CreateMetadata(IDictionary<string,string?> values) 
             => new Metadata(values);
 
         public static IEventWrapper Wrap(Guid aggregateId, Instant timestamp, int version, IEvent content, long id = 0) 

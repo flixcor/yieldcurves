@@ -19,7 +19,7 @@ namespace Common.Infrastructure.SignalR
             _context = context;
         }
 
-        public Task<T?> Get(Guid id) => _decorated.Get(id);
+        public Task<T?> Get(NonEmptyGuid id) => _decorated.Get(id);
 
         public IAsyncEnumerable<T> GetAll() => _decorated.GetAll();
 

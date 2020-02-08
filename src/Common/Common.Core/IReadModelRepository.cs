@@ -11,7 +11,7 @@ namespace Common.Core
         IAsyncEnumerable<T> GetAll();
         IAsyncEnumerable<T> GetMany(Expression<Func<T, bool>> where);
         Task<T?> Single(Expression<Func<T, bool>> where);
-        Task<T?> Get(Guid id);
+        Task<T?> Get(NonEmptyGuid id);
         Task Update(T t);
         Task Insert(T t);
     }
