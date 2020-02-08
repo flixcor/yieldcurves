@@ -25,9 +25,8 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
             _readModelRepository = readModelRepository ?? throw new ArgumentNullException(nameof(readModelRepository));
         }
 
-        public Task<Result> Handle(Command command, CancellationToken cancellationToken)
-        {
-            return Maturity.TryCreate(command.OutputFrequency.MaximumMaturity).Promise(m =>
+        public Task<Result> Handle(Command command, CancellationToken cancellationToken) 
+            => Maturity.TryCreate(command.OutputFrequency.MaximumMaturity).Promise(m =>
             {
                 var outputFrequency = new Domain.OutputFrequency(command.OutputFrequency.OutputSeries, m);
 
@@ -45,7 +44,6 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
                         outputType: command.OutputType)
                     );
             });
-        }
 
         public Task Handle(IEventWrapper<IMarketCurveCreated> @event, CancellationToken cancellationToken)
         {
