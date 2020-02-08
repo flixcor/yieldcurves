@@ -10,7 +10,7 @@ namespace PricePublisher.Service.Domain
     {
         public InstrumentPricing Define(Date asOfDate, NonEmptyGuid instrumentId, Price price, PriceType? priceType = null)
         {
-            GenerateEvent(InstrumentPricingPublished(asOfDate.ToString(), instrumentId, price.Currency.ToString(), price.Value, priceType?.ToString()));
+            GenerateEvent(InstrumentPricingPublished(asOfDate.NonEmptyString(), instrumentId, price.Currency.ToString().NonEmpty(), price.Value, priceType?.NonEmptyString()));
             return this;
         }
 

@@ -25,7 +25,7 @@ namespace Instruments.Service.Features.CreateBloombergInstrument
             var instrumentResult = Result.Combine(
                 pricingSourceResult, 
                 yellowKeyResult, 
-                (pricingSource, yellowKey) => new BloombergInstrument().Define(command.Ticker, pricingSource, yellowKey));
+                (pricingSource, yellowKey) => new BloombergInstrument().Define(command.Ticker.NonEmpty(), pricingSource, yellowKey));
 
             return instrumentResult.Promise(i => _repository.Save(i));
         }

@@ -47,11 +47,11 @@ namespace CalculationEngine.Query.Service.Features.GetCalculatedCurveDetail
                 Id = wrapper.AggregateId,
                 AsAtDate = wrapper.Timestamp.ToDateTimeUtc(),
                 AsOfDate = @event.AsOfDate,
-                CurveRecipeId = @event.CurveRecipeId,
+                CurveRecipeId = @event.CurveRecipeId.NonEmpty(),
                 CurveRecipeName = recipe?.Name,
                 Points = @event.Points.Select(p => new Point
                 {
-                    Id = Guid.NewGuid(),
+                    Id = NonEmpty.Guid(),
                     Currency = p.Currency,
                     Maturity = p.Maturity,
                     Value = p.Value

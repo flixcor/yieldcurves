@@ -31,7 +31,7 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
         public async Task Handle(IEventWrapper<ICurveRecipeCreated> @event, CancellationToken cancellationToken)
         {
             await _marketCurveRepository
-                .Get(@event.Content.MarketCurveId)
+                .Get(@event.Content.MarketCurveId.NonEmpty())
                 .ToResult()
                 .Promise(curve =>
                 {
@@ -47,7 +47,7 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
 
         public Task<Dto?> Handle(Query query, CancellationToken cancellationToken)
         {
-            return _readModelRepository.Get(query.Id);
+            return _readModelRepository.Get(query.Id.NonEmpty());
         }
 
         public async Task Handle(IEventWrapper<IKeyRateShockAdded> @event, CancellationToken cancellationToken)

@@ -38,18 +38,18 @@ namespace Common.EventStore.Lib.Internal
 
         public Task Save<T>(T aggregate, CancellationToken cancellationToken = default, NonEmptyGuid? causationId = null, NonEmptyGuid? correlationId = null) where T : Aggregate<T>, new()
         {
-            causationId ??= Guid.NewGuid();
+            causationId ??= NonEmptyGuid.New();
             correlationId ??= causationId;
 
             var uncommitted = aggregate.GetUncommittedEvents().Select(x =>
             {
-                var id = Guid.NewGuid();
+                var id = Guid.NewGuid().NonEmpty();
 
-                var metaData = CreateMetadata(new Dictionary<string, string?>
+                var metaData = CreateMetadata(new Dictionary<string, string>
                 {
                     { "id", Guid.NewGuid().ToString()},
-                    { "causationId", causationId?.ToString()},
-                    { "correlationId", correlationId?.ToString()}
+                    { "causationId", causationId.ToString()},
+                    { "correlationId", correlationId.ToString()}
                 });
 
                 causationId = id;

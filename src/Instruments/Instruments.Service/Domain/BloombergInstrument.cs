@@ -6,10 +6,10 @@ namespace Instruments.Domain
 {
     public class BloombergInstrument : Aggregate<BloombergInstrument>
     {
-        public BloombergInstrument Define(string ticker, PricingSource pricingSource, YellowKey yellowKey)
+        public BloombergInstrument Define(NonEmptyString ticker, PricingSource pricingSource, YellowKey yellowKey)
         {
-            GenerateEvent(BloombergInstrumentCreated(ticker, pricingSource.ToString(), yellowKey.ToString()));
-            GenerateEvent(InstrumentCreated(Vendor.Bloomberg.ToString(), $"{ticker} {pricingSource} {yellowKey}", true));
+            GenerateEvent(BloombergInstrumentCreated(ticker, pricingSource.NonEmptyString(), yellowKey.NonEmptyString()));
+            GenerateEvent(InstrumentCreated(Vendor.Bloomberg.NonEmptyString(), $"{ticker} {pricingSource} {yellowKey}".NonEmpty(), true));
             return this;
         }
 

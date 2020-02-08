@@ -66,7 +66,7 @@ namespace Common.EventStore.Lib.GES
 
             if (currentEventPosition == null)
             {
-                positionToInsert.Id = Guid.NewGuid();
+                positionToInsert.Id = NonEmptyGuid.New();
                 await _currentPositionRepository.Insert(positionToInsert);
             }
             else

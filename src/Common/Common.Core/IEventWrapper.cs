@@ -24,7 +24,7 @@ namespace Common.Core
         {
             Content = content;
             Id = id;
-            AggregateId = aggregateId;
+            AggregateId = aggregateId.NonEmpty();
             Timestamp = timestamp;
             Version = version;
         }

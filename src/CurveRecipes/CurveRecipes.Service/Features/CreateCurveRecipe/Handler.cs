@@ -13,15 +13,16 @@ using Common.EventStore.Lib;
 namespace CurveRecipes.Service.Features.CreateCurveRecipe
 {
     public class CommandHandler :
-            IHandleCommand<Command>,
-            IHandleQuery<Query, Dto>,
-            IHandleEvent<IMarketCurveCreated>,
-            IHandleEvent<ICurvePointAdded>
+        ApplicationService<CurveRecipe>,
+        IHandleCommand<Command>,
+        IHandleQuery<Query, Dto>,
+        IHandleEvent<IMarketCurveCreated>,
+        IHandleEvent<ICurvePointAdded>
     {
         private readonly IAggregateRepository _repository;
         private readonly IReadModelRepository<MarketCurveDto> _readModelRepository;
 
-        public CommandHandler(IAggregateRepository repository, IReadModelRepository<MarketCurveDto> readModelRepository)
+        public CommandHandler(IAggregateRepository repository, IReadModelRepository<MarketCurveDto> readModelRepository) : base(repository)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _readModelRepository = readModelRepository ?? throw new ArgumentNullException(nameof(readModelRepository));
@@ -29,21 +30,24 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
 
         public Task<Result> Handle(Command command, CancellationToken cancellationToken)
         {
-            return _readModelRepository
-               .Get(command.MarketCurveId)
-               .ToResult()
-               .Promise(c =>
-               {
-                   var maturityResult = Maturity.TryCreate(command.OutputFrequency.MaximumMaturity);
-                   return maturityResult.Promise(m =>
-                   {
-                       var outputFrequency = new Domain.OutputFrequency(command.OutputFrequency.OutputSeries, m);
-                       var recipeResult = new CurveRecipe().TryDefine(command.MarketCurveId, command.ShortName, command.Description, command.LastLiquidTenor, command.DayCountConvention, command.Interpolation, command.ExtrapolationShort,
-                           command.ExtrapolationLong, outputFrequency, command.OutputType);
+            return Maturity.TryCreate(command.OutputFrequency.MaximumMaturity).Promise(m => 
+            {
+                var outputFrequency = new Domain.OutputFrequency(command.OutputFrequency.OutputSeries, m);
 
-                       return recipeResult.Promise(r => _repository.Save(r));
-                   });
-               });
+                return Handle(cancellationToken, command.Id.NonEmpty(), whatToDo: 
+                    c => c.Define(
+                        marketCurveId: command.MarketCurveId.NonEmpty(),
+                        shortName: command.ShortName.NonEmpty(),
+                        description: command.Description.NonEmpty(),
+                        lastLiquidTenor: command.LastLiquidTenor,
+                        dayCountConvention: command.DayCountConvention,
+                        interpolation: command.Interpolation,
+                        extrapolationShort: command.ExtrapolationShort,
+                        extrapolationLong: command.ExtrapolationLong,
+                        outputFrequency: outputFrequency,
+                        outputType: command.OutputType)
+                    );
+            });
         }
 
         public Task Handle(IEventWrapper<IMarketCurveCreated> @event, CancellationToken cancellationToken)

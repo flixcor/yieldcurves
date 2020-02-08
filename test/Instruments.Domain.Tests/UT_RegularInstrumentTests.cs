@@ -1,4 +1,5 @@
 ﻿using System;
+using Common.Core;
 using Common.Tests;
 using Instruments.Domain;
 using NUnit.Framework;
@@ -13,19 +14,19 @@ namespace UnitTests
         {
             var id = Guid.NewGuid();
             var vendor = Vendor.UBS;
-            var desc = "description";
+            var desc = "description".NonEmpty();
 
             When((r) => r.TryDefine(vendor, desc))
                 .Then(
-                    RegularInstrumentCreated(vendor.ToString(), desc),
-                    InstrumentCreated(vendor.ToString(), desc));
+                    RegularInstrumentCreated(vendor.NonEmptyString(), desc),
+                    InstrumentCreated(vendor.NonEmptyString(), desc));
         }
 
         [Test]
         public void UT_new_regularInstrument_with_BB_generates_error()
         {
             var vendor = Vendor.Bloomberg;
-            var desc = "description";
+            var desc = "description".NonEmpty();
 
             Assert.False(Aggregate.TryDefine(vendor, desc).IsSuccessful);
         }

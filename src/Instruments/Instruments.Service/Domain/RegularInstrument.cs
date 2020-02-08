@@ -18,8 +18,8 @@ namespace Instruments.Domain
                 return Fail<RegularInstrument>($"{nameof(Vendor)} {nameof(Bloomberg)} cannot be used for a {nameof(RegularInstrument)}. Create a {nameof(BloombergInstrument)}");
             }
 
-            GenerateEvent(RegularInstrumentCreated(vendor.ToString(), description));
-            GenerateEvent(InstrumentCreated(vendor.ToString(), description));
+            GenerateEvent(RegularInstrumentCreated(vendor.NonEmptyString(), description));
+            GenerateEvent(InstrumentCreated(vendor.NonEmptyString(), description));
 
             return Ok(this);
         }

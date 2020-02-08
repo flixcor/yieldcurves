@@ -77,7 +77,7 @@ namespace CurveRecipes.Service.Features.AddTransformation
 
             return transformationResult.Promise(async t =>
             {
-                var c = await _repository.Load<CurveRecipe>(command.Id);
+                var c = await _repository.Load<CurveRecipe>(command.Id.NonEmpty());
 
                 if (c != null)
                 {

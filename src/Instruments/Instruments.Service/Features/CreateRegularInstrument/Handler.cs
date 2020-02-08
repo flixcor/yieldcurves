@@ -20,7 +20,7 @@ namespace Instruments.Service.Features.CreateRegularInstrument
         public Task<Result> Handle(Command command, CancellationToken cancellationToken)
         {
             return command.Vendor.TryParseEnum<Vendor>().Promise(v =>
-                new RegularInstrument().TryDefine(v, command.Name).Promise(i =>
+                new RegularInstrument().TryDefine(v, command.Name.NonEmpty()).Promise(i =>
                     _repository.Save(i)
                 )
             );

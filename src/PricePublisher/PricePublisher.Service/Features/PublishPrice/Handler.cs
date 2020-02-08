@@ -33,8 +33,8 @@ namespace PricePublisher.Service.Features.PublishPrice
                 onSuccess: async (currency, asOfDate) =>
                 {
                     var price = new Price(currency, command.PriceAmount);
-                    await Handle(cancellationToken, command.Id, p => 
-                        p.Define(asOfDate, command.InstrumentId, price, command.PriceType));
+                    await base.Handle(cancellationToken, command.Id.NonEmpty(), p => 
+                        p.Define(asOfDate, command.InstrumentId.NonEmpty(), price, command.PriceType));
                 });
         }
 

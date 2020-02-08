@@ -15,7 +15,7 @@ namespace Common.EventStore.Lib
         internal IEnumerable<IEventWrapper> GetUncommittedEvents() => _events;
         internal void ClearEvents() => _events.Clear();
 
-        public NonEmptyGuid Id { get; internal set; } = Guid.NewGuid();
+        public NonEmptyGuid Id { get; internal set; } = Guid.NewGuid().NonEmpty();
         internal int Version { get; private set; }
 
         internal void LoadFromHistory(IEventWrapper eventWrapper)

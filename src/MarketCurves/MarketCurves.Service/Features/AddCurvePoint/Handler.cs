@@ -32,10 +32,10 @@ namespace MarketCurves.Service.Features.AddCurvePoint
 
         public async Task<Result> Handle(Command command, CancellationToken cancellationToken)
         {
-            var instrument = await FromId(command.InstrumentId, _getHasPriceType);
+            var instrument = await FromId(command.InstrumentId.NonEmpty(), _getHasPriceType);
             var dateLag = new DateLag(command.DateLag);
 
-            return await Handle(cancellationToken, command.MarketCurveId, whatToDo:
+            return await Handle(cancellationToken, command.MarketCurveId.NonEmpty(), whatToDo:
                 c => c.AddCurvePoint(command.Tenor, instrument, dateLag, command.PriceType, command.IsMandatory));
         }
 
@@ -54,7 +54,7 @@ namespace MarketCurves.Service.Features.AddCurvePoint
 
         public async Task<Dto> Handle(Query query, CancellationToken cancellationToken)
         {
-            var existing = (await _usedValues.Get(query.MarketCurveId)) ?? new UsedValues();
+            var existing = (await _usedValues.Get(query.MarketCurveId.NonEmpty())) ?? new UsedValues();
 
             var instruments = await _instruments
                 .GetAll()

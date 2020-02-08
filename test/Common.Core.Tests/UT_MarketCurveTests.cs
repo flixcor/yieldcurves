@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Common.Core;
 using Common.Tests;
 using MarketCurves.Domain;
 using MarketCurves.Service.Domain;
@@ -18,7 +19,7 @@ namespace UnitTests
             var type = CurveType.BONDSPREAD;
 
             When(c => c.Define(country, type))
-                .Then(MarketCurveCreated(country.ToString(), type.ToString()));
+                .Then(MarketCurveCreated(country.NonEmptyString(), type.NonEmptyString()));
         }
 
         [Test]
@@ -26,14 +27,14 @@ namespace UnitTests
         {
             var id = Guid.NewGuid();
             var tenor = Tenor.FRA10x16;
-            var instrument = await Instrument.FromId(Guid.NewGuid(), (id) => Task.FromResult(true));
+            var instrument = await Instrument.FromId(NonEmpty.Guid(), (id) => Task.FromResult(Vendor.Bloomberg));
             var dateLag = new DateLag(-1);
             var priceType = PriceType.BIDPRICE;
             var isMandatory = false;
 
-            Given(MarketCurveCreated(Country.GB.ToString(), CurveType.ECB.ToString()))
+            Given(MarketCurveCreated(Country.GB.NonEmptyString(), CurveType.ECB.NonEmptyString()))
                 .When(c => c.AddCurvePoint(tenor, instrument, dateLag, priceType, isMandatory))
-                    .Then(CurvePointAdded(tenor.ToString(), instrument.Id, dateLag.Value, isMandatory, priceType.ToString()));
+                    .Then(CurvePointAdded(tenor.NonEmptyString(), instrument.Id, dateLag.Value, isMandatory, priceType.NonEmptyString()));
         }
     }
 }

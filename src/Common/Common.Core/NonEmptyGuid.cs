@@ -4,9 +4,11 @@ namespace Common.Core
 {
     public struct NonEmptyGuid : IEquatable<NonEmptyGuid>
     {
+        public static NonEmptyGuid New() => new NonEmptyGuid(Guid.NewGuid());
+
         private readonly Guid _value;
 
-        private NonEmptyGuid(Guid value)
+        internal NonEmptyGuid(Guid value)
         {
             if (value == Guid.Empty)
             {
@@ -27,9 +29,13 @@ namespace Common.Core
         public static bool operator !=(NonEmptyGuid left, NonEmptyGuid right) => !(left == right);
 
         public static implicit operator Guid(NonEmptyGuid nonEmpty) => nonEmpty._value;
-        public static implicit operator NonEmptyGuid(Guid g) => new NonEmptyGuid(g);
 
         public override string? ToString() => _value.ToString();
         public string ToString(string format) => _value.ToString(format);
+    }
+
+    public static class GuidExtensions
+    {
+        public static NonEmptyGuid NonEmpty(this Guid guid) => new NonEmptyGuid(guid);
     }
 }

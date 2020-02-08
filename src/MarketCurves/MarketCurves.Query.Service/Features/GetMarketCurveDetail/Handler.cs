@@ -27,7 +27,7 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
 
         public Task<Dto?> Handle(Query query, CancellationToken cancellationToken)
         {
-            return _curveRepo.Get(query.Id);
+            return _curveRepo.Get(query.Id.NonEmpty());
         }
 
         public Task Handle(IEventWrapper<IMarketCurveCreated> @event, CancellationToken cancellationToken)
@@ -46,7 +46,7 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
             var @event = wrapper.Content;
 
             var curveResult = await _curveRepo.Get(wrapper.AggregateId).ToResult();
-            var instrumentResult = await _instrumentRepo.Get(@event.InstrumentId).ToResult();
+            var instrumentResult = await _instrumentRepo.Get(@event.InstrumentId.NonEmpty()).ToResult();
 
             await Result
                 .Combine(curveResult, instrumentResult, (c, i) =>

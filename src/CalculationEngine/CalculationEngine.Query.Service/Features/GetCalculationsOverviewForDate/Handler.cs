@@ -33,7 +33,7 @@ namespace CalculationEngine.Query.Service.Features.GetCalculationsOverviewForDat
 
             var recipe = (await _recipeRepository.Single(x => x.Id == @event.CurveRecipeId)) ?? new RecipeDto
             {
-                Id = @event.CurveRecipeId,
+                Id = @event.CurveRecipeId.NonEmpty(),
                 Name = "unknown"
             };
 
@@ -43,7 +43,7 @@ namespace CalculationEngine.Query.Service.Features.GetCalculationsOverviewForDat
             {
                 dto = new Dto
                 {
-                    Id = Guid.NewGuid(),
+                    Id = NonEmpty.Guid(),
                     AsOfDate = asOfDate,
                     Recipes = new RecipeDto[] { recipe }
                 };

@@ -33,7 +33,7 @@ namespace CalculationEngine.Query.Service.Features.GetCalculationDates
             {
                 var dto = new Dto
                 {
-                    Id = Guid.NewGuid(),
+                    Id = NonEmpty.Guid(),
                     AsOfDate = asOfDate
                 };
 

@@ -7,39 +7,39 @@ namespace Common.Events
 {
     public static class Helpers
     {
-        public static IInstrumentCreated InstrumentCreated(string vendor, string description, bool hasPriceType = false)
+        public static IInstrumentCreated InstrumentCreated(NonEmptyString vendor, NonEmptyString description, bool hasPriceType = false)
             => new InstrumentCreated(vendor, description, hasPriceType);
 
-        public static IMarketCurveCreated MarketCurveCreated(string country, string curveType, string? floatingLeg = null)
+        public static IMarketCurveCreated MarketCurveCreated(NonEmptyString country, NonEmptyString curveType, NonEmptyString? floatingLeg = null)
             => new MarketCurveCreated(country, curveType, floatingLeg);
 
-        public static IBloombergInstrumentCreated BloombergInstrumentCreated(string ticker, string pricingSource, string yellowKey)
+        public static IBloombergInstrumentCreated BloombergInstrumentCreated(NonEmptyString ticker, NonEmptyString pricingSource, NonEmptyString yellowKey)
             => new BloombergInstrumentCreated(ticker, pricingSource, yellowKey);
 
-        public static ICurveCalculated CurveCalculated(Guid curveRecipeId, string asOfDate, IEnumerable<IPoint> points)
+        public static ICurveCalculated CurveCalculated(Guid curveRecipeId, NonEmptyString asOfDate, IEnumerable<IPoint> points)
             => new CurveCalculated(curveRecipeId, asOfDate, points);
 
-        public static IRegularInstrumentCreated RegularInstrumentCreated(string vendor, string description)
+        public static IRegularInstrumentCreated RegularInstrumentCreated(NonEmptyString vendor, NonEmptyString description)
             => new RegularInstrumentCreated(vendor, description);
 
-        public static ICurveCalculationFailed CurveCalculationFailed(Guid curveRecipeId, string asOfDate, string[] messages)
+        public static ICurveCalculationFailed CurveCalculationFailed(Guid curveRecipeId, NonEmptyString asOfDate, string[] messages)
             => new CurveCalculationFailed(curveRecipeId, asOfDate, messages);
 
-        public static ICurvePointAdded CurvePointAdded(string tenor, Guid instrumentId, short dateLag, bool isMandatory, string? priceType)
+        public static ICurvePointAdded CurvePointAdded(NonEmptyString tenor, Guid instrumentId, short dateLag, bool isMandatory, NonEmptyString? priceType)
             => new CurvePointAdded(tenor, instrumentId, dateLag, isMandatory, priceType);
 
-        public static ICurveRecipeCreated CurveRecipeCreated(Guid marketCurveId, string shortName, string description,
-                                                             string lastLiquidTenor, string dayCountConvention,
-                                                             string interpolation, string extrapolationShort,
-                                                             string extrapolationLong, string outputSeries,
-                                                             double maximumMaturity, string outputType)
+        public static ICurveRecipeCreated CurveRecipeCreated(Guid marketCurveId, NonEmptyString shortName, NonEmptyString description,
+                                                             NonEmptyString lastLiquidTenor, NonEmptyString dayCountConvention,
+                                                             NonEmptyString interpolation, NonEmptyString extrapolationShort,
+                                                             NonEmptyString extrapolationLong, NonEmptyString outputSeries,
+                                                             double maximumMaturity, NonEmptyString outputType)
                 => new CurveRecipeCreated(marketCurveId, shortName, description, lastLiquidTenor, dayCountConvention,
                                           interpolation, extrapolationShort, extrapolationLong, outputSeries,
                                           maximumMaturity, outputType);
 
-        public static IInstrumentPricingPublished InstrumentPricingPublished(string asOfDate,
-                                                                             Guid instrumentId, string priceCurrency,
-                                                                             double priceAmount, string? priceType = null)
+        public static IInstrumentPricingPublished InstrumentPricingPublished(NonEmptyString asOfDate,
+                                                                             Guid instrumentId, NonEmptyString priceCurrency,
+                                                                             double priceAmount, NonEmptyString? priceType = null)
             => new InstrumentPricingPublished(asOfDate, instrumentId, priceCurrency, priceAmount, priceType);
 
         public static IKeyRateShockAdded KeyRateShockAdded(int order, string shockTarget, double shift, double[] maturities)
@@ -51,7 +51,7 @@ namespace Common.Events
         public static IPoint Point(double maturity, string currency, double value)
             => new Point(maturity, currency, value);
 
-        public static IMetadata CreateMetadata(IDictionary<string,string?> values) 
+        public static IMetadata CreateMetadata(IDictionary<string,string> values) 
             => new Metadata(values);
 
         public static IEventWrapper Wrap(Guid aggregateId, Instant timestamp, int version, IEvent content, long id = 0) 
