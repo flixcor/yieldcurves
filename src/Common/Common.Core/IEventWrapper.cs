@@ -7,7 +7,7 @@ namespace Common.Core
     public interface IEventWrapper
     {
         long Id { get; }
-        NonEmptyGuid AggregateId { get; }
+        Guid AggregateId { get; }
         Instant Timestamp { get; }
         int Version { get; }
         IEvent GetContent();
@@ -30,7 +30,7 @@ namespace Common.Core
         }
 
         public long Id { get; }
-        public NonEmptyGuid AggregateId { get; }
+        public Guid AggregateId { get; }
         public Instant Timestamp { get; }
         public int Version { get; }
 

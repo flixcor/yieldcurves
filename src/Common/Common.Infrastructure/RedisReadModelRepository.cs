@@ -31,7 +31,7 @@ namespace Common.Infrastructure
             return readObject;
         }
 
-        public async Task<T?> Get(NonEmptyGuid id)
+        public async Task<T?> Get(Guid id)
         {
             T? dto = null;
 
@@ -92,7 +92,7 @@ namespace Common.Infrastructure
             return _db.StringSetAsync(key, serialised, when: When.Exists);
         }
 
-        private string Key(NonEmptyGuid id)
+        private string Key(Guid id)
         {
             return InstanceName() + id.ToString("N");
         }

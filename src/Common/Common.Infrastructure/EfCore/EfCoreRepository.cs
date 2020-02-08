@@ -14,7 +14,7 @@ namespace Common.Infrastructure.EfCore
 
         public EfCoreRepository(GenericDbContext db) => _db = db;
 
-        public async Task<T?> Get(NonEmptyGuid id) => await _db.Set<T>().AsQueryable().FirstOrDefaultAsync(x=> x.Id == id);
+        public async Task<T?> Get(Guid id) => await _db.Set<T>().AsQueryable().FirstOrDefaultAsync(x=> x.Id == id);
 
         public IAsyncEnumerable<T> GetAll() => _db.Set<T>().AsQueryable().AsAsyncEnumerable();
 

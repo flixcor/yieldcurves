@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Common.Core;
 using Common.Events;
 using Common.EventStore.Lib;
-using static Common.Events.Helpers;
 using static Common.Core.Result;
+using static Common.Events.Helpers;
 
 namespace CurveRecipes.Domain
 {
@@ -20,8 +18,8 @@ namespace CurveRecipes.Domain
         public CurveRecipe Define(NonEmptyGuid marketCurveId, NonEmptyString shortName, NonEmptyString description, Tenor lastLiquidTenor, DayCountConvention dayCountConvention, Interpolation interpolation, ExtrapolationShort extrapolationShort,
             ExtrapolationLong extrapolationLong, OutputFrequency outputFrequency, OutputType outputType)
         {
-            var @event = CurveRecipeCreated(marketCurveId, shortName, description, lastLiquidTenor.ToString(), dayCountConvention.ToString(), interpolation.ToString(), extrapolationShort.ToString(),
-                extrapolationLong.ToString(), outputFrequency.OutputSeries.ToString(), outputFrequency.MaximumMaturity.Value, outputType.ToString());
+            var @event = CurveRecipeCreated(marketCurveId, shortName, description, lastLiquidTenor.NonEmptyString(), dayCountConvention.NonEmptyString(), interpolation.NonEmptyString(), extrapolationShort.NonEmptyString(),
+                extrapolationLong.NonEmptyString(), outputFrequency.OutputSeries.NonEmptyString(), outputFrequency.MaximumMaturity.Value, outputType.NonEmptyString());
 
             GenerateEvent(@event);
 

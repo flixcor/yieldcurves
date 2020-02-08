@@ -14,10 +14,10 @@ namespace CalculationEngine.Service.ActorModel.Actors
 {
     public class RecipeActor : IdempotentActor
     {
-        private readonly Guid _id;
+        private readonly NonEmptyGuid _id;
         private IEventWrapper<ICurveRecipeCreated> _recipe;
 
-        public RecipeActor(Guid id)
+        public RecipeActor(NonEmptyGuid id)
         {
             _id = id;
 
@@ -30,7 +30,7 @@ namespace CalculationEngine.Service.ActorModel.Actors
         {
             if (obj.CurvePoints.All(x => obj.Pricings.Any(y => y.Content.InstrumentId == x.Content.InstrumentId)))
             {
-                var result = CurveCalculation.Calculate(obj.AsOfDate, _recipe, obj.CurvePoints.Select(x=> x.Content), obj.Pricings.Select(x => x.Content));
+                var result = CurveCalculation.Calculate(obj.AsOfDate, _recipe, obj.CurvePoints.Select(x=> x.Content), obj.Pricings);
                 var calc = new CurveCalculationResult().WithResult(_id, obj.AsOfDate, result);
 
                 using var serviceScope = Context.CreateScope();

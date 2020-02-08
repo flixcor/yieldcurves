@@ -8,7 +8,7 @@ namespace CalculationEngine.Service.Domain
 {
     public static class CurveCalculation
     {
-        public static Result<IEnumerable<CurvePoint>> Calculate(Date asOfDate, IEventWrapper<ICurveRecipeCreated> recipe, IEnumerable<ICurvePointAdded> marketCurve, IEnumerable<IInstrumentPricingPublished> pricings)
+        public static Result<IEnumerable<CurvePoint>> Calculate(Date asOfDate, IEventWrapper<ICurveRecipeCreated> recipe, IEnumerable<ICurvePointAdded> marketCurve, IEnumerable<IEventWrapper<IInstrumentPricingPublished>> pricings)
         {
             var matchingPricesResult = TryGetAllMatchingPrices(asOfDate, marketCurve, pricings);
             var recipeResult = TryMap(recipe);
@@ -16,7 +16,7 @@ namespace CalculationEngine.Service.Domain
             return Result.Combine(matchingPricesResult, recipeResult, (p, r) => r.ApplyTo(p));
         }
 
-        public static Result<IEnumerable<CurvePoint>> TryGetAllMatchingPrices(Date asOfDate, IEnumerable<ICurvePointAdded> marketCurve, IEnumerable<IInstrumentPricingPublished> pricings)
+        public static Result<IEnumerable<CurvePoint>> TryGetAllMatchingPrices(Date asOfDate, IEnumerable<ICurvePointAdded> marketCurve, IEnumerable<IEventWrapper<IInstrumentPricingPublished>> pricings)
         {
             var pricingResult = pricings.Select(TryMap).Convert();
             var pointResult = marketCurve.Select(TryMap).Convert();
@@ -42,14 +42,16 @@ namespace CalculationEngine.Service.Domain
                 });
         }
 
-        private static Result<PublishedPricing> TryMap(IInstrumentPricingPublished e)
+        private static Result<PublishedPricing> TryMap(IEventWrapper<IInstrumentPricingPublished> wrapper)
         {
+            var e = wrapper.Content;
+
             var price = new Price(e.PriceCurrency, e.PriceAmount);
             var asOfDate = Date.FromString(e.AsOfDate);
             var priceTypeResult = e.PriceType.TryParseOptionalEnum<PriceType>();
 
             return priceTypeResult
-                .Promise(() => new PublishedPricing(asOfDate, e.AsAtDate, e.InstrumentId, price, priceTypeResult.Content));
+                .Promise(() => new PublishedPricing(asOfDate, wrapper.Timestamp, e.InstrumentId, price, priceTypeResult.Content));
         }
 
         private static Result<CurveRecipe> TryMap(IEventWrapper<ICurveRecipeCreated> wrapper)

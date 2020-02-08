@@ -1,14 +1,13 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
-using Common.Events;
 using Common.Core.Extensions;
-using CurveRecipes.Domain;
-using Common.Infrastructure.Extensions;
-using System.Linq;
+using Common.Events;
 using Common.EventStore.Lib;
+using CurveRecipes.Domain;
 
 namespace CurveRecipes.Service.Features.CreateCurveRecipe
 {
@@ -19,22 +18,20 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
         IHandleEvent<IMarketCurveCreated>,
         IHandleEvent<ICurvePointAdded>
     {
-        private readonly IAggregateRepository _repository;
         private readonly IReadModelRepository<MarketCurveDto> _readModelRepository;
 
         public CommandHandler(IAggregateRepository repository, IReadModelRepository<MarketCurveDto> readModelRepository) : base(repository)
         {
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _readModelRepository = readModelRepository ?? throw new ArgumentNullException(nameof(readModelRepository));
         }
 
         public Task<Result> Handle(Command command, CancellationToken cancellationToken)
         {
-            return Maturity.TryCreate(command.OutputFrequency.MaximumMaturity).Promise(m => 
+            return Maturity.TryCreate(command.OutputFrequency.MaximumMaturity).Promise(m =>
             {
                 var outputFrequency = new Domain.OutputFrequency(command.OutputFrequency.OutputSeries, m);
 
-                return Handle(cancellationToken, command.Id.NonEmpty(), whatToDo: 
+                return Handle(cancellationToken, command.Id.NonEmpty(), whatToDo:
                     c => c.Define(
                         marketCurveId: command.MarketCurveId.NonEmpty(),
                         shortName: command.ShortName.NonEmpty(),

@@ -4,6 +4,6 @@ namespace Common.Core
 {
     public abstract class ReadObject
     {
-        public NonEmptyGuid Id { get; set; } = Guid.NewGuid().NonEmpty();
+        public Guid Id { get; set; } = Guid.NewGuid();
     }
 }

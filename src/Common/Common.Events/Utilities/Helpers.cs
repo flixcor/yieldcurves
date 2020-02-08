@@ -16,19 +16,19 @@ namespace Common.Events
         public static IBloombergInstrumentCreated BloombergInstrumentCreated(NonEmptyString ticker, NonEmptyString pricingSource, NonEmptyString yellowKey)
             => new BloombergInstrumentCreated(ticker, pricingSource, yellowKey);
 
-        public static ICurveCalculated CurveCalculated(Guid curveRecipeId, NonEmptyString asOfDate, IEnumerable<IPoint> points)
+        public static ICurveCalculated CurveCalculated(NonEmptyGuid curveRecipeId, NonEmptyString asOfDate, IEnumerable<IPoint> points)
             => new CurveCalculated(curveRecipeId, asOfDate, points);
 
         public static IRegularInstrumentCreated RegularInstrumentCreated(NonEmptyString vendor, NonEmptyString description)
             => new RegularInstrumentCreated(vendor, description);
 
-        public static ICurveCalculationFailed CurveCalculationFailed(Guid curveRecipeId, NonEmptyString asOfDate, string[] messages)
+        public static ICurveCalculationFailed CurveCalculationFailed(NonEmptyGuid curveRecipeId, NonEmptyString asOfDate, string[] messages)
             => new CurveCalculationFailed(curveRecipeId, asOfDate, messages);
 
-        public static ICurvePointAdded CurvePointAdded(NonEmptyString tenor, Guid instrumentId, short dateLag, bool isMandatory, NonEmptyString? priceType)
+        public static ICurvePointAdded CurvePointAdded(NonEmptyString tenor, NonEmptyGuid instrumentId, short dateLag, bool isMandatory, NonEmptyString? priceType)
             => new CurvePointAdded(tenor, instrumentId, dateLag, isMandatory, priceType);
 
-        public static ICurveRecipeCreated CurveRecipeCreated(Guid marketCurveId, NonEmptyString shortName, NonEmptyString description,
+        public static ICurveRecipeCreated CurveRecipeCreated(NonEmptyGuid marketCurveId, NonEmptyString shortName, NonEmptyString description,
                                                              NonEmptyString lastLiquidTenor, NonEmptyString dayCountConvention,
                                                              NonEmptyString interpolation, NonEmptyString extrapolationShort,
                                                              NonEmptyString extrapolationLong, NonEmptyString outputSeries,
@@ -38,7 +38,7 @@ namespace Common.Events
                                           maximumMaturity, outputType);
 
         public static IInstrumentPricingPublished InstrumentPricingPublished(NonEmptyString asOfDate,
-                                                                             Guid instrumentId, NonEmptyString priceCurrency,
+                                                                             NonEmptyGuid instrumentId, NonEmptyString priceCurrency,
                                                                              double priceAmount, NonEmptyString? priceType = null)
             => new InstrumentPricingPublished(asOfDate, instrumentId, priceCurrency, priceAmount, priceType);
 

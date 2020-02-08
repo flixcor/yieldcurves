@@ -12,11 +12,11 @@ namespace CalculationEngine.Domain
     {
         public CurveCalculationResult() { }
 
-        public CurveCalculationResult WithResult(Guid recipeId, Date asOfDate, Result<IEnumerable<CurvePoint>> result)
+        public CurveCalculationResult WithResult(NonEmptyGuid recipeId, Date asOfDate, Result<IEnumerable<CurvePoint>> result)
         {
             var e = result.IsSuccessful
-                ? (IEvent)CurveCalculated(recipeId, asOfDate.ToString(), result.Content.Select(x => Point(x.Maturity.Value, x.Price.Currency, x.Price.Value)))
-                : CurveCalculationFailed(recipeId, asOfDate.ToString(), result.Messages.ToArray());
+                ? (IEvent)CurveCalculated(recipeId, asOfDate.NonEmptyString(), result.Content.Select(x => Point(x.Maturity.Value, x.Price.Currency, x.Price.Value)))
+                : CurveCalculationFailed(recipeId, asOfDate.NonEmptyString(), result.Messages.ToArray());
 
             GenerateEvent(e);
 
