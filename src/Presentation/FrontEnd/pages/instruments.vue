@@ -14,7 +14,7 @@
           :initial-events="initialEvents"
           @InstrumentCreated="overviewState.instruments.push($event)"
         >
-          <instruments-overview :state="overviewState" />
+          <instruments-overview :state="overviewState" @create="$router.push({path: '/instruments/create'})" />
         </projection>
       </v-col>
     </v-row>

@@ -2,10 +2,9 @@
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
-using Common.EventStore.Lib.GES;
+using Common.EventStore.Lib;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -16,40 +15,36 @@ namespace Common.EventStore.Controllers
     public class EventController : ControllerBase
     {
         private readonly ILogger<EventController> _logger;
-        private readonly EventStoreQuery _query;
-        private readonly EventStoreSocketSubscriber _subscriber;
+        private readonly IEventReadRepository _repository;
         private static readonly JsonSerializerOptions s_jsonSerializerOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         };
 
-        public EventController(ILogger<EventController> logger, EventStoreQuery query, EventStoreSocketSubscriber subscriber)
+        public EventController(ILogger<EventController> logger, IEventReadRepository repository)
         {
             _logger = logger;
-            _query = query;
-            _subscriber = subscriber;
+            _repository = repository;
         }
 
         [HttpGet]
-        public IAsyncEnumerable<EventReply> GetAsync([FromQuery]EventRequest request)
-        {
-            var cancel = HttpContext.RequestAborted;
-
-            if (request.EventTypes != null)
-            {
-                foreach (var type in request?.EventTypes)
+        public IAsyncEnumerable<EventReply> GetAsync([FromQuery]EventRequest request) =>
+            _repository.Get(
+                eventFilter: request,
+                cancellation: HttpContext.RequestAborted
+            )
+                .Select(t =>
                 {
-                    _query.RegisterEventType(type);
-                }
-            }
+                    var (e, _) = t;
+                    var content = e.GetContent();
 
-            return _query.Run(cancel).Select(e => new EventReply
-            {
-                Position = e.Id,
-                Type = e.GetContent().GetType().Name,
-                Payload = e.GetContent()
-            });
-        }
+                    return new EventReply
+                    {
+                        Position = e.Id,
+                        Type = content.GetType().Name,
+                        Payload = content
+                    };
+                });
 
         [HttpGet("subscribe")]
         public async Task GetEvents([FromQuery]EventRequest request)
@@ -60,62 +55,67 @@ namespace Common.EventStore.Controllers
             Response.Headers["Cache-Control"] = "no-cache";
             Response.Headers["X-Accel-Buffering"] = "no";
 
-            var writer = new StreamWriter(Response.Body);
+            var lastEventId = Request.Headers["Last-Event-ID"].ToString();
 
-            if (request.EventTypes != null)
+            if (long.TryParse(lastEventId, out var checkpoint))
             {
-                foreach (var type in request?.EventTypes)
-                {
-                    _subscriber.RegisterEventType(type);
-                    _query.RegisterEventType(type);
-                }
+                request.Checkpoint = checkpoint;
             }
+
+            var writer = new StreamWriter(Response.Body);
 
             var counter = 0;
 
-            async Task WriteEvent(IEventWrapper wrapper)
+            try
             {
-                var payload = wrapper.GetContent();
-                var type = payload.GetType();
-                var name = type.Name;
-                var position = wrapper.Id;
-
-                var json = JsonSerializer.Serialize(payload, type, s_jsonSerializerOptions);
-
-                _logger.LogInformation($"returning event: {name}");
-
-                await writer.WriteLineAsync($"id: {position}\nevent: {type}\ndata: {json}\n\n");
-            }
-
-            await foreach (var wrapper in _query.Run(cancel))
-            {
-                counter++;
-
-                await WriteEvent(wrapper);
-
-                if (counter % 500 == 0)
+                await foreach (var wrapper in _repository.Get(request, cancel))
                 {
+                    counter++;
+
+                    await WriteEvent(writer, wrapper);
+
+                    if (counter % 500 == 0)
+                    {
+                        await writer.FlushAsync();
+                    }
+
+                    request.Checkpoint = wrapper.Item1.Id;
+                }
+
+                await writer.FlushAsync();
+                await writer.WriteLineAsync("event: sync\n\n");
+                await writer.FlushAsync();
+
+                request.Checkpoint++;
+
+                await foreach (var tup in _repository.Subscribe(request, cancel))
+                {
+                    await WriteEvent(writer, tup);
                     await writer.FlushAsync();
                 }
             }
-
-            async Task OnEvent(IEventWrapper wrapper)
-            {
-                await WriteEvent(wrapper);
-                await writer.FlushAsync();
-            }
-
-            try
-            {
-                await _subscriber.Subscribe(request.Position, OnEvent, cancel);
-                await Task.Delay(Timeout.Infinite, cancel);
-            }
-            catch (TaskCanceledException)
+            catch (System.OperationCanceledException)
             {
                 _logger.LogInformation("cancelled");
             }
 
             _logger.LogInformation("done");
+        }
+
+        private async Task WriteEvent(StreamWriter writer, (IEventWrapper, IMetadata) tup)
+        {
+            var (wrapper, _) = tup;
+
+            var payload = wrapper.GetContent();
+            var type = payload.GetType();
+            var name = type.Name;
+            var position = wrapper.Id;
+
+            var json = JsonSerializer.Serialize(payload, type, s_jsonSerializerOptions);
+
+            _logger.LogInformation($"returning event: {name}");
+
+            await writer.WriteLineAsync($"id: {position}\nevent: {type}\ndata: {json}\n\n");
         }
     }
 }

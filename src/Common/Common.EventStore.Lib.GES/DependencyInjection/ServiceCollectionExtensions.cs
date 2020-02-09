@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net.Http;
+using System.Net.Security;
 using System.Reflection;
 using Common.Core;
 using Common.EventStore.Lib;
@@ -10,14 +12,27 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
-        public static void WithGES(this IPersistenceOption o, string connectionString) => o.Services.AddGES(connectionString);
+        public static void WithGES(this IPersistenceOption o, string connectionString, string username, string password) => o.Services.AddGES(connectionString, username, password);
 
-        private static IServiceCollection AddGES(this IServiceCollection services, string connectionString) => services
-            .AddSingleton(new ApplicationName(Assembly.GetEntryAssembly()?.GetName()?.Name ?? throw new Exception()))
-            .AddSingleton(x => new EventStoreClient(new EventStoreClientSettings(new Uri(connectionString))))
-            .AddScoped<IMessageBusListener, EventStoreListener>()
-            .AddScoped<IEventWriteRepository, EventRepository>()
-            .AddTransient<EventStoreQuery>()
-            .AddTransient<EventStoreSocketSubscriber>();
+        private static IServiceCollection AddGES(this IServiceCollection services, string connectionString, string username, string password)
+        {
+            var eventStoreClient = new EventStoreClient(new Uri(connectionString),
+            () => new HttpClient(new SocketsHttpHandler
+            {
+                SslOptions = new SslClientAuthenticationOptions
+                {
+                    RemoteCertificateValidationCallback = delegate { return true; }
+                }
+            }));
+
+            var uri = new Uri(connectionString);
+
+            return services
+                .AddSingleton(new ApplicationName(Assembly.GetEntryAssembly()?.GetName()?.Name ?? throw new Exception()))
+                .AddSingleton(x => eventStoreClient)
+                .AddSingleton(new UserCredentials(username, password))
+                .AddSingleton<IEventWriteRepository, EventRepository>()
+                .AddSingleton<IEventReadRepository, EventRepository>();
+        }
     }
 }

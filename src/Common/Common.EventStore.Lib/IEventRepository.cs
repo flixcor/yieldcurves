@@ -14,5 +14,6 @@ namespace Common.EventStore.Lib
     public interface IEventReadRepository
     {
         IAsyncEnumerable<(IEventWrapper, IMetadata)> Get(IEventFilter? eventFilter = null, CancellationToken cancellation = default);
+        IAsyncEnumerable<(IEventWrapper, IMetadata)> Subscribe(IEventFilter? eventFilter = null, CancellationToken cancellation = default);
     }
 }

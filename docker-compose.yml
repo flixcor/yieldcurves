@@ -10,17 +10,17 @@ services:
     ports:
       - "6379:6379"
       
-  eventstore-node:
-    image: eventstore/eventstore
-    container_name: eventstore
-    expose:
-      - 2113
-      - 1113
-    ports:
-      - "2113:2113"
-      - "1113:1113"
-    stdin_open: true
-    tty: true
+  # eventstore-node:
+  #   image: 707564d07cfb
+  #   container_name: eventstore
+  #   expose:
+  #     - 2113
+  #     - 1113
+  #   ports:
+  #     - "2113:2113"
+  #     - "1113:1113"
+  #   stdin_open: true
+  #   tty: true
   
   db:
     image: "mcr.microsoft.com/mssql/server"

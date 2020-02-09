@@ -46,11 +46,10 @@ export default {
 
       const typesString = self.eventTypes.join('&eventTypes=')
 
-      self.connection = new EventSource(`${Url}/subscribe?eventTypes=${typesString}&position=${self.position}`)
-
-      const onEvent = e => self.onEvent({ type, position: parseInt(e.lastEventId), payload: JSON.parse(e.data) })
+      self.connection = new EventSource(`${Url}/subscribe?eventTypes=${typesString}&checkpoint=${self.position}`)
 
       for (const type of self.eventTypes) {
+        const onEvent = e => self.onEvent({ type, position: parseInt(e.lastEventId), payload: JSON.parse(e.data) })
         self.connection.addEventListener(type, onEvent)
       }
 

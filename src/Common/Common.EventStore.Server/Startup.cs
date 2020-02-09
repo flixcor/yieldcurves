@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Common.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +21,8 @@ namespace Common.EventStore
         {
             services.AddControllers();
             services.AddCors();
-            services.AddEventStore(o => o.WithGES(Configuration.GetConnectionString("EventStore")));
+            services.AddMediator();
+            services.AddEventStore(o => o.WithGES(Configuration.GetConnectionString("EventStore"), "admin", "changeit"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -40,5 +40,10 @@ namespace Common.EventStore.Lib.EfCore
                 yield return item.ToWrapper();
             }
         }
+
+        public IAsyncEnumerable<(IEventWrapper, IMetadata)> Subscribe(IEventFilter? eventFilter = null, CancellationToken cancellation = default)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

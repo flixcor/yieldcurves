@@ -20,7 +20,7 @@ namespace Instruments.Service
                 .AddMediator(typeof(Features.CreateRegularInstrument.Command).Assembly)
                 .AddRedis("localhost:6379");
 
-            services.AddEventStore(o => o.WithGES(Configuration.GetConnectionString("EventStore")));
+            services.AddEventStore(o => o.WithGES(Configuration.GetConnectionString("EventStore"), "admin", "changeit"));
         }
     }
 }

@@ -48,8 +48,8 @@ namespace Common.EventStore.Lib.Internal
                 var metaData = CreateMetadata(new Dictionary<string, string>
                 {
                     { "id", Guid.NewGuid().ToString()},
-                    { "causationId", causationId.ToString()},
-                    { "correlationId", correlationId.ToString()}
+                    { "causationId", causationId.Value.ToString()},
+                    { "correlationId", correlationId.Value.ToString()}
                 });
 
                 causationId = id;

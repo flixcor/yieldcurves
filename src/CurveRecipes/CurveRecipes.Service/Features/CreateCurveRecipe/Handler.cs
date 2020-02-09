@@ -31,7 +31,7 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
                 var outputFrequency = new Domain.OutputFrequency(command.OutputFrequency.OutputSeries, m);
 
                 return Handle(cancellationToken, command.Id.NonEmpty(), whatToDo:
-                    c => c.Define(
+                    curveRecipe => curveRecipe.Define(
                         marketCurveId: command.MarketCurveId.NonEmpty(),
                         shortName: command.ShortName.NonEmpty(),
                         description: command.Description.NonEmpty(),

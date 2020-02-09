@@ -16,7 +16,7 @@ namespace Common.EventStore.Lib
         internal void ClearEvents() => _events.Clear();
 
         public NonEmptyGuid Id { get; internal set; } = Guid.NewGuid().NonEmpty();
-        internal int Version { get; private set; }
+        internal int Version { get; private set; } = -1;
 
         internal void LoadFromHistory(IEventWrapper eventWrapper)
         {

@@ -11,8 +11,10 @@ namespace Common.EventStore.Lib.GES
         {
             var (wrapper, meta) = wrapperWithMeta;
 
-            var typeName = wrapper.GetContent().GetType().Name;
-            var data = Serializer.Serialize(wrapper.GetContent());
+            var content = wrapper.GetContent();
+
+            var typeName = content.GetType().Name;
+            var data = Serializer.Serialize(wrapper);
             var metadata = Serializer.Serialize(meta);
 
             return new EventData(Uuid.NewUuid(), typeName, data, metadata, false);

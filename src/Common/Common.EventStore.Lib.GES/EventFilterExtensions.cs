@@ -12,11 +12,11 @@ namespace Common.EventStore.Lib.GES
         {
             if (filter.EventTypes.Any())
             {
-                var prefixes = filter.EventTypes.Select(x => new PrefixFilterExpression(x)).ToArray();
-                var eventTypeFilter = new EventTypeFilter(prefixes);
+                var prefixes = string.Join("|", filter.EventTypes);
+                return new EventTypeFilter(new RegularFilterExpression(prefixes));
             }
 
-            return EventTypeFilter.None;
+            return new EventTypeFilter(RegularFilterExpression.ExcludeSystemEvents);
         }
     }
 }
