@@ -20,7 +20,7 @@ namespace PricePublisher.Query.Service
                 .AddEfCore(Configuration.GetConnectionString("SqlServer"), typeof(Features.GetPricesOverview.Query).Assembly)
                 .WithWebSockets();
 
-            services.AddEventStore(o => o.WithGES(Configuration.GetConnectionString("EventStore")))
+            services.AddEventStore(o => o.WithGES(Configuration.GetConnectionString("EventStore"), "admin", "changeit"))
                 .AddMediator(typeof(Features.GetPricesOverview.Query).Assembly);
         }
     }

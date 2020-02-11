@@ -2,6 +2,7 @@
 using Common.EventStore.Lib.DependencyInjection;
 using Common.EventStore.Lib.EfCore;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -21,7 +22,11 @@ namespace Microsoft.Extensions.DependencyInjection
                         u.UseAdminDatabase(adminDb);
                     }
                 }))
-                .AddScoped<IEventWriteRepository, EventRepository>();
+                .AddScoped<IEventWriteRepository, EventRepository>()
+                .AddScoped<IEventReadRepository, EventRepository>()
+                .AddSingleton(_ => new NpgsqlConnection(connectionString))
+                .AddSingleton<IEventListener,EventListener>()
+                .AddHostedService<EventHostedService>();
         }
     }
 }

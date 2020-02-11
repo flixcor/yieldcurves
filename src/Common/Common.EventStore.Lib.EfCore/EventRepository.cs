@@ -2,9 +2,11 @@
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using Common.Core;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Common.EventStore.Lib.EfCore
 {
@@ -41,9 +43,26 @@ namespace Common.EventStore.Lib.EfCore
             }
         }
 
-        public IAsyncEnumerable<(IEventWrapper, IMetadata)> Subscribe(IEventFilter? eventFilter = null, CancellationToken cancellation = default)
+        public async IAsyncEnumerable<(IEventWrapper, IMetadata)> Subscribe(IEventFilter? eventFilter = null, [EnumeratorCancellation]CancellationToken cancellation = default)
         {
-            throw new System.NotImplementedException();
+            eventFilter ??= EventFilter.None;
+
+            await foreach (var (wrapper, metadata) in EventChannel.Subscribe(cancellation))
+            {
+                if (cancellation.IsCancellationRequested)
+                {
+                    yield break;
+                }
+
+                if (
+                    (eventFilter.AggregateId is null || eventFilter.AggregateId == wrapper.AggregateId) &&
+                    (eventFilter.Checkpoint is null || eventFilter.Checkpoint < wrapper.Id) &&
+                    (!eventFilter.EventTypes.Any() || eventFilter.EventTypes.Contains(wrapper.GetContent().GetType().Name))
+                    )
+                {
+                    yield return (wrapper, metadata);
+                }
+            }
         }
     }
 }

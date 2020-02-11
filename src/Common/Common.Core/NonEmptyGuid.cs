@@ -30,7 +30,7 @@ namespace Common.Core
 
         public static implicit operator Guid(NonEmptyGuid nonEmpty) => nonEmpty._value;
 
-        public override string? ToString() => _value.ToString();
+        public override string ToString() => _value.ToString();
         public string ToString(string format) => _value.ToString(format);
     }
 

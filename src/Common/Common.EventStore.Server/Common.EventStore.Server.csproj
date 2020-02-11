@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Common.EventStore.Lib.EfCore\Common.EventStore.Lib.EfCore.csproj" />
     <ProjectReference Include="..\Common.EventStore.Lib.GES\Common.EventStore.Lib.GES.csproj" />
     <ProjectReference Include="..\Common.EventStore.Lib\Common.EventStore.Lib.csproj" />
     <ProjectReference Include="..\Common.Infrastructure\Common.Infrastructure.csproj" />
