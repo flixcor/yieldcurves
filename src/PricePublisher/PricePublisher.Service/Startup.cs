@@ -21,7 +21,7 @@ namespace PricePublisher.Service
                 .AddMediator(typeof(Query).Assembly)
                 .AddRedis("localhost:6379", typeof(Dto).Assembly);
 
-            services.AddEventStore(o => o.WithGES(Configuration.GetConnectionString("EventStore")))
+            services.AddEventStore(o => o.WithGES(Configuration.GetConnectionString("EventStore"), "admin", "changeit"))
                 .AddSingleton<Func<DateTime>>(() => DateTime.UtcNow);
         }
     }

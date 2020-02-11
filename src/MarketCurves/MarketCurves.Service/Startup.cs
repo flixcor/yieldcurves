@@ -22,7 +22,7 @@ namespace MarketCurves.Service
                 .AddMediator(s_assembly)
                 .AddRedis("localhost:6379", s_assembly);
 
-            services.AddEventStore(o => o.WithGES(Configuration.GetConnectionString("EventStore")));
+            services.AddEventStore(o => o.WithGES(Configuration.GetConnectionString("EventStore"), "admin", "changeit"));
         }
     }
 }

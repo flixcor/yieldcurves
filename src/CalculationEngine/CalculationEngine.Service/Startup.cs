@@ -36,7 +36,7 @@ namespace CalculationEngine.Service
                 return actorSystem;
             });
 
-            services.AddEventStore(o => o.WithGES(Configuration.GetConnectionString("EventStore")));
+            services.AddEventStore(o => o.WithGES(Configuration.GetConnectionString("EventStore"), "admin", "changeit"));
             services.AddEfCore<AkkaPersistenceContext>(Configuration.GetConnectionString("SqlServer"));
             services.AddLogging();
 
