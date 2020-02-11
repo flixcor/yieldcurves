@@ -20,8 +20,6 @@ namespace Common.EventStore.Lib.EfCore
                 e.HasIndex(ev => new { ev.AggregateId });
                 e.HasIndex(ev => new { ev.Timestamp });
                 e.HasIndex(ev => new { ev.EventType });
-
-                e.Property(x => x.Payload).HasColumnType("jsonb");
             });
         }
 
