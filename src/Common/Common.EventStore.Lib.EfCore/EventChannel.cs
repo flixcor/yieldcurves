@@ -1,27 +1,27 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Channels;
-using System.Threading.Tasks;
 using Common.Core;
 
 namespace Common.EventStore.Lib.EfCore
 {
     public static class EventChannel
     {
-        private static readonly ConcurrentDictionary<Guid, Channel<(IEventWrapper, IMetadata)>> s_subscribers = new ConcurrentDictionary<Guid, Channel<(IEventWrapper, IMetadata)>>();
+        private static readonly ConcurrentDictionary<Guid, Channel<PersistedEvent>> s_subscribers = new ConcurrentDictionary<Guid, Channel<PersistedEvent>>();
 
-        public static Task PublishAsync((IEventWrapper, IMetadata) tup, CancellationToken cancellationToken)
+        public static void Publish(PersistedEvent tup)
         {
-            var tasks = s_subscribers.Values.Select(async x => await x.Writer.PublishAsync(tup, cancellationToken));
-            return Task.WhenAll(tasks);
+            foreach (var item in s_subscribers.Values)
+            {
+                item.Writer.TryWrite(tup);
+            }
         }
 
-        public static IAsyncEnumerable<(IEventWrapper, IMetadata)> Subscribe(CancellationToken cancellationToken)
+        public static IAsyncEnumerable<PersistedEvent> Subscribe(CancellationToken cancellationToken)
         {
-            var newChannel = Channel.CreateUnbounded<(IEventWrapper, IMetadata)>();
+            var newChannel = Channel.CreateUnbounded<PersistedEvent>();
             var id = Guid.NewGuid();
 
             var success = false;
@@ -39,7 +39,7 @@ namespace Common.EventStore.Lib.EfCore
         private static void RemoveFromBag(Guid id, CancellationToken cancellationToken = default)
         {
             var success = false;
-            Channel<(IEventWrapper, IMetadata)>? subscriber = null;
+            Channel<PersistedEvent>? subscriber = null;
 
             while (!success && !cancellationToken.IsCancellationRequested)
             {

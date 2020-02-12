@@ -33,7 +33,7 @@ namespace Common.EventStore.Lib
         protected void GenerateEvent(IEvent @event)
         {
             Version++;
-            _events.Add(Wrap(Id, new Instant(), Version, @event));
+            _events.Add(Wrap(Id, SystemClock.Instance.GetCurrentInstant(), Version, @event));
             When(@event);
         }
 

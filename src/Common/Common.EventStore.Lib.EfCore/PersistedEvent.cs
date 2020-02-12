@@ -28,7 +28,7 @@ namespace Common.EventStore.Lib.EfCore
             var wrapper = Serializer.DeserializeEvent(Payload);
 
             var newWrapper = Wrap(AggregateId, Timestamp, Version, wrapper.GetContent(), Id);
-            var metadata = Serializer.Deserialize<IMetadata>(Metadata);
+            var metadata = DeserializeMetadata(Metadata);
 
             return (newWrapper, metadata);
         }

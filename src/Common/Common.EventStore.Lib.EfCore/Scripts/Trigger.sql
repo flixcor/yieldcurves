@@ -23,7 +23,7 @@ RETURNS trigger AS $$
 BEGIN
   PERFORM pg_notify(
     'new_event',
-    row_to_json(NEW)::text
+    NEW.Id::text
   );
 
   RETURN NEW;

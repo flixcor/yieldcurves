@@ -1,4 +1,5 @@
-﻿using Common.EventStore.Lib;
+﻿using System;
+using Common.EventStore.Lib;
 using Common.EventStore.Lib.DependencyInjection;
 using Common.EventStore.Lib.EfCore;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,8 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static void AddPostgres(this IServiceCollection services, string connectionString, string? adminDb)
         {
+            EventRepository RepoFactory(IServiceProvider prov) => new EventRepository(prov.GetService<EventStoreContext>(), connectionString);
+
             services
                 .AddDbContext<EventStoreContext>(o => o.UseNpgsql(connectionString, u =>
                 {
@@ -22,11 +25,11 @@ namespace Microsoft.Extensions.DependencyInjection
                         u.UseAdminDatabase(adminDb);
                     }
                 }))
-                .AddScoped<IEventWriteRepository, EventRepository>()
-                .AddScoped<IEventReadRepository, EventRepository>()
+                .AddScoped<IEventWriteRepository, EventRepository>(RepoFactory)
+                .AddScoped<IEventReadRepository, EventRepository>(RepoFactory)
                 .AddSingleton(_ => new NpgsqlConnection(connectionString))
-                .AddSingleton<IEventListener,EventListener>()
-                .AddHostedService<EventHostedService>();
+                .AddSingleton<IEventListener, EventListener>();
+                //.AddHostedService<EventHostedService>();
         }
     }
 }

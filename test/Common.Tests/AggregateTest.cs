@@ -30,7 +30,7 @@ namespace Common.Tests
             {
                 version++;
 
-                Aggregate.LoadFromHistory(Wrap(Aggregate.Id, new Instant(), version, item));
+                Aggregate.LoadFromHistory(Wrap(Aggregate.Id, SystemClock.Instance.GetCurrentInstant(), version, item));
             }
             
             return this;

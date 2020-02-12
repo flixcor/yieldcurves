@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Channels;
 using System.Threading.Tasks;
 using Common.Core;
 using Microsoft.EntityFrameworkCore;
@@ -13,16 +13,39 @@ namespace Common.EventStore.Lib.EfCore
     internal class EventRepository : IEventWriteRepository, IEventReadRepository
     {
         private readonly EventStoreContext _context;
+        private readonly string _connectionString;
 
-        public EventRepository(EventStoreContext context)
+        public EventRepository(EventStoreContext context, string connectionString)
         {
             _context = context;
+            _connectionString = connectionString;
         }
 
         public async Task Save(CancellationToken cancellationToken = default, params (IEventWrapper, IMetadata)[] events)
         {
-            await _context.Events().AddRangeAsync(events.Select(PersistedEvent.FromEventWrapper));
-            await _context.SaveChangesAsync(cancellationToken);
+            //await _context.Events().AddRangeAsync(events.Select(PersistedEvent.FromEventWrapper));
+            //await _context.SaveChangesAsync(cancellationToken);
+
+            await using var conn = new NpgsqlConnection(_connectionString);
+            await conn.OpenAsync(cancellationToken);
+            conn.TypeMapper.UseNodaTime();
+            await using var trans = await conn.BeginTransactionAsync(cancellationToken);
+
+            foreach (var tup in events)
+            {
+                var persisted = PersistedEvent.FromEventWrapper(tup);
+
+                await using var cmd = new NpgsqlCommand(@" INSERT INTO public.""Events"" (""Timestamp"", ""AggregateId"", ""Version"", ""EventType"", ""Metadata"", ""Payload"") VALUES (@t, @a, @v, @et, @m, @p)", conn);
+                cmd.Parameters.AddWithValue("t", persisted.Timestamp);
+                cmd.Parameters.AddWithValue("a", persisted.AggregateId);
+                cmd.Parameters.AddWithValue("v", persisted.Version);
+                cmd.Parameters.AddWithValue("et", persisted.EventType);
+                cmd.Parameters.AddWithValue("m", persisted.Metadata);
+                cmd.Parameters.AddWithValue("p", persisted.Payload);
+                await cmd.ExecuteNonQueryAsync(cancellationToken);
+            }
+
+            await trans.CommitAsync(cancellationToken);
         }
 
         public async IAsyncEnumerable<(IEventWrapper, IMetadata)> Get(IEventFilter? eventFilter = null, [EnumeratorCancellation]CancellationToken cancellation = default)
@@ -43,26 +66,10 @@ namespace Common.EventStore.Lib.EfCore
             }
         }
 
-        public async IAsyncEnumerable<(IEventWrapper, IMetadata)> Subscribe(IEventFilter? eventFilter = null, [EnumeratorCancellation]CancellationToken cancellation = default)
+        public IAsyncEnumerable<(IEventWrapper, IMetadata)> Subscribe(IEventFilter? eventFilter = null, CancellationToken cancellation = default)
         {
             eventFilter ??= EventFilter.None;
-
-            await foreach (var (wrapper, metadata) in EventChannel.Subscribe(cancellation))
-            {
-                if (cancellation.IsCancellationRequested)
-                {
-                    yield break;
-                }
-
-                if (
-                    (eventFilter.AggregateId is null || eventFilter.AggregateId == wrapper.AggregateId) &&
-                    (eventFilter.Checkpoint is null || eventFilter.Checkpoint < wrapper.Id) &&
-                    (!eventFilter.EventTypes.Any() || eventFilter.EventTypes.Contains(wrapper.GetContent().GetType().Name))
-                    )
-                {
-                    yield return (wrapper, metadata);
-                }
-            }
+            return EventChannel.Subscribe(cancellation).Select(x => x.ToWrapper());
         }
     }
 }
