@@ -1,68 +1,70 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
-using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
-namespace Common.EventStore.Lib.EfCore
+namespace Common.EventStore.Lib.Postgres
 {
     internal class EventRepository : IEventWriteRepository, IEventReadRepository
     {
-        private readonly EventStoreContext _context;
         private readonly string _connectionString;
 
-        public EventRepository(EventStoreContext context, string connectionString)
+        public EventRepository(string connectionString)
         {
-            _context = context;
             _connectionString = connectionString;
         }
 
         public async Task Save(CancellationToken cancellationToken = default, params (IEventWrapper, IMetadata)[] events)
         {
-            //await _context.Events().AddRangeAsync(events.Select(PersistedEvent.FromEventWrapper));
-            //await _context.SaveChangesAsync(cancellationToken);
+            await using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync(cancellationToken);
 
-            await using var conn = new NpgsqlConnection(_connectionString);
-            await conn.OpenAsync(cancellationToken);
-            conn.TypeMapper.UseNodaTime();
-            await using var trans = await conn.BeginTransactionAsync(cancellationToken);
-
-            foreach (var tup in events)
+            try
             {
-                var persisted = PersistedEvent.FromEventWrapper(tup);
+                await using var trans = await connection.BeginTransactionAsync(cancellationToken);
 
-                await using var cmd = new NpgsqlCommand(@" INSERT INTO public.""Events"" (""Timestamp"", ""AggregateId"", ""Version"", ""EventType"", ""Metadata"", ""Payload"") VALUES (@t, @a, @v, @et, @m, @p)", conn);
-                cmd.Parameters.AddWithValue("t", persisted.Timestamp);
-                cmd.Parameters.AddWithValue("a", persisted.AggregateId);
-                cmd.Parameters.AddWithValue("v", persisted.Version);
-                cmd.Parameters.AddWithValue("et", persisted.EventType);
-                cmd.Parameters.AddWithValue("m", persisted.Metadata);
-                cmd.Parameters.AddWithValue("p", persisted.Payload);
-                await cmd.ExecuteNonQueryAsync(cancellationToken);
+                foreach (var tup in events)
+                {
+                    var persisted = PersistedEvent.FromEventWrapper(tup);
+
+                    await using var cmd = new NpgsqlCommand(@" INSERT INTO public.""Events"" (""Timestamp"", ""AggregateId"", ""Version"", ""EventType"", ""Metadata"", ""Payload"") VALUES (@t, @a, @v, @et, @m, @p)", connection);
+                    cmd.Parameters.AddWithValue("t", persisted.Timestamp);
+                    cmd.Parameters.AddWithValue("a", persisted.AggregateId);
+                    cmd.Parameters.AddWithValue("v", persisted.Version);
+                    cmd.Parameters.AddWithValue("et", persisted.EventType);
+                    cmd.Parameters.AddWithValue("m", persisted.Metadata);
+                    cmd.Parameters.AddWithValue("p", persisted.Payload);
+                    await cmd.ExecuteNonQueryAsync(cancellationToken);
+                }
+
+                await trans.CommitAsync(cancellationToken);
             }
-
-            await trans.CommitAsync(cancellationToken);
+            finally
+            {
+                await connection.CloseAsync();
+            }
         }
 
-        public async IAsyncEnumerable<(IEventWrapper, IMetadata)> Get(IEventFilter? eventFilter = null, [EnumeratorCancellation]CancellationToken cancellation = default)
+        public async IAsyncEnumerable<(IEventWrapper, IMetadata)> Get(IEventFilter? eventFilter = null, [EnumeratorCancellation]CancellationToken cancellationToken = default)
         {
             eventFilter ??= EventFilter.None;
 
-            var whereClause = eventFilter.ToWhereClause();
+            await using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync(cancellationToken);
 
-            await foreach (var item in _context
-                .Events()
-                .AsNoTracking()
-                .Where(whereClause)
-                .OrderBy(x => x.Id)
-                .AsAsyncEnumerable()
-                .WithCancellation(cancellation))
+            try
             {
-                yield return item.ToWrapper();
+                await foreach (var item in connection.GetAsync(eventFilter, cancellationToken).WithCancellation(cancellationToken))
+                {
+                    yield return item.ToWrapper();
+                }
+            }
+            finally
+            {
+                await connection.CloseAsync();
             }
         }
 

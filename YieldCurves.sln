@@ -196,6 +196,24 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "MicroFrontends", "src\Prese
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "64697"
+	EndProjectSection
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_64697"
+		Debug.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_64697"
+		Release.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "64697"
 		SlnRelativePath = "src\Presentation\MicroFrontends\"
 	EndProjectSection
 EndProject
@@ -214,7 +232,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.EventStore.Server", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.EventStore.Lib", "src\Common\Common.EventStore.Lib\Common.EventStore.Lib.csproj", "{2AC3E81A-14FA-4AD5-9690-B79E6BC41116}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.EventStore.Lib.EfCore", "src\Common\Common.EventStore.Lib.EfCore\Common.EventStore.Lib.EfCore.csproj", "{6C51F626-F521-41AC-B08B-7C31EF81C897}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.EventStore.Lib.Postgres", "src\Common\Common.EventStore.Lib.EfCore\Common.EventStore.Lib.Postgres.csproj", "{6C51F626-F521-41AC-B08B-7C31EF81C897}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.EventStore.Lib.GES", "src\Common\Common.EventStore.Lib.GES\Common.EventStore.Lib.GES.csproj", "{3310E056-20F9-49AF-B6E0-AE185A412FD0}"
 EndProject

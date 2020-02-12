@@ -3,11 +3,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Channels;
-using Common.Core;
 
-namespace Common.EventStore.Lib.EfCore
+namespace Common.EventStore.Lib.Postgres
 {
-    public static class EventChannel
+    internal static class EventChannel
     {
         private static readonly ConcurrentDictionary<Guid, Channel<PersistedEvent>> s_subscribers = new ConcurrentDictionary<Guid, Channel<PersistedEvent>>();
 

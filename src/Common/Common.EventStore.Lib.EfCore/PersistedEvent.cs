@@ -3,9 +3,9 @@ using Common.Core;
 using NodaTime;
 using static Common.Events.Helpers;
 
-namespace Common.EventStore.Lib.EfCore
+namespace Common.EventStore.Lib.Postgres
 {
-    public class PersistedEvent
+    internal class PersistedEvent
     {
 
         internal static PersistedEvent FromEventWrapper((IEventWrapper, IMetadata) eventWrapper)

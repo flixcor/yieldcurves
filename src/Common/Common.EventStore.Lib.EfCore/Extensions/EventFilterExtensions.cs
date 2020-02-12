@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using Common.EventStore.Lib.Postgres;
 
-namespace Common.EventStore.Lib.EfCore
+namespace Common.EventStore.Lib
 {
     internal static class EventFilterExtensions
     {
