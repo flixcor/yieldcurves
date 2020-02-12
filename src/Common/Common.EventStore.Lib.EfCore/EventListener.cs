@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
+using NodaTime;
+using NodaTime.Text;
 using Npgsql;
 
 namespace Common.EventStore.Lib.Postgres
@@ -27,6 +30,8 @@ namespace Common.EventStore.Lib.Postgres
         public async Task ListenAsync(CancellationToken cancellationToken)
         {
             await using var connection = new NpgsqlConnection(_connectionString);
+
+
             await connection.OpenAsync();
             connection.Notification += SendToAll;
 
@@ -57,7 +62,11 @@ namespace Common.EventStore.Lib.Postgres
             if (long.TryParse(e.Payload, out var id))
             {
                 var _ = SendToAll(id);
+                return;
             }
+
+            var doc = JsonDocument.Parse(e.Payload);
+            SendToAll(doc);
         }
 
         private async Task SendToAll(long id)
@@ -72,9 +81,34 @@ namespace Common.EventStore.Lib.Postgres
             await conn.CloseAsync();
         }
 
+        private void SendToAll(JsonDocument jsonDocument)
+        {
+            var aggregateId = jsonDocument.RootElement.GetProperty("AggregateId").GetGuid();
+            var eventType = jsonDocument.RootElement.GetProperty("EventType").GetString();
+            var id = jsonDocument.RootElement.GetProperty("Id").GetInt64();
+            var timeStamp = InstantPattern.General.Parse(jsonDocument.RootElement.GetProperty("Timestamp").GetString()).Value;
+            var version = jsonDocument.RootElement.GetProperty("Version").GetInt32();
+            var payload = jsonDocument.RootElement.GetProperty("Payload").GetBytesFromBase64();
+            var metadata = jsonDocument.RootElement.GetProperty("Metadata").GetBytesFromBase64();
+
+            var result = new PersistedEvent
+            {
+                AggregateId = aggregateId,
+                EventType = eventType,
+                Id = id,
+                Metadata = metadata,
+                Payload = payload,
+                Timestamp = timeStamp,
+                Version = version
+            };
+
+            EventChannel.Publish(result);
+        }
+
         public Task StartAsync(CancellationToken cancellationToken)
         {
             NpgsqlConnection.GlobalTypeMapper.UseNodaTime();
+            NpgsqlConnection.GlobalTypeMapper.UseJsonNet();
             var _ = ListenAsync(_token);
             return Task.CompletedTask;
         }
