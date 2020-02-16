@@ -20,23 +20,27 @@ namespace MarketCurves.Service.Features.AddCurvePoint
         private readonly IReadModelRepository<Instrument> _readModelRepository;
         private readonly IReadModelRepository<UsedValues> _usedValues;
         private readonly IReadModelRepository<Instrument> _instruments;
-        private readonly GetVendor _getHasPriceType;
 
-        public Handler(IAggregateRepository repository, IReadModelRepository<Instrument> readModelRepository, IReadModelRepository<UsedValues> usedValues, IReadModelRepository<Instrument> instruments, GetVendor getHasPriceType) : base(repository)
+        public Handler(IAggregateRepository repository, IReadModelRepository<Instrument> readModelRepository, IReadModelRepository<UsedValues> usedValues, IReadModelRepository<Instrument> instruments) : base(repository)
         {
             _readModelRepository = readModelRepository ?? throw new ArgumentNullException(nameof(readModelRepository));
             _usedValues = usedValues ?? throw new ArgumentNullException(nameof(usedValues));
             _instruments = instruments ?? throw new ArgumentNullException(nameof(instruments));
-            _getHasPriceType = getHasPriceType;
         }
 
         public async Task<Result> Handle(Command command, CancellationToken cancellationToken)
         {
-            var instrument = await FromId(command.InstrumentId.NonEmpty(), _getHasPriceType);
+            var instrument = await FromId(command.InstrumentId.NonEmpty(), GetVendor);
             var dateLag = new DateLag(command.DateLag);
 
             return await Handle(cancellationToken, command.MarketCurveId.NonEmpty(), whatToDo:
                 c => c.AddCurvePoint(command.Tenor, instrument, dateLag, command.PriceType, command.IsMandatory));
+        }
+
+        async Task<Vendor> GetVendor(NonEmptyGuid id)
+        {
+            var i = await _readModelRepository.Get(id);
+            return i.Vendor.TryParseEnum<Vendor>().Content;
         }
 
         public Task Handle(IEventWrapper<IInstrumentCreated> @event, CancellationToken cancellationToken)

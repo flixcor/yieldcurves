@@ -24,7 +24,7 @@ namespace CalculationEngine.Service
             using var scope = serviceProvider.CreateScope();
             var listener = scope.ServiceProvider.GetService<IMessageBusListener>();
 
-            await listener.SubscribeToAll();
+            var _ = listener.SubscribeToAll();
             Console.WriteLine("waiting for events. press enter to exit");
             Console.ReadLine();
         }

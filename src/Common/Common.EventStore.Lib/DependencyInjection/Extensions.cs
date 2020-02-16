@@ -4,6 +4,7 @@ using Common.Infrastructure;
 using Common.EventStore.Lib;
 using Common.EventStore.Lib.DependencyInjection;
 using Common.EventStore.Lib.Internal;
+using System.Reflection;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -11,7 +12,10 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddEventStore(this IServiceCollection services, Action<IPersistenceOption> persistence)
         {
-            services.AddScoped<IAggregateRepository, AggregateRepository>();
+            services.AddSingleton<IAggregateRepository, AggregateRepository>();
+            services.AddSingleton(new ApplicationName(Assembly.GetEntryAssembly()?.GetName()?.Name ?? throw new Exception()));
+
+
             services.AddSingleton<IMessageBusListener, EventListener>();
             services.AddHostedService<MessageBusListenerHostedService>();
 

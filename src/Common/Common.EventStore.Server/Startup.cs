@@ -22,8 +22,9 @@ namespace Common.EventStore
             services.AddControllers();
             services.AddCors();
             services.AddMediator();
-            //services.AddEventStore(o => o.WithGES(Configuration.GetConnectionString("EventStore"), "admin", "changeit"));
-            services.AddEventStore(o => o.WithPostgres(Configuration.GetConnectionString("Postgres")));
+            services.AddRedis("localhost:6379");
+            services.AddEventStore(o => o.WithGES(Configuration.GetConnectionString("EventStore"), "admin", "changeit"));
+            //services.AddEventStore(o => o.WithPostgres(Configuration.GetConnectionString("Postgres")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

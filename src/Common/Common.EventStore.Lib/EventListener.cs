@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.EventStore.Lib
 {
@@ -10,26 +11,29 @@ namespace Common.EventStore.Lib
     {
         private readonly IEventReadRepository _eventReadRepository;
         private readonly IEventBus _eventBus;
-        private readonly IReadModelRepository<EventPosition> _currentPositionRepository;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IServiceProvider _serviceProvider;
         private readonly string _applicationName;
 
         public EventListener(IEventReadRepository eventReadRepository,
             IEventBus eventBus,
-            IReadModelRepository<EventPosition> currentPositionRepository,
             ApplicationName applicationName,
-            IUnitOfWork unitOfWork)
+            IServiceProvider serviceProvider)
         {
             _eventReadRepository = eventReadRepository;
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
-            _currentPositionRepository = currentPositionRepository ?? throw new ArgumentNullException(nameof(currentPositionRepository));
-            _unitOfWork = unitOfWork;
+            _serviceProvider = serviceProvider;
             _applicationName = applicationName?.Value ?? throw new ArgumentNullException(nameof(applicationName));
         }
 
         public async Task SubscribeToAll(CancellationToken cancellationToken)
         {
-            var currentPosition = await GetCurrentPosition();
+            using var scope = _serviceProvider.CreateScope();
+            var services = scope.ServiceProvider;
+
+            var unitOfWork = services.GetService<IUnitOfWork>();
+            var repo = services.GetRequiredService<IReadModelRepository<EventPosition>>();
+
+            var currentPosition = await GetCurrentPosition(repo);
 
             var filter = EventFilter.FromCheckpoint(currentPosition.CommitPosition);
 
@@ -42,24 +46,24 @@ namespace Common.EventStore.Lib
 
                 await _eventBus.Publish(wrapper, cancellationToken);
 
-                await _currentPositionRepository.Update(newPosition);
+                await repo.Update(newPosition);
 
-                if (_unitOfWork != null)
+                if (unitOfWork != null)
                 {
-                    await _unitOfWork.SaveChanges();
+                    await unitOfWork.SaveChanges();
                 }
             }
         }
 
-        private async Task<EventPosition> GetCurrentPosition()
+        private async Task<EventPosition> GetCurrentPosition(IReadModelRepository<EventPosition> repo)
         {
-            var existing = await _currentPositionRepository
+            var existing = await repo
                 .Single(x => x.ApplicationName == _applicationName);
 
             if (existing == null)
             {
                 existing = new EventPosition(0, 0, _applicationName);
-                await _currentPositionRepository.Insert(existing);
+                await repo.Insert(existing);
             }
 
             return existing;

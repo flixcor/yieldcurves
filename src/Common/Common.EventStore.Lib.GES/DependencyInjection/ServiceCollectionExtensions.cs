@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Net.Http;
 using System.Net.Security;
-using System.Reflection;
-using Common.Core;
 using Common.EventStore.Lib;
 using Common.EventStore.Lib.DependencyInjection;
 using Common.EventStore.Lib.GES;
@@ -28,7 +26,6 @@ namespace Microsoft.Extensions.DependencyInjection
             var uri = new Uri(connectionString);
 
             return services
-                .AddSingleton(new ApplicationName(Assembly.GetEntryAssembly()?.GetName()?.Name ?? throw new Exception()))
                 .AddSingleton(x => eventStoreClient)
                 .AddSingleton(new UserCredentials(username, password))
                 .AddSingleton<IEventWriteRepository, EventRepository>()

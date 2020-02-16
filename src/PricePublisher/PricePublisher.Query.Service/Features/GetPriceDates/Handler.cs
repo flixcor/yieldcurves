@@ -24,12 +24,12 @@ namespace PricePublisher.Query.Service.Features.GetPriceDates
 
         public async Task Handle(IEventWrapper<IInstrumentPricingPublished> @event, CancellationToken cancellationToken)
         {
-            var asOfDateString = @event.Content.AsOfDate.ToString();
-            var existing = await _repository.Single(x => x.AsOfDate == asOfDateString);
+            var asOfDate = @event.Content.AsOfDate;
+            var existing = await _repository.Single(x => x.AsOfDate == asOfDate);
 
             if (existing == null)
             {
-                var newDto = new Dto { AsOfDate = asOfDateString };
+                var newDto = new Dto { AsOfDate = asOfDate };
                 await _repository.Insert(newDto);
             }
         }

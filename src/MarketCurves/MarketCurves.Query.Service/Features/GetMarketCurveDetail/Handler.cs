@@ -13,8 +13,7 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
             IHandleQuery<Query, Dto?>,
             IHandleEvent<IMarketCurveCreated>,
             IHandleEvent<ICurvePointAdded>,
-            IHandleEvent<IBloombergInstrumentCreated>,
-            IHandleEvent<IRegularInstrumentCreated>
+            IHandleEvent<IInstrumentCreated>
     {
         private readonly IReadModelRepository<Dto> _curveRepo;
         private readonly IReadModelRepository<InstrumentDto> _instrumentRepo;
@@ -72,21 +71,7 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
                 });
         }
 
-        public Task Handle(IEventWrapper<IBloombergInstrumentCreated> wrapper, CancellationToken cancellationToken)
-        {
-            var @event = wrapper.Content;
-
-            var instrument = new InstrumentDto
-            {
-                Id = wrapper.AggregateId,
-                Name = $"{@event.Ticker} {@event.PricingSource} {@event.YellowKey}",
-                Vendor = "Bloomberg"
-            };
-
-            return _instrumentRepo.Insert(instrument);
-        }
-
-        public Task Handle(IEventWrapper<IRegularInstrumentCreated> wrapper, CancellationToken cancellationToken)
+        public Task Handle(IEventWrapper<IInstrumentCreated> wrapper, CancellationToken cancellationToken)
         {
             var @event = wrapper.Content;
 

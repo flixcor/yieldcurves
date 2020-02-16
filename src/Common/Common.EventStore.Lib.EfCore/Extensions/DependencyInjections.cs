@@ -11,8 +11,8 @@ namespace Microsoft.Extensions.DependencyInjection
         private static void AddPostgres(this IServiceCollection services, string connectionString)
         {
             services
-                .AddScoped<IEventWriteRepository, EventRepository>(_ => new EventRepository(connectionString))
-                .AddScoped<IEventReadRepository, EventRepository>(_ => new EventRepository(connectionString))
+                .AddSingleton<IEventWriteRepository, EventRepository>(_ => new EventRepository(connectionString))
+                .AddSingleton<IEventReadRepository, EventRepository>(_ => new EventRepository(connectionString))
                 .AddHostedService(_ => new Common.EventStore.Lib.Postgres.EventListener(connectionString));
         }
     }
