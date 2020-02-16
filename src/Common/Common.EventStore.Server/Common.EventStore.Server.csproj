@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NodaTime.Serialization.SystemTextJson" Version="1.0.0-beta01" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Common.EventStore.Lib.EfCore\Common.EventStore.Lib.Postgres.csproj" />
     <ProjectReference Include="..\Common.EventStore.Lib.GES\Common.EventStore.Lib.GES.csproj" />
     <ProjectReference Include="..\Common.EventStore.Lib\Common.EventStore.Lib.csproj" />

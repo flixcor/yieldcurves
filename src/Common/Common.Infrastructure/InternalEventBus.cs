@@ -29,7 +29,7 @@ namespace Common.Infrastructure
                 .SelectMany(t => _serviceProvider.GetServices(t))
                 .Cast<dynamic>();
 
-            var concrete = wrapper.ConcreteGeneric(eventType);
+            var concrete = wrapper.ConcreteGeneric();
 
             foreach (var handler in handlers)
             {

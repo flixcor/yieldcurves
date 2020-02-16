@@ -7,6 +7,8 @@ using Common.Core;
 using Common.EventStore.Lib;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using NodaTime;
+using NodaTime.Serialization.SystemTextJson;
 
 namespace Common.EventStore.Controllers
 {
@@ -19,7 +21,7 @@ namespace Common.EventStore.Controllers
         private static readonly JsonSerializerOptions s_jsonSerializerOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        };
+        }.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
 
         public EventController(ILogger<EventController> logger, IEventReadRepository repository)
         {
@@ -36,7 +38,7 @@ namespace Common.EventStore.Controllers
                 .Select(t =>
                 {
                     var (e, _) = t;
-                    var content = e.GetContent();
+                    var content = e.ConcreteGeneric();
 
                     return new EventReply
                     {
@@ -110,8 +112,10 @@ namespace Common.EventStore.Controllers
             var type = payload.GetType();
             var name = type.Name;
             var position = wrapper.Id;
+            var generic = wrapper.ConcreteGeneric();
+            var genericType = generic.GetType();
 
-            var json = JsonSerializer.Serialize(payload, type, s_jsonSerializerOptions);
+            var json = JsonSerializer.Serialize(generic, genericType, s_jsonSerializerOptions);
 
             _logger.LogInformation($"returning event: {name}");
 
