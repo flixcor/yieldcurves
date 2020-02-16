@@ -7,13 +7,9 @@ using static Common.Events.Helpers;
 
 namespace CurveRecipes.Domain
 {
-    public class CurveRecipe : Aggregate<CurveRecipe>
+    public class CurveRecipe : Aggregate
     {
         private int _count = 0;
-
-        public CurveRecipe()
-        {
-        }
 
         public CurveRecipe Define(NonEmptyGuid marketCurveId, NonEmptyString shortName, NonEmptyString description, Tenor lastLiquidTenor, DayCountConvention dayCountConvention, Interpolation interpolation, ExtrapolationShort extrapolationShort,
             ExtrapolationLong extrapolationLong, OutputFrequency outputFrequency, OutputType outputType)

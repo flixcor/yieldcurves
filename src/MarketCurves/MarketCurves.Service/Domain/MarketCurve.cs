@@ -6,13 +6,8 @@ using static Common.Events.Helpers;
 
 namespace MarketCurves.Domain
 {
-    public class MarketCurve : Aggregate<MarketCurve>
+    public class MarketCurve : Aggregate
     {
-        public MarketCurve()
-        {
-
-        }
-
         public MarketCurve Define(Country country, CurveType curveType, FloatingLeg? floatingLeg = null)
         {
             var @event = MarketCurveCreated(country.NonEmptyString(), curveType.NonEmptyString(), floatingLeg?.NonEmptyString());

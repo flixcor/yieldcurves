@@ -8,17 +8,17 @@ using static Common.Events.Helpers;
 
 namespace Common.Tests
 {
-    public interface IWhen<T> where T : Aggregate<T>, new()
+    public interface IWhen<T> where T : Aggregate, new()
     {
         IThen<T> When(Action<T> action);
     }
 
-    public interface IThen<T> where T : Aggregate<T>, new()
+    public interface IThen<T> where T : Aggregate, new()
     {
         void Then(params IEvent[] events);
     }
 
-    public abstract class AggregateTest<T> : IWhen<T>, IThen<T> where T : Aggregate<T>, new()
+    public abstract class AggregateTest<T> : IWhen<T>, IThen<T> where T : Aggregate, new()
     {
         protected T Aggregate { get; private set; } = new T();
 

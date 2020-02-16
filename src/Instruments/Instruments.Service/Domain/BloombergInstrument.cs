@@ -4,7 +4,7 @@ using static Common.Events.Helpers;
 
 namespace Instruments.Domain
 {
-    public class BloombergInstrument : Aggregate<BloombergInstrument>
+    public class BloombergInstrument : Aggregate
     {
         public BloombergInstrument Define(NonEmptyString ticker, PricingSource pricingSource, YellowKey yellowKey)
         {

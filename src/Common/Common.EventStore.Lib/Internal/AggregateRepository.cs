@@ -19,44 +19,58 @@ namespace Common.EventStore.Lib.Internal
             _readRepository = readRepository;
         }
 
-        public async Task<T> Load<T>(NonEmptyGuid id, CancellationToken cancellationToken) where T : Aggregate<T>, new()
+        public async Task<T> Load<T>(NonEmptyGuid id, CancellationToken cancellationToken = default) where T : IAggregate, new()
         {
-            var aggregate = new T
-            {
-                Id = id
-            };
+            var aggregate = new T();
 
-            var filter = EventFilter.ForAggregate(id);
-
-            await foreach (var (item, _) in _readRepository.Get(filter, cancellationToken))
+            if (aggregate is Aggregate eventSourced)
             {
-                aggregate.LoadFromHistory(item);
+                eventSourced.Id = id;
+
+                var filter = EventFilter.ForAggregate(id);
+
+                await foreach (var (item, _) in _readRepository.Get(filter, cancellationToken))
+                {
+                    eventSourced.LoadFromHistory(item);
+                }
+            }
+            else
+            {
+                throw new NotImplementedException();
             }
 
             return aggregate;
         }
 
-        public Task Save<T>(T aggregate, CancellationToken cancellationToken = default, NonEmptyGuid? causationId = null, NonEmptyGuid? correlationId = null) where T : Aggregate<T>, new()
+        public async Task Save<T>(T aggregate, CancellationToken cancellationToken = default, NonEmptyGuid? causationId = null, NonEmptyGuid? correlationId = null) where T : IAggregate, new()
         {
-            causationId ??= NonEmptyGuid.New();
-            correlationId ??= causationId;
-
-            var uncommitted = aggregate.GetUncommittedEvents().Select(x =>
+            if (aggregate is Aggregate a)
             {
-                var id = Guid.NewGuid().NonEmpty();
+                causationId ??= NonEmptyGuid.New();
+                correlationId ??= causationId;
 
-                var metaData = CreateMetadata(new Dictionary<string, string>
+                var uncommitted = a.GetUncommittedEvents().Select(x =>
+                {
+                    var id = Guid.NewGuid().NonEmpty();
+
+                    var metaData = CreateMetadata(new Dictionary<string, string>
                 {
                     { "id", Guid.NewGuid().ToString()},
                     { "causationId", causationId.Value.ToString()},
                     { "correlationId", correlationId.Value.ToString()}
                 });
 
-                causationId = id;
+                    causationId = id;
 
-                return (x, metaData);
-            }).ToArray();
-            return _eventRepository.Save(cancellationToken, uncommitted);
+                    return (x, metaData);
+                }).ToArray();
+
+                await _eventRepository.Save(cancellationToken, uncommitted);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

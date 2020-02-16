@@ -5,6 +5,6 @@ namespace Common.Core
 {
     public interface IMessageBusListener
     {
-        Task SubscribeToAll(CancellationToken cancellationToken);
+        Task SubscribeToAll(CancellationToken cancellationToken = default);
     }
 }

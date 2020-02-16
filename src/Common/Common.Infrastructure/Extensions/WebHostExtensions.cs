@@ -8,21 +8,6 @@ namespace Common.Infrastructure.Extensions
 {
     public static class WebHostExtensions
     {
-        public static async Task RunAsync(this IWebHostBuilder builder)
-        {
-            var host = builder.Build();
-
-            using var scope = host.Services.CreateScope();
-            var listener = scope.ServiceProvider.GetService<IMessageBusListener>();
-
-            if (listener != null)
-            {
-                await listener.SubscribeToAll();
-            }
-
-            await host.RunAsync();
-        }
-
         public static async Task RunAsync(this IHostBuilder builder)
         {
             var host = builder.Build();
@@ -31,7 +16,7 @@ namespace Common.Infrastructure.Extensions
 
             if (listener != null)
             {
-                await listener.SubscribeToAll();
+                _ = listener.SubscribeToAll();
             }
 
             await host.RunAsync();

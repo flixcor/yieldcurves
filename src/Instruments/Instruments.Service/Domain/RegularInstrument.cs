@@ -7,7 +7,7 @@ using static Instruments.Domain.Vendor;
 
 namespace Instruments.Domain
 {
-    public class RegularInstrument : Aggregate<RegularInstrument>
+    public class RegularInstrument : Aggregate
     {
         public Result<RegularInstrument> TryDefine(Vendor vendor, NonEmptyString description)
         {

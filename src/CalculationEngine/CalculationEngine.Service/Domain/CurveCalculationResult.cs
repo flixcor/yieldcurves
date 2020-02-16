@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using CalculationEngine.Service.Domain;
 using Common.Core;
@@ -8,7 +7,7 @@ using static Common.Events.Helpers;
 
 namespace CalculationEngine.Domain
 {
-    public class CurveCalculationResult : Aggregate<CurveCalculationResult>
+    public class CurveCalculationResult : Aggregate
     {
         public CurveCalculationResult() { }
 
