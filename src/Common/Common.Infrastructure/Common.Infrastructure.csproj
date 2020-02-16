@@ -31,7 +31,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common.Core\Common.Core.csproj" />
-    <ProjectReference Include="..\Common.EventStore.Lib\Common.EventStore.Lib.csproj" />
     <ProjectReference Include="..\Common.Events\Common.Events.csproj" />
   </ItemGroup>
 

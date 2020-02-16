@@ -1,12 +1,22 @@
-﻿namespace MarketCurves.Service
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+
+namespace MarketCurves.Service
 {
-    using System.Threading.Tasks;
-    using Common.Infrastructure.DependencyInjection;
-    public static class Program
+    public class Program
     {
         public static async Task Main(string[] args)
         {
-            await Program<Startup>.Main(args);
+            var build = CreateHostBuilder(args).Build();
+            await build.RunAsync();
         }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
     }
 }

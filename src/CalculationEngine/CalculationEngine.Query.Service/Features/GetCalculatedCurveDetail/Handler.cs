@@ -26,7 +26,8 @@ namespace CalculationEngine.Query.Service.Features.GetCalculatedCurveDetail
         {
             var res = await _db.Set<Dto>()
                 .Include(x => x.Points)
-                .FirstOrDefaultAsync(x => x.CurveRecipeId == query.CurveRecipeId && x.AsOfDate == query.AsOfDate);
+                .Where(x => x.CurveRecipeId == query.CurveRecipeId && x.AsOfDate == query.AsOfDate)
+                .FirstOrNullAsync();
 
             if (res != null)
             {

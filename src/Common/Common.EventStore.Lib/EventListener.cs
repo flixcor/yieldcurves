@@ -6,7 +6,7 @@ using Common.Core;
 
 namespace Common.EventStore.Lib
 {
-    public class EventStoreListener : IMessageBusListener
+    public class EventListener : IMessageBusListener
     {
         private readonly IEventReadRepository _eventReadRepository;
         private readonly IEventBus _eventBus;
@@ -14,7 +14,7 @@ namespace Common.EventStore.Lib
         private readonly IUnitOfWork _unitOfWork;
         private readonly string _applicationName;
 
-        public EventStoreListener(IEventReadRepository eventReadRepository,
+        public EventListener(IEventReadRepository eventReadRepository,
             IEventBus eventBus,
             IReadModelRepository<EventPosition> currentPositionRepository,
             ApplicationName applicationName,

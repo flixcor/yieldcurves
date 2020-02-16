@@ -13,7 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services
                 .AddScoped<IEventWriteRepository, EventRepository>(_ => new EventRepository(connectionString))
                 .AddScoped<IEventReadRepository, EventRepository>(_ => new EventRepository(connectionString))
-                .AddHostedService(_ => new EventListener(connectionString));
+                .AddHostedService(_ => new Common.EventStore.Lib.Postgres.EventListener(connectionString));
         }
     }
 }

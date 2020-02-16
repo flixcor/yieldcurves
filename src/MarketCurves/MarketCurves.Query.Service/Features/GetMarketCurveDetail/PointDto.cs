@@ -10,6 +10,6 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
         public string Name { get; set; }
         public int DateLag { get; set; }
         public bool IsMandatory { get; set; }
-        public string PriceType { get; set; }
+        public string? PriceType { get; set; }
     }
 }

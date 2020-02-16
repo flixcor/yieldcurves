@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
-using Common.EventStore.Lib;
 
 namespace Common.Infrastructure
 {
