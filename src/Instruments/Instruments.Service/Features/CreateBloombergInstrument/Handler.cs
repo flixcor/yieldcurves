@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
-using Common.EventStore.Lib;
 using Instruments.Domain;
 
 namespace Instruments.Service.Features.CreateBloombergInstrument
@@ -23,8 +22,8 @@ namespace Instruments.Service.Features.CreateBloombergInstrument
             var yellowKeyResult = command.YellowKey.TryParseEnum<YellowKey>();
 
             var instrumentResult = Result.Combine(
-                pricingSourceResult, 
-                yellowKeyResult, 
+                pricingSourceResult,
+                yellowKeyResult,
                 (pricingSource, yellowKey) => new BloombergInstrument().Define(command.Ticker.NonEmpty(), pricingSource, yellowKey));
 
             return instrumentResult.Promise(i => _repository.Save(i));

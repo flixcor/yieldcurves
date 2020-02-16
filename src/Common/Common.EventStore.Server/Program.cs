@@ -9,8 +9,6 @@ namespace Common.EventStore
         public static async Task Main(string[] args)
         {
             var build = CreateHostBuilder(args).Build();
-            //var ding = (IEventListener)build.Services.GetService(typeof(IEventListener));
-
             await build.RunAsync();
         }
 

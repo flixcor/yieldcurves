@@ -2,11 +2,12 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
+using Common.EventStore.Lib;
 
-namespace Common.EventStore.Lib
+namespace Common.Infrastructure
 {
     public abstract class ApplicationService<TAggregate>
-        where TAggregate : Aggregate<TAggregate>, new()
+        where TAggregate : IAggregate, new()
     {
         readonly IAggregateRepository _aggregateStore;
 

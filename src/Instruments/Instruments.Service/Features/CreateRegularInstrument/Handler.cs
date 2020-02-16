@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
-using Common.EventStore.Lib;
+using Common.Infrastructure;
 using Instruments.Domain;
 
 namespace Instruments.Service.Features.CreateRegularInstrument

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Common.Core;
 using Common.Core.Extensions;
 using Common.Events;
-using Common.EventStore.Lib;
+using Common.Infrastructure;
 using CurveRecipes.Domain;
 
 namespace CurveRecipes.Service.Features.CreateCurveRecipe

@@ -9,7 +9,7 @@ using static Common.Events.Helpers;
 [assembly: InternalsVisibleTo("Common.Tests")]
 namespace Common.EventStore.Lib
 {
-    public abstract class Aggregate<T> where T : Aggregate<T>, new()
+    public abstract class Aggregate<T> : IAggregate where T : Aggregate<T>, new()
     {
         private readonly List<IEventWrapper> _events = new List<IEventWrapper>();
         internal IEnumerable<IEventWrapper> GetUncommittedEvents() => _events;

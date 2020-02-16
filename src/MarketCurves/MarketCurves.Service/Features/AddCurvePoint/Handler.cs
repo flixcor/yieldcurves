@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
 using Common.Events;
-using Common.EventStore.Lib;
+using Common.Infrastructure;
 using MarketCurves.Domain;
 using static MarketCurves.Service.Domain.Instrument;
 
