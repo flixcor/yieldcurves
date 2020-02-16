@@ -133,6 +133,7 @@ namespace Common.EventStore.Lib.GES
 
             _eventStoreClient.SubscribeToAll(
                 start: position,
+                filter: filter,
                 eventAppeared: (_, e, c) => EventAppeared(e, writer, eventTypes.ToArray(), c),
                 resolveLinkTos: true,
                 cancellationToken: cancellation,

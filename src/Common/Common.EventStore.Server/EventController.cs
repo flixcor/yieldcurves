@@ -82,16 +82,16 @@ namespace Common.EventStore.Controllers
                     request.Checkpoint = wrapper.Item1.Id;
                 }
 
-                await writer.FlushAsync();
                 await writer.WriteLineAsync("event: sync\n\n");
                 await writer.FlushAsync();
 
-                request.Checkpoint++;
-
                 await foreach (var tup in _repository.Subscribe(request, cancel))
                 {
-                    await WriteEvent(writer, tup);
-                    await writer.FlushAsync();
+                    if (!request.Checkpoint.HasValue || request.Checkpoint.Value < tup.Item1.Id)
+                    {
+                        await WriteEvent(writer, tup);
+                        await writer.FlushAsync();
+                    }
                 }
             }
             catch (System.OperationCanceledException)
@@ -115,7 +115,7 @@ namespace Common.EventStore.Controllers
 
             _logger.LogInformation($"returning event: {name}");
 
-            await writer.WriteLineAsync($"id: {position}\nevent: {type}\ndata: {json}\n\n");
+            await writer.WriteLineAsync($"id: {position}\nevent: {name}\ndata: {json}\n\n");
         }
     }
 }
