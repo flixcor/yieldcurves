@@ -53,12 +53,12 @@ namespace Common.Core
             throw new Exception();
         }
 
-        public static dynamic ConcreteGeneric(this IEventWrapper abst)
+        public static dynamic ConcreteGeneric(this IEventWrapper abst, Type? type = null)
         {
-            var concreteType = abst.GetContent().GetType();
+            type ??= abst.GetContent().GetType();
             var ex = typeof(EventWrapperExtensions);
             var mi = ex.GetMethod("Concrete");
-            var miConstructed = mi?.MakeGenericMethod(concreteType);
+            var miConstructed = mi?.MakeGenericMethod(type);
             object[] args = { abst};
             return miConstructed?.Invoke(null, args) ?? throw new Exception();
         }

@@ -18,22 +18,25 @@ namespace Common.Infrastructure
 
         public async Task Publish(IEventWrapper wrapper, CancellationToken cancellationToken = default)
         {
+            using var scope = _serviceProvider.CreateScope();
+
             var eventType = wrapper.GetContent().GetType();
 
-            var handlerTypes = eventType
+            var eventInterfaceTypes = eventType
                 .GetInterfaces()
-                .Where(i => i.GetInterface(nameof(IEvent)) != null)
-                .Select(i => typeof(IHandleEvent<>).MakeGenericType(i));
+                .Where(i => i.GetInterface(nameof(IEvent)) != null);
 
-            var handlers = handlerTypes
-                .SelectMany(t => _serviceProvider.GetServices(t))
-                .Cast<dynamic>();
-
-            var concrete = wrapper.ConcreteGeneric();
-
-            foreach (var handler in handlers)
+            foreach (var eventInterfaceType in eventInterfaceTypes)
             {
-                await handler.Handle(concrete, cancellationToken);
+                var handlerType = typeof(IHandleEvent<>).MakeGenericType(eventInterfaceType);
+                var concrete = wrapper.ConcreteGeneric(eventInterfaceType);
+
+                var handlers = scope.ServiceProvider.GetServices(handlerType).Cast<dynamic>();
+
+                foreach (var handler in handlers)
+                {
+                    await handler.Handle(concrete, cancellationToken);
+                }
             }
         }
     }

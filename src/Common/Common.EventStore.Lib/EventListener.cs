@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.EventStore.Lib
 {
-    public class EventListener : IMessageBusListener
+    internal class EventListener : IMessageBusListener
     {
         private readonly IEventReadRepository _eventReadRepository;
         private readonly IEventBus _eventBus;
