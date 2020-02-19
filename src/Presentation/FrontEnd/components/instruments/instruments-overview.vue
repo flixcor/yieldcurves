@@ -28,8 +28,8 @@
             v-for="instrument of state.instruments"
             :key="instrument.aggregateId"
           >
-            <td>{{ instrument.vendor }}</td>
-            <td>{{ instrument.description }}</td>
+            <td>{{ instrument.content.vendor }}</td>
+            <td>{{ instrument.content.description }}</td>
           </tr>
         </tbody>
       </ct-table>

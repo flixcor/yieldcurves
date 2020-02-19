@@ -26,7 +26,7 @@
         <tbody>
           <tr
             v-for="curve of state.marketCurves"
-            :key="curve.id"
+            :key="curve.aggregateId"
             @click="$emit('detailClicked', curve.aggregateId)"
           >
             <td>{{ getName(curve) }}</td>
@@ -51,7 +51,10 @@ export default {
     }
   },
   methods: {
-    getName: curve => appendNonEmpty('_', [curve.country, curve.curveType, curve.floatingLeg])
+    getName (curve) {
+      const { content } = curve
+      return appendNonEmpty('_', [content.country, content.curveType, content.floatingLeg])
+    }
   }
 }
 </script>
