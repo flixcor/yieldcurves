@@ -40,19 +40,14 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
             return _curveRepo.Insert(dto);
         }
 
-        public async Task Handle(IEventWrapper<ICurvePointAdded> wrapper, CancellationToken cancellationToken)
+        public Task Handle(IEventWrapper<ICurvePointAdded> wrapper, CancellationToken cancellationToken)
         {
             var @event = wrapper.Content;
 
-            var curveResult = await _curveRepo.Get(wrapper.AggregateId).ToResult();
-            var instrumentResult = await _instrumentRepo.Get(@event.InstrumentId.NonEmpty()).ToResult();
-
-            await Result
-                .Combine(curveResult, instrumentResult, (c, i) =>
+            return _curveRepo.Get(wrapper.AggregateId).IfNotNull(curve => 
+            {
+                return _instrumentRepo.Get(@event.InstrumentId.NonEmpty()).IfNotNull(instrument =>
                 {
-                    var curve = curveResult.Content;
-                    var instrument = instrumentResult.Content;
-
                     var points = curve.CurvePoints.ToList();
                     points.Add(new PointDto
                     {
@@ -65,10 +60,11 @@ namespace MarketCurves.Query.Service.Features.GetMarketCurveDetail
                         Vendor = instrument.Vendor
                     });
 
-                    curve.CurvePoints = points.OrderBy(x=> x.Tenor).ToList();
+                    curve.CurvePoints = points.OrderBy(x => x.Tenor).ToList();
 
                     return _curveRepo.Update(curve);
                 });
+            });
         }
 
         public Task Handle(IEventWrapper<IInstrumentCreated> wrapper, CancellationToken cancellationToken)

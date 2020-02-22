@@ -56,18 +56,13 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
             return _readModelRepository.Insert(curve);
         }
 
-        public async Task Handle(IEventWrapper<ICurvePointAdded> @event, CancellationToken cancellationToken)
-        {
-            var curve = await _readModelRepository.Get(@event.AggregateId);
-
-            await curve
-                .ToResult()
-                .Promise(x =>
+        public Task Handle(IEventWrapper<ICurvePointAdded> @event, CancellationToken cancellationToken) 
+            => _readModelRepository.Get(@event.AggregateId)
+                .IfNotNull(x =>
                 {
                     x.Tenors.Add(@event.Content.Tenor);
                     return _readModelRepository.Update(x);
                 });
-        }
 
         public async Task<Dto> Handle(Query query, CancellationToken cancellationToken)
         {

@@ -12,11 +12,11 @@ namespace Common.Infrastructure.Extensions
                 : new BadRequestObjectResult(result.Messages);
         }
 
-        public static ActionResult<T> ToActionResult<T>(this Result<T> result)
+        public static IActionResult ToActionResult<T>(this Either<Error, T> result)
         {
-            return result.IsSuccessful
-                ? (ActionResult)new OkObjectResult(result.Content)
-                : new BadRequestObjectResult(result.Messages);
+            return result
+                .MapLeft(l => (IActionResult)new BadRequestObjectResult(l.Messages))
+                .Reduce(r => new OkObjectResult(r));
         }
     }
 }

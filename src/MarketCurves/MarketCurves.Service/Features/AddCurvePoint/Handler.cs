@@ -28,19 +28,24 @@ namespace MarketCurves.Service.Features.AddCurvePoint
             _instruments = instruments ?? throw new ArgumentNullException(nameof(instruments));
         }
 
-        public async Task<Result> Handle(Command command, CancellationToken cancellationToken)
+        public Task<Result> Handle(Command command, CancellationToken cancellationToken)
         {
-            var instrument = await FromId(command.InstrumentId.NonEmpty(), GetVendor);
             var dateLag = new DateLag(command.DateLag);
 
-            return await Handle(cancellationToken, command.MarketCurveId.NonEmpty(), whatToDo:
-                c => c.AddCurvePoint(command.Tenor, instrument, dateLag, command.PriceType, command.IsMandatory));
+            return FromId(command.InstrumentId.NonEmpty(), GetVendor)
+                .IfNotNull(instrument => Handle(cancellationToken, command.MarketCurveId.NonEmpty(), whatToDo:
+                        c => c.AddCurvePoint(command.Tenor, instrument, dateLag, command.PriceType, command.IsMandatory))
+                );
         }
 
-        async Task<Vendor> GetVendor(NonEmptyGuid id)
+        async Task<Vendor?> GetVendor(NonEmptyGuid id)
         {
             var i = await _readModelRepository.Get(id);
-            return i.Vendor.TryParseEnum<Vendor>().Content;
+
+            return i?.Vendor.TryParseEnum<Vendor>()
+                      .ToEither()
+                      .MapLeft(l => (Vendor?)null)
+                      .Reduce(r => r);
         }
 
         public Task Handle(IEventWrapper<IInstrumentCreated> @event, CancellationToken cancellationToken)

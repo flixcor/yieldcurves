@@ -51,24 +51,24 @@ namespace CalculationEngine.Service.Domain
             var priceTypeResult = e.PriceType.TryParseOptionalEnum<PriceType>();
 
             return priceTypeResult
-                .Promise(() => new PublishedPricing(asOfDate, wrapper.Timestamp, e.InstrumentId, price, priceTypeResult.Content));
+                .Promise(priceType => new PublishedPricing(asOfDate, wrapper.Timestamp, e.InstrumentId, price, priceType));
         }
 
         private static Result<CurveRecipe> TryMap(IEventWrapper<ICurveRecipeCreated> wrapper)
         {
             var e = wrapper.Content;
 
-            var lastLiquidTenor = e.LastLiquidTenor.TryParseEnum<Tenor>();
-            var dcc = e.DayCountConvention.TryParseEnum<DayCountConvention>();
-            var inter = e.Interpolation.TryParseEnum<Interpolation>();
-            var exShort = e.ExtrapolationShort.TryParseEnum<ExtrapolationShort>();
-            var exLong = e.ExtrapolationLong.TryParseEnum<ExtrapolationLong>();
-            var outSeries = e.OutputSeries.TryParseEnum<OutputSeries>();
-            var outType = e.OutputType.TryParseEnum<OutputType>();
+            var lastLiquidTenorR = e.LastLiquidTenor.TryParseEnum<Tenor>();
+            var dccR = e.DayCountConvention.TryParseEnum<DayCountConvention>();
+            var interR = e.Interpolation.TryParseEnum<Interpolation>();
+            var exShortR = e.ExtrapolationShort.TryParseEnum<ExtrapolationShort>();
+            var exLongR = e.ExtrapolationLong.TryParseEnum<ExtrapolationLong>();
+            var outSeriesR = e.OutputSeries.TryParseEnum<OutputSeries>();
+            var outTypeR = e.OutputType.TryParseEnum<OutputType>();
 
-            return Result
-                .Combine(lastLiquidTenor, dcc, inter, exShort, exLong, outSeries, outType)
-                .Promise(() => new CurveRecipe(wrapper.AggregateId, lastLiquidTenor.Content, dcc.Content, inter.Content, exShort.Content, exLong.Content, new OutputFrequency(outSeries.Content, new Maturity(e.MaximumMaturity)), outType.Content));
+            return Result.Combine(lastLiquidTenorR, dccR, interR, exShortR, exLongR, outSeriesR, outTypeR, 
+                (lastLiquidTenor, dcc, inter, exShort, exLong, outSeries, outType) 
+                    => new CurveRecipe(wrapper.AggregateId, lastLiquidTenor, dcc, inter, exShort, exLong, new OutputFrequency(outSeries, new Maturity(e.MaximumMaturity)), outType));
         }
     }
 }

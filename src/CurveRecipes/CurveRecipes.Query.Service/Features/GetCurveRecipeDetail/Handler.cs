@@ -28,12 +28,11 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
             _marketCurveRepository = marketCurveRepository ?? throw new ArgumentNullException(nameof(marketCurveRepository));
         }
 
-        public async Task Handle(IEventWrapper<ICurveRecipeCreated> @event, CancellationToken cancellationToken)
+        public Task Handle(IEventWrapper<ICurveRecipeCreated> @event, CancellationToken cancellationToken)
         {
-            await _marketCurveRepository
+            return _marketCurveRepository
                 .Get(@event.Content.MarketCurveId.NonEmpty())
-                .ToResult()
-                .Promise(curve =>
+                .IfNotNull(curve =>
                 {
                     var dto = new Dto
                     {
@@ -50,7 +49,7 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
             return _readModelRepository.Get(query.Id.NonEmpty());
         }
 
-        public async Task Handle(IEventWrapper<IKeyRateShockAdded> @event, CancellationToken cancellationToken)
+        public Task Handle(IEventWrapper<IKeyRateShockAdded> @event, CancellationToken cancellationToken)
         {
             var transformation = new TransformationDto
             {
@@ -75,9 +74,8 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
                     }
             };
 
-            await _readModelRepository.Get(@event.AggregateId)
-                .ToResult()
-                .Promise(recipe =>
+            return _readModelRepository.Get(@event.AggregateId)
+                .IfNotNull(recipe =>
                 {
                     recipe.Transformations.Add(transformation);
                     UpdateName(recipe, transformation);
@@ -85,7 +83,7 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
                 });
         }
 
-        public async Task Handle(IEventWrapper<IParallelShockAdded> @event, CancellationToken cancellationToken)
+        public Task Handle(IEventWrapper<IParallelShockAdded> @event, CancellationToken cancellationToken)
         {
             var transformation = new TransformationDto
             {
@@ -105,9 +103,8 @@ namespace CurveRecipes.Query.Service.Features.GetCurveRecipeDetail
                     }
             };
 
-            await _readModelRepository.Get(@event.AggregateId)
-                .ToResult()
-                .Promise(recipe =>
+            return _readModelRepository.Get(@event.AggregateId)
+                .IfNotNull(recipe =>
                 {
                     recipe.Transformations.Add(transformation);
                     UpdateName(recipe, transformation);

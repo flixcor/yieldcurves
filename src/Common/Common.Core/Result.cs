@@ -105,6 +105,34 @@ namespace Common.Core
             return Fail(messages);
         }
 
+        public static async Task<Result> Combine<A, B, C, D, E, F, G>(Result<A> resultA, Result<B> resultB, Result<C> resultC, Result<D> resultD, Result<E> resultE, Result<F> resultF, Result<G> resultG, 
+            Func<A, B, C, D, E, F, G, Task> onSuccess)
+        {
+            var results = new Result[] { resultA, resultB, resultC, resultD, resultE, resultF, resultG };
+
+            if (results.All(x=> x.IsSuccessful))
+            {
+                await onSuccess(resultA.Content, resultB.Content, resultC.Content, resultD.Content, resultE.Content, resultF.Content, resultG.Content);
+                return Ok();
+            }
+
+            return Fail(results.SelectMany(x=> x.Messages).ToArray());
+        }
+
+        public static Result<T> Combine<A, B, C, D, E, F, G, T>(Result<A> resultA, Result<B> resultB, Result<C> resultC, Result<D> resultD, Result<E> resultE, Result<F> resultF, Result<G> resultG,
+            Func<A, B, C, D, E, F, G, T> onSuccess)
+        {
+            var results = new Result[] { resultA, resultB, resultC, resultD, resultE, resultF, resultG };
+
+            if (results.All(x => x.IsSuccessful))
+            {
+                var result = onSuccess(resultA.Content, resultB.Content, resultC.Content, resultD.Content, resultE.Content, resultF.Content, resultG.Content);
+                return Ok(result);
+            }
+
+            return Fail<T>(results.SelectMany(x => x.Messages).ToArray());
+        }
+
         public bool IsSuccessful { get; }
         public ImmutableArray<string> Messages { get; }
     }
@@ -159,7 +187,7 @@ namespace Common.Core
                 : Fail(Messages.ToArray());
         }
 
-        public T Content { get; }
+        internal T Content { get; }
     }
 
     public static class ResultExtensions
@@ -278,10 +306,152 @@ namespace Common.Core
 
             return Result.Fail(result.Messages.ToArray());
         }
+
+        public static async Task<Either<TNewLeft, TRight>> MapLeft<TLeft, TRight, TNewLeft>(this Task<Either<TLeft, TRight>> task, Func<TLeft, TNewLeft> mapping)
+        {
+            var result = await task;
+            return result.MapLeft(mapping);
+        }
+
+        public static async Task<Either<TLeft, TNewRight>> MapRight<TLeft, TRight, TNewRight>(this Task<Either<TLeft, TRight>> task, Func<TRight, TNewRight> mapping)
+        {
+            var result = await task;
+            return result.MapRight(mapping);
+        }
+
+        public static async Task<TLeft> MapRight<TLeft, TRight>(this Task<Either<TLeft, TRight>> task, Func<TRight, TLeft> mapping)
+        {
+            var result = await task;
+            return result.Reduce(mapping);
+        }
+
+        public static async Task IfNotNull<T>(this Task<T?> task, Func<T, Task> func) where T : class
+        {
+            var value = await task;
+
+            if (value is null)
+            {
+                return;
+            }
+
+            await func(value);
+        }
+
+        public static async Task<TOut?> IfNotNull<T, TOut>(this Task<T?> task, Func<T, Task<TOut>> func) where T : class where TOut : class
+        {
+            var value = await task;
+
+            if (value is null)
+            {
+                return null;
+            }
+
+            return await func(value);
+        }
+
+        public static async Task<TOut?> IfNotNull<T, TOut>(this Task<T?> task, Func<T, TOut> func) where T : class where TOut : class
+        {
+            var value = await task;
+
+            if (value is null)
+            {
+                return null;
+            }
+
+            return func(value);
+        }
+
+        public static ValueTask IfNotNull<T>(T? value, Func<T, Task> func) where T : class
+        {
+            if (value is null)
+            {
+                return new ValueTask();
+            }
+
+            return new ValueTask(func(value));
+        }
+
+        public static Either<Error, T> ToEither<T>(this Result<T> result)
+        {
+            if (result.IsSuccessful)
+            {
+                return result.Content;
+            }
+
+            return new Error(result.Messages.ToArray());
+        }
     }
 
     public struct Nothing
     {
+        public static Nothing Instance { get; } = new Nothing();
+    }
 
+    public abstract class Either<TLeft, TRight>
+    {
+        public abstract Either<TNewLeft, TRight> MapLeft<TNewLeft>(Func<TLeft, TNewLeft> mapping);
+        public abstract Either<TLeft, TNewRight> MapRight<TNewRight>(Func<TRight, TNewRight> mapping);
+        public abstract TLeft Reduce(Func<TRight, TLeft> mapping);
+
+        public static implicit operator Either<TLeft, TRight>(TLeft left) => new Left<TLeft, TRight>(left);
+        public static implicit operator Either<TLeft, TRight>(TRight right) => new Right<TLeft, TRight>(right);
+    }
+
+    public class Left<TLeft, TRight> : Either<TLeft, TRight>
+    {
+        private TLeft Value { get; }
+
+        public Left(TLeft value) => Value = value;
+
+        public override Either<TNewLeft, TRight> MapLeft<TNewLeft>(Func<TLeft, TNewLeft> mapping) 
+            => new Left<TNewLeft, TRight>(mapping(Value));
+
+        public override Either<TLeft, TNewRight> MapRight<TNewRight>(Func<TRight, TNewRight> mapping) 
+            => new Left<TLeft, TNewRight>(Value);
+
+        public override TLeft Reduce(Func<TRight, TLeft> mapping) => Value;
+    }
+
+    public class Right<TLeft, TRight> : Either<TLeft, TRight>
+    {
+        private TRight Value { get; }
+
+        public Right(TRight value) => Value = value;
+
+        public override Either<TNewLeft, TRight> MapLeft<TNewLeft>(Func<TLeft, TNewLeft> mapping)
+            => new Right<TNewLeft, TRight>(Value);
+
+        public override Either<TLeft, TNewRight> MapRight<TNewRight>(Func<TRight, TNewRight> mapping)
+            => new Right<TLeft, TNewRight>(mapping(Value));
+
+        public override TLeft Reduce(Func<TRight, TLeft> mapping) => 
+            mapping(Value);
+    }
+
+    public class Ok<T>
+    {
+        public Ok(T data)
+        {
+            Data = data;
+        }
+
+        public T Data { get; }
+    }
+
+    public class Error
+    {
+        public Error(params string[] messages)
+        {
+            Messages = messages;
+        }
+
+        public Error(List<string> messages)
+        {
+            Messages = messages.ToArray();
+        }
+
+        public static implicit operator Error(string message) => new Error(message);
+
+        public string[] Messages { get; }
     }
 }
