@@ -22,7 +22,7 @@ namespace PricePublisher.Service.Features.PublishPrice
             _readModelRepository = readModelRepository ?? throw new ArgumentNullException(nameof(readModelRepository));
         }
 
-        public async Task<Result> Handle(Command command, CancellationToken cancellationToken)
+        public async Task<Either<Error, Nothing>> Handle(Command command, CancellationToken cancellationToken)
         {
             var instrument = await _readModelRepository.Single(x => x.Id == command.InstrumentId).ToResult();
 

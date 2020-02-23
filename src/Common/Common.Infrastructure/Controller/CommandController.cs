@@ -19,7 +19,7 @@ namespace Common.Infrastructure.Controller
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(CancellationToken ct = default)
+        public async Task<ActionResult> Post(CancellationToken ct = default)
         {
             using var reader = new StreamReader(Request.Body);            
             var body = await reader.ReadToEndAsync();

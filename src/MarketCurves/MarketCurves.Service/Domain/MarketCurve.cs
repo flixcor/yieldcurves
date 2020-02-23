@@ -1,7 +1,6 @@
 ﻿using Common.Core;
 using Common.EventStore.Lib;
 using MarketCurves.Service.Domain;
-using static Common.Core.Result;
 using static Common.Events.Helpers;
 
 namespace MarketCurves.Domain
@@ -15,17 +14,17 @@ namespace MarketCurves.Domain
             return this;
         }
 
-        public Result<MarketCurve> AddCurvePoint(Tenor tenor, Instrument instrument, DateLag dateLag, PriceType? priceType, bool isMandatory)
+        public Either<Error, MarketCurve> AddCurvePoint(Tenor tenor, Instrument instrument, DateLag dateLag, PriceType? priceType, bool isMandatory)
         {
             if (instrument.Vendor.HasPriceType() && !priceType.HasValue)
             {
-                return Fail<MarketCurve>($"instrument {instrument.Id} needs a price type");
+                return new Error($"instrument {instrument.Id} needs a price type");
             }
 
             var @event = CurvePointAdded(tenor.NonEmptyString(), instrument.Id, dateLag.Value, isMandatory, priceType?.NonEmptyString());
             GenerateEvent(@event);
 
-            return Ok(this);
+            return this;
         }
 
         protected override void When(IEvent @event)

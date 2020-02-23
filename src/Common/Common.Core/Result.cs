@@ -229,28 +229,29 @@ namespace Common.Core
             return Result.Ok(objects);
         }
 
-        public static Result<T> TryParseEnum<T>(this string input) where T : struct
+        public static Either<Error, T> TryParseEnum<T>(this string input) where T : struct
         {
-            return !Enum.TryParse<T>(input, true, out var result)
-                ? Result.Fail<T>($"Unknown value for {typeof(T).Name}: {input}")
-                : Result.Ok(result);
+            if (!Enum.TryParse<T>(input, true, out var result))
+            {
+                return new Error($"Unknown value for {typeof(T).Name}: {input}");
+            }
+
+            return result;
         }
 
-        public static Result<T?> TryParseOptionalEnum<T>(this string input) where T : struct
+        public static Either<Error, T?> TryParseOptionalEnum<T>(this string input) where T : struct
         {
-            T? optionalResult = null;
-
             if (!string.IsNullOrWhiteSpace(input))
             {
                 if (!Enum.TryParse<T>(input, true, out var result))
                 {
-                    return Result.Fail<T?>($"Unknown value for {typeof(T).Name}: {input}");
+                    return new Error($"Unknown value for {typeof(T).Name}: {input}");
                 }
 
-                optionalResult = result;
+                return result;
             }
 
-            return Result.Ok(optionalResult);
+            return (T?)null;
         }
 
         public static async Task<Result<TOut>> Promise<T, TOut>(this Task<Result<T>> task, Func<T, Task<Result<TOut>>> onSuccess)
@@ -380,6 +381,26 @@ namespace Common.Core
 
             return new Error(result.Messages.ToArray());
         }
+
+        public static ValueTask<Either<Error,Nothing>> Reduce(this Either<Error,Task> input)
+        {
+            return input
+                .MapLeft(error => new ValueTask<Either<Error, Nothing>>(error))
+                .Reduce(r => new ValueTask<Either<Error, Nothing>>(r.ToEither()));
+        }
+
+        public static async Task<Either<Error,Nothing>> ToEither(this Task task)
+        {
+            await task;
+            return Nothing.Instance;
+        }
+
+        public static T Reduce<T>(this Either<T, T> either) => either.Reduce(x => x);
+
+        public static TLeft Reduce<TLeft, TRight>(this Either<TLeft, TRight> either) 
+            where TRight : TLeft
+                => either.Reduce(x => x);
+
     }
 
     public struct Nothing
@@ -391,6 +412,7 @@ namespace Common.Core
     {
         public abstract Either<TNewLeft, TRight> MapLeft<TNewLeft>(Func<TLeft, TNewLeft> mapping);
         public abstract Either<TLeft, TNewRight> MapRight<TNewRight>(Func<TRight, TNewRight> mapping);
+        public abstract Either<TLeft, TNewRight> MapRight<TNewRight>(Func<TRight, Either<TLeft, TNewRight>> mapping);
         public abstract TLeft Reduce(Func<TRight, TLeft> mapping);
 
         public static implicit operator Either<TLeft, TRight>(TLeft left) => new Left<TLeft, TRight>(left);
@@ -399,7 +421,7 @@ namespace Common.Core
 
     public class Left<TLeft, TRight> : Either<TLeft, TRight>
     {
-        private TLeft Value { get; }
+        internal TLeft Value { get; }
 
         public Left(TLeft value) => Value = value;
 
@@ -410,11 +432,14 @@ namespace Common.Core
             => new Left<TLeft, TNewRight>(Value);
 
         public override TLeft Reduce(Func<TRight, TLeft> mapping) => Value;
+
+        public override Either<TLeft, TNewRight> MapRight<TNewRight>(Func<TRight, Either<TLeft, TNewRight>> mapping)
+            => new Left<TLeft, TNewRight>(Value);
     }
 
     public class Right<TLeft, TRight> : Either<TLeft, TRight>
     {
-        private TRight Value { get; }
+        internal TRight Value { get; }
 
         public Right(TRight value) => Value = value;
 
@@ -424,8 +449,11 @@ namespace Common.Core
         public override Either<TLeft, TNewRight> MapRight<TNewRight>(Func<TRight, TNewRight> mapping)
             => new Right<TLeft, TNewRight>(mapping(Value));
 
-        public override TLeft Reduce(Func<TRight, TLeft> mapping) => 
-            mapping(Value);
+        public override TLeft Reduce(Func<TRight, TLeft> mapping) 
+            => mapping(Value);
+
+        public override Either<TLeft, TNewRight> MapRight<TNewRight>(Func<TRight, Either<TLeft, TNewRight>> mapping)
+            => mapping(Value);
     }
 
     public class Ok<T>

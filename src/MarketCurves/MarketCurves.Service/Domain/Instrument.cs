@@ -8,7 +8,7 @@ namespace MarketCurves.Service.Domain
 {
     public class Instrument : IEquatable<Instrument?>
     {
-        public delegate Task<Vendor?> GetVendor(NonEmptyGuid id);
+        public delegate Task<Either<Error,Vendor>> GetVendor(NonEmptyGuid id);
 
         private Instrument(NonEmptyGuid id)
         {
@@ -18,16 +18,11 @@ namespace MarketCurves.Service.Domain
         public NonEmptyGuid Id { get; }
         public Vendor Vendor { get; private set; }
 
-        public static async Task<Instrument?> FromId(NonEmptyGuid id, GetVendor getVendor)
+        public static async Task<Either<Error,Instrument>> FromId(NonEmptyGuid id, GetVendor getVendor)
         {
             var vendor = await getVendor(id);
 
-            if (vendor.HasValue)
-            {
-                return new Instrument(id) { Vendor = vendor.Value };
-            }
-
-            return null;
+            return vendor.MapRight(v => new Instrument(id) { Vendor = v });
         }
 
         public override bool Equals(object? obj)

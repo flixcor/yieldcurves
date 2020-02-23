@@ -16,7 +16,7 @@ namespace Instruments.Service.Features.CreateBloombergInstrument
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        public Task<Result> Handle(Command command, CancellationToken cancellationToken)
+        public Task<Either<Error, Nothing>> Handle(Command command, CancellationToken cancellationToken)
         {
             var pricingSourceResult = command.PricingSource.TryParseEnum<PricingSource>();
             var yellowKeyResult = command.YellowKey.TryParseEnum<YellowKey>();

@@ -2,7 +2,6 @@
 using Common.Core;
 using Common.Events;
 using Common.EventStore.Lib;
-using static Common.Core.Result;
 using static Common.Events.Helpers;
 
 namespace CurveRecipes.Domain
@@ -22,7 +21,7 @@ namespace CurveRecipes.Domain
             return this;
         }
 
-        public Result<CurveRecipe> AddTransformation(ITransformation transformation, Order? order = null)
+        public Either<Error, CurveRecipe> AddTransformation(ITransformation transformation, Order? order = null)
         {
             order ??= new Order(_count + 1);
 
@@ -31,18 +30,16 @@ namespace CurveRecipes.Domain
                 case ParallelShock parallelShock:
                     var psEvent = ParallelShockAdded(order.Value, parallelShock.ShockTarget.ToString(), parallelShock.Shift.Value);
                     GenerateEvent(psEvent);
-                    break;
+                    return this;
 
                 case KeyRateShock keyRateShock:
                     var krsEvent = KeyRateShockAdded(order.Value, keyRateShock.ShockTarget.ToString(), keyRateShock.Shift.Value, keyRateShock.Maturities.Select(m => m.Value).ToArray());
                     GenerateEvent(krsEvent);
-                    break;
+                    return this;
 
                 default:
-                    return Fail<CurveRecipe>($"Did not recognize {nameof(transformation)} of type {transformation?.GetType()}");
+                    return new Error($"Did not recognize {nameof(transformation)} of type {transformation?.GetType()}");
             }
-
-            return Ok(this);
         }
 
         protected override void When(IEvent @event)

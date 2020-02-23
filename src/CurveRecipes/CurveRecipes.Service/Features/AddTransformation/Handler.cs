@@ -3,20 +3,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
 using Common.EventStore.Lib;
+using Common.Infrastructure;
 using CurveRecipes.Domain;
 using Newtonsoft.Json.Linq;
 
 namespace CurveRecipes.Service.Features.AddTransformation
 {
     public class Handler :
+        ApplicationService<CurveRecipe>,
         IHandleQuery<Query, Dto>,
         IHandleCommand<Command>
     {
-        private readonly IAggregateRepository _repository;
-
-        public Handler(IAggregateRepository repository)
+        public Handler(IAggregateRepository repository) : base(repository)
         {
-            _repository = repository;
         }
 
         public Task<Dto> Handle(Query query, CancellationToken cancellationToken)
@@ -25,27 +24,30 @@ namespace CurveRecipes.Service.Features.AddTransformation
             return Task.FromResult(result);
         }
 
-        public Result<ITransformation> TryMap(string transformationName, JObject transformation) => transformationName switch
+        public Either<Error,ITransformation> TryMap(string transformationName, JObject transformation) => transformationName switch
         {
             nameof(KeyRateShock) => TryMap<AddKeyRateShock>(transformation)
-                .Promise(c => TryMap(c)),
+                .MapRight(c => TryMap(c)),
 
             nameof(ParallelShock) => TryMap<AddParallelShock>(transformation)
-                .Promise(c => TryMap(c)),
+                .MapRight(c => TryMap(c)),
 
-            _ => Result.Fail<ITransformation>("No transformation found"),
+            _ => new Error("No transformation found"),
         };
 
-        private Result<T> TryMap<T>(JObject transformation)
+        private Either<Error, T> TryMap<T>(JObject transformation)
         {
             var casted = transformation.ToObject<T>();
 
-            return casted != null
-                ? Result.Ok(casted)
-                : Result.Fail<T>($"Could not parse {nameof(transformation)} to {typeof(T).Name}");
+            if (casted == null)
+            {
+                return new Error($"Could not parse {nameof(transformation)} to {typeof(T).Name}");
+            }
+
+            return casted;
         }
 
-        private static Result<ITransformation> TryMap(AddKeyRateShock command)
+        private static Either<Error, ITransformation> TryMap(AddKeyRateShock command)
         {
             var shockTargetResult = command.ShockTarget.TryParseEnum<ShockTarget>();
             var maturitiesResult = command.Maturities
@@ -60,10 +62,10 @@ namespace CurveRecipes.Service.Features.AddTransformation
             });
         }
 
-        private static Result<ITransformation> TryMap(AddParallelShock command)
+        private static Either<Error, ITransformation> TryMap(AddParallelShock command)
         {
             return command.ShockTarget.TryParseEnum<ShockTarget>()
-                .Promise(st =>
+                .MapRight(st =>
                 {
                     var shift = new Shift(command.Shift);
                     var ps = new ParallelShock(st, shift);
@@ -71,23 +73,15 @@ namespace CurveRecipes.Service.Features.AddTransformation
                 });
         }
 
-        public Task<Result> Handle(Command command, CancellationToken cancellationToken)
+        public Task<Either<Error,Nothing>> Handle(Command command, CancellationToken cancellationToken)
         {
-            var transformationResult = TryMap(command.TransformationName, command.Transformation);
-
-            return transformationResult.Promise(async t =>
+            return Handle(cancellationToken, command.Id.NonEmpty(), c =>
             {
-                var c = await _repository.Load<CurveRecipe>(command.Id.NonEmpty());
-
-                if (c != null)
-                {
-                    var result = await c.AddTransformation(t)
-                        .Promise(() => _repository.Save(c));
-
-                    return result;
-                }
-
-                return Result.Fail("Not found");
+                TryMap(command.TransformationName, command.Transformation)
+                    .MapRight(t => 
+                    {
+                        return c.AddTransformation(t);
+                    });
             });
         }
     }

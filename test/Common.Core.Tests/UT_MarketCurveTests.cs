@@ -27,7 +27,7 @@ namespace UnitTests
         {
             var id = Guid.NewGuid();
             var tenor = Tenor.FRA10x16;
-            var instrument = await Instrument.FromId(NonEmpty.Guid(), (id) => Task.FromResult((Vendor?)Vendor.Bloomberg));
+            var instrument = (await Instrument.FromId(NonEmpty.Guid(), (id) => Task.FromResult((Either<Error, Vendor>)Vendor.Bloomberg))).MapLeft(l => new Instrument(id.NonEmpty())).Reduce();
             var dateLag = new DateLag(-1);
             var priceType = PriceType.BIDPRICE;
             var isMandatory = false;

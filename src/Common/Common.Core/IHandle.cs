@@ -8,7 +8,7 @@ namespace Common.Core
     public interface IHandleCommand<in TCommand>
         where TCommand : ICommand
     {
-        Task<Result> Handle(TCommand command, CancellationToken cancellationToken);
+        Task<Either<Error, Nothing>> Handle(TCommand command, CancellationToken cancellationToken);
     }
 
     public interface IHandleEvent<TEvent>

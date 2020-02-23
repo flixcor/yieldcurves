@@ -25,25 +25,27 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
             _readModelRepository = readModelRepository ?? throw new ArgumentNullException(nameof(readModelRepository));
         }
 
-        public Task<Result> Handle(Command command, CancellationToken cancellationToken) 
-            => Maturity.TryCreate(command.OutputFrequency.MaximumMaturity).Promise(m =>
-            {
-                var outputFrequency = new Domain.OutputFrequency(command.OutputFrequency.OutputSeries, m);
+        public Task<Either<Error, Nothing>> Handle(Command command, CancellationToken cancellationToken) 
+            => Handle(cancellationToken, command.Id.NonEmpty(), whatToDo: curveRecipe =>
+                Maturity.TryCreate(command.OutputFrequency.MaximumMaturity)
+                    .MapRight(m =>
+                    {
+                        var outputFrequency = new Domain.OutputFrequency(command.OutputFrequency.OutputSeries, m);
 
-                return Handle(cancellationToken, command.Id.NonEmpty(), whatToDo:
-                    curveRecipe => curveRecipe.Define(
-                        marketCurveId: command.MarketCurveId.NonEmpty(),
-                        shortName: command.ShortName.NonEmpty(),
-                        description: command.Description.NonEmpty(),
-                        lastLiquidTenor: command.LastLiquidTenor,
-                        dayCountConvention: command.DayCountConvention,
-                        interpolation: command.Interpolation,
-                        extrapolationShort: command.ExtrapolationShort,
-                        extrapolationLong: command.ExtrapolationLong,
-                        outputFrequency: outputFrequency,
-                        outputType: command.OutputType)
-                    );
-            });
+                        return curveRecipe.Define(
+                            marketCurveId: command.MarketCurveId.NonEmpty(),
+                            shortName: command.ShortName.NonEmpty(),
+                            description: command.Description.NonEmpty(),
+                            lastLiquidTenor: command.LastLiquidTenor,
+                            dayCountConvention: command.DayCountConvention,
+                            interpolation: command.Interpolation,
+                            extrapolationShort: command.ExtrapolationShort,
+                            extrapolationLong: command.ExtrapolationLong,
+                            outputFrequency: outputFrequency,
+                            outputType: command.OutputType
+                        );
+                    })
+            );
 
         public Task Handle(IEventWrapper<IMarketCurveCreated> @event, CancellationToken cancellationToken)
         {
