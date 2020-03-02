@@ -9,7 +9,7 @@ namespace MarketCurves.Domain
     {
         public MarketCurve Define(Country country, CurveType curveType, FloatingLeg? floatingLeg = null)
         {
-            var @event = MarketCurveCreated(country.NonEmptyString(), curveType.NonEmptyString(), floatingLeg?.NonEmptyString());
+            var @event = MarketCurveCreated(country, curveType, floatingLeg);
             GenerateEvent(@event);
             return this;
         }
@@ -21,7 +21,7 @@ namespace MarketCurves.Domain
                 return new Error($"instrument {instrument.Id} needs a price type");
             }
 
-            var @event = CurvePointAdded(tenor.NonEmptyString(), instrument.Id, dateLag.Value, isMandatory, priceType?.NonEmptyString());
+            var @event = CurvePointAdded(tenor, instrument.Id, dateLag.Value, isMandatory, priceType);
             GenerateEvent(@event);
 
             return this;

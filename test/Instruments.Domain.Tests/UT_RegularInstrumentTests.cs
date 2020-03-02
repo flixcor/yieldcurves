@@ -18,8 +18,8 @@ namespace UnitTests
 
             When((r) => r.TryDefine(vendor, desc))
                 .Then(
-                    RegularInstrumentCreated(vendor.NonEmptyString(), desc),
-                    InstrumentCreated(vendor.NonEmptyString(), desc));
+                    RegularInstrumentCreated(vendor, desc),
+                    InstrumentCreated(vendor, desc));
         }
 
         [Test]

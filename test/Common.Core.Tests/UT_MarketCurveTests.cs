@@ -19,7 +19,7 @@ namespace UnitTests
             var type = CurveType.BONDSPREAD;
 
             When(c => c.Define(country, type))
-                .Then(MarketCurveCreated(country.NonEmptyString(), type.NonEmptyString()));
+                .Then(MarketCurveCreated(country, type));
         }
 
         [Test]
@@ -32,9 +32,9 @@ namespace UnitTests
             var priceType = PriceType.BIDPRICE;
             var isMandatory = false;
 
-            Given(MarketCurveCreated(Country.GB.NonEmptyString(), CurveType.ECB.NonEmptyString()))
+            Given(MarketCurveCreated(Country.GB, CurveType.ECB))
                 .When(c => c.AddCurvePoint(tenor, instrument, dateLag, priceType, isMandatory))
-                    .Then(CurvePointAdded(tenor.NonEmptyString(), instrument.Id, dateLag.Value, isMandatory, priceType.NonEmptyString()));
+                    .Then(CurvePointAdded(tenor, instrument.Id, dateLag.Value, isMandatory, priceType));
         }
     }
 }

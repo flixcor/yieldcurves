@@ -8,8 +8,8 @@ namespace Instruments.Domain
     {
         public BloombergInstrument Define(NonEmptyString ticker, PricingSource pricingSource, YellowKey yellowKey)
         {
-            GenerateEvent(BloombergInstrumentCreated(ticker, pricingSource.NonEmptyString(), yellowKey.NonEmptyString()));
-            GenerateEvent(InstrumentCreated(Vendor.Bloomberg.NonEmptyString(), $"{ticker} {pricingSource} {yellowKey}".NonEmpty(), true));
+            GenerateEvent(BloombergInstrumentCreated(ticker, pricingSource, yellowKey));
+            GenerateEvent(InstrumentCreated(Vendor.Bloomberg, $"{ticker} {pricingSource} {yellowKey}".NonEmpty(), true));
             return this;
         }
 

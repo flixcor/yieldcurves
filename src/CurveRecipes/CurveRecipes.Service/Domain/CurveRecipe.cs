@@ -13,8 +13,8 @@ namespace CurveRecipes.Domain
         public CurveRecipe Define(NonEmptyGuid marketCurveId, NonEmptyString shortName, NonEmptyString description, Tenor lastLiquidTenor, DayCountConvention dayCountConvention, Interpolation interpolation, ExtrapolationShort extrapolationShort,
             ExtrapolationLong extrapolationLong, OutputFrequency outputFrequency, OutputType outputType)
         {
-            var @event = CurveRecipeCreated(marketCurveId, shortName, description, lastLiquidTenor.NonEmptyString(), dayCountConvention.NonEmptyString(), interpolation.NonEmptyString(), extrapolationShort.NonEmptyString(),
-                extrapolationLong.NonEmptyString(), outputFrequency.OutputSeries.NonEmptyString(), outputFrequency.MaximumMaturity.Value, outputType.NonEmptyString());
+            var @event = CurveRecipeCreated(marketCurveId, shortName, description, lastLiquidTenor, dayCountConvention, interpolation, extrapolationShort,
+                extrapolationLong, outputFrequency.OutputSeries, outputFrequency.MaximumMaturity.Value, outputType);
 
             GenerateEvent(@event);
 

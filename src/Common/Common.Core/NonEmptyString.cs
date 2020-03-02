@@ -29,6 +29,8 @@ namespace Common.Core
         public static bool operator !=(NonEmptyString left, NonEmptyString right) => !(left == right);
 
         public static implicit operator string(NonEmptyString nonEmpty) => nonEmpty._value;
+
+        public static implicit operator NonEmptyString(Enum o) => new NonEmptyString(o.ToString());
     }
 
     public static class NonEmptyStringExtensions
