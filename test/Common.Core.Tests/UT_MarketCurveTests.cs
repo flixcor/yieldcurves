@@ -23,7 +23,7 @@ namespace UnitTests
         }
 
         [Test]
-        public async Task UT_MarketCurve_AddCurvePoint_happy_flow()
+        public void UT_MarketCurve_AddCurvePoint_happy_flow()
         {
             var id = Guid.NewGuid();
             var tenor = Tenor.FRA10x16;

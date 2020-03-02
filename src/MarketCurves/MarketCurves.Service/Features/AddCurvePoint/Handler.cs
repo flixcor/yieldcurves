@@ -31,15 +31,11 @@ namespace MarketCurves.Service.Features.AddCurvePoint
         public async Task<Either<Error,Nothing>> Handle(Command command, CancellationToken cancellationToken)
         {
             var dateLag = new DateLag(command.DateLag);
+            var instrumentResult = await FromId(command.InstrumentId.NonEmpty(), GetVendor);
 
-            throw new NotImplementedException("Need to fix this");
-
-            await FromId(command.InstrumentId.NonEmpty(), GetVendor)
-                .MapRight(instrument => Handle(cancellationToken, command.MarketCurveId.NonEmpty(), whatToDo:
-                        c => c.AddCurvePoint(command.Tenor, instrument, dateLag, command.PriceType, command.IsMandatory))
-                );
-
-            return Nothing.Instance;
+            return await Handle(cancellationToken, command.MarketCurveId.NonEmpty(), whatToDo: c => 
+                instrumentResult.MapRight(instrument => 
+                    c.AddCurvePoint(command.Tenor, instrument, dateLag, command.PriceType, command.IsMandatory)));
         }
 
         async Task<Either<Error,Vendor>> GetVendor(NonEmptyGuid id)

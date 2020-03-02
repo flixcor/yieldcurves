@@ -8,7 +8,7 @@ namespace CalculationEngine.Service
 {
     public class Program
     {
-        public static async Task Main()
+        public static void Main()
         {
             IServiceCollection services = new ServiceCollection();
             // Startup.cs finally :)

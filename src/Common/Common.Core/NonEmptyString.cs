@@ -31,12 +31,12 @@ namespace Common.Core
         public static implicit operator string(NonEmptyString nonEmpty) => nonEmpty._value;
 
         public static implicit operator NonEmptyString(Enum o) => new NonEmptyString(o.ToString());
+        public static implicit operator NonEmptyString?(Enum? o) => o is null ? (NonEmptyString?)null : new NonEmptyString(o.ToString());
     }
 
     public static class NonEmptyStringExtensions
     {
         public static NonEmptyString NonEmpty(this string str) => new NonEmptyString(str);
-        public static NonEmptyString NonEmptyString<T>(this T o) where T : Enum => new NonEmptyString(o.ToString());
 
     }
 
