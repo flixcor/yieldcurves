@@ -8,41 +8,42 @@ namespace CalculationEngine.Service.Domain
 {
     public static class CurveCalculation
     {
-        public static Result<IEnumerable<CurvePoint>> Calculate(Date asOfDate, IEventWrapper<ICurveRecipeCreated> recipe, IEnumerable<ICurvePointAdded> marketCurve, IEnumerable<IEventWrapper<IInstrumentPricingPublished>> pricings)
+        public static Either<Error, IEnumerable<CurvePoint>> Calculate(Date asOfDate, IEventWrapper<ICurveRecipeCreated> recipe, IEnumerable<ICurvePointAdded> marketCurve, IEnumerable<IEventWrapper<IInstrumentPricingPublished>> pricings)
         {
             var matchingPricesResult = TryGetAllMatchingPrices(asOfDate, marketCurve, pricings);
             var recipeResult = TryMap(recipe);
 
-            return Result.Combine(matchingPricesResult, recipeResult, (p, r) => r.ApplyTo(p));
+            return matchingPricesResult.MapRight(recipeResult, (p, r) => r.ApplyTo(p));
         }
 
-        public static Result<IEnumerable<CurvePoint>> TryGetAllMatchingPrices(Date asOfDate, IEnumerable<ICurvePointAdded> marketCurve, IEnumerable<IEventWrapper<IInstrumentPricingPublished>> pricings)
+        public static Either<Error, ICollection<CurvePoint>> TryGetAllMatchingPrices(Date asOfDate, IEnumerable<ICurvePointAdded> marketCurve, IEnumerable<IEventWrapper<IInstrumentPricingPublished>> pricings)
         {
-            var pricingResult = pricings.Select(TryMap).Convert();
-            var pointResult = marketCurve.Select(TryMap).Convert();
+            var pricingResult = pricings.Select(TryMap).Flatten();
+            var pointResult = marketCurve.Select(TryMap).Flatten();
 
-            return Result.Combine(pricingResult, pointResult, (pr, p) => GetPointsFromPricings(asOfDate, p, pr));
+            return pricingResult
+                .MapRight(pointResult, (pr, p) => GetPointsFromPricings(asOfDate, p, pr))
+                .Flatten();
         }
 
-        private static Result<IEnumerable<CurvePoint>> GetPointsFromPricings(Date asOfDate, IEnumerable<PointRecipe> recipes, IEnumerable<PublishedPricing> pricings) =>
+        private static Either<Error, ICollection<CurvePoint>> GetPointsFromPricings(Date asOfDate, IEnumerable<PointRecipe> recipes, IEnumerable<PublishedPricing> pricings) =>
             recipes
                 .Select(x => x.GetPoint(pricings, asOfDate))
-                .Convert();
+                .Flatten();
 
-        private static Result<PointRecipe> TryMap(ICurvePointAdded e)
+        private static Either<Error, PointRecipe> TryMap(ICurvePointAdded e)
         {
             var priceTypeResult = e.PriceType.TryParseOptionalEnum<PriceType>();
             var tenorResult = e.Tenor.TryParseEnum<Tenor>();
 
-            return Result
-                .Combine(priceTypeResult, tenorResult, (p, t) =>
+            return priceTypeResult.MapRight(tenorResult, (p, t) =>
                 {
                     var dateLag = new DateLag(e.DateLag);
                     return new PointRecipe(e.InstrumentId, t, dateLag, p);
                 });
         }
 
-        private static Result<PublishedPricing> TryMap(IEventWrapper<IInstrumentPricingPublished> wrapper)
+        private static Either<Error, PublishedPricing> TryMap(IEventWrapper<IInstrumentPricingPublished> wrapper)
         {
             var e = wrapper.Content;
 
@@ -51,10 +52,10 @@ namespace CalculationEngine.Service.Domain
             var priceTypeResult = e.PriceType.TryParseOptionalEnum<PriceType>();
 
             return priceTypeResult
-                .Promise(priceType => new PublishedPricing(asOfDate, wrapper.Timestamp, e.InstrumentId, price, priceType));
+                .MapRight(priceType => new PublishedPricing(asOfDate, wrapper.Timestamp, e.InstrumentId, price, priceType));
         }
 
-        private static Result<CurveRecipe> TryMap(IEventWrapper<ICurveRecipeCreated> wrapper)
+        private static Either<Error, CurveRecipe> TryMap(IEventWrapper<ICurveRecipeCreated> wrapper)
         {
             var e = wrapper.Content;
 
@@ -66,7 +67,7 @@ namespace CalculationEngine.Service.Domain
             var outSeriesR = e.OutputSeries.TryParseEnum<OutputSeries>();
             var outTypeR = e.OutputType.TryParseEnum<OutputType>();
 
-            return Result.Combine(lastLiquidTenorR, dccR, interR, exShortR, exLongR, outSeriesR, outTypeR, 
+            return lastLiquidTenorR.MapRight(dccR, interR, exShortR, exLongR, outSeriesR, outTypeR, 
                 (lastLiquidTenor, dcc, inter, exShort, exLong, outSeries, outType) 
                     => new CurveRecipe(wrapper.AggregateId, lastLiquidTenor, dcc, inter, exShort, exLong, new OutputFrequency(outSeries, new Maturity(e.MaximumMaturity)), outType));
         }

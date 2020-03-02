@@ -9,14 +9,14 @@ namespace PricePublisher.Service.Domain
         private const string Format = "yyyy-MM-dd";
         private readonly string _dateString;
 
-        public static Result<Date> TryParse(string dateString)
+        public static Either<Error, Date> TryParse(string dateString)
         {
             if (!DateTime.TryParseExact(dateString, Format, CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
             {
-                return Result.Fail<Date>($"value {dateString} does not comply to format {Format}");
+                return new Error($"value {dateString} does not comply to format {Format}");
             }
 
-            return Result.Ok(new Date(dateString));
+            return new Date(dateString);
         }
 
         public override string ToString() => _dateString;

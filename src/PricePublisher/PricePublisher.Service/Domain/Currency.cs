@@ -11,11 +11,14 @@ namespace PricePublisher.Service.Domain
             _value = value;
         }
 
-        public static Result<Currency> FromString(string input)
+        public static Either<Error,Currency> FromString(string input)
         {
-            return string.IsNullOrWhiteSpace(input) || input.Length != 3
-                ? Result.Fail<Currency>("currency cannot be empty and must be 3 characters")
-                : Result.Ok(new Currency(input));
+            if (string.IsNullOrWhiteSpace(input) || input.Length != 3)
+            {
+                return new Error("currency cannot be empty and must be 3 characters");
+            }
+
+            return new Currency(input);
         }
 
         public override string ToString()

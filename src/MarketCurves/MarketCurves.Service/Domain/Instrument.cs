@@ -10,6 +10,11 @@ namespace MarketCurves.Service.Domain
     {
         public delegate Task<Either<Error,Vendor>> GetVendor(NonEmptyGuid id);
 
+        public Instrument(NonEmptyGuid id, Vendor vendor) : this(id)
+        {
+            Vendor = vendor;
+        }
+
         private Instrument(NonEmptyGuid id)
         {
             Id = id;

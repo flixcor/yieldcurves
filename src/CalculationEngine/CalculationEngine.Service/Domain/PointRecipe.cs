@@ -21,7 +21,7 @@ namespace CalculationEngine.Domain
         public DateLag DateLag { get; }
         public PriceType? PriceType { get; }
 
-        public Result<CurvePoint> GetPoint(IEnumerable<PublishedPricing> pricings, Date asOfDate)
+        public Either<Error, CurvePoint> GetPoint(IEnumerable<PublishedPricing> pricings, Date asOfDate)
         {
             var minDate = asOfDate.Ultimum(DateLag);
             var match = pricings
@@ -29,9 +29,12 @@ namespace CalculationEngine.Domain
                 .OrderByDescending(x => x.AsOfDate)
                 .FirstOrDefault();
 
-            return match == null 
-                ? Result.Fail<CurvePoint>("Not found") 
-                : Result.Ok(new CurvePoint(Tenor.GetMaturity(), match.Price));
+            if (match is null)
+            {
+                return new Error("Not found");
+            }
+
+            return new CurvePoint(Tenor.GetMaturity(), match.Price);
         }
     }
 }

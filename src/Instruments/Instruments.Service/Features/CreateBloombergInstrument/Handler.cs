@@ -1,19 +1,17 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Common.Core;
+using Common.Infrastructure;
 using Instruments.Domain;
 
 namespace Instruments.Service.Features.CreateBloombergInstrument
 {
     public class Handler :
+            ApplicationService<BloombergInstrument>,
             IHandleCommand<Command>
     {
-        private readonly IAggregateRepository _repository;
-
-        public Handler(IAggregateRepository repository)
+        public Handler(IAggregateRepository repository) : base(repository)
         {
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
         public Task<Either<Error, Nothing>> Handle(Command command, CancellationToken cancellationToken)
@@ -21,12 +19,9 @@ namespace Instruments.Service.Features.CreateBloombergInstrument
             var pricingSourceResult = command.PricingSource.TryParseEnum<PricingSource>();
             var yellowKeyResult = command.YellowKey.TryParseEnum<YellowKey>();
 
-            var instrumentResult = Result.Combine(
-                pricingSourceResult,
-                yellowKeyResult,
-                (pricingSource, yellowKey) => new BloombergInstrument().Define(command.Ticker.NonEmpty(), pricingSource, yellowKey));
-
-            return instrumentResult.Promise(i => _repository.Save(i));
+            return Handle(cancellationToken, command.Id.NonEmpty(), b =>
+                pricingSourceResult.MapRight(yellowKeyResult, (pricingSource, yellowKey)
+                    => b.Define(command.Ticker.NonEmpty(), pricingSource, yellowKey)));
         }
     }
 }

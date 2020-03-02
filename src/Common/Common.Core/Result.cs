@@ -401,6 +401,85 @@ namespace Common.Core
             where TRight : TLeft
                 => either.Reduce(x => x);
 
+        public static Either<Error, TNewRight> MapRight<TRight1, TRight2, TNewRight>(this Either<Error, TRight1> either1, Either<Error, TRight2> either2, Func<TRight1, TRight2, TNewRight> mapping)
+        {
+            if (either1 is Right<Error, TRight1> right1 && either2 is Right<Error, TRight2> right2)
+            {
+                return mapping(right1.Value, right2.Value);
+            }
+
+            var objArray = new object[] { either1, either2 };
+
+            var messages = objArray.OfType<Error>().SelectMany(e => e.Messages).ToArray();
+
+            return new Error(messages);
+        }
+
+        public static Either<Error, TNewRight> MapRight<TRight1, TRight2, TRight3, TNewRight>(this Either<Error, TRight1> either1, Either<Error, TRight2> either2, Either<Error, TRight3> either3, Func<TRight1, TRight2, TRight3, TNewRight> mapping)
+        {
+            if (either1 is Right<Error, TRight1> right1 && either2 is Right<Error, TRight2> right2 && either3 is Right<Error, TRight3> right3)
+            {
+                return mapping(right1.Value, right2.Value, right3.Value);
+            }
+
+            var objArray = new object[] { either1, either2, either3};
+
+            var messages = objArray.OfType<Error>().SelectMany(e => e.Messages).ToArray();
+
+            return new Error(messages);
+        }
+
+        public static Either<Error, TNewRight> MapRight<TRight1, TRight2, TRight3, TRight4, TRight5, TRight6, TRight7, TNewRight>(this Either<Error, TRight1> either1, Either<Error, TRight2> either2, Either<Error, TRight3> either3, Either<Error, TRight4> either4, Either<Error, TRight5> either5, Either<Error, TRight6> either6, Either<Error, TRight7> either7, Func<TRight1, TRight2, TRight3, TRight4, TRight5, TRight6, TRight7, TNewRight> mapping)
+        {
+            if (either1 is TRight1 right1 && either2 is TRight2 right2 && either3 is TRight3 right3 && either4 is TRight4 right4 && either5 is TRight5 right5 && either6 is TRight6 right6 && either7 is TRight7 right7)
+            {
+                return mapping(right1, right2, right3, right4, right5, right6, right7);
+            }
+
+            var objArray = new object[] { either1, either2, either3, either4, either5, either6, either7 };
+
+            var messages = objArray.OfType<Error>().SelectMany(e => e.Messages).ToArray();
+
+            return new Error(messages);
+        }
+
+        public static Either<Error, ICollection<TRight>> Flatten<TRight>(this IEnumerable<Either<Error, TRight>> eithers)
+        {
+            var messages = new List<string>();
+            ICollection<TRight> rights = new List<TRight>();
+
+            foreach (var item in eithers)
+            {
+                if (item is Error error)
+                {
+                    messages.AddRange(error.Messages);
+                }
+                if (item is TRight right)
+                {
+                    rights.Add(right);
+                }
+            }
+
+            return messages.Any() 
+                ? new Error(messages) 
+                : (Either<Error, ICollection<TRight>>)rights;
+        }
+
+
+        public static Either<Error, TRight> Flatten<TRight>(this Either<Error, Either<Error, TRight>> doubled)
+        {
+            if (doubled is Either<Error, TRight> sub)
+            {
+                return sub;
+            }
+
+            if (doubled is Error error)
+            {
+                return error;
+            }
+
+            throw new NotImplementedException();
+        }
     }
 
     public struct Nothing
@@ -435,6 +514,8 @@ namespace Common.Core
 
         public override Either<TLeft, TNewRight> MapRight<TNewRight>(Func<TRight, Either<TLeft, TNewRight>> mapping)
             => new Left<TLeft, TNewRight>(Value);
+
+        public static explicit operator TLeft(Left<TLeft, TRight> left) => left.Value;
     }
 
     public class Right<TLeft, TRight> : Either<TLeft, TRight>
@@ -454,6 +535,8 @@ namespace Common.Core
 
         public override Either<TLeft, TNewRight> MapRight<TNewRight>(Func<TRight, Either<TLeft, TNewRight>> mapping)
             => mapping(Value);
+
+        public static explicit operator TRight(Right<TLeft, TRight> right) => right.Value;
     }
 
     public class Ok<T>

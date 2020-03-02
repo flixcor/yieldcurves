@@ -52,9 +52,9 @@ namespace CurveRecipes.Service.Features.AddTransformation
             var shockTargetResult = command.ShockTarget.TryParseEnum<ShockTarget>();
             var maturitiesResult = command.Maturities
                 .Select(m => Maturity.TryCreate(m))
-                .Convert();
+                .Flatten();
 
-            return Result.Combine(shockTargetResult, maturitiesResult, (st, m) =>
+            return shockTargetResult.MapRight(maturitiesResult, (st, m) =>
             {
                 var shift = new Shift(command.Shift);
                 var krs = new KeyRateShock(st, shift, m.ToArray());

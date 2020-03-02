@@ -99,7 +99,7 @@ namespace CurveRecipes.Domain
 
     public static class TenorExtensions
     {
-        public static Result<Maturity> GetMaturity(this Tenor tenor)
+        public static Either<Error, Maturity> GetMaturity(this Tenor tenor)
         {
             var multiplier = (tenor.ToString()[0]) switch
             {

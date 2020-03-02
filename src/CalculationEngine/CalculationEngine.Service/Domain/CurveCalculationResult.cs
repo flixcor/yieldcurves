@@ -11,9 +11,9 @@ namespace CalculationEngine.Domain
     {
         public CurveCalculationResult() { }
 
-        public CurveCalculationResult WithResult(NonEmptyGuid recipeId, Date asOfDate, Result<IEnumerable<CurvePoint>> result)
+        public CurveCalculationResult WithResult(NonEmptyGuid recipeId, Date asOfDate, Either<Error, IEnumerable<CurvePoint>> result)
         {
-            var e = result.ToEither()
+            var e = result
                 .MapLeft(e => (IEvent)CurveCalculationFailed(recipeId, asOfDate.NonEmptyString(), e.Messages))
                 .Reduce(r => CurveCalculated(recipeId, asOfDate.NonEmptyString(), r.Select(x => Point(x.Maturity.Value, x.Price.Currency, x.Price.Value))));
 

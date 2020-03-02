@@ -28,7 +28,7 @@ namespace UnitTests
             var vendor = Vendor.Bloomberg;
             var desc = "description".NonEmpty();
 
-            Assert.False(Aggregate.TryDefine(vendor, desc).IsSuccessful);
+            Assert.False(Aggregate.TryDefine(vendor, desc).MapLeft(x=> false).Reduce(x=> true));
         }
     }
 }

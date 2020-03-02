@@ -22,20 +22,15 @@ namespace PricePublisher.Service.Features.PublishPrice
             _readModelRepository = readModelRepository ?? throw new ArgumentNullException(nameof(readModelRepository));
         }
 
-        public async Task<Either<Error, Nothing>> Handle(Command command, CancellationToken cancellationToken)
+        public Task<Either<Error, Nothing>> Handle(Command command, CancellationToken cancellationToken)
         {
-            var instrument = await _readModelRepository.Single(x => x.Id == command.InstrumentId).ToResult();
-
-            var currencyResult = Currency.FromString(command.PriceCurrency);
+            var currencyResult = Currency.FromString(command.PriceCurrency).MapRight(x=> new Price(x, command.PriceAmount));
             var asOfDateResult = Date.TryParse(command.AsOfDate);
 
-            return await Result.Combine(currencyResult, asOfDateResult, 
-                onSuccess: async (currency, asOfDate) =>
-                {
-                    var price = new Price(currency, command.PriceAmount);
-                    await base.Handle(cancellationToken, command.Id.NonEmpty(), p => 
-                        p.Define(asOfDate, command.InstrumentId.NonEmpty(), price, command.PriceType));
-                });
+            return Handle(cancellationToken, command.Id.NonEmpty(), p =>
+            {
+                return currencyResult.MapRight(asOfDateResult, (pr, d) => p.Define(d, command.InstrumentId.NonEmpty(), pr, command.PriceType));
+            });
         }
 
         public Task Handle(IEventWrapper<IInstrumentCreated> @event, CancellationToken cancellationToken)
