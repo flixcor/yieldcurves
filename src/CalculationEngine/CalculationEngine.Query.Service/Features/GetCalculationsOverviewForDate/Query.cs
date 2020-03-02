@@ -5,6 +5,6 @@ namespace CalculationEngine.Query.Service.Features.GetCalculationsOverviewForDat
 {
     public class Query : IQuery<Dto?>
     {
-        public string AsOfDate { get; set; }
+        public string? AsOfDate { get; set; }
     }
 }

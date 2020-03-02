@@ -17,15 +17,13 @@ namespace MarketCurves.Service.Features.AddCurvePoint
         IHandleEvent<IInstrumentCreated>,
         IHandleEvent<ICurvePointAdded>
     {
-        private readonly IReadModelRepository<Instrument> _readModelRepository;
-        private readonly IReadModelRepository<UsedValues> _usedValues;
         private readonly IReadModelRepository<Instrument> _instruments;
+        private readonly IReadModelRepository<UsedValues> _usedValues;
 
-        public Handler(IAggregateRepository repository, IReadModelRepository<Instrument> readModelRepository, IReadModelRepository<UsedValues> usedValues, IReadModelRepository<Instrument> instruments) : base(repository)
+        public Handler(IAggregateRepository repository, IReadModelRepository<Instrument> instruments, IReadModelRepository<UsedValues> usedValues) : base(repository)
         {
-            _readModelRepository = readModelRepository ?? throw new ArgumentNullException(nameof(readModelRepository));
-            _usedValues = usedValues ?? throw new ArgumentNullException(nameof(usedValues));
             _instruments = instruments ?? throw new ArgumentNullException(nameof(instruments));
+            _usedValues = usedValues ?? throw new ArgumentNullException(nameof(usedValues));
         }
 
         public async Task<Either<Error,Nothing>> Handle(Command command, CancellationToken cancellationToken)
@@ -40,14 +38,11 @@ namespace MarketCurves.Service.Features.AddCurvePoint
 
         async Task<Either<Error,Vendor>> GetVendor(NonEmptyGuid id)
         {
-            var instrument = await _readModelRepository.Get(id);
+            var instrument = await _instruments.Get(id);
 
-            if (instrument == null)
-            {
-                return new Error("Not found");
-            }
-
-            return instrument.Vendor.TryParseEnum<Vendor>();
+            return instrument?.Vendor == null ? 
+                new Error("Not found") : 
+                instrument.Vendor.TryParseEnum<Vendor>();
         }
 
         public Task Handle(IEventWrapper<IInstrumentCreated> @event, CancellationToken cancellationToken)
@@ -60,7 +55,7 @@ namespace MarketCurves.Service.Features.AddCurvePoint
                 HasPriceType = @event.Content.HasPriceType
             };
 
-            return _readModelRepository.Insert(instrument);
+            return _instruments.Insert(instrument);
         }
 
         public async Task<Dto> Handle(Query query, CancellationToken cancellationToken)
@@ -73,17 +68,17 @@ namespace MarketCurves.Service.Features.AddCurvePoint
                 .ToListAsync();
 
             var dto = new Dto
-            {
-                Command = new Command
+            (
+                new Command
                 {
                     MarketCurveId = query.MarketCurveId,
                 },
 
-                Instruments = instruments,
+                instruments,
 
-                Tenors = Enum.GetNames(typeof(Tenor))
+                Enum.GetNames(typeof(Tenor))
                     .Where(x => !existing.Tenors.Contains(x))
-            };
+            );
 
             return dto;
         }

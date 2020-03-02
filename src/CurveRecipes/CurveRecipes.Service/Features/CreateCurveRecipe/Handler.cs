@@ -71,13 +71,9 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
             var curves = await _readModelRepository.GetMany(x => x.Tenors.Any()).ToListAsync(cancellationToken);
 
             return new Dto
-            {
-                Command = new Command
-                {
-                    Id = Guid.NewGuid()
-                },
-                MarketCurves = curves
-            };
+            (
+                curves
+            );
         }
 
         private string GenerateName(IMarketCurveCreated @event)

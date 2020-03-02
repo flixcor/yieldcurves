@@ -24,7 +24,7 @@ namespace CurveRecipes.Service.Features.AddTransformation
             return Task.FromResult(result);
         }
 
-        public Either<Error,ITransformation> TryMap(string transformationName, JObject transformation) => transformationName switch
+        public Either<Error,ITransformation> TryMap(string? transformationName, JObject? transformation) => transformationName switch
         {
             nameof(KeyRateShock) => TryMap<AddKeyRateShock>(transformation)
                 .MapRight(c => TryMap(c)),
@@ -35,16 +35,18 @@ namespace CurveRecipes.Service.Features.AddTransformation
             _ => new Error("No transformation found"),
         };
 
-        private Either<Error, T> TryMap<T>(JObject transformation)
+        private Either<Error, T> TryMap<T>(JObject? transformation)
         {
-            var casted = transformation.ToObject<T>();
-
-            if (casted == null)
+            if (transformation is null)
             {
                 return new Error($"Could not parse {nameof(transformation)} to {typeof(T).Name}");
             }
 
-            return casted;
+            var casted = transformation.ToObject<T>();
+
+            return casted == null 
+                ? new Error($"Could not parse {nameof(transformation)} to {typeof(T).Name}") 
+                : (Either<Error, T>)casted;
         }
 
         private static Either<Error, ITransformation> TryMap(AddKeyRateShock command)

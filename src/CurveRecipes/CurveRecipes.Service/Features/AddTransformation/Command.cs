@@ -7,7 +7,7 @@ namespace CurveRecipes.Service.Features.AddTransformation
     public class Command : ICommand
     {
         public Guid Id { get; set; }
-        public string TransformationName { get; set; }
-        public JObject Transformation { get; set; }
+        public string? TransformationName { get; set; }
+        public JObject? Transformation { get; set; }
     }
 }

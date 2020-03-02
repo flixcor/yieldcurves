@@ -13,12 +13,9 @@ namespace PricePublisher.Service.Domain
 
         public static Either<Error,Currency> FromString(string input)
         {
-            if (string.IsNullOrWhiteSpace(input) || input.Length != 3)
-            {
-                return new Error("currency cannot be empty and must be 3 characters");
-            }
-
-            return new Currency(input);
+            return string.IsNullOrWhiteSpace(input) || input.Length != 3
+                ? new Error("currency cannot be empty and must be 3 characters")
+                : (Either<Error, Currency>)new Currency(input);
         }
 
         public override string ToString()

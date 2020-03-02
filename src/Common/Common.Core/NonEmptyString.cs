@@ -6,9 +6,9 @@ namespace Common.Core
     {
         private readonly string _value;
 
-        internal NonEmptyString(string value)
+        internal NonEmptyString(string? value)
         {
-            if (value == string.Empty)
+            if (string.IsNullOrWhiteSpace(value))
             {
                 throw new ArgumentNullException(nameof(value));
             }
@@ -36,7 +36,7 @@ namespace Common.Core
 
     public static class NonEmptyStringExtensions
     {
-        public static NonEmptyString NonEmpty(this string str) => new NonEmptyString(str);
+        public static NonEmptyString NonEmpty(this string? str) => new NonEmptyString(str);
 
     }
 

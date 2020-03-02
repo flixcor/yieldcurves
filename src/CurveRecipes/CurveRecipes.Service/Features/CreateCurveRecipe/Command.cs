@@ -14,8 +14,8 @@ namespace CurveRecipes.Service.Features.CreateCurveRecipe
     {
         public Guid Id { get; set; }
         public Guid MarketCurveId { get; set; }
-        public string ShortName { get; set; }
-        public string Description { get; set; }
+        public string? ShortName { get; set; }
+        public string? Description { get; set; }
         public Tenor LastLiquidTenor { get; set; }
         public DayCountConvention DayCountConvention { get; set; }
         public Interpolation Interpolation { get; set; }

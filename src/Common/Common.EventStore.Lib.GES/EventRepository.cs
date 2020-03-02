@@ -158,12 +158,9 @@ namespace Common.EventStore.Lib.GES
         private Task EventAppeared(ResolvedEvent resolvedEvent, ChannelWriter<(IEventWrapper, IMetadata)> writer, string[] eventTypes, CancellationToken cancellationToken)
         {
             var wrapper = resolvedEvent.Deserialize(eventTypes);
-            if (wrapper.HasValue)
-            {
-                return writer.PublishAsync(wrapper.Value, cancellationToken).AsTask();
-            }
-
-            return Task.CompletedTask;
+            return wrapper.HasValue 
+                ? writer.PublishAsync(wrapper.Value, cancellationToken).AsTask() 
+                : Task.CompletedTask;
         }
 
 
