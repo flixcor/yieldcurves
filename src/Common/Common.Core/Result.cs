@@ -500,7 +500,7 @@ namespace Common.Core
 
     public class Left<TLeft, TRight> : Either<TLeft, TRight>
     {
-        internal TLeft Value { get; }
+        public TLeft Value { get; }
 
         public Left(TLeft value) => Value = value;
 
@@ -515,12 +515,12 @@ namespace Common.Core
         public override Either<TLeft, TNewRight> MapRight<TNewRight>(Func<TRight, Either<TLeft, TNewRight>> mapping)
             => new Left<TLeft, TNewRight>(Value);
 
-        public static explicit operator TLeft(Left<TLeft, TRight> left) => left.Value;
+        public static implicit operator TLeft(Left<TLeft, TRight> left) => left.Value;
     }
 
     public class Right<TLeft, TRight> : Either<TLeft, TRight>
     {
-        internal TRight Value { get; }
+        public TRight Value { get; }
 
         public Right(TRight value) => Value = value;
 
@@ -536,7 +536,7 @@ namespace Common.Core
         public override Either<TLeft, TNewRight> MapRight<TNewRight>(Func<TRight, Either<TLeft, TNewRight>> mapping)
             => mapping(Value);
 
-        public static explicit operator TRight(Right<TLeft, TRight> right) => right.Value;
+        public static implicit operator TRight(Right<TLeft, TRight> right) => right.Value;
     }
 
     public class Ok<T>

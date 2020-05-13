@@ -233,6 +233,24 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "MicroFrontends", "src\Prese
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "64697"
+	EndProjectSection
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_64697"
+		Debug.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_64697"
+		Release.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "64697"
 		SlnRelativePath = "src\Presentation\MicroFrontends\"
 	EndProjectSection
 EndProject
@@ -254,6 +272,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.EventStore.Lib.Postgres", "src\Common\Common.EventStore.Lib.EfCore\Common.EventStore.Lib.Postgres.csproj", "{6C51F626-F521-41AC-B08B-7C31EF81C897}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.EventStore.Lib.GES", "src\Common\Common.EventStore.Lib.GES\Common.EventStore.Lib.GES.csproj", "{3310E056-20F9-49AF-B6E0-AE185A412FD0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestParsing", "test\TestParsing\TestParsing.csproj", "{B7040091-9D44-42B2-B4EC-9F740A3715FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -340,6 +360,10 @@ Global
 		{3310E056-20F9-49AF-B6E0-AE185A412FD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3310E056-20F9-49AF-B6E0-AE185A412FD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3310E056-20F9-49AF-B6E0-AE185A412FD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7040091-9D44-42B2-B4EC-9F740A3715FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7040091-9D44-42B2-B4EC-9F740A3715FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7040091-9D44-42B2-B4EC-9F740A3715FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7040091-9D44-42B2-B4EC-9F740A3715FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -373,6 +397,7 @@ Global
 		{2AC3E81A-14FA-4AD5-9690-B79E6BC41116} = {8696303F-4F08-4CAB-9107-A7318E2A1387}
 		{6C51F626-F521-41AC-B08B-7C31EF81C897} = {8696303F-4F08-4CAB-9107-A7318E2A1387}
 		{3310E056-20F9-49AF-B6E0-AE185A412FD0} = {8696303F-4F08-4CAB-9107-A7318E2A1387}
+		{B7040091-9D44-42B2-B4EC-9F740A3715FB} = {95921209-5B2E-4E74-80FC-D4F96540EAA8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2681B182-AD3D-4651-A205-39DA65F48B1C}
