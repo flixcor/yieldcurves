@@ -29,8 +29,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarketCurves.Service", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarketCurves.Query.Service", "src\MarketCurves\MarketCurves.Query.Service\MarketCurves.Query.Service.csproj", "{AC7B3F86-30D0-4AA8-98C9-25EBA7CC645A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{F1BA26EF-F24D-4A01-AB78-D0A0F4258AAC}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CurveRecipes", "CurveRecipes", "{11C09AF9-45CC-4FCC-AA35-9EBF0A139420}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{95921209-5B2E-4E74-80FC-D4F96540EAA8}"
@@ -53,207 +51,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PricePublisher.Service", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculationEngine.Service", "src\CalculationEngine\CalculationEngine.Service\CalculationEngine.Service.csproj", "{D484821E-BD50-47E0-864A-33203F3DD26E}"
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "MicroFrontends", "src\Presentation\MicroFrontends\", "{2601DB5B-E173-4679-B6BF-52EF6558B1A0}"
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_64697"
-		Debug.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_64697"
-		Release.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "64697"
-	EndProjectSection
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_64697"
-		Debug.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_64697"
-		Release.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "64697"
-	EndProjectSection
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_64697"
-		Debug.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_64697"
-		Release.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "64697"
-	EndProjectSection
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_64697"
-		Debug.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_64697"
-		Release.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "64697"
-	EndProjectSection
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_64697"
-		Debug.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_64697"
-		Release.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "64697"
-	EndProjectSection
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_64697"
-		Debug.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_64697"
-		Release.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "64697"
-	EndProjectSection
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_64697"
-		Debug.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_64697"
-		Release.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "64697"
-	EndProjectSection
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_64697"
-		Debug.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_64697"
-		Release.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "64697"
-	EndProjectSection
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_64697"
-		Debug.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_64697"
-		Release.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "64697"
-	EndProjectSection
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_64697"
-		Debug.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_64697"
-		Release.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "64697"
-	EndProjectSection
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_64697"
-		Debug.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_64697"
-		Release.AspNetCompiler.PhysicalPath = "src\Presentation\MicroFrontends\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_64697\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "64697"
-		SlnRelativePath = "src\Presentation\MicroFrontends\"
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PricePublisher.Query.Service", "src\PricePublisher\PricePublisher.Query.Service\PricePublisher.Query.Service.csproj", "{209A34A1-C490-419C-AF86-A2B63245D192}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalculationEngine.Query.Service", "src\CalculationEngine\CalculationEngine.Query.Service\CalculationEngine.Query.Service.csproj", "{E22A004B-2881-4362-9BD6-9A6A4526CDEE}"
@@ -273,7 +70,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.EventStore.Lib.Postg
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.EventStore.Lib.GES", "src\Common\Common.EventStore.Lib.GES\Common.EventStore.Lib.GES.csproj", "{3310E056-20F9-49AF-B6E0-AE185A412FD0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestParsing", "test\TestParsing\TestParsing.csproj", "{B7040091-9D44-42B2-B4EC-9F740A3715FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestParsing", "test\TestParsing\TestParsing.csproj", "{B7040091-9D44-42B2-B4EC-9F740A3715FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -329,9 +126,6 @@ Global
 		{D484821E-BD50-47E0-864A-33203F3DD26E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D484821E-BD50-47E0-864A-33203F3DD26E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D484821E-BD50-47E0-864A-33203F3DD26E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2601DB5B-E173-4679-B6BF-52EF6558B1A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2601DB5B-E173-4679-B6BF-52EF6558B1A0}.Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{2601DB5B-E173-4679-B6BF-52EF6558B1A0}.Release|Any CPU.Build.0 = Debug|Any CPU
 		{209A34A1-C490-419C-AF86-A2B63245D192}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{209A34A1-C490-419C-AF86-A2B63245D192}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{209A34A1-C490-419C-AF86-A2B63245D192}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -377,7 +171,6 @@ Global
 		{4F7A7215-AB4B-47AB-8D8A-859414999EB1} = {5C08E959-8C27-4D91-8CE6-646F0380E5D5}
 		{007B0B21-4CE6-4C9B-8B9A-7E276735F48E} = {4F7A7215-AB4B-47AB-8D8A-859414999EB1}
 		{AC7B3F86-30D0-4AA8-98C9-25EBA7CC645A} = {4F7A7215-AB4B-47AB-8D8A-859414999EB1}
-		{F1BA26EF-F24D-4A01-AB78-D0A0F4258AAC} = {5C08E959-8C27-4D91-8CE6-646F0380E5D5}
 		{11C09AF9-45CC-4FCC-AA35-9EBF0A139420} = {5C08E959-8C27-4D91-8CE6-646F0380E5D5}
 		{614B6ABD-3012-4674-B4E2-2C17B577781E} = {95921209-5B2E-4E74-80FC-D4F96540EAA8}
 		{6A12591E-B743-4F2C-AE14-5D6D420D2080} = {95921209-5B2E-4E74-80FC-D4F96540EAA8}
@@ -388,7 +181,6 @@ Global
 		{B52F0443-908C-4341-ABFC-9C40C92778EA} = {11C09AF9-45CC-4FCC-AA35-9EBF0A139420}
 		{A70C9C95-332E-4ED4-96DB-80C3ECA4CD1C} = {B8B0A5DB-E4AD-4941-A447-5BE0FE3817E9}
 		{D484821E-BD50-47E0-864A-33203F3DD26E} = {8EE6D1F7-5704-4FC9-ACA6-D9CF1C8E9446}
-		{2601DB5B-E173-4679-B6BF-52EF6558B1A0} = {F1BA26EF-F24D-4A01-AB78-D0A0F4258AAC}
 		{209A34A1-C490-419C-AF86-A2B63245D192} = {B8B0A5DB-E4AD-4941-A447-5BE0FE3817E9}
 		{E22A004B-2881-4362-9BD6-9A6A4526CDEE} = {8EE6D1F7-5704-4FC9-ACA6-D9CF1C8E9446}
 		{9B97DA50-7972-4128-BE99-E479CA448765} = {8696303F-4F08-4CAB-9107-A7318E2A1387}
