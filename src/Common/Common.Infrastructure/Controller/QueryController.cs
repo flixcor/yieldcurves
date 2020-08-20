@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.Infrastructure.Controller
 {
-    public class QueryController<TQuery, TDto> : ControllerBase where TQuery : IQuery<TDto> where TDto : class
+    public class QueryController<TQuery, TDto> : ControllerBase where TQuery : IQuery<TDto> where TDto : new ()
     {
         private static readonly string s_featureName = HelperMethods.GetFeatureName(typeof(TQuery));
         private readonly IHandleQuery<TQuery, TDto> _handler;

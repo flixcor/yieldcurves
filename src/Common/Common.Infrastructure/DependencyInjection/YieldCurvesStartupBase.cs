@@ -74,6 +74,7 @@ namespace Common.Infrastructure.DependencyInjection
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.RegisterCommandsAndQueries();
 
                 if (_withSignalR)
                 {

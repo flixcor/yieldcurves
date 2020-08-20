@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.Infrastructure.Controller
 {
-    public class ListQueryController<TQuery, TDto> : ControllerBase where TQuery : IListQuery<TDto> where TDto : class
+    public class ListQueryController<TQuery, TDto> : ControllerBase where TQuery : IListQuery<TDto> where TDto : new ()
     {
         private static readonly string s_featureName = HelperMethods.GetFeatureName(typeof(TQuery));
         private readonly IHandleListQuery<TQuery, TDto> _handler;
