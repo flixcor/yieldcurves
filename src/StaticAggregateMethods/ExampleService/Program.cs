@@ -9,17 +9,9 @@ namespace ExampleService
     {
         public static void Main(string[] args)
         {
-            var link = RestMapper.TryMapQuery<NameAndAdd, IReadOnlyCollection<object>>("/test");
+            var testEndpoint = RestMapper.TryMapQuery<NameAndAdd, IReadOnlyCollection<object>>("/test");
 
-            IEnumerable<Link> GetLinks()
-            {
-                if (link != null)
-                {
-                    yield return link;
-                }
-            }
-
-            RestMapper.TrySetIndex(GetLinks);
+            RestMapper.TryMapIndex(() => testEndpoint.Enumerate());
 
             CreateHostBuilder(args).Build().Run();
         }

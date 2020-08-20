@@ -17,7 +17,7 @@ namespace ExampleService.Shared
 
         internal T LoadFromHistory(EventWrapper eventWrapper)
         {
-            if (eventWrapper.Version != Version + 1)
+            if (eventWrapper.Version != Version + 1 || eventWrapper.Content is null)
             {
                 throw new Exception();
             }

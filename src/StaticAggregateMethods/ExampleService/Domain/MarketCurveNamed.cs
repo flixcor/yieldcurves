@@ -5,8 +5,5 @@ using System.Threading.Tasks;
 
 namespace ExampleService.Domain
 {
-    public record MarketCurveNamed
-    {
-        public string Name { get; init; }
-    }
+    public record MarketCurveNamed(string Name);
 }

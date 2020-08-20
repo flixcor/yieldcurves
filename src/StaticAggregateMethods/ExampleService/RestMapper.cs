@@ -29,35 +29,44 @@ namespace ExampleService
 
         private static Func<IEnumerable<Link>>? s_index = default;
 
-        public static Link TrySetIndex(Func<IEnumerable<Link>> generator)
+        public static Link? TryMapIndex(Func<IEnumerable<Link>> generator)
         {
             var link = new Link("/", HttpMethod.Get);
 
             if (s_hash.Add(link))
             {
                 s_index = generator;
+                return link;
             }
 
-            return link;
+            return null;
         }
 
-        public static Link TryMapCommand<TCommand>(PathString path) where TCommand : ICommand, new()
+        public static IEnumerable<T> Enumerate<T>(this T? maybeT) where T : class
+        {
+            if (maybeT is not null)
+            {
+                yield return maybeT;
+            }
+        }
+
+        public static Link? TryMapCommand<TCommand>(PathString path) where TCommand : ICommand, new()
         {
             var link = new Link(path, HttpMethod.Post);
 
             return s_hash.Add(link) && s_commands.TryAdd(path, typeof(TCommand)) && s_linkIndex.TryAdd(typeof(TCommand), link)
                 ? link
-                : s_linkIndex[typeof(TCommand)];
+                : null;
         }
 
-        public static Link TryMapQuery<TQuery, TDto>(PathString path, Func<TDto, object>? enrich = null) where TQuery : IQuery<TDto>, new()
+        public static Link? TryMapQuery<TQuery, TDto>(PathString path, Func<TDto, object>? enrich = null) where TQuery : IQuery<TDto>, new()
         {
             var link = new Link(path, HttpMethod.Get);
             var castEnrich = enrich as Func<object, object>;
 
             return s_hash.Add(link) && s_linkIndex.TryAdd(typeof(TQuery), link) && s_queries.TryAdd(path, (typeof(TQuery), typeof(TDto), castEnrich))
                 ? link
-                : s_linkIndex[typeof(TQuery)];
+                : null;
         }
 
         public static Link<T> WithExpected<T>(this Link link, T expected) => new Link<T>(link.Href, link.Method, expected);
