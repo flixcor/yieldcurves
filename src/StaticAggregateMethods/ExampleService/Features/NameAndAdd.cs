@@ -5,7 +5,7 @@ using ExampleService.Shared;
 
 namespace ExampleService.Features
 {
-    public class NameAndAdd : IQuery<IReadOnlyCollection<object>>
+    public record NameAndAdd : IQuery<IReadOnlyCollection<object>>
     {
         public string? Name { get; init; }
         public string? Instrument { get; init; }
