@@ -1,7 +1,10 @@
-﻿namespace ExampleService.Shared
+﻿using System;
+using System.Threading.Tasks;
+
+namespace ExampleService.Shared
 {
     public interface ICommand
     {
-        void Handle();
+        Task Handle();
     }
 }

@@ -1,7 +1,9 @@
-﻿namespace ExampleService.Shared
+﻿using System.Threading.Tasks;
+
+namespace ExampleService.Shared
 {
     public interface IQuery<T>
     {
-        T Handle();
+        Task<T> Handle();
     }
 }

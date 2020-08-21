@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using ExampleService.Features;
+﻿using ExampleService.Features;
+using ExampleService.Shared;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -9,18 +10,24 @@ namespace ExampleService
     {
         public static void Main(string[] args)
         {
-            var testEndpoint = RestMapper.TryMapQuery<NameAndAdd, IReadOnlyCollection<object>>("/test");
+            var testEndpoint = RestMapper.TryMapQuery<Test, string?>("/test");
+            var commandEndpoint = RestMapper.TryMapCommand<NameAndAdd>("/marketcurves")?.WithExpected(new NameAndAdd());
 
-            RestMapper.TryMapIndex(() => testEndpoint.Enumerate());
+            var endpoints = RestMapper.Enumerate(testEndpoint, commandEndpoint);
+
+            RestMapper.TryMapIndex(() => endpoints);
+
+            RestMapper.SetAggregateStore(new EsAggregateStore(new InMemoryEventStore()));
 
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+        public static IHostBuilder CreateHostBuilder(string[] args) => Host
+            .CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(web => web
+                .Configure(app => app
+                    .UseRouting()
+                    .UseEndpoints(e => e
+                        .MapCommandsAndQueries())));
     }
 }

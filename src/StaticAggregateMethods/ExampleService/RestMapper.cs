@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
-using System.Threading.Tasks;
 using System.Web;
 using ExampleService.Shared;
 using Microsoft.AspNetCore.Builder;
@@ -14,12 +13,21 @@ using NodaTime.Serialization.SystemTextJson;
 
 namespace ExampleService
 {
-    public record Link(string Href, HttpMethod Method);
-    public record Link<T>(string Href, HttpMethod Method, T Expected);
+    public record Link
+    {
+        public string? Href { get; init; }
+        public HttpMethod? Method { get; init; }
+    }
+
+    public record Link<T> : Link where T : class
+    {
+        public T? Expected { get; init; }
+    }
 
     public static class RestMapper
     {
-        private static readonly Dictionary<PathString, (Type, Type, Func<object, object>?)> s_queries = new Dictionary<PathString, (Type, Type, Func<object, object>?)>();
+        private static readonly Dictionary<PathString, (Type, Type, Func<object, object>?)> s_queries
+            = new Dictionary<PathString, (Type, Type, Func<object, object>?)>();
 
         private static readonly Dictionary<PathString, Type> s_commands = new Dictionary<PathString, Type>();
 
@@ -29,9 +37,13 @@ namespace ExampleService
 
         private static Func<IEnumerable<Link>>? s_index = default;
 
+        public static Func<IAggregateStore> GetAggregateStore { get; private set; } = () => throw new Exception();
+
+        public static void SetAggregateStore(IAggregateStore aggregateStore) => GetAggregateStore = () => aggregateStore;
+
         public static Link? TryMapIndex(Func<IEnumerable<Link>> generator)
         {
-            var link = new Link("/", HttpMethod.Get);
+            var link = new Link { Href = "/", Method = HttpMethod.Get };
 
             if (s_hash.Add(link))
             {
@@ -50,28 +62,36 @@ namespace ExampleService
             }
         }
 
+        public static IEnumerable<Link> Enumerate(params object?[] maybeTs) => maybeTs.OfType<Link>();
+
         public static Link? TryMapCommand<TCommand>(PathString path) where TCommand : ICommand, new()
         {
-            var link = new Link(path, HttpMethod.Post);
+            var link = new Link { Href = path, Method = HttpMethod.Post };
 
-            return s_hash.Add(link) && s_commands.TryAdd(path, typeof(TCommand)) && s_linkIndex.TryAdd(typeof(TCommand), link)
-                ? link
-                : null;
+            return s_hash.Add(link) && s_commands.TryAdd(path, typeof(TCommand))
+                && s_linkIndex.TryAdd(typeof(TCommand), link)
+                    ? link
+                    : null;
         }
 
         public static Link? TryMapQuery<TQuery, TDto>(PathString path, Func<TDto, object>? enrich = null) where TQuery : IQuery<TDto>, new()
         {
-            var link = new Link(path, HttpMethod.Get);
+            var link = new Link { Href = path, Method = HttpMethod.Get };
             var castEnrich = enrich as Func<object, object>;
 
-            return s_hash.Add(link) && s_linkIndex.TryAdd(typeof(TQuery), link) && s_queries.TryAdd(path, (typeof(TQuery), typeof(TDto), castEnrich))
-                ? link
-                : null;
+            return s_hash.Add(link)
+                && s_linkIndex.TryAdd(typeof(TQuery), link)
+                && s_queries.TryAdd(path, (typeof(TQuery), typeof(TDto), castEnrich))
+                    ? link
+                    : null;
         }
 
-        public static Link<T> WithExpected<T>(this Link link, T expected) => new Link<T>(link.Href, link.Method, expected);
-        public static Link<T> WithRouteValues<T>(this Link<T> link, object routeValues) => new Link<T>(link.Href.ReplaceParameters(routeValues), link.Method, link.Expected);
-        public static Link WithRouteValues(this Link link, object routeValues) => new Link(link.Href.ReplaceParameters(routeValues), link.Method);
+        public static Link<T> WithExpected<T>(this Link link, T expected) where T : class
+            => new Link<T> { Href = link.Href, Method = link.Method, Expected = expected };
+        public static Link<T> WithRouteValues<T>(this Link<T> link, object routeValues) where T : class
+            => new Link<T> { Href = link?.Href?.ReplaceParameters(routeValues), Method = link?.Method, Expected = link?.Expected };
+        public static Link WithRouteValues(this Link link, object routeValues)
+            => new Link { Href = link?.Href?.ReplaceParameters(routeValues), Method = link?.Method };
 
         private static string ReplaceParameters(this string s, object routeValues)
         {
@@ -127,7 +147,7 @@ namespace ExampleService
                         return;
                     }
 
-                    var result = (query as dynamic).Handle();
+                    var result = await (query as dynamic).Handle();
 
                     if (result == null)
                     {
@@ -159,7 +179,7 @@ namespace ExampleService
                         return;
                     }
 
-                    command.Handle();
+                    await command.Handle();
                     httpContext.Response.StatusCode = StatusCodes.Status202Accepted;
                 });
             }
