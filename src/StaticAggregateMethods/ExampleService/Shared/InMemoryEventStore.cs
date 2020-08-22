@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ExampleService.Shared
 {
-    public class InMemoryEventStore : IEventStore
+    public class InMemoryEventStore : IEventStore, IDisposable
     {
         private class InMemoryStream
         {
@@ -24,6 +24,8 @@ namespace ExampleService.Shared
         private readonly Channel<EventWrapper> _channel = Channel.CreateBounded<EventWrapper>(1000);
 
         private readonly ConcurrentDictionary<string, InMemoryStream> _streams = new ConcurrentDictionary<string, InMemoryStream>();
+
+        private long _position;
 
         public IAsyncEnumerable<EventWrapper> Subscribe(CancellationToken token) => _channel.Reader.ReadAllAsync(token);
 
@@ -42,20 +44,47 @@ namespace ExampleService.Shared
                 });
                 foreach (var item in events)
                 {
+                    item.Id = Interlocked.Increment(ref _position);
                     await _channel.Writer.WriteAsync(item, cancellationToken);
                 }
             }
         }
 
-        public async IAsyncEnumerable<EventWrapper> Get(string stream, CancellationToken cancellation = default)
+        public IAsyncEnumerable<EventWrapper> Get(string stream, CancellationToken cancellation = default) => 
+            new FakeAsyncEnumerable<EventWrapper>(GetSync(stream));
+
+        private IEnumerable<EventWrapper> GetSync(string stream) =>
+            _streams.TryGetValue(stream, out var r) 
+                ? r.Events 
+                : Enumerable.Empty<EventWrapper>();
+
+        public void Dispose() => _channel.Writer.Complete();
+
+        private class FakeAsyncEnumerable<T> : IAsyncEnumerable<T>
         {
-            if (_streams.TryGetValue(stream, out var r))
+            private readonly IEnumerable<T> _enumerable;
+
+            public FakeAsyncEnumerable(IEnumerable<T> enumerable) => _enumerable = enumerable;
+
+            public IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default) 
+                => new TestDbAsyncEnumerator<T>(_enumerable.GetEnumerator());
+        }
+
+        private class TestDbAsyncEnumerator<T> : IAsyncEnumerator<T>
+        {
+            private readonly IEnumerator<T> _inner;
+
+            public TestDbAsyncEnumerator(IEnumerator<T> inner) => _inner = inner;
+
+            public ValueTask<bool> MoveNextAsync() => new ValueTask<bool>(_inner.MoveNext());
+
+            public ValueTask DisposeAsync()
             {
-                foreach (var item in r.Events)
-                {
-                    yield return item;
-                }
+                _inner.Dispose();
+                return new ValueTask();
             }
+
+            public T Current => _inner.Current;
         }
     }
 }

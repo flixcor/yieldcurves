@@ -17,6 +17,7 @@ namespace ExampleService.Shared
         {
             var state = new T();
             var es = Cast(state);
+            es.Id = id;
 
             await foreach (var item in _eventStore.Get(es.StreamName, token))
             {
