@@ -1,6 +1,8 @@
 ﻿using ExampleService.Domain;
 using ExampleService.Features;
 using ExampleService.Shared;
+using static ExampleService.Domain.Commands;
+using static ExampleService.Domain.Events;
 
 namespace ExampleService
 {
@@ -11,13 +13,13 @@ namespace ExampleService
             InMemoryProjectionStore.TryRegister<CurveList>(GetCurveList.Project);
 
             var testEndpoint = RestMapper.TryMapQuery<GetCurveList, CurveList>("/marketcurves");
-            var commandEndpoint = RestMapper.TryMapCommand<NameAndAdd>("/marketcurves")?.WithExpected(new NameAndAdd());
+            var commandEndpoint = RestMapper.TryMapCommand(MarketCurve.NameAndAdd, "/marketcurves")?.WithExpected(new NameAndAddInstrument());
 
             var endpoints = RestMapper.Enumerate(testEndpoint, commandEndpoint);
 
             RestMapper.TryMapIndex(endpoints);
 
-            EventMapper.TryMap<InstrumentAdded>("instrument added");
+            EventMapper.TryMap<InstrumentAddedToCurve>("instrument added");
             EventMapper.TryMap<MarketCurveNamed>("market curve named");
 
             RestMapper.SetAggregateStore(aggregateStore);

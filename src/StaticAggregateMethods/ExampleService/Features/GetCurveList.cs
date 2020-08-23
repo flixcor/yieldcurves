@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using ExampleService.Domain;
 using ExampleService.Shared;
+using static ExampleService.Domain.Events;
 
 namespace ExampleService.Features
 {
     public class GetCurveList : IQuery<CurveList>
     {
-        public static CurveList Project(CurveList state, EventWrapper eventWrapper) => eventWrapper.Content switch
+        public static CurveList Project(CurveList state, EventEnvelope eventWrapper) => eventWrapper.Content switch
         {
             MarketCurveNamed named => AddOrUpdate(state, eventWrapper.AggregateId, (c) => c with { Name = named.Name }),
-            InstrumentAdded instrument => AddOrUpdate(state, eventWrapper.AggregateId, (c) => c with { Instruments = c.Instruments.Append(instrument.InstrumentId).ToList() }),
+            InstrumentAddedToCurve instrument => AddOrUpdate(state, eventWrapper.AggregateId, (c) => c with { Instruments = c.Instruments.Append(instrument.InstrumentId).ToList() }),
             _ => state
         };
 

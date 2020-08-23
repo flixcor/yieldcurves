@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
+using static ExampleService.Shared.Handlers;
 
 namespace ExampleService.Shared
 {
@@ -42,6 +43,7 @@ namespace ExampleService.Shared
 
         public static Func<IAggregateStore> GetAggregateStore { get; private set; } = () => throw new Exception();
 
+        public static IEventStore EventStore { get; set; } = new InMemoryEventStore();
         public static void SetAggregateStore(IAggregateStore aggregateStore) => GetAggregateStore = () => aggregateStore;
 
         public static Link? TryMapIndex(IEnumerable<Link> links)
@@ -71,11 +73,11 @@ namespace ExampleService.Shared
 
         public static IEnumerable<Link> Enumerate(params object?[] maybeTs) => maybeTs.OfType<Link>();
 
-        public static Link? TryMapCommand<TCommand>(PathString path) where TCommand : ICommand, new()
+        public static Link? TryMapCommand<TCommand, TState>(Handlers.CommandHandler<TCommand, TState> handler, PathString path) where TCommand : class, new() where TState : class, new()
         {
             var link = new Link { Href = path, Method = HttpMethods.Post };
 
-            static async Task Handle(HttpContext httpContext)
+            async Task Handle(HttpContext httpContext)
             {
                 var token = httpContext.RequestAborted;
                 var command = await JsonSerializer.DeserializeAsync<TCommand>(httpContext.Request.Body, Options, token);
@@ -86,7 +88,7 @@ namespace ExampleService.Shared
                     return;
                 }
 
-                await command.Handle();
+                await AppService.Handle(handler, new CommandEnvelope<TCommand> { Command = command }, EventStore);
                 httpContext.Response.StatusCode = StatusCodes.Status202Accepted;
             }
 

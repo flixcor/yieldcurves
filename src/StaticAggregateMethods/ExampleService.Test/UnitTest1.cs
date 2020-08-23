@@ -1,6 +1,8 @@
-﻿using System;
-using ExampleService.Domain;
+﻿using AutoFixture;
 using Xunit;
+using static ExampleService.Domain.Commands;
+using static ExampleService.Domain.Events;
+using static ExampleService.Test.Shared.GivenWhenThen<ExampleService.Domain.MarketCurve>;
 
 namespace ExampleService.Test
 {
@@ -9,10 +11,17 @@ namespace ExampleService.Test
         [Fact]
         public void Test1()
         {
-            var events = MarketCurve.Name("name").AddInstrument("instrument").GetUncommittedEvents();
-            Assert.Collection(events,
-                (e) => Assert.IsType<MarketCurveNamed>(e.Content),
-                (e) => Assert.IsType<InstrumentAdded>(e.Content)
+            var fixture = new Fixture();
+            var initialName = fixture.Create<MarketCurveNamed>();
+            var command = fixture.Create<NameAndAddInstrument>();
+
+            Given(initialName).
+
+            When(command).
+
+            Then(
+                new MarketCurveNamed(command.Name),
+                new InstrumentAddedToCurve(command.Instrument)
             );
         }
     }

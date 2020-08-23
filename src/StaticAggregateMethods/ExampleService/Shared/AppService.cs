@@ -1,19 +1,30 @@
 ﻿using System;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using static ExampleService.Shared.Handlers;
 
 namespace ExampleService.Shared
 {
-    public abstract record AppService<T> : ICommand where T : IAggregateState, new()
+    public static class AppService
     {
-        protected abstract string GetId();
-
-        public async Task Handle()
+        public static async Task Handle<C, S>(CommandHandler<C, S> handler, CommandEnvelope<C> commandEnvelope, IEventStore eventStore, CancellationToken cancel = default) where C : class where S: class, new()
         {
-            var store = RestMapper.GetAggregateStore();
-            var aggregate = await store.Load<T>(GetId());
-            await store.Save(await HandleInternal(aggregate));
-        }
+            if (commandEnvelope.AggregateId == null || commandEnvelope.Command == null)
+            {
+                throw new Exception();
+            }
 
-        protected abstract ValueTask<T> HandleInternal(T aggregate);
+            var streamName = StreamNameMapper.GetStreamName<S>(commandEnvelope.AggregateId);
+            var store = RestMapper.GetAggregateStore();
+
+            var aggregate = await store.Load<S>(commandEnvelope.AggregateId, cancel);
+
+            var events = handler(commandEnvelope.Command, aggregate.State)
+                .Select((e, i) => new EventEnvelope { AggregateId = aggregate.Id, Version = aggregate.Version + i + 1, Content = e })
+                .ToArray();
+
+            await eventStore.Save(streamName, cancel, events);
+        }
     }
 }

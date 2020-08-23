@@ -2,7 +2,7 @@
 
 namespace ExampleService.Shared
 {
-    public record EventWrapper
+    public record EventEnvelope
     {
         public long Id { get; internal set; }
         public string? AggregateId { get; init; }

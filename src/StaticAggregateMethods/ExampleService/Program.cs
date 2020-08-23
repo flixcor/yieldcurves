@@ -14,7 +14,7 @@ namespace ExampleService
         public static void Main(string[] args)
         {
             using var eventStore = new InMemoryEventStore();
-            Bootstrap.Setup(new EsAggregateStore(eventStore));
+            Bootstrap.Setup(null);
             _ = WriteEvents(eventStore, default);
             CreateHostBuilder(args).Build().Run();
         }

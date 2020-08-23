@@ -13,23 +13,23 @@ namespace ExampleService.Shared
     {
         private class InMemoryStream
         {
-            public InMemoryStream(IEnumerable<EventWrapper> events)
+            public InMemoryStream(IEnumerable<EventEnvelope> events)
             {
                 Events = events.ToImmutableArray();
             }
 
-            public ImmutableArray<EventWrapper> Events { get; }
+            public ImmutableArray<EventEnvelope> Events { get; }
         }
 
-        private readonly Channel<EventWrapper> _channel = Channel.CreateBounded<EventWrapper>(1000);
+        private readonly Channel<EventEnvelope> _channel = Channel.CreateBounded<EventEnvelope>(1000);
 
         private readonly ConcurrentDictionary<string, InMemoryStream> _streams = new ConcurrentDictionary<string, InMemoryStream>();
 
         private long _position;
 
-        public IAsyncEnumerable<EventWrapper> Subscribe(CancellationToken token) => _channel.Reader.ReadAllAsync(token);
+        public IAsyncEnumerable<EventEnvelope> Subscribe(CancellationToken token) => _channel.Reader.ReadAllAsync(token);
 
-        public async Task Save(string stream, CancellationToken cancellationToken = default, params EventWrapper[] events)
+        public async Task Save(string stream, CancellationToken cancellationToken = default, params EventEnvelope[] events)
         {
             if (events.Any())
             {
@@ -50,13 +50,13 @@ namespace ExampleService.Shared
             }
         }
 
-        public IAsyncEnumerable<EventWrapper> Get(string stream, CancellationToken cancellation = default) => 
-            new FakeAsyncEnumerable<EventWrapper>(GetSync(stream));
+        public IAsyncEnumerable<EventEnvelope> Get(string stream, CancellationToken cancellation = default) => 
+            new FakeAsyncEnumerable<EventEnvelope>(GetSync(stream));
 
-        private IEnumerable<EventWrapper> GetSync(string stream) =>
+        private IEnumerable<EventEnvelope> GetSync(string stream) =>
             _streams.TryGetValue(stream, out var r) 
                 ? r.Events 
-                : Enumerable.Empty<EventWrapper>();
+                : Enumerable.Empty<EventEnvelope>();
 
         public void Dispose() => _channel.Writer.Complete();
 
