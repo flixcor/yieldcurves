@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ExampleService.Shared
 {
@@ -9,13 +7,13 @@ namespace ExampleService.Shared
     {
         public Dictionary<Type, Func<object, object, object>> EventHandlers { get; } = new Dictionary<Type, Func<object, object, object>>();
         public Dictionary<Type, Func<object, object, IEnumerable<object>>> CommandHandlers { get; } = new Dictionary<Type, Func<object, object, IEnumerable<object>>>();
-        
-        public Delegates.GetStreamName GetStreamName = (id) => typeof(State).Name.ToLowerInvariant() + "-" + id;
 
-        protected void When<Event>(Delegates.When<State, Event> func) 
+        public Delegates.GetStreamName GetStreamName { get; private set; } = (id) => typeof(State).Name.ToLowerInvariant() + "-" + id;
+
+        protected void When<Event>(Delegates.When<State, Event> func)
             => EventHandlers[typeof(Event)] = (state, @event) => func((State)state, (Event)@event);
 
-        protected void Handle<Command>(Delegates.Handle<State, Command> handler) 
+        protected void Handle<Command>(Delegates.Handle<State, Command> handler)
             => CommandHandlers[typeof(Command)] = (state, command) => handler((State)state, (Command)command);
 
         protected void Handle<CommandType>(Func<State, CommandType, object> handler) => Handle<CommandType>((s, c) => new[] { handler(s, c) });
