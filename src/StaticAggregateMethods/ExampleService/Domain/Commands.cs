@@ -1,4 +1,0 @@
-﻿namespace ExampleService.Domain
-{
-    
-}
