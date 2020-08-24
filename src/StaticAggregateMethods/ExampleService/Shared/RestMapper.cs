@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
-using static ExampleService.Shared.Handlers;
+using static ExampleService.Shared.Delegates;
 
 namespace ExampleService.Shared
 {
@@ -41,10 +41,10 @@ namespace ExampleService.Shared
     {
         private static readonly Dictionary<Link, RequestDelegate> s_handlers = new Dictionary<Link, RequestDelegate>();
 
-        public static Func<IAggregateStore> GetAggregateStore { get; private set; } = () => throw new Exception();
+        public static Func<IEventStore> GetEventStore { get; private set; } = () => throw new Exception();
 
         public static IEventStore EventStore { get; set; } = new InMemoryEventStore();
-        public static void SetAggregateStore(IAggregateStore aggregateStore) => GetAggregateStore = () => aggregateStore;
+        public static void SetEventStore(IEventStore eventStore) => GetEventStore = () => eventStore;
 
         public static Link? TryMapIndex(IEnumerable<Link> links)
         {
@@ -73,14 +73,14 @@ namespace ExampleService.Shared
 
         public static IEnumerable<Link> Enumerate(params object?[] maybeTs) => maybeTs.OfType<Link>();
 
-        public static Link? TryMapCommand<TCommand, TState>(Handlers.CommandHandler<TCommand, TState> handler, PathString path) where TCommand : class, new() where TState : class, new()
+        public static Link? TryMapCommand<State, Command>(PathString path) where Command : class, new() where State : class, new()
         {
             var link = new Link { Href = path, Method = HttpMethods.Post };
 
             async Task Handle(HttpContext httpContext)
             {
                 var token = httpContext.RequestAborted;
-                var command = await JsonSerializer.DeserializeAsync<TCommand>(httpContext.Request.Body, Options, token);
+                var command = await JsonSerializer.DeserializeAsync<Command>(httpContext.Request.Body, Options, token);
 
                 if (command is null)
                 {
@@ -88,7 +88,9 @@ namespace ExampleService.Shared
                     return;
                 }
 
-                await AppService.Handle(handler, new CommandEnvelope<TCommand> { Command = command }, EventStore);
+                var handler = Registry.GetHandler<State, Command>();
+
+                await AppService.Handle(handler, new CommandEnvelope<Command> { Command = command }, EventStore);
                 httpContext.Response.StatusCode = StatusCodes.Status202Accepted;
             }
 

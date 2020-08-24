@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ExampleService.Domain;
 using ExampleService.Shared;
-using static ExampleService.Domain.Events;
+using static ExampleService.Domain.MarketCurve.Events;
 
 namespace ExampleService.Features
 {
