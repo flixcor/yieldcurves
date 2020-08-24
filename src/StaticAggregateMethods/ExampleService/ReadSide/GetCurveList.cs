@@ -6,7 +6,7 @@ using static ExampleService.Domain.MarketCurve.Events;
 
 namespace ExampleService.Features
 {
-    public class GetCurveList : IQuery<CurveList>
+    public class GetCurveList : IQuery<GetCurveList.CurveList>
     {
         public static CurveList Project(CurveList state, EventEnvelope eventWrapper) => eventWrapper.Content switch
         {
@@ -23,17 +23,17 @@ namespace ExampleService.Features
         }
 
         public CurveList Handle(CurveList input) => input;
-    }
+        
+        public record CurveList
+        {
+            public IReadOnlyCollection<Curve> Curves { get; init; } = new List<Curve>();
+        }
 
-    public record CurveList
-    {
-        public IReadOnlyCollection<Curve> Curves { get; init; } = new List<Curve>();
-    }
-
-    public record Curve
-    {
-        public string? Id { get; init; }
-        public string? Name { get; init; }
-        public IReadOnlyCollection<string> Instruments { get; init; } = new List<string>();
+        public record Curve
+        {
+            public string? Id { get; init; }
+            public string? Name { get; init; }
+            public IReadOnlyCollection<string> Instruments { get; init; } = new List<string>();
+        }
     }
 }

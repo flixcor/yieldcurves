@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ExampleService.Shared;
 using static ExampleService.Domain.MarketCurve.Commands;
@@ -24,8 +25,12 @@ namespace ExampleService.Domain
                     return new object[] { new MarketCurveNamed(command.Name), new InstrumentAddedToCurve(command.Instrument) };
                 });
 
-                When<MarketCurveNamed>((state, @event) => state with { Name = @event.Name });
+                Handle<AddInstrument>((s, e) => s.Instruments.Contains(e.Instrument)
+                    ? Array.Empty<object>()
+                    : new[] { new InstrumentAddedToCurve(e.Instrument) });
 
+
+                When<MarketCurveNamed>((state, @event) => state with { Name = @event.Name });
                 When<InstrumentAddedToCurve>((state, @event) => state with { Instruments = state.Instruments.Append(@event.InstrumentId).ToList() });
             }
         }
@@ -41,6 +46,11 @@ namespace ExampleService.Domain
             public record NameAndAddInstrument
             {
                 public string? Name { get; init; }
+                public string? Instrument { get; init; }
+            }
+
+            public record AddInstrument
+            {
                 public string? Instrument { get; init; }
             }
         }

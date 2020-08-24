@@ -61,7 +61,7 @@ namespace ExampleService.Shared
                 : null;
         }
 
-        public static IEnumerable<T> Enumerate<T>(this T? maybeT) where T : class
+        public static IEnumerable<T> Yield<T>(this T? maybeT) where T : class
         {
             if (maybeT is not null)
             {
@@ -71,7 +71,7 @@ namespace ExampleService.Shared
 
         public static IEnumerable<Link> Enumerate(params object?[] maybeTs) => maybeTs.OfType<Link>();
 
-        public static Link? TryMapCommand<State, Command>(PathString path) where Command : class, new() where State : class, new()
+        public static Link? TryMapCommand<State, Command>(string path) where Command : class where State : class, new()
         {
             var link = new Link { Href = path, Method = HttpMethods.Post };
 
@@ -88,7 +88,15 @@ namespace ExampleService.Shared
 
                 var handler = Registry.GetHandler<State, Command>();
 
-                await AppService.Handle(handler, new CommandEnvelope<Command> { Command = command }, GetEventStore());
+                var id = httpContext.GetRouteValue("id");
+
+                var commandEnvelope = new CommandEnvelope<Command>
+                {
+                    Command = command,
+                    AggregateId = id is string aggregateId ? aggregateId : Guid.NewGuid().ToString()
+                };
+
+                await AppService.Handle(handler, commandEnvelope, GetEventStore());
                 httpContext.Response.StatusCode = StatusCodes.Status202Accepted;
             }
 
@@ -97,7 +105,7 @@ namespace ExampleService.Shared
                 : null;
         }
 
-        public static Link? TryMapQuery<TQuery, TProjection>(PathString path, Func<TProjection, object?>? enrich = null) where TQuery : class, IQuery<TProjection>, new() where TProjection : class, new()
+        public static Link? TryMapQuery<TQuery, TProjection>(string path, Func<TProjection, object?>? enrich = null) where TQuery : class, IQuery<TProjection>, new() where TProjection : class, new()
         {
             var link = new Link { Href = path, Method = HttpMethods.Get };
 
@@ -176,21 +184,11 @@ namespace ExampleService.Shared
         {
             foreach (var (link, handler) in s_handlers)
             {
-                endpointRouteBuilder.MapHandler(link, handler);
+                endpointRouteBuilder.MapMethods(link.Href, link.Method.Yield(), handler);
             }
 
             return endpointRouteBuilder;
         }
-
-        private static IEndpointConventionBuilder MapHandler(this IEndpointRouteBuilder endpointRouteBuilder, Link? link, RequestDelegate? handler) =>
-            link?.Href == null || handler == null
-                ? throw new Exception()
-                : link.Method?.ToLowerInvariant() switch
-                {
-                    "get" => endpointRouteBuilder.MapGet(link.Href, handler),
-                    "post" => endpointRouteBuilder.MapPost(link.Href, handler),
-                    _ => throw new Exception()
-                };
 
         private static T? GetQueryObject<T>(this HttpRequest request) where T : class
         {
