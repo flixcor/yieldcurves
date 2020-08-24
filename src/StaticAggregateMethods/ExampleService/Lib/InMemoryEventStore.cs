@@ -40,11 +40,11 @@ namespace ExampleService.Shared
                     {
                         throw new Exception();
                     }
-                    return new InMemoryStream(v.Events.Concat(events));
+                    return new InMemoryStream(v.Events.Concat(events.Select(x=> x with { Id = Interlocked.Increment(ref _position) })));
                 });
+
                 foreach (var item in events)
                 {
-                    item.Id = Interlocked.Increment(ref _position);
                     await _channel.Writer.WriteAsync(item, cancellationToken);
                 }
             }

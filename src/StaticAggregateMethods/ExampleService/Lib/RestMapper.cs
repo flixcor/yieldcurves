@@ -42,8 +42,6 @@ namespace ExampleService.Shared
         private static readonly Dictionary<Link, RequestDelegate> s_handlers = new Dictionary<Link, RequestDelegate>();
 
         public static Func<IEventStore> GetEventStore { get; private set; } = () => throw new Exception();
-
-        public static IEventStore EventStore { get; set; } = new InMemoryEventStore();
         public static void SetEventStore(IEventStore eventStore) => GetEventStore = () => eventStore;
 
         public static Link? TryMapIndex(IEnumerable<Link> links)
@@ -90,7 +88,7 @@ namespace ExampleService.Shared
 
                 var handler = Registry.GetHandler<State, Command>();
 
-                await AppService.Handle(handler, new CommandEnvelope<Command> { Command = command }, EventStore);
+                await AppService.Handle(handler, new CommandEnvelope<Command> { Command = command }, GetEventStore());
                 httpContext.Response.StatusCode = StatusCodes.Status202Accepted;
             }
 

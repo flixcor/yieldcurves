@@ -10,6 +10,7 @@ namespace ExampleService
     {
         public static void Setup(IEventStore eventStore)
         {
+            Registry.RegisterAll<Program>();
             InMemoryProjectionStore.TryRegister<CurveList>(GetCurveList.Project);
 
             var testEndpoint = RestMapper.TryMapQuery<GetCurveList, CurveList>("/marketcurves");

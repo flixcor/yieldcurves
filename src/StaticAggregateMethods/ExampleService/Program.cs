@@ -11,12 +11,15 @@ namespace ExampleService
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
+            using var cancel = new CancellationTokenSource();
+
             using var eventStore = new InMemoryEventStore();
-            Bootstrap.Setup(null);
-            _ = WriteEvents(eventStore, default);
-            CreateHostBuilder(args).Build().Run();
+            Bootstrap.Setup(eventStore);
+            var host = CreateHostBuilder(args).Build();
+            _ = WriteEvents(eventStore, cancel.Token);
+            await host.RunAsync(cancel.Token);
         }
 
         private static async Task WriteEvents(IEventStore eventStore, CancellationToken token)
