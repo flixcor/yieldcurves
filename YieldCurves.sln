@@ -74,11 +74,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestParsing", "test\TestPar
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StaticAggregateMethods", "StaticAggregateMethods", "{7B841556-CC20-47FA-AC15-8F20D83F9F23}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleService", "src\StaticAggregateMethods\ExampleService\ExampleService.csproj", "{3DE9D1DC-4E1D-4E44-883F-CBC2A86F3C72}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleService", "src\StaticAggregateMethods\ExampleService\ExampleService.csproj", "{3DE9D1DC-4E1D-4E44-883F-CBC2A86F3C72}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleService.Test", "src\StaticAggregateMethods\ExampleService.Test\ExampleService.Test.csproj", "{DBC717B3-3680-411A-9C0A-852BDA50F14A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleService.Test", "src\StaticAggregateMethods\ExampleService.Test\ExampleService.Test.csproj", "{DBC717B3-3680-411A-9C0A-852BDA50F14A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject1", "src\StaticAggregateMethods\UnitTestProject1\UnitTestProject1.csproj", "{90C610D2-4DA0-4B54-B51A-F581EBC17788}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTestProject1", "src\StaticAggregateMethods\UnitTestProject1\UnitTestProject1.csproj", "{90C610D2-4DA0-4B54-B51A-F581EBC17788}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib", "src\StaticAggregateMethods\Lib\Lib.csproj", "{CEC74C32-3277-4275-86F4-10F963A12680}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.SourceGenerator", "src\StaticAggregateMethods\Lib.SourceGenerator\Lib.SourceGenerator.csproj", "{78233002-8833-44EA-8806-0CF03D8AC7E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "src\StaticAggregateMethods\ConsoleApp1\ConsoleApp1.csproj", "{D5D2DE22-2471-4C8D-B120-59E0767532AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -178,6 +184,18 @@ Global
 		{90C610D2-4DA0-4B54-B51A-F581EBC17788}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90C610D2-4DA0-4B54-B51A-F581EBC17788}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90C610D2-4DA0-4B54-B51A-F581EBC17788}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEC74C32-3277-4275-86F4-10F963A12680}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEC74C32-3277-4275-86F4-10F963A12680}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEC74C32-3277-4275-86F4-10F963A12680}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEC74C32-3277-4275-86F4-10F963A12680}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78233002-8833-44EA-8806-0CF03D8AC7E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78233002-8833-44EA-8806-0CF03D8AC7E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78233002-8833-44EA-8806-0CF03D8AC7E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78233002-8833-44EA-8806-0CF03D8AC7E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5D2DE22-2471-4C8D-B120-59E0767532AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5D2DE22-2471-4C8D-B120-59E0767532AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5D2DE22-2471-4C8D-B120-59E0767532AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5D2DE22-2471-4C8D-B120-59E0767532AC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -214,6 +232,9 @@ Global
 		{3DE9D1DC-4E1D-4E44-883F-CBC2A86F3C72} = {7B841556-CC20-47FA-AC15-8F20D83F9F23}
 		{DBC717B3-3680-411A-9C0A-852BDA50F14A} = {7B841556-CC20-47FA-AC15-8F20D83F9F23}
 		{90C610D2-4DA0-4B54-B51A-F581EBC17788} = {7B841556-CC20-47FA-AC15-8F20D83F9F23}
+		{CEC74C32-3277-4275-86F4-10F963A12680} = {7B841556-CC20-47FA-AC15-8F20D83F9F23}
+		{78233002-8833-44EA-8806-0CF03D8AC7E8} = {7B841556-CC20-47FA-AC15-8F20D83F9F23}
+		{D5D2DE22-2471-4C8D-B120-59E0767532AC} = {7B841556-CC20-47FA-AC15-8F20D83F9F23}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2681B182-AD3D-4651-A205-39DA65F48B1C}

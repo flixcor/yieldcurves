@@ -32,10 +32,10 @@ namespace ExampleService.Shared
 
         public static void Register<Aggregate, State>() where Aggregate : Aggregate<State>, new() where State : class, new()
         {
-            var aggregate = new Aggregate();
-            s_eventHandlers[typeof(State)] = aggregate.EventHandlers;
-            s_commandHandlers[typeof(State)] = aggregate.CommandHandlers;
-            s_streamNames[typeof(State)] = aggregate.GetStreamName;
+            //var aggregate = new Aggregate();
+            //s_eventHandlers[typeof(State)] = aggregate.EventHandlers;
+            //s_commandHandlers[typeof(State)] = aggregate.CommandHandlers;
+            //s_streamNames[typeof(State)] = aggregate.GetStreamName;
         }
 
         public static void RegisterAll<T>()

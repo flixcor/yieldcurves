@@ -1,15 +1,18 @@
 ﻿using AutoFixture;
 using Xunit;
-using static ExampleService.Domain.MarketCurve;
 using static ExampleService.Domain.MarketCurve.Commands;
 using static ExampleService.Domain.MarketCurve.Events;
-using static ExampleService.Test.Shared.GivenWhenThen<ExampleService.Program>;
+using static ExampleService.Domain.MarketCurve;
+using ExampleService.Test.Shared;
 
 
 namespace ExampleService.Test
 {
+    using static GivenWhenThen<Aggregate, State>;
     public class UnitTest1
     {
+        
+
         [Fact]
         public void Test1()
         {
@@ -17,7 +20,7 @@ namespace ExampleService.Test
             var initialName = fixture.Create<MarketCurveNamed>();
             var command = fixture.Create<NameAndAddInstrument>();
 
-            Given<State>(initialName).
+            Given(initialName).
 
             When(command).
 

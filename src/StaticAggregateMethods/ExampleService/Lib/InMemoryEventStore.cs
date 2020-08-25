@@ -29,19 +29,24 @@ namespace ExampleService.Shared
 
         public IAsyncEnumerable<EventEnvelope> Subscribe(CancellationToken token) => _channel.Reader.ReadAllAsync(token);
 
+        private EventEnvelope IncrementId(EventEnvelope envelope) => envelope with { Id = Interlocked.Increment(ref _position) };
+
         public async Task Save(string stream, CancellationToken cancellationToken = default, params EventEnvelope[] events)
         {
             if (events.Any())
             {
-                _streams.AddOrUpdate(stream, new InMemoryStream(events), (k, v) =>
-                {
-                    var first = events.First();
-                    if (v.Events.Length != first.Version)
+                _streams.AddOrUpdate(
+                    key: stream,
+                    addValueFactory: _ => new InMemoryStream(events.Select(IncrementId)),
+                    updateValueFactory: (_, value) =>
                     {
-                        throw new Exception();
-                    }
-                    return new InMemoryStream(v.Events.Concat(events.Select(x=> x with { Id = Interlocked.Increment(ref _position) })));
-                });
+                        var first = events.First();
+                        if (value.Events.Length != first.Version)
+                        {
+                            throw new Exception();
+                        }
+                        return new InMemoryStream(value.Events.Concat(events.Select(IncrementId)));
+                    });
 
                 foreach (var item in events)
                 {
