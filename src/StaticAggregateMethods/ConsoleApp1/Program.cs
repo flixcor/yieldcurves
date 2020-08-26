@@ -1,29 +1,35 @@
 ﻿using System;
-using GeneratedCheese;
 using Lib;
 
 namespace ConsoleApp1
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
-            var childDing = new ChildDing();
-            var cheeseChooser = new CheeseChooser();
-            Console.WriteLine($"The best cheese for pasta is: {cheeseChooser.BestCheeseForPasta}");
-            Console.WriteLine($"The best cheese for potato is: {cheeseChooser.BestCheeseForBakedPotato}");
-            Console.WriteLine(cheeseChooser.Test);
+            _ = new ChildDing(); 
+            var agg = AggregateRegistry.Resolve<State>();
+            var state = agg.When(new State(), new Command());
+            Console.WriteLine(state.Hoi);
         } 
 
-        class State
-        {
+        
+    }
+    public class Command
+    {
 
-        }
-
-        class ChildDing: Aggregate<State>
-        {
-
-        }
     }
 
+    public class State
+    {
+        public string Hoi { get; set; } = "hoi";
+    }
+
+    public class ChildDing : Aggregate<State>
+    {
+        public ChildDing()
+        {
+            When<Command>((s, _) => new State { Hoi = "doei" });
+        }
+    }
 }
