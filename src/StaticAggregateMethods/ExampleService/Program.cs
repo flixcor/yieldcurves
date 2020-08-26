@@ -2,12 +2,13 @@
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using ExampleService.Shared;
+using ExampleService.Lib;
+using Lib.EventSourcing;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace ExampleService
+namespace Lib
 {
     public class Program
     {
@@ -39,7 +40,7 @@ namespace ExampleService
 
                     Console.WriteLine(e.Message);
                 }
-                
+
             }
         }
 

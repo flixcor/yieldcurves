@@ -1,40 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
+using Lib.Aggregates;
+using Lib.EventSourcing;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using NodaTime;
-using NodaTime.Serialization.SystemTextJson;
-using static ExampleService.Shared.Delegates;
 
-namespace ExampleService.Shared
+namespace ExampleService.Lib
 {
-    public record Link
+    public class Link
     {
         public string? Href { get; init; }
         public string? Method { get; init; }
         public HydraClass? Expects { get; init; }
     }
 
-    public record HydraClass
+    public class HydraClass
     {
-        public string? @Id { get; init; }
+        public string? @Id { get; set; }
         public string? @Type { get; } = "hydra:Class";
-        public IReadOnlyCollection<SupportedProperty> SupportedProperty { get; init; } = Array.Empty<SupportedProperty>();
-        public string? Title { get; init; }
+        public IReadOnlyCollection<SupportedProperty> SupportedProperty { get; set; } = Array.Empty<SupportedProperty>();
+        public string? Title { get; set; }
     }
 
-    public record SupportedProperty
+    public class SupportedProperty
     {
         public string @Type { get; } = "SupportedProperty";
-        public bool Required { get; init; } = true;
-        public string? Title { get; init; }
-        public dynamic? Default { get; init; }
+        public bool Required { get; set; } = true;
+        public string? Title { get; set; }
+        public dynamic? Default { get; set; }
     }
 
     public static class RestMapper
@@ -63,7 +61,7 @@ namespace ExampleService.Shared
 
         public static IEnumerable<T> Yield<T>(this T? maybeT) where T : class
         {
-            if (maybeT is not null)
+            if (maybeT != null)
             {
                 yield return maybeT;
             }
@@ -86,7 +84,7 @@ namespace ExampleService.Shared
                     return;
                 }
 
-                var handler = Registry.GetHandler<State, Command>();
+                var aggregate = httpContext.RequestServices.GetService(typeof(IAggregate<State>)) as IAggregate<State>;
 
                 var id = httpContext.GetRouteValue("id");
 
@@ -96,7 +94,7 @@ namespace ExampleService.Shared
                     AggregateId = id is string aggregateId ? aggregateId : Guid.NewGuid().ToString()
                 };
 
-                await AppService.Handle(handler, commandEnvelope, GetEventStore());
+                await AppService.Handle(commandEnvelope, aggregate, GetEventStore());
                 httpContext.Response.StatusCode = StatusCodes.Status202Accepted;
             }
 
@@ -156,14 +154,16 @@ namespace ExampleService.Shared
             var name = type.Name;
             var supportedProperties = type.GetProperties().Select(p => new SupportedProperty { Title = p.Name, Default = p.GetValue(t) }).ToArray();
 
-            return link with
+            return new Link
             {
+                Href = link.Href,
+                Method = link.Method,
                 Expects = new HydraClass { Id = "hydra:" + name, Title = name, SupportedProperty = supportedProperties }
             };
         }
 
         public static Link WithRouteValues(this Link link, object routeValues)
-            => link with { Href = link?.Href?.ReplaceParameters(routeValues) };
+            => new Link { Href = link?.Href?.ReplaceParameters(routeValues), Expects = link.Expects, Method = link.Method };
 
         private static string ReplaceParameters(this string s, object routeValues)
         {
@@ -208,7 +208,9 @@ namespace ExampleService.Shared
 
             var ding = dict.Cast<string>().ToDictionary(k => k, v => (object?)dict[v]);
 
-            request?.RouteValues.ToList().ForEach(keValuePair =>
+
+
+            request.RouteValues.ToList().ForEach(keValuePair =>
             {
                 var (key, value) = keValuePair;
                 ding.TryAdd(key, value);
@@ -223,6 +225,6 @@ namespace ExampleService.Shared
             PropertyNameCaseInsensitive = true,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             IgnoreNullValues = true
-        }.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+        };
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ExampleService.Shared
+namespace Lib.Aggregates
 {
     public static class Delegates
     {

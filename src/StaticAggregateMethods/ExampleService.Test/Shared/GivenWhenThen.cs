@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using ExampleService.Shared;
+using Lib.Aggregates;
 using Xunit;
 
-namespace ExampleService.Test.Shared
+namespace Lib.Test.Shared
 {
     public interface IWhen<S>
     {

@@ -1,4 +1,4 @@
-﻿namespace ExampleService.Shared
+﻿namespace Lib.EventSourcing
 {
     public interface IQuery<T>
     {

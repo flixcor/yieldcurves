@@ -1,13 +1,14 @@
 ﻿using System.Linq;
-using ExampleService.Domain;
-using ExampleService.Features;
-using ExampleService.Shared;
-using static ExampleService.Domain.MarketCurve.Commands;
-using static ExampleService.Domain.MarketCurve.Events;
-using static ExampleService.Features.GetCurveList;
-using static ExampleService.Features.GetCurve;
+using ExampleService.Lib;
+using Lib.Domain;
+using Lib.EventSourcing;
+using Lib.Features;
+using static Lib.Domain.MarketCurve.Commands;
+using static Lib.Domain.MarketCurve.Events;
+using static Lib.Features.GetCurve;
+using static Lib.Features.GetCurveList;
 
-namespace ExampleService
+namespace Lib
 {
     public static class Bootstrap
     {
@@ -16,14 +17,11 @@ namespace ExampleService
 
         public static void Setup(IEventStore eventStore)
         {
-
-
-            Registry.RegisterAll<Program>();
             InMemoryProjectionStore.TryRegister<CurveList>(Project);
             InMemoryProjectionStore.TryRegister<GetCurve.Curve>(Project);
 
-            var getCurveList = RestMapper.TryMapQuery<GetCurveList, CurveList>(MarketCurvesUrl, (curves) => new 
-            { 
+            var getCurveList = RestMapper.TryMapQuery<GetCurveList, CurveList>(MarketCurvesUrl, (curves) => new
+            {
                 curves = curves.Curves.Select(c => new
                 {
                     id = MarketCurvesUrl + "/" + c.Id,
@@ -31,7 +29,7 @@ namespace ExampleService
                     c.Name
                 })
             });
-            
+
             var nameAndAddInstrument = RestMapper.TryMapCommand<MarketCurve.State, NameAndAddInstrument>(
                 MarketCurvesUrl)?.WithExpected(new NameAndAddInstrument()
             );

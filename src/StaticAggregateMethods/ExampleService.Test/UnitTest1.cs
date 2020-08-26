@@ -1,12 +1,12 @@
 ﻿using AutoFixture;
 using Xunit;
-using static ExampleService.Domain.MarketCurve.Commands;
-using static ExampleService.Domain.MarketCurve.Events;
-using static ExampleService.Domain.MarketCurve;
-using ExampleService.Test.Shared;
+using static Lib.Domain.MarketCurve.Commands;
+using static Lib.Domain.MarketCurve.Events;
+using static Lib.Domain.MarketCurve;
+using Lib.Test.Shared;
 
 
-namespace ExampleService.Test
+namespace Lib.Test
 {
     using static GivenWhenThen<Aggregate, State>;
     public class UnitTest1

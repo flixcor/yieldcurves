@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ExampleService.Shared;
-using static ExampleService.Domain.MarketCurve.Commands;
-using static ExampleService.Domain.MarketCurve.Events;
+using Lib.Aggregates;
+using static Lib.Domain.MarketCurve.Commands;
+using static Lib.Domain.MarketCurve.Events;
 
-namespace ExampleService.Domain
+namespace Lib.Domain
 {
     public static class MarketCurve
     {
@@ -15,7 +15,7 @@ namespace ExampleService.Domain
             {
                 StreamName((id) => "marketcurve-" + id);
 
-                Handle<NameAndAddInstrument>((_, command) => 
+                Handle<NameAndAddInstrument>((_, command) =>
                 {
                     if (command.Name == null || command.Instrument == null)
                     {
@@ -63,5 +63,5 @@ namespace ExampleService.Domain
         }
     }
 
-    
+
 }

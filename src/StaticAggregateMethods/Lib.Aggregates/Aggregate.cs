@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ExampleService.Shared
+namespace Lib.Aggregates
 {
     public interface IAggregate<State> where State : class, new()
     {
         State When(State state, object @event);
         IEnumerable<object> Handle(State state, object command);
+        Delegates.GetStreamName GetStreamName { get; }
     }
 
-    public abstract class Aggregate<State>: IAggregate<State> where State : class, new()
+    public abstract class Aggregate<State> : IAggregate<State> where State : class, new()
     {
         public Dictionary<Type, Func<State, object, State>> EventHandlers { get; } = new Dictionary<Type, Func<State, object, State>>();
         public Dictionary<Type, Func<State, object, IEnumerable<object>>> CommandHandlers { get; } = new Dictionary<Type, Func<State, object, IEnumerable<object>>>();
@@ -28,7 +29,7 @@ namespace ExampleService.Shared
 
         State IAggregate<State>.When(State state, object @event)
         {
-            return EventHandlers[@event.GetType()](state, @event);
+            return EventHandlers.TryGetValue(@event.GetType(), out var when) ? when(state, @event) : state;
         }
 
         IEnumerable<object> IAggregate<State>.Handle(State state, object command)

@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
-namespace ExampleService.Shared
+namespace Lib.EventSourcing
 {
     public class InMemoryEventStore : IEventStore, IDisposable
     {

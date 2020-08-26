@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using Lib.Aggregates;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -43,6 +45,19 @@ namespace CheeseSourceGenerator
                 return;
             }
             var compilation = context.Compilation;
+            var references = compilation.ExternalReferences.Where(x => !x.Display.Contains("Microsoft.NETCore.App.Ref"));
+            var assemblies = references.Select(a => Assembly.LoadFile(a.Display));
+
+            var types = assemblies
+                .SelectMany(a => a
+                    .GetTypes()
+                    .Where(x =>
+                        x.BaseType != null
+                        && x.BaseType.IsGenericType
+                        && x.BaseType.GetGenericTypeDefinition() == typeof(Aggregate<>)))
+                    .Select(x => new { Aggregate = x.FullName, State = x.BaseType.GetGenericArguments()[0].FullName })
+                    .ToList();
+
 
             var stringBuilder = new StringBuilder();
 
@@ -56,7 +71,12 @@ namespace CheeseSourceGenerator
                 var nameSpaceName = nameSpace.ToString();
                 var fullT = nameSpaceName + "." + typeInfo.Name;
 
-                stringBuilder.Append($"            s_aggregates.Add(typeof({fullT}), new {field.FullName}());");
+                stringBuilder.AppendLine($"            s_aggregates.Add(typeof({fullT}), new {field.FullName}());");
+            }
+
+            foreach (var item in types)
+            {
+                stringBuilder.AppendLine($"            s_aggregates.Add(typeof({item.State}), new {item.Aggregate}());");
             }
 
             stringBuilder.Append(Part2);

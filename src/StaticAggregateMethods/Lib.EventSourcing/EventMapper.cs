@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ExampleService.Shared
+namespace Lib.EventSourcing
 {
     public static class EventMapper
     {

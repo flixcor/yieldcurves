@@ -11,4 +11,8 @@
     <PackageReference Include="NodaTime.Serialization.SystemTextJson" Version="1.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Lib.EventSourcing\Lib.EventSourcing.csproj" />
+  </ItemGroup>
+
 </Project>

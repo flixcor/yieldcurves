@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ExampleService.Shared;
-using static ExampleService.Domain.MarketCurve.Events;
+using Lib.EventSourcing;
+using static Lib.Domain.MarketCurve.Events;
 
-namespace ExampleService.Features
+namespace Lib.Features
 {
     public class GetCurveList : IQuery<GetCurveList.CurveList>
     {
@@ -23,7 +23,7 @@ namespace ExampleService.Features
         }
 
         public CurveList Handle(CurveList input) => input;
-        
+
         public record CurveList
         {
             public IReadOnlyCollection<Curve> Curves { get; init; } = new List<Curve>();

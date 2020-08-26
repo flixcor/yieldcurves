@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using ExampleService.Shared;
-using static ExampleService.Domain.MarketCurve.Events;
+using Lib.EventSourcing;
+using static Lib.Domain.MarketCurve.Events;
 
-namespace ExampleService.Features
+namespace Lib.Features
 {
     public class GetCurve : IQuery<GetCurve.Curve>
     {
@@ -25,5 +24,5 @@ namespace ExampleService.Features
         }
     }
 
-    
+
 }
