@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ExampleService.Lib;
 using Lib.Aggregates;
 using static Lib.Domain.MarketCurve.Commands;
 using static Lib.Domain.MarketCurve.Events;
@@ -26,8 +27,8 @@ namespace Lib.Domain
                 });
 
                 Handle<AddInstrument>((s, e) => s.Instruments.Contains(e.Instrument)
-                    ? Array.Empty<object>()
-                    : new[] { new InstrumentAddedToCurve(e.Instrument) });
+                    ? Enumerable.Empty<object>()
+                    : new InstrumentAddedToCurve(e.Instrument).Yield());
 
 
                 When<MarketCurveNamed>((state, @event) => state with { Name = @event.Name });

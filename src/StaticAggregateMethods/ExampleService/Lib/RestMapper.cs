@@ -38,6 +38,25 @@ namespace ExampleService.Lib
     public static class RestMapper
     {
         private static readonly Dictionary<Link, RequestDelegate> s_handlers = new Dictionary<Link, RequestDelegate>();
+        private static readonly Dictionary<Type, object> s_aggregates = new Dictionary<Type, object>();
+
+        private static bool TryAddAggregate<Aggregate, State>() where Aggregate : IAggregate<State>, new() where State : class, new()
+        {
+            var type = typeof(Aggregate);
+
+            if (s_aggregates.ContainsKey(type))
+            {
+                return false;
+            }
+
+            s_aggregates.Add(type, new Aggregate());
+            return true;
+        }
+
+        private static IAggregate<State> GetAggregate<Aggregate, State>() where Aggregate : IAggregate<State>, new() where State : class, new()
+        {
+            return s_aggregates[typeof(Aggregate)] as IAggregate<State>;
+        }
 
         public static Func<IEventStore> GetEventStore { get; private set; } = () => throw new Exception();
         public static void SetEventStore(IEventStore eventStore) => GetEventStore = () => eventStore;
@@ -69,38 +88,43 @@ namespace ExampleService.Lib
 
         public static IEnumerable<Link> Enumerate(params object?[] maybeTs) => maybeTs.OfType<Link>();
 
-        public static Link? TryMapCommand<State, Command>(string path) where Command : class where State : class, new()
+        public static Link? TryMapCommand<Aggregate, State, Command>(string path) where Command : class where State : class, new() where Aggregate : IAggregate<State>, new()
         {
+            TryAddAggregate<Aggregate, State>();
+
             var link = new Link { Href = path, Method = HttpMethods.Post };
 
-            async Task Handle(HttpContext httpContext)
-            {
-                var token = httpContext.RequestAborted;
-                var command = await JsonSerializer.DeserializeAsync<Command>(httpContext.Request.Body, Options, token);
-
-                if (command is null)
-                {
-                    httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
-                    return;
-                }
-
-                var aggregate = httpContext.RequestServices.GetService(typeof(IAggregate<State>)) as IAggregate<State>;
-
-                var id = httpContext.GetRouteValue("id");
-
-                var commandEnvelope = new CommandEnvelope<Command>
-                {
-                    Command = command,
-                    AggregateId = id is string aggregateId ? aggregateId : Guid.NewGuid().ToString()
-                };
-
-                await AppService.Handle(commandEnvelope, aggregate, GetEventStore());
-                httpContext.Response.StatusCode = StatusCodes.Status202Accepted;
-            }
-
-            return s_handlers.TryAdd(link, Handle)
+            return s_handlers.TryAdd(link, Handle<Aggregate, State, Command>)
                 ? link
                 : null;
+        }
+
+        private static async Task Handle<Aggregate, State, Command>(HttpContext httpContext)
+            where Aggregate : IAggregate<State>, new()
+            where State : class, new()
+            where Command : class
+        {
+            var token = httpContext.RequestAborted;
+            var command = await JsonSerializer.DeserializeAsync<Command>(httpContext.Request.Body, Options, token);
+
+            if (command is null)
+            {
+                httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+                return;
+            }
+
+            var aggregate = GetAggregate<Aggregate, State>();
+
+            var id = httpContext.GetRouteValue("id");
+
+            var commandEnvelope = new CommandEnvelope<Command>
+            {
+                Command = command,
+                AggregateId = id is string aggregateId ? aggregateId : Guid.NewGuid().ToString()
+            };
+
+            await AppService.Handle(commandEnvelope, aggregate, GetEventStore());
+            httpContext.Response.StatusCode = StatusCodes.Status202Accepted;
         }
 
         public static Link? TryMapQuery<TQuery, TProjection>(string path, Func<TProjection, object?>? enrich = null) where TQuery : class, IQuery<TProjection>, new() where TProjection : class, new()

@@ -17,6 +17,10 @@ namespace Lib
 
         public static void Setup(IEventStore eventStore)
         {
+            Describe.Class<GetCurve.Curve>()
+                .Property(x => x.Instruments).Are("")
+                .Property(x=> x.Name).Is("");
+
             InMemoryProjectionStore.TryRegister<CurveList>(Project);
             InMemoryProjectionStore.TryRegister<GetCurve.Curve>(Project);
 
@@ -24,17 +28,17 @@ namespace Lib
             {
                 curves = curves.Curves.Select(c => new
                 {
-                    id = MarketCurvesUrl + "/" + c.Id,
+                    @Id = MarketCurvesUrl + "/" + c.Id,
                     c.Instruments,
                     c.Name
                 })
             });
 
-            var nameAndAddInstrument = RestMapper.TryMapCommand<MarketCurve.State, NameAndAddInstrument>(
+            var nameAndAddInstrument = RestMapper.TryMapCommand<MarketCurve.Aggregate, MarketCurve.State, NameAndAddInstrument>(
                 MarketCurvesUrl)?.WithExpected(new NameAndAddInstrument()
             );
 
-            RestMapper.TryMapCommand<MarketCurve.State, AddInstrument>(MarketCurveSingleUrl);
+            RestMapper.TryMapCommand<MarketCurve.Aggregate, MarketCurve.State, AddInstrument>(MarketCurveSingleUrl);
             RestMapper.TryMapQuery<GetCurve, GetCurve.Curve>(MarketCurveSingleUrl);
 
             RestMapper.TryMapIndex(getCurveList.Yield());
