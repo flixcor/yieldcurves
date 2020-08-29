@@ -137,15 +137,14 @@ namespace ExampleService.Lib
             {
                 var token = context.RequestAborted;
                 var query = context.Request.GetQueryObject<TQuery>();
-                var projection = await InMemoryProjectionStore.GetAsync<TProjection>();
 
-                if (query == null || projection == null)
+                if (query == null)
                 {
                     context.Response.StatusCode = StatusCodes.Status400BadRequest;
                     return;
                 }
 
-                var queryResult = query.Handle(projection);
+                var queryResult = query.Handle();
 
                 if (queryResult == null)
                 {

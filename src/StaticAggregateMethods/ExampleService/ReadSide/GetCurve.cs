@@ -7,14 +7,19 @@ namespace Lib.Features
 {
     public class GetCurve : IQuery<GetCurve.Curve>
     {
-        public static Curve Project(Curve state, EventEnvelope eventWrapper) => eventWrapper.Content switch
-        {
-            MarketCurveNamed named => state with { Name = named.Name },
-            InstrumentAddedToCurve instrument => state with { Instruments = state.Instruments.Append(instrument.InstrumentId).ToList() },
-            _ => state
-        };
+        public string Id { get; init; }
 
-        public Curve Handle(Curve input) => input;
+        public class Projection : InMemoryProjection<Curve>
+        {
+            public Projection()
+            {
+                CreateOrUpdateWhen<MarketCurveNamed>((e, state) => state with { Id = e.AggregateId, Name = e.Content.Name });
+
+                CreateOrUpdateWhen<InstrumentAddedToCurve>((e, state) => state with { Id = e.AggregateId, Instruments = state.Instruments.Append(e.Content.InstrumentId).ToList() });
+            }
+        }
+
+        public Curve Handle() => InMemoryProjectionStore.Instance.Get<Curve>(Id).Item2;
 
         public record Curve
         {
@@ -23,6 +28,4 @@ namespace Lib.Features
             public IReadOnlyCollection<string> Instruments { get; init; } = new List<string>();
         }
     }
-
-
 }

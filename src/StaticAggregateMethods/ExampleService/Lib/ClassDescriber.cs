@@ -14,7 +14,7 @@ namespace ExampleService.Lib
                 return describer;
             }
 
-            describer = new Describer<T>();
+            describer = new ClassDescriber<T>();
             s_types[typeof(T)] = describer;
 
             return describer;
@@ -22,9 +22,16 @@ namespace ExampleService.Lib
 
 
 
-        private class Describer<T> : IClassDescriber<T> where T : class
+        private class ClassDescriber<T> : IClassDescriber<T> where T : class
         {
+            private string? _type;
             private readonly Dictionary<Func<T, object>, string> _urls = new Dictionary<Func<T, object>, string>();
+
+            public IClassDescriber<T> HasType(string type)
+            {
+                _type = type;
+                return this;
+            }
 
             public IPropertyDescriber<T> Property(Func<T, object> func) => new PropertyDescriber(this, func);
             public IPropertyDescriber<T> Property(Func<T, string> func) => new PropertyDescriber(this, func);
@@ -32,10 +39,10 @@ namespace ExampleService.Lib
 
             private class PropertyDescriber : IPropertyDescriber<T>
             {
-                private readonly Describer<T> _parent;
+                private readonly ClassDescriber<T> _parent;
                 private readonly Func<T, object> _func;
 
-                public PropertyDescriber(Describer<T> parent, Func<T, object> func)
+                public PropertyDescriber(ClassDescriber<T> parent, Func<T, object> func)
                 {
                     _parent = parent;
                     _func = func;
@@ -49,10 +56,10 @@ namespace ExampleService.Lib
 
             private class CollectionDescriber: ICollectionDescriber<T> 
             {
-                private readonly Describer<T> _parent;
+                private readonly ClassDescriber<T> _parent;
                 private readonly Func<T, object> _func;
 
-                public CollectionDescriber(Describer<T> parent, Func<T, object> func)
+                public CollectionDescriber(ClassDescriber<T> parent, Func<T, object> func)
                 {
                     _parent = parent;
                     _func = func;
@@ -69,6 +76,7 @@ namespace ExampleService.Lib
 
     public interface IClassDescriber<T> where T : class
     {
+        IClassDescriber<T> HasType(string type);
         IPropertyDescriber<T> Property(Func<T, string> func);
         IPropertyDescriber<T> Property(Func<T, object> func);
         ICollectionDescriber<T> Property<P>(Func<T, IEnumerable<P>> func);

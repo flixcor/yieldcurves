@@ -8,21 +8,15 @@ namespace Lib.Features
 {
     public class GetCurveList : IQuery<GetCurveList.CurveList>
     {
-        public static CurveList Project(CurveList state, EventEnvelope eventWrapper) => eventWrapper.Content switch
+        public class Projection : InMemoryProjection<Curve>
         {
-            MarketCurveNamed named => AddOrUpdate(state, eventWrapper.AggregateId, (c) => c with { Name = named.Name }),
-            InstrumentAddedToCurve instrument => AddOrUpdate(state, eventWrapper.AggregateId, (c) => c with { Instruments = c.Instruments.Append(instrument.InstrumentId).ToList() }),
-            _ => state
-        };
-
-        private static CurveList AddOrUpdate(CurveList state, string id, Func<Curve, Curve> func)
-        {
-            var inputCurve = state.Curves.FirstOrDefault(x => x.Id == id) ?? new Curve { Id = id };
-            var outputCurve = func(inputCurve);
-            return state with { Curves = state.Curves.Where(x => x.Id != id).Append(outputCurve).ToList() };
+            public Projection()
+            {
+                CreateOrUpdateWhen<MarketCurveNamed>((e, c) => c with { Id = e.AggregateId, Name = e.Content.Name });
+            }
         }
 
-        public CurveList Handle(CurveList input) => input;
+        public CurveList Handle() => new CurveList { Curves = InMemoryProjectionStore.Instance.GetAll<Curve>().Item2.ToList() };
 
         public record CurveList
         {
@@ -33,7 +27,6 @@ namespace Lib.Features
         {
             public string? Id { get; init; }
             public string? Name { get; init; }
-            public IReadOnlyCollection<string> Instruments { get; init; } = new List<string>();
         }
     }
 }

@@ -3,6 +3,7 @@ using ExampleService.Lib;
 using Lib.Domain;
 using Lib.EventSourcing;
 using Lib.Features;
+using Vocab;
 using static Lib.Domain.MarketCurve.Commands;
 using static Lib.Domain.MarketCurve.Events;
 using static Lib.Features.GetCurve;
@@ -18,18 +19,14 @@ namespace Lib
         public static void Setup(IEventStore eventStore)
         {
             Describe.Class<GetCurve.Curve>()
-                .Property(x => x.Instruments).Are("")
-                .Property(x=> x.Name).Is("");
-
-            InMemoryProjectionStore.TryRegister<CurveList>(Project);
-            InMemoryProjectionStore.TryRegister<GetCurve.Curve>(Project);
+                .Property(x => x.Instruments).Are(Schema.instrument)
+                .Property(x=> x.Name).Is(Schema.name);
 
             var getCurveList = RestMapper.TryMapQuery<GetCurveList, CurveList>(MarketCurvesUrl, (curves) => new
             {
                 curves = curves.Curves.Select(c => new
                 {
                     @Id = MarketCurvesUrl + "/" + c.Id,
-                    c.Instruments,
                     c.Name
                 })
             });

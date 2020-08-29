@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using ExampleService.Lib;
 using Lib.EventSourcing;
+using Lib.Features;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Projac;
 
 namespace Lib
 {
@@ -25,11 +28,14 @@ namespace Lib
 
         private static async Task WriteEvents(IEventStore eventStore, CancellationToken token)
         {
+            var projections = new GetCurve.Projection().Handlers.Concat(new GetCurveList.Projection().Handlers).ToArray();
+            var projector = new Projector<InMemoryProjectionStore>(Resolve.WhenAssignableToHandlerMessageType(projections));
+
             await foreach (var item in eventStore.Subscribe(token))
             {
                 try
                 {
-                    InMemoryProjectionStore.Project(item);
+                    await projector.ProjectAsync(InMemoryProjectionStore.Instance, item, token);
                     var json = JsonSerializer.Serialize(item, RestMapper.Options);
                     Console.WriteLine();
                     Console.WriteLine(EventMapper.Name(item.Content.GetType()));

@@ -1,32 +1,44 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Lib.EventSourcing
 {
-    public static class InMemoryProjectionStore
+    public class InMemoryProjectionStore
     {
-        private static Dictionary<Type, (object State, Func<object, EventEnvelope, object> Projection)> _projections = new Dictionary<Type, (object, Func<object, EventEnvelope, object>)>();
+        public static readonly InMemoryProjectionStore Instance = new InMemoryProjectionStore();
 
-        public static bool TryRegister<T>(Func<T, EventEnvelope, T> projection) where T : class, new()
-        {
-            var type = typeof(T);
+        private InMemoryProjectionStore() { }
 
-            if (_projections.ContainsKey(type))
-            {
-                return false;
-            }
+        private readonly ConcurrentDictionary<Type, (long, Dictionary<string, object>)> _projections = new ConcurrentDictionary<Type, (long, Dictionary<string, object>)>();
 
-            _projections[type] = (new T(), (state, e) => Convert(state, e, projection));
+        public (long, T) Get<T>(string id) where T : class =>
+            _projections.TryGetValue(typeof(T), out var projection)
+                ? projection.Item2.TryGetValue(id, out var obj) && obj is T t
+                    ? (projection.Item1, t)
+                    : (projection.Item1, null)
+                : (0, null);
 
-            return true;
-        }
+        public (long, IEnumerable<T>) GetAll<T>() => _projections.TryGetValue(typeof(T), out var projection)
+            ? (projection.Item1, projection.Item2.Values.OfType<T>())
+            : (0, Enumerable.Empty<T>());
 
-        public static Task<T> GetAsync<T>() where T : class, new() => Task.FromResult(_projections[typeof(T)].Item1 as T);
+        public void AddOrUpdate<T>(long version, Func<T, T> mapper, string id) where T : class, new () 
+        => _projections.AddOrUpdate(
+            typeof(T),
+            _ => (version, new Dictionary<string, object> { { id, mapper(new T()) } }),
+            (_, tup) => version > tup.Item1 
+                ? (version, new Dictionary<string, object>(tup.Item2) { [id] = mapper(tup.Item2.TryGetValue(id, out var val) && val is T t ? t : new T()) })
+                : tup
+            );
 
-        public static void Project(EventEnvelope eventWrapper) => _projections = _projections.ToDictionary(x => x.Key, x => (x.Value.Projection(x.Value.State, eventWrapper), x.Value.Projection));
-
-        private static object Convert<T>(object state, EventEnvelope @event, Func<T, EventEnvelope, T> projection) where T : class, new() => projection(state as T, @event);
+        public void Delete<T>(long version, string id) => _projections.AddOrUpdate(
+            typeof(T),
+            _ => (version, new Dictionary<string, object>()),
+            (_, tup) => version > tup.Item1
+                ? (version, new Dictionary<string, object>(tup.Item2) { [id] = null })
+                : tup
+            );
     }
 }

@@ -20,7 +20,7 @@ namespace Lib.EventSourcing
             var (version, state) = await Load(streamName, aggregate, eventStore, cancel);
 
             var events = aggregate.Handle(state, commandEnvelope.Command)
-                .Select((e, i) => new EventEnvelope { AggregateId = commandEnvelope.AggregateId, Version = version + i + 1, Content = e })
+                .Select((e, i) => EventEnvelope.Create(commandEnvelope.AggregateId, version + i + 1,  e))
                 .ToArray();
 
             await eventStore.Save(streamName, cancel, events);
