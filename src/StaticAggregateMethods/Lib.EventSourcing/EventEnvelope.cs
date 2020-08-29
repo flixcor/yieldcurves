@@ -13,7 +13,7 @@ namespace Lib.EventSourcing
             return envelope with { AggregateId = aggregateId, Version = version, Content = content };
         }
 
-        public long Id { get; internal set; }
+        public long Position { get; internal set; }
         public string? AggregateId { get; init; }
         public DateTimeOffset Timestamp { get; init; } = DateTimeOffset.UtcNow;
         public int Version { get; init; }

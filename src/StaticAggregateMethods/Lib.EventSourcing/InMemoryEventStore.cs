@@ -25,19 +25,25 @@ namespace Lib.EventSourcing
 
         private readonly ConcurrentDictionary<string, InMemoryStream> _streams = new ConcurrentDictionary<string, InMemoryStream>();
 
-        private long _position;
+        private long _position = -1;
 
         public IAsyncEnumerable<EventEnvelope> Subscribe(CancellationToken token) => _channel.Reader.ReadAllAsync(token);
 
-        private EventEnvelope IncrementId(EventEnvelope envelope) => envelope with { Id = Interlocked.Increment(ref _position) };
+        private EventEnvelope IncrementId(EventEnvelope envelope) => envelope with { Position = Interlocked.Increment(ref _position) };
 
         public async Task Save(string stream, CancellationToken cancellationToken = default, params EventEnvelope[] events)
         {
             if (events.Any())
             {
+                List<EventEnvelope> addedEvents = null;
+
                 _streams.AddOrUpdate(
                     key: stream,
-                    addValueFactory: _ => new InMemoryStream(events.Select(IncrementId)),
+                    addValueFactory: _ =>
+                    {
+                        addedEvents = events.Select(IncrementId).ToList();
+                        return new InMemoryStream(addedEvents);
+                    },
                     updateValueFactory: (_, value) =>
                     {
                         var first = events.First();
@@ -45,10 +51,12 @@ namespace Lib.EventSourcing
                         {
                             throw new Exception();
                         }
-                        return new InMemoryStream(value.Events.Concat(events.Select(IncrementId)));
+
+                        addedEvents = events.Select(IncrementId).ToList();
+                        return new InMemoryStream(value.Events.Concat(addedEvents));
                     });
 
-                foreach (var item in events)
+                foreach (var item in addedEvents)
                 {
                     await _channel.Writer.WriteAsync(item, cancellationToken);
                 }
