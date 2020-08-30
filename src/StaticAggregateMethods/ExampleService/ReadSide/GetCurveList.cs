@@ -13,10 +13,19 @@ namespace Lib.Features
             public Projection()
             {
                 CreateOrUpdateWhen<MarketCurveNamed>((e, c) => c with { Id = e.AggregateId, Name = e.Content.Name });
+                CreateOrUpdateWhen<InstrumentAddedToCurve>((e, c)
+                    =>
+                {
+                    return c with { Id = e.AggregateId, InstrumentCount = c.InstrumentCount + 1 };
+                });
             }
         }
 
-        public CurveList Handle() => new CurveList { Curves = InMemoryProjectionStore.Instance.GetAll<Curve>().Item2.ToList() };
+        public (long, CurveList) Handle()
+        {
+            var (position, curves) = InMemoryProjectionStore.Instance.GetAll<Curve>();
+            return (position, new CurveList { Curves = curves.ToList() });
+        }
 
         public record CurveList
         {
@@ -27,6 +36,7 @@ namespace Lib.Features
         {
             public string? Id { get; init; }
             public string? Name { get; init; }
+            public int InstrumentCount { get; init; }
         }
     }
 }

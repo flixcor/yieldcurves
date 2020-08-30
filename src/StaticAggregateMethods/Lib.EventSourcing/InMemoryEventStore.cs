@@ -31,7 +31,7 @@ namespace Lib.EventSourcing
 
         private EventEnvelope IncrementId(EventEnvelope envelope) => envelope with { Position = Interlocked.Increment(ref _position) };
 
-        public async Task Save(string stream, CancellationToken cancellationToken = default, params EventEnvelope[] events)
+        public async Task<long?> Save(string stream, CancellationToken cancellationToken = default, params EventEnvelope[] events)
         {
             if (events.Any())
             {
@@ -60,7 +60,11 @@ namespace Lib.EventSourcing
                 {
                     await _channel.Writer.WriteAsync(item, cancellationToken);
                 }
+
+                return addedEvents.Max(x => x.Position);
             }
+
+            return null;
         }
 
         public IAsyncEnumerable<EventEnvelope> Get(string stream, CancellationToken cancellation = default) => 

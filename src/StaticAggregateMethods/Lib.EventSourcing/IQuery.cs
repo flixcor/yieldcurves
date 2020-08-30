@@ -2,6 +2,6 @@
 {
     public interface IQuery<T>
     {
-        T Handle();
+        (long, T) Handle();
     }
 }

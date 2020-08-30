@@ -19,7 +19,7 @@ namespace Lib.Features
             }
         }
 
-        public Curve Handle() => InMemoryProjectionStore.Instance.Get<Curve>(Id).Item2;
+        public (long, Curve) Handle() => InMemoryProjectionStore.Instance.Get<Curve>(Id);
 
         public record Curve
         {

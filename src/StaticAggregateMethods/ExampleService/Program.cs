@@ -8,6 +8,7 @@ using Lib.EventSourcing;
 using Lib.Features;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Projac;
 
@@ -55,7 +56,41 @@ namespace Lib
             .ConfigureWebHostDefaults(web => web
                 .Configure(app => app
                     .UseRouting()
-                    .UseEndpoints(e => e
-                        .MapCommandsAndQueries())));
+                    .UseEndpoints(e =>
+                    {
+                        e.MapCommandsAndQueries();
+                        e.MapGet("test.html", (context) =>
+                        {
+                            var response = context.Response;
+                            response.StatusCode = 200;
+                            response.ContentType = "text/html";
+                            return response.WriteAsync(Body, context.RequestAborted);
+                        });
+                    })));
+
+        const string Body = @"
+        <!DOCTYPE html>
+<html>
+<head>
+    <meta charset=""utf-8\"" />
+    <title></title>
+</head>
+<body>
+    <script>
+        function doFetch()
+        {
+            fetch(""/marketcurves"").then(response => {
+                console.log(response.ok)
+                setTimeout(() => doFetch(), 2000);
+            })
+        }
+
+        (function init() {
+            doFetch()
+        })()
+    </script>
+</body>
+</html>
+";
     }
 }

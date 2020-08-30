@@ -11,7 +11,7 @@ namespace Lib.EventSourcing
 
             When<EventEnvelope<E>>((mem, e) =>
             {
-                mem.AddOrUpdate<T>(e.Version, (t) => mapper(e, t), getId(e));
+                mem.AddOrUpdate<T>(e.Position, (t) => mapper(e, t), getId(e));
             });
         }
 
@@ -21,7 +21,7 @@ namespace Lib.EventSourcing
 
             When<EventEnvelope<E>>((mem, e) =>
             {
-                mem.Delete<E>(e.Version, getId(e));
+                mem.Delete<E>(e.Position, getId(e));
             });
         }
     }

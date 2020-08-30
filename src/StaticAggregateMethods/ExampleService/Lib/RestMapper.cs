@@ -9,6 +9,7 @@ using Lib.EventSourcing;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Net.Http.Headers;
 
 namespace ExampleService.Lib
 {
@@ -123,8 +124,13 @@ namespace ExampleService.Lib
                 AggregateId = id is string aggregateId ? aggregateId : Guid.NewGuid().ToString()
             };
 
-            await AppService.Handle(commandEnvelope, aggregate, GetEventStore());
-            httpContext.Response.StatusCode = StatusCodes.Status202Accepted;
+            var maybePosition = await AppService.Handle(commandEnvelope, aggregate, GetEventStore(), token);
+            httpContext.Response.StatusCode = StatusCodes.Status200OK;
+
+            if (maybePosition is long p)
+            {
+                await httpContext.Response.WriteAsync(p.ToString(), token);
+            }
         }
 
         public static Link? TryMapQuery<TQuery, TProjection>(string path, Func<TProjection, object?>? enrich = null) where TQuery : class, IQuery<TProjection>, new() where TProjection : class, new()
@@ -144,15 +150,27 @@ namespace ExampleService.Lib
                     return;
                 }
 
-                var queryResult = query.Handle();
+                var (position, queryResult) = query.Handle();
 
-                if (queryResult == null)
+                var requestHeaders = context.Request.GetTypedHeaders();
+
+                var minimumPositions = requestHeaders.IfMatch.TryParsePositions();
+                
+                if (minimumPositions.Any(p => p > position))
                 {
-                    context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                    context.Response.StatusCode = StatusCodes.Status412PreconditionFailed;
                     return;
                 }
 
-                var result = enrich != null ? enrich(queryResult) : queryResult;
+                var maximumPositions = requestHeaders.IfNoneMatch.TryParsePositions().ToList();
+
+                if (maximumPositions.Count > 0 && maximumPositions.All(x=> x == position))
+                {
+                    context.Response.StatusCode = StatusCodes.Status304NotModified;
+                    return;
+                }
+
+                var result = enrich(queryResult);
 
                 if (result == null)
                 {
@@ -161,14 +179,27 @@ namespace ExampleService.Lib
                 }
 
                 context.Response.StatusCode = StatusCodes.Status200OK;
+                
+                var etag = new EntityTagHeaderValue($@"""{ position }""");
+                context.Response.GetTypedHeaders().ETag = etag;
+
                 await JsonSerializer.SerializeAsync(context.Response.Body, result, result.GetType(), Options, token);
             }
-
-
 
             return s_handlers.TryAdd(link, Handle)
                     ? link
                     : null;
+        }
+
+        private static IEnumerable<long> TryParsePositions(this IEnumerable<EntityTagHeaderValue> values)
+        {
+            foreach (var item in values)
+            {
+                if (item.Tag.HasValue && long.TryParse(item.Tag.Value.Replace("\"", string.Empty), out var p))
+                {
+                    yield return p;
+                }
+            }
         }
 
         public static Link WithExpected<T>(this Link link, T t) where T : class
