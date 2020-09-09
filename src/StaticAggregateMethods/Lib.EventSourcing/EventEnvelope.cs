@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -12,27 +13,27 @@ namespace Lib.EventSourcing
 
         public static ObjectActivator GetActivator(ConstructorInfo ctor)
         {
-            Type type = ctor.DeclaringType;
-            ParameterInfo[] paramsInfo = ctor.GetParameters();
+            var type = ctor.DeclaringType;
+            var paramsInfo = ctor.GetParameters();
 
             //create a single param of type object[]
-            ParameterExpression param =
+            var param =
                 Expression.Parameter(typeof(object[]), "args");
 
-            Expression[] argsExp =
+            var argsExp =
                 new Expression[paramsInfo.Length];
 
             //pick each arg from the params array 
             //and create a typed expression of them
-            for (int i = 0; i < paramsInfo.Length; i++)
+            for (var i = 0; i < paramsInfo.Length; i++)
             {
                 Expression index = Expression.Constant(i);
-                Type paramType = paramsInfo[i].ParameterType;
+                var paramType = paramsInfo[i].ParameterType;
 
-                Expression paramAccessorExp =
+                var paramAccessorExp =
                     Expression.ArrayIndex(param, index);
 
-                Expression paramCastExp =
+                var paramCastExp =
                     Expression.Convert(paramAccessorExp, paramType);
 
                 argsExp[i] = paramCastExp;
@@ -40,24 +41,34 @@ namespace Lib.EventSourcing
 
             //make a NewExpression that calls the
             //ctor with the args we just created
-            NewExpression newExp = Expression.New(ctor, argsExp);
+            var newExp = Expression.New(ctor, argsExp);
 
             //create a lambda with the New
             //Expression as body and our param object[] as arg
-            LambdaExpression lambda =
+            var lambda =
                 Expression.Lambda(typeof(ObjectActivator), newExp, param);
 
             //compile it
-            ObjectActivator compiled = (ObjectActivator)lambda.Compile();
+            var compiled = (ObjectActivator)lambda.Compile();
             return compiled;
         }
 
-        public static EventEnvelope Create(string aggregateId, int version, object content)
+        private static readonly Dictionary<Type, ObjectActivator> s_activators = new Dictionary<Type, ObjectActivator>();
+
+        private static ObjectActivator GetActivator(Type type)
         {
-            var type = content.GetType();
-            var constructor = typeof(EventEnvelope<>).MakeGenericType(content.GetType()).GetConstructor(new[] { typeof(string), typeof(int), type });
-            return GetActivator(constructor)(aggregateId, version, content) as EventEnvelope;
+            if (!s_activators.TryGetValue(type, out var activator))
+            {
+                var constructor = typeof(EventEnvelope<>).MakeGenericType(type).GetConstructor(new[] { typeof(string), typeof(int), type });
+                activator = GetActivator(constructor!);
+                s_activators[type] = activator;
+            }
+
+            return activator;
         }
+
+        public static EventEnvelope Create(string aggregateId, int version, object content) 
+            => (GetActivator(content.GetType())(aggregateId, version, content) as EventEnvelope)!;
 
         public long Position { get; internal set; }
         public string? AggregateId { get; init; }
