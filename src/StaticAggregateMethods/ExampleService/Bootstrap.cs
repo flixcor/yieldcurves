@@ -27,8 +27,7 @@ namespace Lib
                 curves = curves.Curves.Select(c => new
                 {
                     @Id = MarketCurvesUrl + "/" + c.Id,
-                    c.Name,
-                    c.InstrumentCount
+                    c.Name
                 })
             });
 

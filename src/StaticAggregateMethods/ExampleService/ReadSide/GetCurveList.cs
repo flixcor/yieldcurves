@@ -13,11 +13,6 @@ namespace Lib.Features
             public Projection()
             {
                 CreateOrUpdateWhen<MarketCurveNamed>((e, c) => c with { Id = e.AggregateId, Name = e.Content.Name });
-                CreateOrUpdateWhen<InstrumentAddedToCurve>((e, c)
-                    =>
-                {
-                    return c with { Id = e.AggregateId, InstrumentCount = c.InstrumentCount + 1 };
-                });
             }
         }
 
@@ -36,7 +31,6 @@ namespace Lib.Features
         {
             public string? Id { get; init; }
             public string? Name { get; init; }
-            public int InstrumentCount { get; init; }
         }
     }
 }
