@@ -5,27 +5,27 @@ using static Lib.Domain.MarketCurve.Events;
 
 namespace Lib.Features
 {
-    public class GetCurve : IQuery<GetCurve.Curve>
+    public class GetCurve : IQuery<GetCurve.Curve?>
     {
-        public string Id { get; init; }
+        public string? Id { get; init; }
 
         public class Projection : InMemoryProjection<Curve>
         {
             public Projection()
             {
-                CreateOrUpdateWhen<MarketCurveNamed>((e, state) => state with { Id = e.AggregateId, Name = e.Content.Name });
+                CreateOrUpdateWhen<MarketCurveNamed>((e, state) => state with { Id = e.AggregateId, Name = e.Content?.Name });
 
-                CreateOrUpdateWhen<InstrumentAddedToCurve>((e, state) => state with { Id = e.AggregateId, Instruments = state.Instruments.Append(e.Content.InstrumentId).ToList() });
+                CreateOrUpdateWhen<InstrumentAddedToCurve>((e, state) => state with { Id = e.AggregateId, Instruments = state.Instruments.Append(e.Content?.InstrumentId).ToList() });
             }
         }
 
-        public (long, Curve) Handle() => InMemoryProjectionStore.Instance.Get<Curve>(Id);
+        public (long, Curve?) Handle() => InMemoryProjectionStore.Instance.Get<Curve>(Id ?? throw new System.Exception());
 
         public record Curve
         {
             public string? Id { get; init; }
             public string? Name { get; init; }
-            public IReadOnlyCollection<string> Instruments { get; init; } = new List<string>();
+            public IReadOnlyCollection<string?> Instruments { get; init; } = new List<string?>();
         }
     }
 }
