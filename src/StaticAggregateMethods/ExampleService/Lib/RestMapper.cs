@@ -159,6 +159,7 @@ namespace ExampleService.Lib
                 if (minimumPositions.Any(p => p > position))
                 {
                     context.Response.StatusCode = StatusCodes.Status412PreconditionFailed;
+                    context.Response.Headers.Add(HeaderNames.RetryAfter, "1");
                     return;
                 }
 
