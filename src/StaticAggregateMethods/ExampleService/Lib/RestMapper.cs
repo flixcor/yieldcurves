@@ -56,7 +56,7 @@ namespace ExampleService.Lib
 
         private static IAggregate<State> GetAggregate<Aggregate, State>() where Aggregate : IAggregate<State>, new() where State : class, new()
         {
-            return s_aggregates[typeof(Aggregate)] as IAggregate<State>;
+            return s_aggregates[typeof(Aggregate)] as IAggregate<State> ?? throw new Exception();
         }
 
         public static Func<IEventStore> GetEventStore { get; private set; } = () => throw new Exception();
@@ -218,7 +218,7 @@ namespace ExampleService.Lib
         }
 
         public static Link WithRouteValues(this Link link, object routeValues)
-            => new Link { Href = link?.Href?.ReplaceParameters(routeValues), Expects = link.Expects, Method = link.Method };
+            => new Link { Href = link?.Href?.ReplaceParameters(routeValues), Expects = link?.Expects, Method = link?.Method };
 
         private static string ReplaceParameters(this string s, object routeValues)
         {
@@ -239,7 +239,11 @@ namespace ExampleService.Lib
         {
             foreach (var (link, handler) in s_handlers)
             {
-                endpointRouteBuilder.MapMethods(link.Href, link.Method.Yield(), handler);
+                if (link != null && handler != null)
+                {
+                    endpointRouteBuilder.MapMethods(link.Href ?? string.Empty, link.Method.Yield(), handler);
+                }
+                
             }
 
             return endpointRouteBuilder;

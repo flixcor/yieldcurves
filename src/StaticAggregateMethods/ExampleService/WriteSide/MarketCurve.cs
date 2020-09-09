@@ -26,7 +26,7 @@ namespace Lib.Domain
                     return new object[] { new MarketCurveNamed(command.Name), new InstrumentAddedToCurve(command.Instrument) };
                 });
 
-                Handle<AddInstrument>((s, e) => s.Instruments.Contains(e.Instrument)
+                Handle<AddInstrument>((s, e) => e.Instrument == null || s.Instruments.Contains(e.Instrument)
                     ? Enumerable.Empty<object>()
                     : new InstrumentAddedToCurve(e.Instrument).Yield());
 
