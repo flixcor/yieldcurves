@@ -18,11 +18,11 @@ namespace Lib.EventSourcing
                 ? projection.Item2.TryGetValue(id, out var obj) && obj is T t
                     ? (projection.Item1, t)
                     : (projection.Item1, null)
-                : (0, null);
+                : (-1, null);
 
         public (long, IEnumerable<T>) GetAll<T>() => _projections.TryGetValue(typeof(T), out var projection)
             ? (projection.Item1, projection.Item2.Values.OfType<T>())
-            : (0, Enumerable.Empty<T>());
+            : (-1, Enumerable.Empty<T>());
 
         public void AddOrUpdate<T>(long position, Func<T, T> mapper, string id) where T : class, new () 
         => _projections.AddOrUpdate(
