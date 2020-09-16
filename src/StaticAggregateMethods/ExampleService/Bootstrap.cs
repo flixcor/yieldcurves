@@ -1,12 +1,12 @@
-﻿using System.Linq;
-using ExampleService.Lib;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Lib.AspNet;
 using Lib.Domain;
 using Lib.EventSourcing;
 using Lib.Features;
 using Vocab;
 using static Lib.Domain.MarketCurve.Commands;
 using static Lib.Domain.MarketCurve.Events;
-using static Lib.Features.GetCurve;
 using static Lib.Features.GetCurveList;
 
 namespace Lib
@@ -20,14 +20,14 @@ namespace Lib
         {
             Describe.Class<GetCurve.Curve>()
                 .Property(x => x.Instruments).Are(Schema.instrument)
-                .Property(x=> x.Name).Is(Schema.name);
+                .Property(x => x.Name).Is(Schema.name);
 
             var getCurveList = RestMapper.TryMapQuery<GetCurveList, CurveList>(MarketCurvesUrl, (curves) => new
             {
-                curves = curves.Curves.Select(c => new
+                curves = curves.Curves.Select(c => new Dictionary<string, object>
                 {
-                    @Id = MarketCurvesUrl + "/" + c.Id,
-                    c.Name
+                    ["@id"] = MarketCurvesUrl + "/" + c.Id,
+                    ["name"] = c.Name
                 })
             });
 

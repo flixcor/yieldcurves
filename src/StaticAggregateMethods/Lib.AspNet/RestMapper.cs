@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Web;
 using Lib.Aggregates;
@@ -11,29 +12,32 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Net.Http.Headers;
 
-namespace ExampleService.Lib
+namespace Lib.AspNet
 {
     public class Link
     {
-        public string? Href { get; init; }
-        public string? Method { get; init; }
-        public HydraClass? Expects { get; init; }
+        public string Href { get; init; }
+        public string Method { get; init; }
+        public HydraClass Expects { get; init; }
     }
 
     public class HydraClass
     {
-        public string? @Id { get; set; }
-        public string? @Type { get; } = "hydra:Class";
+        [JsonPropertyName("@id")]
+        public string @Id { get; set; }
+        [JsonPropertyName("@type")]
+        public string @Type { get; } = "hydra:Class";
         public IReadOnlyCollection<SupportedProperty> SupportedProperty { get; set; } = Array.Empty<SupportedProperty>();
-        public string? Title { get; set; }
+        public string Title { get; set; }
     }
 
     public class SupportedProperty
     {
+        [JsonPropertyName("@type")]
         public string @Type { get; } = "SupportedProperty";
         public bool Required { get; set; } = true;
-        public string? Title { get; set; }
-        public dynamic? Default { get; set; }
+        public string Title { get; set; }
+        public dynamic Default { get; set; }
     }
 
     public static class RestMapper
@@ -62,7 +66,7 @@ namespace ExampleService.Lib
         public static Func<IEventStore> GetEventStore { get; private set; } = () => throw new Exception();
         public static void SetEventStore(IEventStore eventStore) => GetEventStore = () => eventStore;
 
-        public static Link? TryMapIndex(IEnumerable<Link> links)
+        public static Link TryMapIndex(IEnumerable<Link> links)
         {
             var linkArr = links.Cast<dynamic>().ToArray();
 
@@ -79,7 +83,7 @@ namespace ExampleService.Lib
                 : null;
         }
 
-        public static IEnumerable<T> Yield<T>(this T? maybeT) where T : class
+        public static IEnumerable<T> Yield<T>(this T maybeT) where T : class
         {
             if (maybeT != null)
             {
@@ -87,9 +91,9 @@ namespace ExampleService.Lib
             }
         }
 
-        public static IEnumerable<Link> Enumerate(params object?[] maybeTs) => maybeTs.OfType<Link>();
+        public static IEnumerable<Link> Enumerate(params object[] maybeTs) => maybeTs.OfType<Link>();
 
-        public static Link? TryMapCommand<Aggregate, State, Command>(string path) where Command : class where State : class, new() where Aggregate : IAggregate<State>, new()
+        public static Link TryMapCommand<Aggregate, State, Command>(string path) where Command : class where State : class, new() where Aggregate : IAggregate<State>, new()
         {
             TryAddAggregate<Aggregate, State>();
 
@@ -133,7 +137,7 @@ namespace ExampleService.Lib
             }
         }
 
-        public static Link? TryMapQuery<TQuery, TProjection>(string path, Func<TProjection, object?>? enrich = null) where TQuery : class, IQuery<TProjection>, new() where TProjection : class, new()
+        public static Link TryMapQuery<TQuery, TProjection>(string path, Func<TProjection, object> enrich = null) where TQuery : class, IQuery<TProjection>, new() where TProjection : class, new()
         {
             var link = new Link { Href = path, Method = HttpMethods.Get };
 
@@ -155,7 +159,7 @@ namespace ExampleService.Lib
                 var requestHeaders = context.Request.GetTypedHeaders();
 
                 var minimumPositions = requestHeaders.IfMatch.TryParsePositions();
-                
+
                 if (minimumPositions.Any(p => p > position))
                 {
                     context.Response.StatusCode = StatusCodes.Status412PreconditionFailed;
@@ -165,7 +169,7 @@ namespace ExampleService.Lib
 
                 var maximumPositions = requestHeaders.IfNoneMatch.TryParsePositions().ToList();
 
-                if (maximumPositions.Count > 0 && maximumPositions.All(x=> x == position))
+                if (maximumPositions.Count > 0 && maximumPositions.All(x => x == position))
                 {
                     context.Response.StatusCode = StatusCodes.Status304NotModified;
                     return;
@@ -180,7 +184,7 @@ namespace ExampleService.Lib
                 }
 
                 context.Response.StatusCode = StatusCodes.Status200OK;
-                
+
                 var etag = new EntityTagHeaderValue($@"""{ position }""");
                 context.Response.GetTypedHeaders().ETag = etag;
 
@@ -243,13 +247,13 @@ namespace ExampleService.Lib
                 {
                     endpointRouteBuilder.MapMethods(link.Href ?? string.Empty, link.Method.Yield(), handler);
                 }
-                
+
             }
 
             return endpointRouteBuilder;
         }
 
-        private static T? GetQueryObject<T>(this HttpRequest request) where T : class
+        private static T GetQueryObject<T>(this HttpRequest request) where T : class
         {
             var queryString = request.QueryString.Value;
 
@@ -265,7 +269,7 @@ namespace ExampleService.Lib
                 return null;
             }
 
-            var ding = dict.Cast<string>().ToDictionary(k => k, v => (object?)dict[v]);
+            var ding = dict.Cast<string>().ToDictionary(k => k, v => (object)dict[v]);
 
 
 

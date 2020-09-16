@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ExampleService.Lib;
 using Lib.Aggregates;
+using Lib.AspNet;
 using static Lib.Domain.MarketCurve.Commands;
 using static Lib.Domain.MarketCurve.Events;
 

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using ExampleService.Lib;
+using Lib.AspNet;
 using Lib.EventSourcing;
 using Lib.Features;
 using Microsoft.AspNetCore.Builder;
@@ -77,16 +77,12 @@ namespace Lib
 </head>
 <body>
     <script>
-        function doFetch()
+        (function doFetch()
         {
             fetch(""/marketcurves"").then(response => {
                 console.log(response.ok)
                 setTimeout(() => doFetch(), 2000);
             })
-        }
-
-        (function init() {
-            doFetch()
         })()
     </script>
 </body>
