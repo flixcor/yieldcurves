@@ -27,7 +27,7 @@ namespace Lib
                 curves = curves.Curves.Select(c => new Dictionary<string, object>
                 {
                     ["@id"] = MarketCurvesUrl + "/" + c.Id,
-                    ["name"] = c.Name
+                    [Schema.name] = c.Name
                 })
             });
 
