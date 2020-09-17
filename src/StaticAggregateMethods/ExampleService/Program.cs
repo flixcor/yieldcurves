@@ -69,23 +69,29 @@ namespace Lib
                     })));
 
         const string Body = @"
-        <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
-<head>
-    <meta charset=""utf-8\"" />
-    <title></title>
-</head>
-<body>
-    <script>
-        (function doFetch()
-        {
-            fetch(""/marketcurves"").then(response => {
-                console.log(response.ok)
-                setTimeout(() => doFetch(), 2000);
-            })
-        })()
-    </script>
-</body>
+    <head>
+        <meta charset='utf-8\' />
+        <title></title>
+    </head>
+    <body>
+        <script>
+            (function doFetch()
+            {
+                fetch('/marketcurves', {
+                    headers: {
+                        'Accept-Encoding': 'gzip'
+                    }
+                }).then(response => {
+                    response.json().then(body => {
+                        console.log(body)
+                        setTimeout(() => doFetch(), 2000);
+                    })
+                })
+            })()
+        </script>
+    </body>
 </html>
 ";
     }

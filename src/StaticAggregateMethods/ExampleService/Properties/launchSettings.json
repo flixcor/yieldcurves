@@ -18,7 +18,7 @@
     "ExampleService": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:5001;http://localhost:5000",
+      "applicationUrl": "https://localhost:44359;http://localhost:60609",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
