@@ -80,7 +80,11 @@ namespace Lib.EventSourcing
                 ? r.Events 
                 : Enumerable.Empty<EventEnvelope>();
 
-        public void Dispose() => _channel.Writer.Complete();
+        public void Dispose()
+        {
+            _channel.Writer.Complete();
+            GC.SuppressFinalize(this);
+        }
 
         private class FakeAsyncEnumerable<T> : IAsyncEnumerable<T>
         {
