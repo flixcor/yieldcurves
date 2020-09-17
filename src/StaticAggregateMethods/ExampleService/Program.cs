@@ -77,7 +77,7 @@ namespace Lib
     </head>
     <body>
         <script>
-            (function doFetch()
+            function doFetch()
             {
                 fetch('/marketcurves', {
                     headers: {
@@ -86,10 +86,38 @@ namespace Lib
                 }).then(response => {
                     response.json().then(body => {
                         console.log(body)
-                        setTimeout(() => doFetch(), 2000);
                     })
                 })
-            })()
+            }
+
+            function doPost()
+            {
+                fetch('/marketcurves', {
+                    method: 'POST',
+                    headers: {
+                        'Accept-Encoding': 'gzip'
+                    },
+                    body: JSON.stringify({
+                        name: 'sample',
+                        instrument: 'instrument2'
+                    })
+                }).then(response => {
+                    response.text().then(body => {
+                        console.log(body)
+                    })
+                })
+            }
+
+            function doRandom() {
+                const func = Math.random() >= 0.5
+                    ? doFetch
+                    : doPost
+                
+                func()
+                setTimeout(() => doRandom(), 2000)
+            }
+
+            doRandom()
         </script>
     </body>
 </html>

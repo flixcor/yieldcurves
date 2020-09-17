@@ -8,7 +8,7 @@ namespace Lib.EventSourcing
 {
     public static class AppService
     {
-        public static async Task<long?> Handle<S, C>(CommandEnvelope<C> commandEnvelope, IAggregate<S> aggregate, IEventStore eventStore, CancellationToken cancel = default) where C : class where S : class, new()
+        public static async Task<long?> Handle<S, C>(CommandEnvelope<C> commandEnvelope, IAggregate<S> aggregate, IEventStore eventStore, CancellationToken cancel = default) where C : class where S : class
         {
             if (commandEnvelope.AggregateId == null || commandEnvelope.Command == null)
             {
@@ -26,9 +26,9 @@ namespace Lib.EventSourcing
             return await eventStore.Save(streamName, cancel, events);
         }
 
-        private static async Task<(int, S)> Load<S>(string streamName, IAggregate<S> aggregate, IEventStore eventStore, CancellationToken cancel) where S : class, new()
+        private static async Task<(int, S)> Load<S>(string streamName, IAggregate<S> aggregate, IEventStore eventStore, CancellationToken cancel) where S : class
         {
-            var state = new S();
+            var state = aggregate.InitState();
 
             var version = -1;
 

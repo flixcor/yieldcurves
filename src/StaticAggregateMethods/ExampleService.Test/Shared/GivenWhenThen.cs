@@ -15,7 +15,7 @@ namespace Lib.Test.Shared
         void Then(params object[] events);
     }
 
-    public static class GivenWhenThen<Aggregate, State> where Aggregate : IAggregate<State>, new() where State : class, new()
+    public static class GivenWhenThen<Aggregate, State> where Aggregate : IAggregate<State>, new() where State : class
     {
         static readonly Aggregate s_aggregate = new Aggregate();
 
@@ -35,7 +35,7 @@ namespace Lib.Test.Shared
 
         public static IWhen<State> Given(params object[] events)
             => new WhenImpl { Events = events };
-        public static IThen<State, C> When<C>(C command) => new ThenImpl<C> { State = new State(), Command = command };
+        public static IThen<State, C> When<C>(C command) => new ThenImpl<C> { State = s_aggregate.InitState(), Command = command };
 
         private static readonly object[] s_empty = Array.Empty<object>();
 
@@ -45,7 +45,7 @@ namespace Lib.Test.Shared
 
             IThen<State, Command> IWhen<State>.When<Command>(Command command)
             {
-                var state = Events.Aggregate(new State(), (s, e) => s_aggregate.When(s, e));
+                var state = Events.Aggregate(s_aggregate.InitState(), (s, e) => s_aggregate.When(s, e));
 
                 return new ThenImpl<Command>
                 {

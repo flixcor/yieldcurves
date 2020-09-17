@@ -16,7 +16,6 @@ namespace Lib.EventSourcing
 
         public static ObjectActivator GetActivator(ConstructorInfo ctor)
         {
-            var type = ctor.DeclaringType;
             var paramsInfo = ctor.GetParameters();
 
             //create a single param of type object[]

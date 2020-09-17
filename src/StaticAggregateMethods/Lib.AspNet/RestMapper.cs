@@ -45,7 +45,7 @@ namespace Lib.AspNet
         private static readonly Dictionary<Link, RequestDelegate> s_handlers = new Dictionary<Link, RequestDelegate>();
         private static readonly Dictionary<Type, object> s_aggregates = new Dictionary<Type, object>();
 
-        private static bool TryAddAggregate<Aggregate, State>() where Aggregate : IAggregate<State>, new() where State : class, new()
+        private static bool TryAddAggregate<Aggregate, State>() where Aggregate : IAggregate<State>, new() where State : class
         {
             var type = typeof(Aggregate);
 
@@ -58,7 +58,7 @@ namespace Lib.AspNet
             return true;
         }
 
-        private static IAggregate<State> GetAggregate<Aggregate, State>() where Aggregate : IAggregate<State>, new() where State : class, new()
+        private static IAggregate<State> GetAggregate<Aggregate, State>() where Aggregate : IAggregate<State>, new() where State : class
         {
             return s_aggregates[typeof(Aggregate)] as IAggregate<State> ?? throw new Exception();
         }
@@ -93,7 +93,7 @@ namespace Lib.AspNet
 
         public static IEnumerable<Link> Enumerate(params object[] maybeTs) => maybeTs.OfType<Link>();
 
-        public static Link TryMapCommand<Aggregate, State, Command>(string path) where Command : class where State : class, new() where Aggregate : IAggregate<State>, new()
+        public static Link TryMapCommand<Aggregate, State, Command>(string path) where Command : class where State : class where Aggregate : IAggregate<State>, new()
         {
             TryAddAggregate<Aggregate, State>();
 
@@ -104,23 +104,23 @@ namespace Lib.AspNet
                 : null;
         }
 
-        private static async Task Handle<Aggregate, State, Command>(HttpContext httpContext)
+        private static async Task Handle<Aggregate, State, Command>(HttpContext context)
             where Aggregate : IAggregate<State>, new()
-            where State : class, new()
+            where State : class
             where Command : class
         {
-            var token = httpContext.RequestAborted;
-            var command = await JsonSerializer.DeserializeAsync<Command>(httpContext.Request.Body, Options, token);
+            var token = context.RequestAborted;
+            var command = await JsonSerializer.DeserializeAsync<Command>(context.Request.Body, Options, token);
 
             if (command is null)
             {
-                httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
                 return;
             }
 
             var aggregate = GetAggregate<Aggregate, State>();
 
-            var id = httpContext.GetRouteValue("id");
+            var id = context.GetRouteValue("id");
 
             var commandEnvelope = new CommandEnvelope<Command>
             {
@@ -129,11 +129,11 @@ namespace Lib.AspNet
             };
 
             var maybePosition = await AppService.Handle(commandEnvelope, aggregate, GetEventStore(), token);
-            httpContext.Response.StatusCode = StatusCodes.Status200OK;
+            context.Response.StatusCode = StatusCodes.Status200OK;
 
             if (maybePosition is long p)
             {
-                await httpContext.Response.WriteAsync(p.ToString(), token);
+                await context.Response.WriteAsync(p.ToString(), token);
             }
         }
 

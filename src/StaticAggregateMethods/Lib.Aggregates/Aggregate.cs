@@ -4,19 +4,22 @@ using System.Linq;
 
 namespace Lib.Aggregates
 {
-    public interface IAggregate<State> where State : class, new()
+    public interface IAggregate<State> where State : class
     {
         State When(State state, object @event);
         IEnumerable<object> Handle(State state, object command);
-        Delegates.GetStreamName GetStreamName { get; }
+        string GetStreamName(string id);
+        State InitState();
     }
 
-    public abstract class Aggregate<State> : IAggregate<State> where State : class, new()
-    {
+    public abstract class Aggregate<State> : IAggregate<State> where State : class
+    { 
         private readonly Dictionary<Type, Func<State, object, State>> _eventHandlers = new Dictionary<Type, Func<State, object, State>>();
         private readonly Dictionary<Type, Func<State, object, IEnumerable<object>>> _commandHandlers = new Dictionary<Type, Func<State, object, IEnumerable<object>>>();
 
-        public Delegates.GetStreamName GetStreamName { get; private set; } = (id) => typeof(State).Name.ToLowerInvariant() + "-" + id;
+        public abstract State InitState();
+
+        public virtual string GetStreamName(string id) => typeof(State).Name.ToLowerInvariant() + "-" + id;
 
         protected void When<Event>(Delegates.When<State, Event> func)
             => _eventHandlers[typeof(Event)] = (state, @event) => func(state, (Event)@event);
@@ -25,8 +28,6 @@ namespace Lib.Aggregates
             => _commandHandlers[typeof(Command)] = (state, command) => handler(state, (Command)command);
 
         protected void Handle<CommandType>(Func<State, CommandType, object> handler) => Handle<CommandType>((s, c) => new[] { handler(s, c) });
-
-        protected void StreamName(Delegates.GetStreamName func) => GetStreamName = func;
 
         State IAggregate<State>.When(State state, object @event)
         {

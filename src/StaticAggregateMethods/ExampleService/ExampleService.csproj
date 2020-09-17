@@ -17,6 +17,4 @@
     <ProjectReference Include="..\Lib.AspNet\Lib.AspNet.csproj" />
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties writeside_4nameandaddinstrument_1schema_1json__JsonSchema="https://json-schema.org/draft/2019-09/schema" /></VisualStudio></ProjectExtensions>
-
 </Project>

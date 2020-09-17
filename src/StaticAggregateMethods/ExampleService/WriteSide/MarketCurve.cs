@@ -14,33 +14,22 @@ namespace Lib.Domain
         {
             public Aggregate()
             {
-                StreamName((id) => "marketcurve-" + id);
+                Handle<NameAndAddInstrument>((_, command) => new object[] { new MarketCurveNamed(command.Name), new InstrumentAddedToCurve(command.Instrument) });
 
-                Handle((Delegates.Handle<State, NameAndAddInstrument>)((_, command) =>
-                {
-                    if (command.Name == null || command.Instrument == null)
-                    {
-                        return Enumerable.Empty<object>();
-                    }
-
-                    return new object[] { new MarketCurveNamed(command.Name), new InstrumentAddedToCurve(command.Instrument) };
-                }));
-
-                Handle<AddInstrument>((s, e) => e.Instrument == null || s.Instruments.Contains(e.Instrument)
+                Handle<AddInstrument>((state, command) => state.Instruments.Contains(command.Instrument)
                     ? Enumerable.Empty<object>()
-                    : new InstrumentAddedToCurve(e.Instrument).Yield());
+                    : new InstrumentAddedToCurve(command.Instrument).Yield());
 
 
                 When<MarketCurveNamed>((state, @event) => state with { Name = @event.Name });
                 When<InstrumentAddedToCurve>((state, @event) => state with { Instruments = state.Instruments.Append(@event.InstrumentId).ToList() });
             }
+
+            public override string GetStreamName(string id) => "marketcurve-" + id;
+            public override State InitState() => new State(string.Empty, Array.Empty<string>());
         }
 
-        public record State
-        {
-            public IReadOnlyCollection<string> Instruments { get; init; } = new List<string>();
-            public string? Name { get; init; }
-        }
+        public record State(string Name, IReadOnlyCollection<string> Instruments);
 
         public static class Commands
         {
