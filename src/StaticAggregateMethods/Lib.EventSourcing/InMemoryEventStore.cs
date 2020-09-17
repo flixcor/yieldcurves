@@ -93,14 +93,14 @@ namespace Lib.EventSourcing
             public FakeAsyncEnumerable(IEnumerable<T> enumerable) => _enumerable = enumerable;
 
             public IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default) 
-                => new TestDbAsyncEnumerator<T>(_enumerable.GetEnumerator());
+                => new FakeAsyncEnumerator<T>(_enumerable.GetEnumerator());
         }
 
-        private class TestDbAsyncEnumerator<T> : IAsyncEnumerator<T>
+        private class FakeAsyncEnumerator<T> : IAsyncEnumerator<T>
         {
             private readonly IEnumerator<T> _inner;
 
-            public TestDbAsyncEnumerator(IEnumerator<T> inner) => _inner = inner;
+            public FakeAsyncEnumerator(IEnumerator<T> inner) => _inner = inner;
 
             public ValueTask<bool> MoveNextAsync() => new ValueTask<bool>(_inner.MoveNext());
 
