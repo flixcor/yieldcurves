@@ -6,7 +6,10 @@ using System.Reflection;
 
 namespace Lib.EventSourcing
 {
-    public record EventEnvelope
+
+    public record EventEnvelope(long Position, string AggregateId, DateTimeOffset Timestamp, int Version, object Content);
+
+    public static class Extensions
     {
         //https://rogerjohansson.blog/2008/02/28/linq-expressions-creating-objects/
         public delegate object ObjectActivator(params object[] args);
@@ -67,27 +70,17 @@ namespace Lib.EventSourcing
             return activator;
         }
 
-        public static EventEnvelope Create(string aggregateId, int version, object content) 
+        public static EventEnvelope CreateEventEnvelope(this object content, string aggregateId, int version)
             => (GetActivator(content.GetType())(aggregateId, version, content) as EventEnvelope)!;
-
-        public long Position { get; internal set; }
-        public string? AggregateId { get; init; }
-        public DateTimeOffset Timestamp { get; init; } = DateTimeOffset.UtcNow;
-        public int Version { get; init; }
-        public virtual object? Content { get; init; }
     }
 
     public record EventEnvelope<T>: EventEnvelope where T : class
     {
-        public EventEnvelope(string aggregateId, int version, T content)
+        public EventEnvelope(string aggregateId, int version, T content): base(0, aggregateId, DateTimeOffset.UtcNow, version, content)
         {
-            AggregateId = aggregateId;
-            Version = version;
-            base.Content = content;
             Content = content;
         }
-
         
-        public new T? Content { get; set; }
+        public new T Content { get; }
     }
 }

@@ -24,12 +24,12 @@ namespace Lib.EventSourcing
             ? (projection.Item1, projection.Item2.Values.OfType<T>())
             : (-1, Enumerable.Empty<T>());
 
-        public void AddOrUpdate<T>(long position, Func<T, T> mapper, string id) where T : class, new () 
+        public void AddOrUpdate<T>(Func<T> init, long position, Func<T, T> mapper, string id) where T : class
         => _projections.AddOrUpdate(
             typeof(T),
-            _ => (position, new Dictionary<string, object?> { { id, mapper(new T()) } }),
+            _ => (position, new Dictionary<string, object?> { { id, mapper(init()) } }),
             (_, tup) => position > tup.Item1 
-                ? (position, new Dictionary<string, object?>(tup.Item2) { [id] = mapper(tup.Item2.TryGetValue(id, out var val) && val is T t ? t : new T()) })
+                ? (position, new Dictionary<string, object?>(tup.Item2) { [id] = mapper(tup.Item2.TryGetValue(id, out var val) && val is T t ? t : init()) })
                 : tup
             );
 

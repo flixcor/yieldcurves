@@ -14,6 +14,8 @@ namespace Lib.Features
             {
                 CreateOrUpdateWhen<MarketCurveNamed>((e, c) => c with { Id = e.AggregateId, Name = e.Content.Name });
             }
+
+            protected override Curve InitializeModel() => new Curve(string.Empty, string.Empty);
         }
 
         public (long, CurveList) Handle()
@@ -27,10 +29,6 @@ namespace Lib.Features
             public IReadOnlyCollection<Curve> Curves { get; init; } = new List<Curve>();
         }
 
-        public record Curve
-        {
-            public string? Id { get; init; }
-            public string? Name { get; init; }
-        }
+        public record Curve(string Id, string Name);
     }
 }

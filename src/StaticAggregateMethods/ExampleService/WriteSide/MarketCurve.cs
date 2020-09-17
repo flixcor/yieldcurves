@@ -16,7 +16,7 @@ namespace Lib.Domain
             {
                 StreamName((id) => "marketcurve-" + id);
 
-                Handle<NameAndAddInstrument>((_, command) =>
+                Handle((Delegates.Handle<State, NameAndAddInstrument>)((_, command) =>
                 {
                     if (command.Name == null || command.Instrument == null)
                     {
@@ -24,7 +24,7 @@ namespace Lib.Domain
                     }
 
                     return new object[] { new MarketCurveNamed(command.Name), new InstrumentAddedToCurve(command.Instrument) };
-                });
+                }));
 
                 Handle<AddInstrument>((s, e) => e.Instrument == null || s.Instruments.Contains(e.Instrument)
                     ? Enumerable.Empty<object>()
@@ -44,16 +44,9 @@ namespace Lib.Domain
 
         public static class Commands
         {
-            public record NameAndAddInstrument
-            {
-                public string? Name { get; init; }
-                public string? Instrument { get; init; }
-            }
+            public record NameAndAddInstrument(string Name, string Instrument);
 
-            public record AddInstrument
-            {
-                public string? Instrument { get; init; }
-            }
+            public record AddInstrument(string Instrument);
         }
 
         public static class Events

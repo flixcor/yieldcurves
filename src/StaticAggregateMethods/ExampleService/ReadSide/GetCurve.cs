@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Lib.EventSourcing;
 using static Lib.Domain.MarketCurve.Events;
@@ -13,19 +14,16 @@ namespace Lib.Features
         {
             public Projection()
             {
-                CreateOrUpdateWhen<MarketCurveNamed>((e, state) => state with { Id = e.AggregateId, Name = e.Content?.Name });
+                CreateOrUpdateWhen<MarketCurveNamed>((e, state) => state with { Id = e.AggregateId, Name = e.Content.Name });
 
-                CreateOrUpdateWhen<InstrumentAddedToCurve>((e, state) => state with { Id = e.AggregateId, Instruments = state.Instruments.Append(e.Content?.InstrumentId).ToList() });
+                CreateOrUpdateWhen<InstrumentAddedToCurve>((e, state) => state with { Id = e.AggregateId, Instruments = state.Instruments.Append(e.Content.InstrumentId).ToList() });
             }
+
+            protected override Curve InitializeModel() => new Curve(string.Empty, string.Empty, Array.Empty<string>());
         }
 
         public (long, Curve?) Handle() => InMemoryProjectionStore.Instance.Get<Curve>(Id ?? throw new System.Exception());
 
-        public record Curve
-        {
-            public string? Id { get; init; }
-            public string? Name { get; init; }
-            public IReadOnlyCollection<string?> Instruments { get; init; } = new List<string?>();
-        }
+        public record Curve(string Id, string Name, IReadOnlyCollection<string> Instruments);
     }
 }

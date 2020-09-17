@@ -4,7 +4,7 @@ using Projac;
 
 namespace Lib.EventSourcing
 {
-    public abstract class InMemoryProjection<T> : Projection<InMemoryProjectionStore> where T : class, new()
+    public abstract class InMemoryProjection<T> : Projection<InMemoryProjectionStore> where T : class
     {
         protected InMemoryProjection() => 
             When<EventEnvelope>((mem, e) =>
@@ -19,7 +19,7 @@ namespace Lib.EventSourcing
         {
             getId ??= (e) => e.AggregateId ?? throw new Exception();
 
-            When<EventEnvelope<E>>((mem, e) => mem.AddOrUpdate<T>(e.Position, (t) => mapper(e, t), getId(e)));
+            When<EventEnvelope<E>>((mem, e) => mem.AddOrUpdate(InitializeModel, e.Position, (t) => mapper(e, t), getId(e)));
         }
 
         protected void DeleteWhen<E>(Func<EventEnvelope<E>, string>? getId = null) where E : class
@@ -28,5 +28,7 @@ namespace Lib.EventSourcing
 
             When<EventEnvelope<E>>((mem, e) => mem.Delete<T>(e.Position, getId(e)));
         }
+
+        protected abstract T InitializeModel();
     }
 }

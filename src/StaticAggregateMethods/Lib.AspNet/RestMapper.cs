@@ -137,7 +137,7 @@ namespace Lib.AspNet
             }
         }
 
-        public static Link TryMapQuery<TQuery, TProjection>(string path, Func<TProjection, object> enrich = null) where TQuery : class, IQuery<TProjection>, new() where TProjection : class, new()
+        public static Link TryMapQuery<TQuery, TModel>(string path, Func<TModel, object> enrich = null) where TQuery : class, IQuery<TModel> where TModel : class
         {
             var link = new Link { Href = path, Method = HttpMethods.Get };
 

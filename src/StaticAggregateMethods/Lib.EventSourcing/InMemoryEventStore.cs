@@ -35,7 +35,7 @@ namespace Lib.EventSourcing
         {
             if (events.Any())
             {
-                List<EventEnvelope> addedEvents = null;
+                List<EventEnvelope>? addedEvents = null;
 
                 _streams.AddOrUpdate(
                     key: stream,
@@ -55,6 +55,11 @@ namespace Lib.EventSourcing
                         addedEvents = events.Select(IncrementId).ToList();
                         return new InMemoryStream(value.Events.Concat(addedEvents));
                     });
+
+                if (addedEvents == null)
+                {
+                    return null;
+                }
 
                 foreach (var item in addedEvents)
                 {

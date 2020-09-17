@@ -32,11 +32,11 @@ namespace Lib
             });
 
             var nameAndAddInstrument = RestMapper.TryMapCommand<MarketCurve.Aggregate, MarketCurve.State, NameAndAddInstrument>(
-                MarketCurvesUrl)?.WithExpected(new NameAndAddInstrument()
+                MarketCurvesUrl)?.WithExpected(new NameAndAddInstrument(string.Empty, string.Empty)
             );
 
             RestMapper.TryMapCommand<MarketCurve.Aggregate, MarketCurve.State, AddInstrument>(MarketCurveSingleUrl);
-            RestMapper.TryMapQuery<GetCurve, GetCurve.Curve>(MarketCurveSingleUrl);
+            RestMapper.TryMapQuery<GetCurve, GetCurve.Curve?>(MarketCurveSingleUrl);
 
             RestMapper.TryMapIndex(getCurveList.Yield());
 
