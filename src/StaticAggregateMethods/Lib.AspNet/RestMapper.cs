@@ -25,7 +25,7 @@ namespace Lib.AspNet
         public string? @Id { get; init; }
         [JsonPropertyName("@type")]
         public string @Type { get; } = "hydra:Class";
-        public IReadOnlyCollection<SupportedProperty> SupportedProperty { get; set; } = Array.Empty<SupportedProperty>();
+        public IReadOnlyCollection<SupportedProperty> SupportedProperty { get; init; } = Array.Empty<SupportedProperty>();
         public string? Title { get; init; }
     }
 
