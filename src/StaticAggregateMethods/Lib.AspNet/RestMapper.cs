@@ -14,30 +14,28 @@ using Microsoft.Net.Http.Headers;
 
 namespace Lib.AspNet
 {
-    public class Link
+    public record Link(string Href, string Method)
     {
-        public string Href { get; init; }
-        public string Method { get; init; }
-        public HydraClass Expects { get; init; }
+        public HydraClass? Expects { get; init; }
     }
 
     public class HydraClass
     {
         [JsonPropertyName("@id")]
-        public string @Id { get; set; }
+        public string? @Id { get; init; }
         [JsonPropertyName("@type")]
         public string @Type { get; } = "hydra:Class";
         public IReadOnlyCollection<SupportedProperty> SupportedProperty { get; set; } = Array.Empty<SupportedProperty>();
-        public string Title { get; set; }
+        public string? Title { get; init; }
     }
 
     public class SupportedProperty
     {
         [JsonPropertyName("@type")]
         public string @Type { get; } = "SupportedProperty";
-        public bool Required { get; set; } = true;
-        public string Title { get; set; }
-        public dynamic Default { get; set; }
+        public bool Required { get; init; } = true;
+        public string? Title { get; init; }
+        public dynamic? Default { get; init; }
     }
 
     public static class RestMapper
@@ -66,7 +64,7 @@ namespace Lib.AspNet
         public static Func<IEventStore> GetEventStore { get; private set; } = () => throw new Exception();
         public static void SetEventStore(IEventStore eventStore) => GetEventStore = () => eventStore;
 
-        public static Link TryMapIndex(IEnumerable<Link> links)
+        public static Link? TryMapIndex(IEnumerable<Link> links)
         {
             var linkArr = links.Cast<dynamic>().ToArray();
 
@@ -76,14 +74,14 @@ namespace Lib.AspNet
                 await JsonSerializer.SerializeAsync(httpContext.Response.Body, linkArr, Options, httpContext.RequestAborted);
             }
 
-            var link = new Link { Href = "/", Method = HttpMethods.Get };
+            var link = new Link("/", HttpMethods.Get);
 
             return s_handlers.TryAdd(link, Handle)
                 ? link
                 : null;
         }
 
-        public static IEnumerable<T> Yield<T>(this T maybeT) where T : class
+        public static IEnumerable<T> Yield<T>(this T? maybeT) where T : class
         {
             if (maybeT != null)
             {
@@ -93,11 +91,16 @@ namespace Lib.AspNet
 
         public static IEnumerable<Link> Enumerate(params object[] maybeTs) => maybeTs.OfType<Link>();
 
-        public static Link TryMapCommand<Aggregate, State, Command>(string path) where Command : class where State : class where Aggregate : IAggregate<State>, new()
+        public static Link? TryMapCommand<Aggregate, State, Command>(string path, Command? expected = null) where Command : class where State : class where Aggregate : IAggregate<State>, new()
         {
             TryAddAggregate<Aggregate, State>();
 
-            var link = new Link { Href = path, Method = HttpMethods.Post };
+            var link = new Link(path, HttpMethods.Post);
+
+            if (expected != null)
+            {
+                link = link.WithExpected(expected);
+            }
 
             return s_handlers.TryAdd(link, Handle<Aggregate, State, Command>)
                 ? link
@@ -137,11 +140,11 @@ namespace Lib.AspNet
             }
         }
 
-        public static Link TryMapQuery<TQuery, TModel>(string path, Func<TModel, object> enrich = null) where TQuery : class, IQuery<TModel> where TModel : class
+        public static Link? TryMapQuery<TQuery, TModel>(string path, Func<TModel, object>? enrich = null) where TQuery : class, IQuery<TModel> where TModel : class?
         {
-            var link = new Link { Href = path, Method = HttpMethods.Get };
+            var link = new Link(path, HttpMethods.Get);
 
-            enrich ??= (x) => x;
+            enrich ??= (x) => x!;
 
             async Task Handle(HttpContext context)
             {
@@ -176,6 +179,18 @@ namespace Lib.AspNet
                 }
 
                 var result = enrich(queryResult);
+
+                if (result is Dictionary<string, object> dict)
+                {
+                    var matchingHandlers = s_handlers.Where(x => x.Key.Href == link.Href && !HttpMethods.IsGet(x.Key.Method)).Select(x=> new 
+                    { 
+                        method = x.Key.Method,
+                        expected = x.Key.Expects
+                    });
+
+                    dict["actions"] = matchingHandlers.ToArray();
+                    result = dict;
+                }
 
                 if (result == null)
                 {
@@ -213,16 +228,11 @@ namespace Lib.AspNet
             var name = type.Name;
             var supportedProperties = type.GetProperties().Select(p => new SupportedProperty { Title = p.Name, Default = p.GetValue(t) }).ToArray();
 
-            return new Link
-            {
-                Href = link.Href,
-                Method = link.Method,
-                Expects = new HydraClass { Id = "hydra:" + name, Title = name, SupportedProperty = supportedProperties }
-            };
+            return link with { Expects = new HydraClass { Id = "hydra:" + name, Title = name, SupportedProperty = supportedProperties } };
         }
 
         public static Link WithRouteValues(this Link link, object routeValues)
-            => new Link { Href = link?.Href?.ReplaceParameters(routeValues), Expects = link?.Expects, Method = link?.Method };
+            => link with { Href = link.Href.ReplaceParameters(routeValues) };
 
         private static string ReplaceParameters(this string s, object routeValues)
         {
@@ -253,7 +263,7 @@ namespace Lib.AspNet
             return endpointRouteBuilder;
         }
 
-        private static T GetQueryObject<T>(this HttpRequest request) where T : class
+        private static T? GetQueryObject<T>(this HttpRequest request) where T : class
         {
             var queryString = request.QueryString.Value;
 
@@ -269,7 +279,7 @@ namespace Lib.AspNet
                 return null;
             }
 
-            var ding = dict.Cast<string>().ToDictionary(k => k, v => (object)dict[v]);
+            var ding = dict.OfType<string>().ToDictionary(k => k, v => (object?)dict[v]);
 
 
 

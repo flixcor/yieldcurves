@@ -22,18 +22,16 @@ namespace Lib
                 .Property(x => x.Instruments).Are(Schema.instrument)
                 .Property(x => x.Name).Is(Schema.name);
 
-            var getCurveList = RestMapper.TryMapQuery<GetCurveList, CurveList>(MarketCurvesUrl, (curves) => new
+            var getCurveList = RestMapper.TryMapQuery<GetCurveList, CurveList>(MarketCurvesUrl, (curves) => new Dictionary<string, object>
             {
-                curves = curves.Curves.Select(c => new Dictionary<string, object>
+                ["curves"] = curves.Curves.Select(c => new Dictionary<string, object>
                 {
                     ["@id"] = MarketCurvesUrl + "/" + c.Id,
                     [Schema.name] = c.Name
                 })
             });
 
-            var nameAndAddInstrument = RestMapper.TryMapCommand<MarketCurve.Aggregate, MarketCurve.State, NameAndAddInstrument>(
-                MarketCurvesUrl)?.WithExpected(new NameAndAddInstrument(string.Empty, string.Empty)
-            );
+            var nameAndAddInstrument = RestMapper.TryMapCommand<MarketCurve.Aggregate, MarketCurve.State, NameAndAddInstrument>(MarketCurvesUrl, new NameAndAddInstrument(string.Empty, string.Empty));
 
             RestMapper.TryMapCommand<MarketCurve.Aggregate, MarketCurve.State, AddInstrument>(MarketCurveSingleUrl);
             RestMapper.TryMapQuery<GetCurve, GetCurve.Curve?>(MarketCurveSingleUrl);

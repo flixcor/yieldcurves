@@ -24,14 +24,7 @@ namespace Lib.AspNet
 
         private class ClassDescriber<T> : IClassDescriber<T> where T : class
         {
-            private string _type;
             private readonly Dictionary<Func<T, object>, string> _urls = new Dictionary<Func<T, object>, string>();
-
-            public IClassDescriber<T> HasType(string type)
-            {
-                _type = type;
-                return this;
-            }
 
             public IPropertyDescriber<T> Property(Func<T, object> func) => new PropertyDescriber(this, func);
             public IPropertyDescriber<T> Property(Func<T, string> func) => new PropertyDescriber(this, func);
@@ -76,7 +69,6 @@ namespace Lib.AspNet
 
     public interface IClassDescriber<T> where T : class
     {
-        IClassDescriber<T> HasType(string type);
         IPropertyDescriber<T> Property(Func<T, string> func);
         IPropertyDescriber<T> Property(Func<T, object> func);
         ICollectionDescriber<T> Property<P>(Func<T, IEnumerable<P>> func);
