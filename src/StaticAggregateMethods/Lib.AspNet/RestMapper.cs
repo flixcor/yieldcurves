@@ -284,13 +284,10 @@ namespace Lib.AspNet
 
             var ding = dict.OfType<string>().ToDictionary(k => k, v => (object?)dict[v]);
 
-
-
-            request.RouteValues.ToList().ForEach(keValuePair =>
+            foreach (var (key, value) in request.RouteValues)
             {
-                var (key, value) = keValuePair;
                 ding.TryAdd(key, value);
-            });
+            }
 
             var serialized = JsonSerializer.Serialize(ding, Options);
             return JsonSerializer.Deserialize<T>(serialized, Options);
