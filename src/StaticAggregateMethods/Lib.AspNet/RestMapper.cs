@@ -92,7 +92,7 @@ namespace Lib.AspNet
 
         public static IEnumerable<Link> Enumerate(params object[] maybeTs) => maybeTs.OfType<Link>();
 
-        public static Link? TryMapCommand<Aggregate, State, Command>(string path, Command? expected = null) where Command : class where State : class where Aggregate : IAggregate<State>, new()
+        public static Link TryMapCommand<Aggregate, State, Command>(string path, Command? expected = null) where Command : class where State : class where Aggregate : IAggregate<State>, new()
         {
             TryAddAggregate<Aggregate, State>();
 
@@ -103,9 +103,8 @@ namespace Lib.AspNet
                 link = link.WithExpected(expected);
             }
 
-            return s_handlers.TryAdd(link, Handle<Aggregate, State, Command>)
-                ? link
-                : null;
+            s_handlers.TryAdd(link, Handle<Aggregate, State, Command>);
+            return link;
         }
 
         private static async Task Handle<Aggregate, State, Command>(HttpContext context)
@@ -141,11 +140,14 @@ namespace Lib.AspNet
             }
         }
 
-        public static Link? TryMapQuery<TQuery, TModel>(string path, Func<TModel, object>? enrich = null) where TQuery : class, IQuery<TModel> where TModel : class?
+        public static Link TryMapQuery<TQuery, TModel>(string path, Func<TModel, object>? enrich = null) where TQuery : class, IQuery<TModel> where TModel : class?
         {
             var link = new Link(path, HttpMethods.Get);
 
             enrich ??= (x) => x!;
+
+            s_handlers.TryAdd(link, Handle);
+            return link;
 
             async Task Handle(HttpContext context)
             {
@@ -208,10 +210,6 @@ namespace Lib.AspNet
                 await context.Response.WriteAsJsonAsync(result, result.GetType(), Options, token);
                 await context.Response.CompleteAsync();
             }
-
-            return s_handlers.TryAdd(link, Handle)
-                    ? link
-                    : null;
         }
 
         private static IEnumerable<long> TryParsePositions(this IEnumerable<EntityTagHeaderValue> values)
