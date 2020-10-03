@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -182,8 +183,8 @@ namespace Lib.AspNet
 
                 if (result is Dictionary<string, object> dict)
                 {
-                    var matchingHandlers = s_handlers.Where(x => x.Key.Href == link.Href && !HttpMethods.IsGet(x.Key.Method)).Select(x=> new 
-                    { 
+                    var matchingHandlers = s_handlers.Where(x => x.Key.Href == link.Href && !HttpMethods.IsGet(x.Key.Method)).Select(x => new
+                    {
                         method = x.Key.Method,
                         expected = x.Key.Expects
                     });
@@ -199,11 +200,13 @@ namespace Lib.AspNet
                 }
 
                 context.Response.StatusCode = StatusCodes.Status200OK;
+                context.Response.ContentType = MediaTypeNames.Application.Json;
 
                 var etag = new EntityTagHeaderValue($@"""{ position }""");
                 context.Response.GetTypedHeaders().ETag = etag;
 
-                await JsonSerializer.SerializeAsync(context.Response.Body, result, result.GetType(), Options, token);
+                await context.Response.WriteAsJsonAsync(result, result.GetType(), Options, token);
+                await context.Response.CompleteAsync();
             }
 
             return s_handlers.TryAdd(link, Handle)
