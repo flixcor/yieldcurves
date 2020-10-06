@@ -140,7 +140,7 @@ namespace Lib.AspNet
             }
         }
 
-        public static Link TryMapQuery<TQuery, TModel>(string path, Func<TModel, object>? enrich = null) where TQuery : class, IQuery<TModel> where TModel : class?
+        public static Link TryMapQuery<TQuery, TModel>(string path, Func<TModel, object?>? enrich = null) where TQuery : class, IQuery<TModel> where TModel : class?
         {
             var link = new Link(path, HttpMethods.Get);
 
@@ -189,9 +189,13 @@ namespace Lib.AspNet
                     {
                         method = x.Key.Method,
                         expected = x.Key.Expects
-                    });
+                    }).ToArray();
 
-                    dict["actions"] = matchingHandlers.ToArray();
+                    if (matchingHandlers.Any())
+                    {
+                        dict["actions"] = matchingHandlers;
+                    }
+                    
                     result = dict;
                 }
 

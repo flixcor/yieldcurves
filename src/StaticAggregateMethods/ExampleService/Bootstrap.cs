@@ -15,6 +15,7 @@ namespace Lib
     {
         private const string MarketCurvesUrl = "/marketcurves";
         private const string MarketCurveSingleUrl = MarketCurvesUrl + @"/{id}";
+        private const string AddInstrumentUrl = MarketCurveSingleUrl + "/instruments";
 
         public static void Setup(IEventStore eventStore)
         {
@@ -22,7 +23,12 @@ namespace Lib
                 .Property(x => x.Instruments).Are(Schema.instrument)
                 .Property(x => x.Name).Is(Schema.name);
 
-            var getCurve = RestMapper.TryMapQuery<GetCurve, GetCurve.Curve?>(MarketCurveSingleUrl);
+            var getCurve = RestMapper.TryMapQuery<GetCurve, GetCurve.Curve?>(MarketCurveSingleUrl, (c) => c is null ? null : new Dictionary<string, object> 
+            { 
+                ["@id"] = MarketCurveSingleUrl.Replace(@"{id}", c.Id),
+                [Schema.name] = c.Name,
+                ["instruments"] = c.Instruments,
+            });
 
             var getCurveList = RestMapper.TryMapQuery<GetCurveList, CurveList>(MarketCurvesUrl, (curves) => new Dictionary<string, object>
             {
@@ -35,7 +41,7 @@ namespace Lib
 
             var nameAndAddInstrument = RestMapper.TryMapCommand<MarketCurve.Aggregate, MarketCurve.State, NameAndAddInstrument>(MarketCurvesUrl, new NameAndAddInstrument(string.Empty, string.Empty));
 
-            RestMapper.TryMapCommand<MarketCurve.Aggregate, MarketCurve.State, AddInstrument>(MarketCurveSingleUrl);
+            RestMapper.TryMapCommand<MarketCurve.Aggregate, MarketCurve.State, AddInstrument>(AddInstrumentUrl, new AddInstrument(string.Empty));
             
 
             RestMapper.TryMapIndex(getCurveList.Yield());
