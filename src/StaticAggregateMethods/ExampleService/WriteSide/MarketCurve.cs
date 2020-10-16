@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Lib.Aggregates;
-using Lib.AspNet;
 using static Lib.Domain.MarketCurve.Commands;
 using static Lib.Domain.MarketCurve.Events;
 
@@ -14,11 +13,11 @@ namespace Lib.Domain
         {
             public Aggregate()
             {
-                Handle<NameAndAddInstrument>((_, command) => new object[] { new MarketCurveNamed(command.Name), new InstrumentAddedToCurve(command.Instrument) });
+                Handle<NameAndAddInstrument>((_, command) => Yield(new MarketCurveNamed(command.Name), new InstrumentAddedToCurve(command.Instrument));
 
                 Handle<AddInstrument>((state, command) => state.Instruments.Contains(command.Instrument)
-                    ? Enumerable.Empty<object>()
-                    : new InstrumentAddedToCurve(command.Instrument).Yield());
+                    ? None
+                    : Yield(new InstrumentAddedToCurve(command.Instrument)));
 
 
                 When<MarketCurveNamed>((state, @event) => state with { Name = @event.Name });
@@ -43,6 +42,9 @@ namespace Lib.Domain
             public record MarketCurveNamed(string Name);
 
             public record InstrumentAddedToCurve(string InstrumentId);
+
+            public static readonly IEnumerable<object> None = Enumerable.Empty<object>();
+            public static IEnumerable<object> Yield(params object?[] events) => events.Where(x=> x != null)!;
         }
     }
 
