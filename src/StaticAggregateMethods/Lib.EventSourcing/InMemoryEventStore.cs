@@ -11,9 +11,9 @@ namespace Lib.EventSourcing
 {
     public class InMemoryEventStore : IEventStore, IDisposable
     {
-        private class InMemoryStream
+        private class InMemoryEventStream
         {
-            public InMemoryStream(IEnumerable<EventEnvelope> events)
+            public InMemoryEventStream(IEnumerable<EventEnvelope> events)
             {
                 Events = events.ToImmutableArray();
             }
@@ -23,7 +23,7 @@ namespace Lib.EventSourcing
 
         private readonly Channel<EventEnvelope> _channel = Channel.CreateBounded<EventEnvelope>(1000);
 
-        private readonly ConcurrentDictionary<string, InMemoryStream> _streams = new ConcurrentDictionary<string, InMemoryStream>();
+        private readonly ConcurrentDictionary<string, InMemoryEventStream> _streams = new ConcurrentDictionary<string, InMemoryEventStream>();
 
         private long _position = -1;
 
@@ -42,7 +42,7 @@ namespace Lib.EventSourcing
                     addValueFactory: _ =>
                     {
                         addedEvents = events.Select(IncrementId).ToList();
-                        return new InMemoryStream(addedEvents);
+                        return new InMemoryEventStream(addedEvents);
                     },
                     updateValueFactory: (_, value) =>
                     {
@@ -53,7 +53,7 @@ namespace Lib.EventSourcing
                         }
 
                         addedEvents = events.Select(IncrementId).ToList();
-                        return new InMemoryStream(value.Events.Concat(addedEvents));
+                        return new InMemoryEventStream(value.Events.Concat(addedEvents));
                     });
 
                 if (addedEvents == null)

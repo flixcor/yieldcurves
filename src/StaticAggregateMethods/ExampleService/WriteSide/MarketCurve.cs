@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Lib.Aggregates;
-using static Lib.Domain.MarketCurve.Commands;
 using static Lib.Domain.MarketCurve.Events;
+using Contracts;
 
 namespace Lib.Domain
 {
@@ -29,13 +29,6 @@ namespace Lib.Domain
         }
 
         public record State(string Name, IReadOnlyCollection<string> Instruments);
-
-        public static class Commands
-        {
-            public record NameAndAddInstrument(string Name, string Instrument);
-
-            public record AddInstrument(string Instrument);
-        }
 
         public static class Events
         {

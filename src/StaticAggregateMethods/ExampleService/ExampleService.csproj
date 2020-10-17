@@ -7,6 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="WriteSide\AddInstrument.schema.json" />
+    <Content Remove="WriteSide\NameAndAddInstrument.schema.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="WriteSide\AddInstrument.schema.json" />
+    <AdditionalFiles Include="WriteSide\NameAndAddInstrument.schema.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="NodaTime" Version="3.0.0" />
     <PackageReference Include="NodaTime.Serialization.SystemTextJson" Version="1.0.0" />
     <PackageReference Include="Projac" Version="0.1.0" />
@@ -15,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lib.AspNet\Lib.AspNet.csproj" />
+    <ProjectReference Include="..\Lib.SourceGenerator\Lib.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>

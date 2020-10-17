@@ -84,7 +84,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lib.Aggregates", "src\Stati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lib.EventSourcing", "src\StaticAggregateMethods\Lib.EventSourcing\Lib.EventSourcing.csproj", "{59431BEA-D146-444E-9B75-75592CCC5C56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.AspNet", "src\StaticAggregateMethods\Lib.AspNet\Lib.AspNet.csproj", "{DF9E5802-5C33-45E6-B4AF-7EA68159DF34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lib.AspNet", "src\StaticAggregateMethods\Lib.AspNet\Lib.AspNet.csproj", "{DF9E5802-5C33-45E6-B4AF-7EA68159DF34}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneratorTester", "src\StaticAggregateMethods\GeneratorTester\GeneratorTester.csproj", "{9544F3C0-DD89-4461-966E-63F65460B958}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -196,6 +198,10 @@ Global
 		{DF9E5802-5C33-45E6-B4AF-7EA68159DF34}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF9E5802-5C33-45E6-B4AF-7EA68159DF34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF9E5802-5C33-45E6-B4AF-7EA68159DF34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9544F3C0-DD89-4461-966E-63F65460B958}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9544F3C0-DD89-4461-966E-63F65460B958}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9544F3C0-DD89-4461-966E-63F65460B958}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9544F3C0-DD89-4461-966E-63F65460B958}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -235,6 +241,7 @@ Global
 		{E3B5E250-18D2-43F7-8A0B-24C82282E25C} = {7B841556-CC20-47FA-AC15-8F20D83F9F23}
 		{59431BEA-D146-444E-9B75-75592CCC5C56} = {7B841556-CC20-47FA-AC15-8F20D83F9F23}
 		{DF9E5802-5C33-45E6-B4AF-7EA68159DF34} = {7B841556-CC20-47FA-AC15-8F20D83F9F23}
+		{9544F3C0-DD89-4461-966E-63F65460B958} = {7B841556-CC20-47FA-AC15-8F20D83F9F23}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2681B182-AD3D-4651-A205-39DA65F48B1C}

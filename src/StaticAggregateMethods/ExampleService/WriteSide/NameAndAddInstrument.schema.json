@@ -1,0 +1,16 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NameAndAddInstrument",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The person's first name."
+    },
+    "instrument": {
+      "type": "string",
+      "description": "The person's last name."
+    }
+  },
+  "required":  ["instrument", "name"]
+}
