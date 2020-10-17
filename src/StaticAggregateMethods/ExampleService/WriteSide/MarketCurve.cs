@@ -13,7 +13,7 @@ namespace Lib.Domain
         {
             public Aggregate()
             {
-                Handle<NameAndAddInstrument>((_, command) => Yield(new MarketCurveNamed(command.Name), new InstrumentAddedToCurve(command.Instrument));
+                Handle<NameAndAddInstrument>((_, command) => Yield(new MarketCurveNamed(command.Name), new InstrumentAddedToCurve(command.Instrument)));
 
                 Handle<AddInstrument>((state, command) => state.Instruments.Contains(command.Instrument)
                     ? None
