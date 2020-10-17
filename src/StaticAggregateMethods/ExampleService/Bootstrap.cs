@@ -5,9 +5,9 @@ using Lib.Domain;
 using Lib.EventSourcing;
 using Lib.Features;
 using Vocab;
-using static Lib.Domain.MarketCurve.Commands;
 using static Lib.Domain.MarketCurve.Events;
 using static Lib.Features.GetCurveList;
+using static Contracts.ContractCollection;
 
 namespace Lib
 {
@@ -19,6 +19,8 @@ namespace Lib
 
         public static void Setup(IEventStore eventStore)
         {
+            Contracts.ContractCollection.Setup();
+
             Describe.Class<GetCurve.Curve>()
                 .Property(x => x.Instruments).Are(Schema.instrument)
                 .Property(x => x.Name).Is(Schema.name);

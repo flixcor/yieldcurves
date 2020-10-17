@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using Lib.SourceGenerator;
 
 namespace GeneratorTester
@@ -8,15 +7,13 @@ namespace GeneratorTester
     {
         static void Main()
         {
-            var builder = new StringBuilder();
-            Helpers.GetClassContent("MyClass", schema, builder);
-            var str = builder.ToString();
-            Console.WriteLine(str);
+            var text = Helpers.GetContractsText(new[] { ("MyClass", Schema) });
+            Console.WriteLine(text);
             Console.WriteLine("press any key");
             Console.ReadKey();
         }
 
-        const string schema = @"
+        const string Schema = @"
 {
 ""$id"": ""https://example.com/person.schema.json"",
   ""$schema"": ""http://json-schema.org/draft-07/schema#"",

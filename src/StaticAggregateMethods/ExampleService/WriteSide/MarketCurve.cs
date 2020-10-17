@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Lib.Aggregates;
 using static Lib.Domain.MarketCurve.Events;
-using Contracts;
+using static Contracts.ContractCollection;
 
 namespace Lib.Domain
 {
@@ -32,7 +32,9 @@ namespace Lib.Domain
 
         public static class Events
         {
-            public record MarketCurveNamed(string Name);
+            public record MarketCurveNamed(string Name)
+            { 
+            }
 
             public record InstrumentAddedToCurve(string InstrumentId);
 

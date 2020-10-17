@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using NJsonSchema;
 
@@ -7,17 +8,49 @@ namespace Lib.SourceGenerator
 {
     public static class Helpers
     {
+        public static string GetContractsText(IEnumerable<(string, string)> files)
+        {
+            var setupBuilder = new StringBuilder();
+            setupBuilder.AppendLine("        public static void Setup()");
+            setupBuilder.AppendLine("        {");
+
+            var builder = new StringBuilder();
+            builder.AppendLine("#nullable enable");
+            builder.AppendLine("namespace Contracts");
+            builder.AppendLine("{");
+            builder.AppendLine("    using System.Text.Json;");
+            builder.AppendLine();
+            builder.AppendLine("    public static class ContractCollection");
+            builder.AppendLine("    {");
+
+
+            foreach (var (className, schemaText) in files)
+            {
+                GetClassContent(className, schemaText, builder);
+                setupBuilder.Append("            Lib.AspNet.Serializer.TryRegister(");
+                setupBuilder.Append(className);
+                setupBuilder.AppendLine(".FromJson);");
+            }
+            setupBuilder.AppendLine("        }");
+            builder.Append(setupBuilder);
+            builder.AppendLine("    }");
+            builder.AppendLine("}");
+            builder.AppendLine("#nullable disable");
+
+            return builder.ToString();
+        }
+
         public static void GetClassContent(string className, string contract, StringBuilder recordBuilder)
         {
             var schema = JsonSchema.FromJsonAsync(contract).GetAwaiter().GetResult();
 
-            var extensionBuilder = new StringBuilder("        public static ");
+            var extensionBuilder = new StringBuilder("            public static ");
             extensionBuilder.Append(className);
             extensionBuilder.Append(" FromJson(JsonElement element) => new ");
             extensionBuilder.Append(className);
             extensionBuilder.Append("(");
 
-            recordBuilder.Append("    public record ");
+            recordBuilder.Append("        public record ");
             recordBuilder.Append(className);
             recordBuilder.Append("(");
 
@@ -56,9 +89,9 @@ namespace Lib.SourceGenerator
             extensionBuilder.AppendLine(");");
 
             recordBuilder.AppendLine(")");
-            recordBuilder.AppendLine("    {");
+            recordBuilder.AppendLine("        {");
             recordBuilder.Append(extensionBuilder);
-            recordBuilder.AppendLine("    }");
+            recordBuilder.AppendLine("        }");
         }
 
         public static bool EqualsIgnoreCase(this string left, string right) => left.Equals(right, StringComparison.OrdinalIgnoreCase);
