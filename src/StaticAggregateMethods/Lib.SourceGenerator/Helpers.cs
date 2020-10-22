@@ -30,6 +30,11 @@ namespace Lib.SourceGenerator
                 setupBuilder.Append("            Lib.AspNet.Serializer.TryRegister(");
                 setupBuilder.Append(className);
                 setupBuilder.AppendLine(".FromJson);");
+                setupBuilder.Append("            Lib.AspNet.SchemaResolver.TryRegister<");
+                setupBuilder.Append(className);
+                setupBuilder.Append(">(");
+                setupBuilder.Append(className);
+                setupBuilder.AppendLine(".Schema);");
             }
             setupBuilder.AppendLine("        }");
             builder.Append(setupBuilder);
@@ -91,6 +96,9 @@ namespace Lib.SourceGenerator
             recordBuilder.AppendLine(")");
             recordBuilder.AppendLine("        {");
             recordBuilder.Append(extensionBuilder);
+            recordBuilder.Append("public const string Schema = @\"");
+            recordBuilder.Append(contract.Replace("\"", "\"\""));
+            recordBuilder.AppendLine("\";");
             recordBuilder.AppendLine("        }");
         }
 

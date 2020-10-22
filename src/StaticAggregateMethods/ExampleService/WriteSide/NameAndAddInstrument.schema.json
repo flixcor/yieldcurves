@@ -5,11 +5,13 @@
   "properties": {
     "name": {
       "type": "string",
-      "description": "The person's first name."
+      "title":  "Curve name",
+      "description": "The curve's name."
     },
     "instrument": {
       "type": "string",
-      "description": "The person's last name."
+      "title":  "Instrument name",
+      "description": "The instruments's name."
     }
   },
   "required":  ["instrument", "name"]

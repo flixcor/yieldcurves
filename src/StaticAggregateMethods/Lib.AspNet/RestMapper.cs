@@ -20,6 +20,20 @@ namespace Lib.AspNet
     public record Link(string Href, string Method)
     {
         public HydraClass? Expects { get; init; }
+        public string? Schema { get; init; }
+    }
+
+    public static class SchemaResolver
+    {
+        private readonly static Dictionary<Type, string> s_dict = new Dictionary<Type, string>();
+
+        public static bool TryRegister<TContract>(string schema) => s_dict.TryAdd(typeof(TContract), schema);
+
+        public static string? GetSchema<TContract>()
+        {
+            s_dict.TryGetValue(typeof(TContract), out var result);
+            return result;
+        }
     }
 
     public static class Serializer
@@ -137,6 +151,13 @@ namespace Lib.AspNet
                 link = link.WithExpected(expected);
             }
 
+            var schema = SchemaResolver.GetSchema<Command>();
+            
+            if (schema != null)
+            {
+                link = link with { Schema = schema };
+            }
+
             s_handlers.TryAdd(link, Handle<Aggregate, State, Command>);
             return link;
         }
@@ -222,7 +243,8 @@ namespace Lib.AspNet
                     var matchingHandlers = s_handlers.Where(x => x.Key.Href == link.Href && !HttpMethods.IsGet(x.Key.Method)).Select(x => new
                     {
                         method = x.Key.Method,
-                        expected = x.Key.Expects
+                        expected = x.Key.Expects,
+                        schema = JsonDocument.Parse(x.Key.Schema)
                     }).ToArray();
 
                     if (matchingHandlers.Any())

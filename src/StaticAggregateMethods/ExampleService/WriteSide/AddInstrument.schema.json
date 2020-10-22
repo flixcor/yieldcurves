@@ -5,6 +5,7 @@
   "properties": {
     "instrument": {
       "type": "string",
+      "title":  "Instrument",
       "description": "The name of the instrument."
     }
   },
