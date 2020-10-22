@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Lib.AspNet;
-using Lib.Domain;
 using Lib.EventSourcing;
-using Lib.Features;
 using Vocab;
-using static Lib.Domain.MarketCurve.Events;
-using static Lib.Features.GetCurveList;
+using static ExampleService.WriteSide.MarketCurve.Events;
+using static ExampleService.ReadSide.GetCurveList;
 using static Contracts.ContractCollection;
+using ExampleService.WriteSide;
+using ExampleService.ReadSide;
 
 namespace Lib
 {

@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Lib.EventSourcing;
-using static Lib.Domain.MarketCurve.Events;
+using static ExampleService.WriteSide.MarketCurve.Events;
 
-namespace Lib.Features
+namespace ExampleService.ReadSide
 {
     public class GetCurveList : IQuery<GetCurveList.CurveList>
     {

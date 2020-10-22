@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Lib.Aggregates;
-using static Lib.Domain.MarketCurve.Events;
 using static Contracts.ContractCollection;
+using static ExampleService.WriteSide.MarketCurve.Events;
 
-namespace Lib.Domain
+namespace ExampleService.WriteSide
 {
     public static class MarketCurve
     {
@@ -37,7 +37,7 @@ namespace Lib.Domain
             public record InstrumentAddedToCurve(string InstrumentId);
 
             public static readonly IEnumerable<object> None = Enumerable.Empty<object>();
-            public static IEnumerable<object> Yield(params object?[] events) => events.Where(x=> x != null)!;
+            public static IEnumerable<object> Yield(params object?[] events) => events.Where(x => x != null)!;
         }
     }
 

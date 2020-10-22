@@ -1,9 +1,9 @@
 ﻿using AutoFixture;
-using Xunit;
-using static Lib.Domain.MarketCurve.Commands;
-using static Lib.Domain.MarketCurve.Events;
-using static Lib.Domain.MarketCurve;
 using Lib.Test.Shared;
+using Xunit;
+using static Contracts.ContractCollection;
+using static ExampleService.WriteSide.MarketCurve;
+using static ExampleService.WriteSide.MarketCurve.Events;
 
 
 namespace Lib.Test
@@ -11,7 +11,7 @@ namespace Lib.Test
     using static GivenWhenThen<Aggregate, State>;
     public class UnitTest1
     {
-        
+
 
         [Fact]
         public void Test1()
