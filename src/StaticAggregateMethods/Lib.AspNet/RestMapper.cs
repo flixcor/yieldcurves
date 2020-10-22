@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net.Mime;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using Lib.Aggregates;
@@ -17,76 +16,6 @@ using Microsoft.Net.Http.Headers;
 
 namespace Lib.AspNet
 {
-    public record Link(string Href, string Method)
-    {
-        public HydraClass? Expects { get; init; }
-        public string? Schema { get; init; }
-    }
-
-    public static class SchemaResolver
-    {
-        private readonly static Dictionary<Type, string> s_dict = new Dictionary<Type, string>();
-
-        public static bool TryRegister<TContract>(string schema) => s_dict.TryAdd(typeof(TContract), schema);
-
-        public static string? GetSchema<TContract>()
-        {
-            s_dict.TryGetValue(typeof(TContract), out var result);
-            return result;
-        }
-    }
-
-    public static class Serializer
-    {
-        public static readonly JsonSerializerOptions Options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            IgnoreNullValues = true
-        };
-
-        private delegate Task<object?> DeserializeDelegate(Stream input, CancellationToken cancellationToken);
-        private readonly static Dictionary<Type, DeserializeDelegate> s_dict = new Dictionary<Type, DeserializeDelegate>();
-
-        public static bool TryRegister<TContract>(Func<JsonElement, TContract> func) => s_dict.TryAdd(typeof(TContract), GetDelegate(func));
-
-        public static async Task<TContract?> DeserializeAsync<TContract>(Stream input, CancellationToken token)
-        {
-            if (s_dict.TryGetValue(typeof(TContract), out var del))
-            {
-                var obj = await del(input, token);
-                return (TContract?)obj;
-            }
-
-            return await JsonSerializer.DeserializeAsync<TContract>(input, Options, token);
-        }
-
-        private static DeserializeDelegate GetDelegate<TContract>(Func<JsonElement, TContract> func) => async (stream, token) =>
-        {
-            var doc = await JsonDocument.ParseAsync(stream, default, token);
-            return func(doc.RootElement);
-        };
-    }
-
-    public class HydraClass
-    {
-        [JsonPropertyName("@id")]
-        public string? @Id { get; init; }
-        [JsonPropertyName("@type")]
-        public string @Type { get; } = "hydra:Class";
-        public IReadOnlyCollection<SupportedProperty> SupportedProperty { get; init; } = Array.Empty<SupportedProperty>();
-        public string? Title { get; init; }
-    }
-
-    public class SupportedProperty
-    {
-        [JsonPropertyName("@type")]
-        public string @Type { get; } = "SupportedProperty";
-        public bool Required { get; init; } = true;
-        public string? Title { get; init; }
-        public dynamic? Default { get; init; }
-    }
-
     public static class RestMapper
     {
         private static readonly Dictionary<Link, RequestDelegate> s_handlers = new Dictionary<Link, RequestDelegate>();
