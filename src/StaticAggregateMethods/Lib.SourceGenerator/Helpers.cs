@@ -96,7 +96,7 @@ namespace Lib.SourceGenerator
             recordBuilder.AppendLine(")");
             recordBuilder.AppendLine("        {");
             recordBuilder.Append(extensionBuilder);
-            recordBuilder.Append("public const string Schema = @\"");
+            recordBuilder.Append("            public const string Schema = @\"");
             recordBuilder.Append(contract.Replace("\"", "\"\""));
             recordBuilder.AppendLine("\";");
             recordBuilder.AppendLine("        }");
